@@ -1,0 +1,128 @@
+[
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_geography_regions_polys.geojson",
+    "sha256": "b7b26e50ea917d3696aec87f932def2bf5f890f5770e441d59c162c6f4c92a77",
+    "blob": "b0af6a56d56c7903c9aa40df5b01813bb4334c94"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_geography_marine_polys.geojson",
+    "sha256": "53f865e8ffa966cdd402145c82c5cd14ee7ce974cd0eb9a3f59f03a4cfd2d66c",
+    "blob": "bea6b3567d415123ca75123c2aa1619076bf2250"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_rivers_lake_centerlines.geojson",
+    "sha256": "bb854a900ecbd3b408df46d5e16e3e0f974ba55993f9d8b5c26e855273c0905a",
+    "blob": "61a0d7137a6ff1113cc259525e7479c63d5fec86"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_lakes.geojson",
+    "sha256": "2d036f53dedec578001c5c30c2959ee7d4eebc1306900fa4367c49929ec8f2d9",
+    "blob": "e48ec603e0943b62f8c81960fb990bb6bab4a4a8"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_geography_regions_points.geojson",
+    "sha256": "25821b530966e62756faebf53699f12bf73550f8228aa4bbdf3e4132dd7cf806",
+    "blob": "75e2a7192111dee3464e90296d31cf5ad5cd7d1c"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_geography_regions_elevation_points.geojson",
+    "sha256": "f98a16867867146ec4146d6d4b18c823eeedb2825947de666116cf9a4e3f43cb",
+    "blob": "86076ef74c48d1adca1eadefd2b22894795d070c"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_land.geojson",
+    "sha256": "1ac90796408bc6ad6911d69448485d3c4dbf2190370080368a09976e1c9f7416",
+    "blob": "2d76878175b8054acd9c5a52917ee9ea59a36fc5"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_minor_islands.geojson",
+    "sha256": "8c933ca7a4760256bdc46408355706e39764b0fa01c160c28888b90b4faec29f",
+    "blob": "0b0f8adeb4fba6f5fd94b1e0881f48b363de2c3e"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_admin_0_countries.geojson",
+    "sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255",
+    "blob": "5ebc66e25fc1af01edaebe9375c546655e04cf1e"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_50m_land.geojson",
+    "sha256": "e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b",
+    "blob": "c412c52b5286ba727dcb7047ecd6080bcbeb8298"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_50m_lakes.geojson",
+    "sha256": "d350b75978b26fe839b797c2c529b2fb8f47fb3983c03f4964e36d5df9378a52",
+    "blob": "5ddced58279ea13ae5023929f135bb7ecfd12d95"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_50m_admin_0_boundary_lines_land.geojson",
+    "sha256": "2faac4f6b34386f3d21b6e018cf151f241f00e5c936d44dd17d7d9bfb147fa48",
+    "blob": "f2da10de881015c7182951b59a75b1e4e27356c6"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_admin_0_boundary_lines_land.geojson",
+    "sha256": "74d9c16229c095fde65943a9919e337682f044bcebccb120764f38edf3b70f4a",
+    "blob": "a4e4090820e0d95c23d55aefa6b5f1721552cc71"
+  },
+  {
+    "repo": "nvkelso/natural-earth-raster",
+    "commit": "f04832c819e7a203d159dffe93cd9245332d6b33",
+    "path": "50m_rasters/GRAY_50M_SR/GRAY_50M_SR.tif",
+    "sha256": "9177298c48d8b7e82d5cda9ac2643ff8b477b138e692880a8506fd693305b9a7",
+    "blob": "c2786a189d3701adec5455c05d8254a9ae45d3d6"
+  },
+  {
+    "repo": "nvkelso/natural-earth-raster",
+    "commit": "f04832c819e7a203d159dffe93cd9245332d6b33",
+    "path": "50m_rasters/GRAY_50M_SR/GRAY_50M_SR.tfw",
+    "sha256": "7f1cc97126a52814c874ec326a8275c7ded3edc4d7bced417f76d71a995069bd",
+    "blob": "6271b06423dccb54186d7e33284c8c28af7185a9"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_50m_ocean.geojson",
+    "sha256": "5b810162af4b20805838cfd766ef1a445c350cf6aafc8b589515daef30033adf",
+    "blob": "09ec7f4c65735e46badd82d42f3a0fdcdb7d8c33"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_ocean.geojson",
+    "sha256": "f9696a1337c746a0f6c8c13bc60d0f230d2ef8d105198d5657726c8f8e763fc2",
+    "blob": "7f5c93c471dc99e34976ed760593f8e91c330226"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_50m_rivers_lake_centerlines.geojson",
+    "sha256": "f286e0ce978fde999ca2d7a78c764be08542e19b63cded52b05c12d5173ccc51",
+    "blob": "6f9d88ea3498448c7f29f458ce42a771a36bd6be"
+  }
+]

@@ -1,0 +1,167 @@
+- id: alps
+  uid: 4PQ3ciT0aM
+  name: Alps
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104297}}
+  expect: {bbox: [4, 43, 17, 49]}
+
+- id: himalayas
+  uid: KXRwHaydc6
+  name: Himalayas
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104307}}
+  expect: {bbox: [70, 25, 98, 37]}
+
+- id: black-sea
+  uid: 64NBXpNOKv
+  name: Black Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115171}}
+  expect: {bbox: [27, 40, 42, 47.5], area_km2: [380000, 470000]}
+
+- id: atlantic-ocean
+  uid: N3NGMxsbci
+  name: Atlantic Ocean
+  type: Ocean
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115057}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115149}}
+  expect: {bbox: [-100, -61, 25, 69]}
+
+- id: bosporus
+  uid: MAPQnshVtc
+  name: Bosporus
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118835}}
+  expect: {bbox: [28.8, 40.9, 29.3, 41.4]}
+
+- id: khyber-pass
+  uid: xiBxfhWifB
+  name: Khyber Pass
+  type: Mountain pass
+  category: Passes & Corridors
+  tier: 1
+  style: point
+  geometry:
+  - {layer: 10m_geography_regions_elevation_points, select: {ne_id: 1159105727}}
+  expect: {bbox: [70.5, 33.5, 71.8, 34.5]}
+
+- id: malta
+  uid: NwuUPtkuvb
+  name: Malta
+  type: Island
+  category: Peninsulas & Islands
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321065}}
+  expect: {bbox: [14, 35.7, 14.7, 36.2]}
+
+- id: nile
+  uid: w5NtfRCzSA
+  name: Nile
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Nile, rivernum: 4}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: El Bahr el Abyad, rivernum: 17}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Bahr el Jebel, rivernum: 14}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Bahr el Jebel, rivernum: 16}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Albert Nile, rivernum: 9}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Victoria Nile, rivernum: 5}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Rosetta Branch, rivernum: 19}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Damietta Branch, rivernum: 20}}
+  expect: {bbox: [29, -3, 34, 32], length_km: [3500, 6800]}
+
+- id: mississippi-missouri-ohio
+  uid: PkOyvaz7pZ
+  name: Mississippi–Missouri–Ohio
+  alt_names: [Mississippi]
+  type: River system
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Mississippi, rivernum: 3}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Missouri, rivernum: 8}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Ohio, rivernum: 92}}
+  expect: {bbox: [-114, 28, -79, 49], length_km: [5000, 9000]}
+
+- id: gulf-stream
+  uid: buWvbSn4fn
+  name: Gulf Stream & North Atlantic Drift
+  alt_names: [Gulf Stream]
+  type: Ocean current
+  category: Climate Systems
+  tier: 2
+  style: flow-current
+  geometry:
+  - {file: gulf-stream.geojson}
+  expect: {bbox: [-82, 24, 5, 66]}
+
+- id: pacific-ocean
+  uid: 9dKZ99t54a
+  name: Pacific Ocean
+  type: Ocean
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115079}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115099}}
+  expect: {bbox: [100, -61, -65, 60]}
+
+- id: arctic-ocean
+  uid: wSxtLBdr0g
+  name: Arctic Ocean
+  type: Ocean
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115017}}
+  expect: {bbox: [-180, 60, 180, 90]}
+
+- id: kerch-strait
+  uid: aAfAczxNPs
+  name: Kerch Strait
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {file: kerch-strait.geojson}
+  expect: {bbox: [36.3, 44.9, 36.9, 45.6]}
+
+- id: subtropical-highs
+  uid: FXLN9Bdl59
+  name: Subtropical highs
+  alt_names: [horse latitudes]
+  type: Pressure belt
+  category: Climate Systems
+  tier: 2
+  style: band
+  geometry:
+  - {file: subtropical-highs.geojson}
+  expect: {bbox: [-180, -36, 180, 36]}

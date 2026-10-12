@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "source": "Schematic annual-mean belts of subtropical high pressure at roughly 25-35° N and S (standard textbook general circulation). Placeholder geometry pending a sourced redraw."
+      },
+      "geometry": {"type": "MultiPolygon", "coordinates": [
+        [[[-180, 25], [-60, 25], [60, 25], [180, 25], [180, 35], [60, 35], [-60, 35], [-180, 35], [-180, 25]]],
+        [[[-180, -35], [-60, -35], [60, -35], [180, -35], [180, -25], [60, -25], [-60, -25], [-180, -25], [-180, -35]]]
+      ]}
+    }
+  ]
+}

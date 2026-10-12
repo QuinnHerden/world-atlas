@@ -1,0 +1,21 @@
+[project]
+name = "geofeat"
+version = "0.1.0"
+description = "Build pipeline for the Geographic Features Anki deck"
+authors = [
+    { name = "Quinn Herden", email = "55929299+QuinnHerden@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "cartopy>=0.26.0",
+    "geopandas>=1.2.0",
+    "matplotlib>=3.11.2",
+    "pillow>=12.3.0",
+    "pydantic>=2.14.1",
+    "pykdtree>=1.4.3",
+    "ruamel-yaml>=0.19.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

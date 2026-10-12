@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "source": "Approximate mean axis from general oceanographic knowledge (Florida Straits, Cape Hatteras separation, NE Atlantic drift toward Norway). Unverified: check against a NOAA public-domain current map before release."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [[-80.0, 24.8], [-79.8, 27.0], [-79.0, 31.0], [-75.2, 35.3], [-70.0, 37.8], [-62.0, 39.5], [-52.0, 41.5], [-44.0, 45.0], [-35.0, 49.5], [-24.0, 53.5], [-14.0, 57.5], [-5.0, 61.5], [3.0, 64.5]]
+      }
+    }
+  ]
+}

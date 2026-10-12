@@ -1,0 +1,12 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "source": "Approximate channel centreline between the Sea of Azov and the Black Sea, from general knowledge of the Kerch Peninsula and Taman coast. Unverified: check against a public-domain nautical chart before release."
+      },
+      "geometry": {"type": "LineString", "coordinates": [[36.63, 45.44], [36.58, 45.33], [36.61, 45.22], [36.55, 45.07]]}
+    }
+  ]
+}
