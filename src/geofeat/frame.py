@@ -19,6 +19,8 @@ FILL = 0.45  # share of the frame's long axis the highlight should cover
 GLOBAL_SPAN_M = 10_000_000  # wider than this goes on a world map
 INSET_BELOW_M = 5_000_000  # frames narrower than this get a locator globe
 MIN_SPAN_M = {"point": 600_000, "strait": 600_000}
+SHORT_STRAIT_M = 50_000
+SHORT_STRAIT_SPAN_M = 400_000
 MIN_SPAN_SMALL_AREA_M = 800_000
 SMALL_AREA_M = 50_000
 
@@ -53,22 +55,30 @@ def project(geometry: BaseGeometry, projection: ccrs.Projection) -> BaseGeometry
 
 
 def frame(feature: Feature, geometry: BaseGeometry) -> Frame:
-    projection = laea(geometry)
+    """Fit the highlight, or with `frame.centre`, the smallest frame on that centre that still holds it."""
+    fixed = feature.frame.centre
+    projection = laea(geometry) if fixed is None else ccrs.LambertAzimuthalEqualArea(*fixed)
     x0, y0, x1, y1 = project(geometry, projection).bounds
     width, height = x1 - x0, y1 - y0
 
     if not math.isfinite(width + height) or max(width, height) > GLOBAL_SPAN_M:
         return Frame(ccrs.EqualEarth(central_longitude=centre(geometry)[0]), None, inset=False)
 
-    frame_w = max(width, height * ASPECT) / FILL
+    if fixed is None:
+        frame_w = max(width, height * ASPECT) / FILL
+        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    else:
+        frame_w = 2 * max(abs(x0), abs(x1), abs(y0) * ASPECT, abs(y1) * ASPECT) * 1.15
+        cx, cy = 0.0, 0.0
     if feature.frame.min_span_km:
         frame_w = max(frame_w, feature.frame.min_span_km * 1000)
+    elif feature.style == "strait" and max(width, height) < SHORT_STRAIT_M:
+        frame_w = max(frame_w, SHORT_STRAIT_SPAN_M)
     elif feature.style in MIN_SPAN_M:
         frame_w = max(frame_w, MIN_SPAN_M[feature.style])
     elif max(width, height) < SMALL_AREA_M:
         frame_w = max(frame_w, MIN_SPAN_SMALL_AREA_M)
     frame_h = frame_w / ASPECT
 
-    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
     extent = (cx - frame_w / 2, cx + frame_w / 2, cy - frame_h / 2, cy + frame_h / 2)
     return Frame(projection, extent, inset=frame_w < INSET_BELOW_M)

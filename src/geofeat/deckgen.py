@@ -16,7 +16,7 @@ def card(feature: Feature, image: str) -> str:
     answer = feature.name
     if feature.alt_names:
         answer += f" ({', '.join(feature.alt_names)})"
-    front = f"**{html.escape(feature.type)}**<br>![]({image})"
+    front = f"**{html.escape(feature.type_text)}**<br>![]({image})"
     return f"---\n\n{front} ::: {html.escape(answer)}\n\n---\n[^uid]: {feature.uid}\n"
 
 

@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "source": "Approximate annual-mean axis from general oceanographic knowledge: southward off Portugal and Morocco, drawn just west of the Canary Islands (the current is several hundred km wide and also flows between them), turning west north of Cape Verde into the North Equatorial Current. Unverified: check against a NOAA public-domain surface-current map before release."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [[-14.0, 38.0], [-15.0, 34.0], [-17.5, 31.0], [-20.7, 28.0], [-21.1, 25.0], [-21.4, 22.0], [-22.0, 19.8], [-23.5, 18.8], [-28.0, 18.8]]
+      }
+    }
+  ]
+}

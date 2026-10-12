@@ -18,7 +18,7 @@
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104307}}
-  expect: {bbox: [70, 25, 98, 37]}
+  expect: {bbox: [75.4, 26.8, 95.8, 34.0]}
 
 - id: black-sea
   uid: 64NBXpNOKv
@@ -92,13 +92,14 @@
   - {layer: 10m_rivers_lake_centerlines, select: {name: Victoria Nile, rivernum: 5}, rows: 2}
   - {layer: 10m_rivers_lake_centerlines, select: {name: Rosetta Branch, rivernum: 19}}
   - {layer: 10m_rivers_lake_centerlines, select: {name: Damietta Branch, rivernum: 20}}
-  expect: {bbox: [29, -3, 34, 32], length_km: [3500, 6800]}
+  expect: {bbox: [30.1, -1.0, 34.1, 31.6], length_km: [5500, 6800]}
+  frame: {centre: [32.0, 16.5], min_span_km: 5500}
 
 - id: mississippi-missouri-ohio
   uid: PkOyvaz7pZ
   name: Mississippi–Missouri–Ohio
   alt_names: [Mississippi]
-  type: River system
+  type: River
   category: Rivers
   tier: 1
   style: line
@@ -165,3 +166,100 @@
   geometry:
   - {file: subtropical-highs.geojson}
   expect: {bbox: [-180, -36, 180, 36]}
+
+- id: dardanelles
+  uid: fvaL0bjWEc
+  name: Dardanelles
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159119155}}
+  expect: {bbox: [26.1, 39.9, 26.8, 40.5]}
+
+- id: karakoram
+  uid: fvBfUrOnq8
+  name: Karakoram
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104185}}
+  expect: {bbox: [74.8, 33.2, 80.0, 38.0]}
+  frame: {centre: [72.5, 36.0], min_span_km: 1800}
+
+- id: pamirs
+  uid: cucDLcxgiQ
+  name: Pamirs
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104181}}
+  expect: {bbox: [71.1, 37.0, 77.1, 39.7]}
+  frame: {centre: [72.5, 36.0], min_span_km: 1800}
+
+- id: hindu-kush
+  uid: FsC3qGSzTF
+  name: Hindu Kush
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104183}}
+  expect: {bbox: [66.5, 34.0, 75.8, 37.6]}
+  frame: {centre: [72.5, 36.0], min_span_km: 1800}
+
+- id: tibetan-plateau
+  uid: yrr5stmbG1
+  name: Tibetan Plateau
+  type: Plateau
+  category: Deserts, Plateaus & Plains
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104345}}
+  - {feature: himalayas, subtract: true}
+  - {feature: karakoram, subtract: true}
+  - {feature: hindu-kush, subtract: true}
+  - {feature: pamirs, subtract: true}
+  expect: {bbox: [76.3, 27.3, 104.2, 40.2], area_km2: [2200000, 2500000]}
+  trim_to_largest: true
+
+- id: nile-delta
+  uid: Vy73Ga6Z2h
+  name: Nile Delta
+  type: Delta
+  category: Regions, Rifts & Deltas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103505}}
+  expect: {bbox: [29.7, 30.0, 32.2, 31.7]}
+  frame: {context: [nile]}
+
+- id: canary-current
+  uid: 2ruzsrsPTl
+  name: Canary Current
+  type: Ocean current
+  category: Climate Systems
+  tier: 3
+  style: flow-current
+  geometry:
+  - {file: canary-current.geojson}
+  expect: {bbox: [-28.0, 17.0, -13.5, 38.5]}
+
+- id: trade-winds
+  uid: ezAhmdLnju
+  name: Trade winds
+  type: Prevailing winds
+  category: Climate Systems
+  tier: 1
+  style: flow-wind
+  geometry:
+  - {file: trade-winds.geojson}
+  expect: {bbox: [-180, -28, 180, 28]}

@@ -1,7 +1,8 @@
 PY := uv run python -m geofeat
 DECK := Geographic Features
+IDS ?=
 
-.PHONY: all fetch ids check-data render deck check build sheet clean
+.PHONY: all test fetch ids check-data render deck check build sheet pairs cvd clean
 
 all: build
 
@@ -11,7 +12,10 @@ ids:
 fetch:
 	$(PY).fetch
 
-check-data: fetch
+test:
+	uv run python -m unittest discover -s tests
+
+check-data: test fetch
 	$(PY).check data
 
 render: check-data
@@ -31,7 +35,13 @@ build: check
 	@ls dist/*.apkg
 
 sheet:
-	$(PY).sheet
+	$(PY).sheet $(IDS)
+
+pairs: render
+	$(PY).sheet --pairs
+
+cvd: render
+	$(PY).cvd $(IDS)
 
 clean:
 	rm -rf build deck dist

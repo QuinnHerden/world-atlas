@@ -138,7 +138,13 @@ Every selector must match exactly the expected rows, and `expect` (bbox, length 
    - Part types fit the style.
    - Every river is one connected line after snapping gaps under 20 km, and reaches its mouth.
    - Every hand-authored part has a `source` property.
-3. **Sibling pairs:** for features within 300 km of each other or overlapping, the highlights must differ and neither may cover the other. These pairs are listed on the contact sheet.
+3. **Sibling pairs:** features within 300 km of each other or overlapping are compared by their highlights, drawn as on one map framing both. World-map features are only compared with each other.
+   - **Fail** if the highlights are near-identical (IoU ≥ 0.8), or if one covers the other (≥ 90%) and both have the same base type.
+   - **Nested** features with different types ("Delta" inside a "River" frame, a range inside a plateau) are kept and reported as info.
+   - **Overrides:** a same-type pair that should nest can be accepted with `allow_nested: [{id, reason}]` on either feature. Every override is printed by `make check-data`.
+   - **Flow lines** (currents and winds) must chain head-to-tail; a piece drawn backwards fails.
+   - `make check-data` prints the failing and nested pairs. `make pairs` lists every pair and writes them side by side to `build/pairs.png`.
+   - **Rivers:** a river must end at its mouth. A true end of the merged line, meaning a source or mouth rather than a junction, must be within 5 km of the sea. Set `expect.mouth: lake` for rivers that end in a lake, or `none` for inland sinks.
 4. **Renders:** every feature has exactly one render, and `render` clears stale files first.
 5. **ankc:** `ankc --version` is 0.4.x, `ankc check --deck "Geographic Features"` passes, and after the build the note count in the `.apkg` equals the number of non-retired features.
 

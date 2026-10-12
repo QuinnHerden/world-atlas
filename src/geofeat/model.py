@@ -27,6 +27,10 @@ Category = Literal[
     "Regions, Rifts & Deltas",
     "Climate Systems",
 ]
+FeatureType = Literal[
+    "Ocean", "Sea", "Strait", "Mountain range", "Mountain pass", "River", "Plateau", "Island", "Delta",
+    "Ocean current", "Prevailing winds", "Pressure belt",
+]
 Style = Literal["area", "line", "point", "strait", "flow-current", "flow-wind", "band"]
 
 _UNSAFE_TEXT = re.compile(r"[\n<>]|:::|\[\^|^-{3}")
@@ -47,17 +51,23 @@ class Strict(BaseModel):
 
 
 class Part(Strict):
-    """One piece of a feature's geometry: rows from a Natural Earth layer, or a hand-authored file."""
+    """One piece of a feature's geometry: rows from a Natural Earth layer, a hand-authored file, or another feature.
+
+    A `subtract` part is cut out of the others, e.g. a sibling range out of a plateau that contains it.
+    """
 
     layer: str | None = None
     select: dict[str, str | int] | None = None
     rows: int = 1
     file: Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*\.geojson$")] | None = None
+    feature: str | None = None
+    subtract: bool = False
 
     @model_validator(mode="after")
     def _one_source(self) -> "Part":
-        if (self.file is None) == (self.layer is None or self.select is None):
-            raise ValueError("a part needs either `file`, or both `layer` and `select`")
+        sources = [self.file is not None, self.feature is not None, self.layer is not None or self.select is not None]
+        if sum(sources) != 1 or (sources[2] and (self.layer is None or self.select is None)):
+            raise ValueError("a part needs exactly one of `file`, `feature`, or both `layer` and `select`")
         return self
 
 
@@ -66,10 +76,20 @@ class Expect(Strict):
     bbox: tuple[float, float, float, float]
     length_km: tuple[float, float] | None = None
     area_km2: tuple[float, float] | None = None
+    mouth: Literal["sea", "lake", "none"] = "sea"  # where a river must end; "none" for inland sinks like the Okavango
 
 
 class FrameOptions(Strict):
     min_span_km: float | None = None
+    centre: tuple[float, float] | None = None  # lon, lat; siblings sharing a centre and span share a frame
+    context: list[str] = []  # ids of line features drawn faintly underneath, e.g. a delta's river
+
+
+class AllowNested(Strict):
+    """Accept that this feature and `id` nest despite sharing a type, e.g. a sub-range inside its range."""
+
+    id: str
+    reason: Annotated[str, Field(min_length=10)]
 
 
 class Feature(Strict):
@@ -77,14 +97,21 @@ class Feature(Strict):
     uid: Annotated[str, Field(pattern=r"^[A-Za-z0-9]{10}$")] | None = None
     name: CardText
     alt_names: list[CardText] = []
-    type: CardText
+    type: FeatureType
+    qualifier: CardText | None = None  # e.g. the season a climate map shows: "Monsoon, July"
     category: Category
     tier: Literal[1, 2, 3]
     style: Style
     geometry: list[Part]
     expect: Expect
     frame: FrameOptions = FrameOptions()
+    allow_nested: list[AllowNested] = []
+    trim_to_largest: bool = False  # after subtracting, keep only the largest polygon (drops cut-off scraps)
     retired: bool = False
+
+    @property
+    def type_text(self) -> str:
+        return f"{self.type}, {self.qualifier}" if self.qualifier else self.type
 
     @property
     def subdeck(self) -> str:

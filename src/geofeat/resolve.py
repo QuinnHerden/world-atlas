@@ -5,15 +5,18 @@ from functools import cache
 from pathlib import Path
 
 import geopandas as gpd
+import numpy as np
 import shapely
 from pyproj import Geod
 from shapely import unary_union
-from shapely.geometry import shape
+from shapely.geometry import LineString, MultiLineString, shape
 from shapely.geometry.base import BaseGeometry
 
-from geofeat.model import GEOMETRY, LOCK, VENDOR, Feature
+from geofeat.model import GEOMETRY, LOCK, VENDOR, Feature, Part, load_features
 
 GEOD = Geod(ellps="WGS84")
+SLIVER_KM2 = 2_500
+MAX_DROPPED_SHARE = 0.01
 
 
 @cache
@@ -39,31 +42,100 @@ def _custom(file: str) -> BaseGeometry:
     for feature in collection["features"]:
         if not feature.get("properties", {}).get("source"):
             raise ValueError(f"{file}: every feature needs a `source` property")
-    return unary_union([shape(f["geometry"]) for f in collection["features"]])
+    return combine([shape(f["geometry"]) for f in collection["features"]])
 
 
-def resolve(feature: Feature) -> BaseGeometry:
-    parts = []
-    for part in feature.geometry:
-        if part.file:
-            parts.append(_custom(part.file))
-            continue
-        gdf = layer(part.layer)
-        unknown = {k.lower() for k in part.select} - set(gdf.columns)
-        if unknown:
-            raise ValueError(f"{feature.id}: {part.layer} has no column(s) {sorted(unknown)}")
-        mask = True
-        for key, value in part.select.items():
-            mask = mask & (gdf[key.lower()] == value)
-        matched = gdf[mask]
-        if len(matched) != part.rows:
-            raise ValueError(
-                f"{feature.id}: {part.layer} {part.select} matched {len(matched)} rows, expected {part.rows}"
-            )
-        parts.append(unary_union(matched.geometry.values))
-    geometry = unary_union(parts)
+def combine(geometries: list[BaseGeometry]) -> BaseGeometry:
+    """Union the parts, except all-line parts, which stay as drawn: a union would split them where they cross."""
+    if all(g.geom_type in ("LineString", "MultiLineString") for g in geometries):
+        return MultiLineString([line for g in geometries for line in shapely.get_parts(g) if not line.is_empty])
+    return unary_union(geometries)
+
+
+@cache
+def features_by_id() -> dict[str, Feature]:
+    return {f.id: f for f in load_features()}
+
+
+def _part(feature: Feature, part: Part, stack: tuple[str, ...]) -> BaseGeometry:
+    if part.file:
+        return _custom(part.file)
+    if part.feature:
+        if part.feature in stack:
+            raise ValueError(f"{feature.id}: feature reference cycle {' -> '.join((*stack, part.feature))}")
+        if part.feature not in features_by_id():
+            raise ValueError(f"{feature.id}: references unknown feature {part.feature!r}")
+        return resolve_with_trim(features_by_id()[part.feature], stack)[0]
+    gdf = layer(part.layer)
+    unknown = {k.lower() for k in part.select} - set(gdf.columns)
+    if unknown:
+        raise ValueError(f"{feature.id}: {part.layer} has no column(s) {sorted(unknown)}")
+    mask = True
+    for key, value in part.select.items():
+        mask = mask & (gdf[key.lower()] == value)
+    matched = gdf[mask]
+    if len(matched) != part.rows:
+        raise ValueError(f"{feature.id}: {part.layer} {part.select} matched {len(matched)} rows, expected {part.rows}")
+    return unary_union(matched.geometry.values)
+
+
+def flow_lines(geometry: BaseGeometry) -> list[LineString]:
+    """A flow geometry's lines, merged only head-to-tail, with longitudes unwrapped so a line split at ±180° rejoins."""
+    pieces = []
+    ref = None
+    for line in shapely.get_parts(geometry):
+        coords = shapely.get_coordinates(line)
+        coords[:, 0] = np.unwrap(coords[:, 0], period=360)
+        ref = coords[0, 0] if ref is None else ref
+        coords[:, 0] += 360 * round((ref - coords[0, 0]) / 360)
+        if len(coords) > 1:
+            pieces.append(LineString(coords))
+    merged = shapely.line_merge(MultiLineString(pieces), directed=True)
+    return [line for line in shapely.get_parts(merged) if line.length > 0]
+
+
+def _area_km2(geometry: BaseGeometry) -> float:
+    return abs(GEOD.geometry_area_perimeter(geometry)[0]) / 1e6
+
+
+def _drop_slivers(feature: Feature, keep: BaseGeometry, cut_result: BaseGeometry) -> tuple[BaseGeometry, float]:
+    """Drop small polygons the cut created where borders don't quite match; untouched pieces, lines and points stay.
+
+    With `trim_to_largest`, every polygon but the largest goes too; the caller reports how much.
+    """
+    original = shapely.get_parts(keep)
+    pieces = list(shapely.get_parts(cut_result))
+    largest = max((p for p in pieces if p.geom_type == "Polygon"), key=_area_km2, default=None)
+    kept, slivers, trimmed = [], 0.0, 0.0
+    for piece in pieces:
+        if piece.geom_type != "Polygon" or piece is largest or any(piece.equals(o) for o in original):
+            kept.append(piece)
+        elif (area := _area_km2(piece)) < SLIVER_KM2:
+            slivers += area
+        elif feature.trim_to_largest:
+            trimmed += area
+        else:
+            kept.append(piece)
+    result = unary_union(kept)
+    if slivers > MAX_DROPPED_SHARE * _area_km2(result):
+        raise ValueError(f"{feature.id}: subtracting dropped {slivers:.0f} km² of slivers; check the cut")
+    return result, trimmed
+
+
+def resolve_with_trim(feature: Feature, stack: tuple[str, ...] = ()) -> tuple[BaseGeometry, float]:
+    """The feature's geometry, and the km² that `trim_to_largest` removed (0 without it)."""
+    stack = (*stack, feature.id)
+    keep = combine([_part(feature, p, stack) for p in feature.geometry if not p.subtract])
+    cut = [_part(feature, p, stack) for p in feature.geometry if p.subtract]
+    geometry, trimmed = (keep, 0.0)
+    if cut:
+        geometry, trimmed = _drop_slivers(feature, keep, shapely.make_valid(keep.difference(unary_union(cut))))
     _check_expect(feature, geometry)
-    return geometry
+    return geometry, trimmed
+
+
+def resolve(feature: Feature, stack: tuple[str, ...] = ()) -> BaseGeometry:
+    return resolve_with_trim(feature, stack)[0]
 
 
 def _in_bbox(geometry: BaseGeometry, bbox: tuple[float, float, float, float]) -> bool:
@@ -82,7 +154,7 @@ def _check_expect(feature: Feature, geometry: BaseGeometry) -> None:
     if not _in_bbox(geometry, expect.bbox):
         raise ValueError(f"{feature.id}: geometry falls outside expected bbox {expect.bbox}")
     if expect.length_km:
-        _in_range(feature.id, "length_km", GEOD.geometry_length(geometry) / 1000, expect.length_km)
+        _in_range(feature.id, "length_km", GEOD.geometry_length(unary_union(geometry)) / 1000, expect.length_km)
     if expect.area_km2:
         _in_range(feature.id, "area_km2", abs(GEOD.geometry_area_perimeter(geometry)[0]) / 1e6, expect.area_km2)
 
