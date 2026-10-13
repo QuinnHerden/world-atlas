@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Channel centreline drawn by hand from the 24 km NE narrows (Cape Tua, Sumatra – Cape Pujat, Java) past Krakatau to the Indian Ocean, per Wikipedia 'Sunda Strait' (5.92S 105.88E, SW–NE axis). Checked against Natural Earth 10m v5.1.2 (public domain) land (crosses only a sub-km islet).", "method": "reference-coords", "refs": ["Wikipedia 'Sunda Strait'", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[105.95, -5.72], [105.88, -5.88], [105.75, -6.0], [105.5, -6.2], [105.2, -6.45], [104.95, -6.7]]}}
+  ]
+}

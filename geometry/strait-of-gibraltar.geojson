@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Channel centreline drawn by hand from the Cape Trafalgar–Cape Spartel entrance through the Tarifa (36.01N 5.61W)–Point Cires (35.91N 5.48W) narrows to the Gibraltar–Ceuta exit; general knowledge of the headland positions, checked to lie in water on Natural Earth 10m v5.1.2 (public domain) land.", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[-6.0, 35.95], [-5.75, 35.94], [-5.6, 35.965], [-5.45, 35.98], [-5.32, 36.02]]}}
+  ]
+}

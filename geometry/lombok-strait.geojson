@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Channel centreline drawn by hand from the Bali Sea (40 km northern opening) through the 20 km narrows between Nusa Penida and Lombok to the Indian Ocean, per Wikipedia 'Lombok Strait' (8.77S 115.73E, ~60 km long). Checked to stay in water on Natural Earth 10m v5.1.2 (public domain) land.", "method": "reference-coords", "refs": ["Wikipedia 'Lombok Strait'", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[115.72, -8.15], [115.78, -8.45], [115.75, -8.75], [115.82, -9.05]]}}
+  ]
+}

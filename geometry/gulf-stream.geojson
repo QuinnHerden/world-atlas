@@ -1,15 +1,7 @@
 {
   "type": "FeatureCollection",
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "source": "Approximate mean axis from general oceanographic knowledge (Florida Straits, Cape Hatteras separation, NE Atlantic drift toward Norway). Unverified: check against a NOAA public-domain current map before release."
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [[-80.0, 24.8], [-79.8, 27.0], [-79.0, 31.0], [-75.2, 35.3], [-70.0, 37.8], [-62.0, 39.5], [-52.0, 41.5], [-44.0, 45.0], [-35.0, 49.5], [-24.0, 53.5], [-14.0, 57.5], [-5.0, 61.5], [3.0, 64.5]]
-      }
-    }
+    {"type": "Feature", "properties": {"source": "Florida Current and Gulf Stream to the Tail of the Grand Banks: streamline traced by script through the NOAA AOML Global Drifter Program annual-mean near-surface velocity climatology (Laurindo, Mariano & Lumpkin 2017; public domain), smoothed to about 1 deg and simplified (separation from the shelf at Cape Hatteras, 35.4 N).", "method": "pd-dataset", "refs": ["NOAA AOML GDP drifter annual-mean climatology (Laurindo, Mariano & Lumpkin 2017, doi:10.1016/j.dsr.2017.04.009; dataset doi:10.7266/N7SJ1HN5; accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "LineString", "coordinates": [[-81.5, 24.3], [-80.1, 26.5], [-80.0, 29.1], [-79.6, 31.7], [-77.0, 33.3], [-74.9, 35.4], [-72.3, 37.1], [-69.1, 37.9], [-65.7, 38.3], [-62.5, 39.2], [-59.1, 39.8], [-55.6, 40.1], [-51.5, 40.3], [-48.5, 41.5]]}},
+    {"type": "Feature", "properties": {"source": "North Atlantic Current and Drift: hand-traced simplified axis, checked against streamlines of the NOAA AOML Global Drifter Program annual-mean near-surface velocity climatology (Laurindo, Mariano & Lumpkin 2017; public domain), which show it north along the Grand Banks to the Northwest Corner near 51 N 43 W, east near 50-52 N across the Mid-Atlantic Ridge, then north-east past Rockall and through the Faroe-Shetland Channel into the Norwegian Sea. The mean flow here is broad and eddy-rich, so this line is schematic.", "method": "hand-drawn", "refs": ["NOAA AOML GDP drifter annual-mean climatology (Laurindo, Mariano & Lumpkin 2017, doi:10.1016/j.dsr.2017.04.009; dataset doi:10.7266/N7SJ1HN5; accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "LineString", "coordinates": [[-48.5, 41.5], [-46.0, 43.5], [-44.5, 46.5], [-43.5, 49.5], [-42.2, 51.0], [-38.0, 50.5], [-34.0, 50.4], [-30.0, 51.5], [-26.0, 52.9], [-22.6, 53.3], [-19.5, 54.5], [-16.1, 55.7], [-12.0, 57.0], [-8.7, 58.6], [-5.0, 60.2], [-1.0, 61.6], [2.5, 63.2], [4.5, 64.8]]}}
   ]
 }

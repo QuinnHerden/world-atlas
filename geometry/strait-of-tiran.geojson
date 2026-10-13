@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Channel centreline drawn by hand through the western strait (Enterprise/Grafton passages, 5–6 km) between Sinai and Tiran Island, per Wikipedia 'Strait of Tiran' (28.004N 34.465E). Channel edges read off Natural Earth 10m v5.1.2 (public domain) land; line checked to stay in water.", "method": "reference-coords", "refs": ["Wikipedia 'Strait of Tiran'", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[34.53, 28.15], [34.49, 28.06], [34.462, 28.0], [34.44, 27.95], [34.4, 27.88]]}}
+  ]
+}

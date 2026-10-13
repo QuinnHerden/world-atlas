@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Lusatian Neisse from the Czech–German–Polish tripoint near Zittau to its mouth in the Oder at Ratzdorf, drawn by hand through the border towns it passes (Zittau, Gorlitz/Zgorzelec, Rothenburg, Bad Muskau, Forst, Guben; general-knowledge coordinates) and joined to the Natural Earth 10m v5.1.2 (public domain) 'Oder' 130 vertex at Ratzdorf. Approximate (~5 km).", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[14.82, 50.87], [14.82, 50.92], [14.86, 51.0], [14.92, 51.08], [14.99, 51.15], [14.97, 51.25], [14.97, 51.33], [14.88, 51.42], [14.73, 51.5], [14.72, 51.56], [14.69, 51.65], [14.66, 51.74], [14.68, 51.85], [14.72, 51.95], [14.74, 52.02], [14.758, 52.069], [14.761, 52.077]]}}
+  ]
+}

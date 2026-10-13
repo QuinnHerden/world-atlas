@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Channel centreline drawn by hand through the main western channel (Dact el-Mayun, ~20 km) between Perim Island and Ras Siyyan, per Wikipedia 'Bab-el-Mandeb' (centre 12.58N 43.33E; Ras Menheli to Ras Siyyan ~26 km). Positions read off Natural Earth 10m v5.1.2 (public domain) land; line checked to stay in water.", "method": "reference-coords", "refs": ["Wikipedia 'Bab-el-Mandeb'", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[43.25, 13.05], [43.28, 12.8], [43.29, 12.65], [43.36, 12.52], [43.5, 12.4], [43.65, 12.3]]}}
+  ]
+}

@@ -5,4 +5,4 @@ build/
 deck/
 dist/
 research.md
-build.log
+*.log

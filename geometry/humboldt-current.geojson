@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Hand-traced simplified axis, checked against streamlines of the NOAA AOML Global Drifter Program annual-mean near-surface velocity climatology (Laurindo, Mariano & Lumpkin 2017; public domain). North from where the West Wind Drift meets South America (about 43 S), along the Chilean coast about 150-300 km offshore, close inshore off Peru, leaving the coast near Punta Aguja (about 6 S) and turning west into the South Equatorial Current just south of the equator, short of the Galapagos. Eastern boundary currents are broad (several hundred km) and slow in the mean, so the single line is schematic.", "method": "hand-drawn", "refs": ["NOAA AOML GDP drifter annual-mean climatology (Laurindo, Mariano & Lumpkin 2017, doi:10.1016/j.dsr.2017.04.009; dataset doi:10.7266/N7SJ1HN5; accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "LineString", "coordinates": [[-78.0, -43.0], [-76.0, -38.0], [-74.5, -33.0], [-73.5, -28.0], [-72.5, -23.0], [-72.8, -19.0], [-75.5, -16.0], [-78.5, -12.0], [-80.8, -8.5], [-82.3, -5.5], [-84.5, -3.0], [-88.5, -1.8]]}}
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Wikipedia 'Brenner Pass' coordinates 47 00'12\"N 11 30'27\"E (1,370 m, Austria–Italy border).", "method": "reference-coords", "refs": ["Wikipedia 'Brenner Pass'"]}, "geometry": {"type": "Point", "coordinates": [11.508, 47.003]}}
+  ]
+}

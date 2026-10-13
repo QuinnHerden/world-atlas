@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "NOAA NCEI IBTrACS v04r01 (public domain), Western Pacific basin typhoon-strength fixes (>= 64 kt), seasons 1971-2020: 6-hourly fixes binned on a 2.5 deg grid, 1-2-1 smoothed, outer contour at 15% of peak density, closed and simplified by script. A climatological track-density envelope, not any single storm.", "method": "pd-dataset", "refs": ["NOAA NCEI IBTrACS v04r01, doi:10.25921/82ty-9e16 (accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "Polygon", "coordinates": [[[113.8, 23.7], [108.8, 22.1], [106.2, 18.7], [108.7, 13.6], [113.7, 11.1], [128.7, 8.6], [148.8, 9.3], [156.3, 12.4], [158.0, 16.2], [155.1, 21.3], [156.0, 28.7], [154.2, 31.3], [148.8, 31.7], [143.8, 34.3], [126.3, 33.8], [113.8, 23.7]]]}}
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Over the sea: streamline of the July surface wind in the NOAA PSL ICOADS 2-degree monthly long-term mean 1971-2000 (public domain), traced by script and simplified. Arabian Sea branch: cross-equatorial Somali jet turning onto the Konkan coast near 19 N; the short inland end is schematic.", "method": "hand-drawn", "refs": ["NOAA PSL ICOADS 2-degree enhanced monthly LTM 1971-2000, ERDDAP esrlIcoads2gec71 (accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "LineString", "coordinates": [[49.6, -2.5], [49.9, 0.6], [51.8, 3.7], [54.1, 6.4], [56.7, 9.0], [59.3, 11.5], [62.1, 13.9], [65.2, 15.9], [68.6, 17.4], [72.2, 18.6], [75.5, 19.8]]}},
+    {"type": "Feature", "properties": {"source": "Over the sea: streamline of the July surface wind in the NOAA PSL ICOADS 2-degree monthly long-term mean 1971-2000 (public domain), traced by script and simplified. Bay of Bengal branch: northward over the Bay to the Bengal coast; the turn north-west up the Ganges plain along the monsoon trough is schematic, after IMD and standard textbook July charts.", "method": "hand-drawn", "refs": ["NOAA PSL ICOADS 2-degree enhanced monthly LTM 1971-2000, ERDDAP esrlIcoads2gec71 (accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "LineString", "coordinates": [[79.0, 4.5], [82.2, 5.2], [85.2, 7.1], [87.9, 9.5], [89.8, 13.0], [90.5, 17.0], [90.6, 20.5], [89.8, 23.2], [87.5, 25.2], [84.0, 26.3], [80.5, 27.5]]}}
+  ]
+}

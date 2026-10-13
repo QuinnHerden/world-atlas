@@ -2,8 +2,10 @@
 
 Both highlights are drawn as they would appear on one map framing the pair: polygons as filled, lines and points
 widened by their stroke. A pair fails when the highlights are near-identical (IoU), or when one covers the other and
-both share a base type word. Nesting with different type words ("Delta" in "River") is allowed and reported as info.
-World-map features (oceans, global belts) are only compared with each other: a regional card never shares their frame.
+both types share a family (`model.FAMILY`: "Pass" and "Corridor" are both land passages), unless one feature declares
+the pair in `allow_nested`. Nesting across families ("Delta" in a "River" frame, a "Pass" in a "Mountain range") is
+reported as info. World-map features (oceans, global belts) are only compared with each other: a regional card never
+shares their frame.
 """
 
 import math
@@ -20,14 +22,15 @@ NEAR_M = 300_000
 NEAR_DEG = 3.0  # cheap lon/lat prefilter, a little wider than NEAR_M
 IOU_MAX = 0.8
 COVER_MAX = 0.9
-WORLD_SPAN_M = 34_000_000  # width of a world map
+IOU_NEAR, COVER_NEAR = 0.5, 0.7  # close enough to a limit to be worth a look on the pairs sheet
+WORLD_SPAN_M = 40_000_000  # width of a world map (plate carrée, the equator's length)
 
 
 @dataclass(frozen=True)
 class Pair:
     a: str
     b: str
-    same_type: bool
+    same_family: bool
     distance_km: float
     iou: float
     cover: float
@@ -35,11 +38,15 @@ class Pair:
 
     @property
     def flagged(self) -> bool:
-        return self.iou >= IOU_MAX or (self.same_type and self.cover >= COVER_MAX and not self.allowed)
+        return self.iou >= IOU_MAX or (self.same_family and self.cover >= COVER_MAX and not self.allowed)
 
     @property
     def nested(self) -> bool:
         return self.cover >= COVER_MAX and not self.flagged
+
+    @property
+    def near(self) -> bool:
+        return self.iou >= IOU_NEAR or self.cover >= COVER_NEAR
 
     def __str__(self) -> str:
         mark = "FLAG " if self.flagged else "allowed " if self.allowed and self.nested else "nested " if self.nested else ""
@@ -80,7 +87,7 @@ def compare(fa: Feature, ga: BaseGeometry, fb: Feature, gb: BaseGeometry) -> Pai
         return None
     overlap = a.intersection(b).area
     return Pair(
-        fa.id, fb.id, fa.type == fb.type, distance / 1000,
+        fa.id, fb.id, fa.family == fb.family, distance / 1000,
         iou=overlap / a.union(b).area, cover=overlap / min(a.area, b.area), allowed=_allowed(fa, fb),
     )
 

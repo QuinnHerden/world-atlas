@@ -1,0 +1,152 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "source": "Approximate 1960 shoreline of the Aral Sea (about 53 m above sea level), outer shore only: islands such as Kokaral, Barsakelmes and Vozrozhdeniya are not cut out. Drawn by judgement from general knowledge of the 1960 sea, not traced from any map: the Ustyurt cliff as a near-straight west shore at about 58.15E, Muynak (43.77N 59.02E) and Aralsk (46.80N 61.67E) on the shore as ports, the Syr Darya mouth near 61.0E 46.1N, the Small Aral north of Kokaral. Placed to enclose both Natural Earth 10m present-day basins; it encloses about 65,700 km\u00b2, against a published 1960 area of about 66,000-68,000 km\u00b2. Expect errors of 10-20 km along the shore. Drawn as context only (a dashed line), never highlighted.",
+        "method": "hand-drawn",
+        "refs": [
+          "Micklin, P. (2007) The Aral Sea disaster. Annual Review of Earth and Planetary Sciences 35: 47-72 (1960 level and area)",
+          "Encyclopaedia Britannica, 'Aral Sea' (text description of the former extent)",
+          "Natural Earth 10m lakes v5.1.2 (public domain), commit f1890d9: present-day North and South Aral, used as an inner bound"
+        ]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              58.75,
+              46.28
+            ],
+            [
+              58.5,
+              45.95
+            ],
+            [
+              58.3,
+              45.6
+            ],
+            [
+              58.17,
+              45.2
+            ],
+            [
+              58.13,
+              44.8
+            ],
+            [
+              58.13,
+              44.4
+            ],
+            [
+              58.18,
+              44.0
+            ],
+            [
+              58.25,
+              43.65
+            ],
+            [
+              58.5,
+              43.45
+            ],
+            [
+              58.8,
+              43.55
+            ],
+            [
+              59.0,
+              43.75
+            ],
+            [
+              59.3,
+              43.85
+            ],
+            [
+              59.6,
+              43.88
+            ],
+            [
+              59.95,
+              43.98
+            ],
+            [
+              60.35,
+              44.2
+            ],
+            [
+              60.8,
+              44.55
+            ],
+            [
+              61.15,
+              44.9
+            ],
+            [
+              61.4,
+              45.3
+            ],
+            [
+              61.45,
+              45.65
+            ],
+            [
+              61.3,
+              45.95
+            ],
+            [
+              61.05,
+              46.1
+            ],
+            [
+              61.35,
+              46.3
+            ],
+            [
+              61.75,
+              46.8
+            ],
+            [
+              61.5,
+              46.9
+            ],
+            [
+              61.0,
+              46.78
+            ],
+            [
+              60.6,
+              46.9
+            ],
+            [
+              60.15,
+              46.78
+            ],
+            [
+              59.85,
+              46.5
+            ],
+            [
+              59.85,
+              46.2
+            ],
+            [
+              59.6,
+              46.0
+            ],
+            [
+              59.15,
+              46.12
+            ],
+            [
+              58.75,
+              46.28
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

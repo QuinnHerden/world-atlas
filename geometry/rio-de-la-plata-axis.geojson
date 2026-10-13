@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Estuary axis drawn by hand from the mouth of NE river 'Parana' 36 down the middle of the Natural Earth 10m v5.1.2 (public domain) poly 'Rio de la Plata' (1159116815): midpoints of Buenos Aires–Colonia, Punta Piedras–Montevideo and the IHO outer limit Punta del Este–Cabo San Antonio. Approximate.", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[-58.447, -34.007], [-58.2, -34.25], [-57.75, -34.55], [-57.25, -34.85], [-56.7, -35.17], [-55.8, -35.64]]}}
+  ]
+}

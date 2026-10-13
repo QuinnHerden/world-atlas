@@ -124,5 +124,12 @@
     "path": "geojson/ne_50m_rivers_lake_centerlines.geojson",
     "sha256": "f286e0ce978fde999ca2d7a78c764be08542e19b63cded52b05c12d5173ccc51",
     "blob": "6f9d88ea3498448c7f29f458ce42a771a36bd6be"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_50m_admin_1_states_provinces_lines.geojson",
+    "sha256": "72cca93c850d412628a5da4bc5ebfe21ba4d376eb34611bde6b623ee73f0fdcf",
+    "blob": "41da0731acea59ed0ffc499e517e185a0d033a14"
   }
 ]

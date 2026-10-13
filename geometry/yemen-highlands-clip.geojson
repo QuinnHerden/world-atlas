@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Clip polygon (subtract) for the Yemen highlands, the southern Sarawat between the end of NE 'ASIR MTS.' (about 16.4N) and the Gulf of Aden coast, with the Aden–Abyan coast up to the Hadhramaut (46.7E), west of the Ramlat al-Sab'atayn sands near Marib (about 45.5E); Natural Earth has no polygon for them. Drawn by hand from Britannica's text description of Yemen's western highlands, not its map images, so the eastern edge is approximate to about 50 km.", "method": "hand-drawn", "refs": ["Britannica 'Yemen' (text)", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "Polygon", "coordinates": [[[42.6, 17.2], [42.6, 12.5], [46.7, 12.5], [46.7, 14.0], [45.6, 14.8], [45.4, 16.0], [44.6, 17.2], [42.6, 17.2]]]}}
+  ]
+}

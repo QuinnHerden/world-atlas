@@ -1,0 +1,8 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Greenland–Iceland leg across the Denmark Strait narrows (~290 km), from the NW Iceland coast near Straumnes to the facing East Greenland coast; end points read off Natural Earth 10m v5.1.2 (public domain) land. The GIUK gap has no official line; this follows the common depiction of its two stretches either side of Iceland.", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[-27.0, 68.6], [-23.13, 66.43]]}},
+    {"type": "Feature", "properties": {"source": "Iceland–Faroes leg: shortest crossing from east Iceland (Gerpir area) to the Faroes, end points read off Natural Earth 10m v5.1.2 (public domain) land. Conventional, not an official line.", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[-13.5, 65.08], [-7.64, 62.11]]}},
+    {"type": "Feature", "properties": {"source": "Faroes–Shetland leg (Faroe–Shetland Channel), shortest crossing between the two on Natural Earth 10m v5.1.2 (public domain) land. Conventional; some depictions run to mainland Scotland instead.", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[-6.28, 62.3], [-1.61, 60.48]]}}
+  ]
+}

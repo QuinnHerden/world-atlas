@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "NOAA NCEI IBTrACS v04r01 (public domain), North Atlantic basin hurricane-strength fixes (>= 64 kt), seasons 1971-2020: 6-hourly fixes binned on a 2.5 deg grid, 1-2-1 smoothed, outer contour at 15% of peak density, closed and simplified by script. A climatological track-density envelope, not any single storm.", "method": "pd-dataset", "refs": ["NOAA NCEI IBTrACS v04r01, doi:10.25921/82ty-9e16 (accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "Polygon", "coordinates": [[[-96.2, 18.8], [-81.2, 10.1], [-68.8, 12.8], [-43.8, 10.7], [-28.9, 13.7], [-29.7, 16.2], [-40.8, 25.1], [-30.9, 33.7], [-34.7, 41.2], [-41.3, 44.1], [-53.7, 45.2], [-66.2, 43.1], [-78.7, 37.3], [-83.7, 31.6], [-88.8, 33.0], [-96.2, 30.9], [-99.8, 23.7], [-96.2, 18.8]]]}}
+  ]
+}

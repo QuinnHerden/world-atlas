@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Channel centreline drawn by hand through the narrows between Larak Island (Iran) and the Quoin islands off Ras Musandam (Oman), following the Omani-waters traffic separation scheme described in Wikipedia 'Strait of Hormuz' (strait centre 26.6N 56.5E, ~39 km narrows). Checked to lie entirely in water on Natural Earth 10m v5.1.2 (public domain) land. Approximate at strait-frame scale.", "method": "reference-coords", "refs": ["Wikipedia 'Strait of Hormuz'", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[55.9, 26.25], [56.2, 26.45], [56.42, 26.6], [56.62, 26.52], [56.8, 26.25], [56.95, 25.95]]}}
+  ]
+}

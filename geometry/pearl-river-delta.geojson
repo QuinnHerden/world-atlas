@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Pearl River Delta drawn by hand as the alluvial plain and Lingding estuary bounded by Sanshui/Foshan, Guangzhou, Dongguan, Shenzhen, Hong Kong, Macau, Zhuhai and Jiangmen (Britannica 'Pearl River Delta'; town coordinates general knowledge). Approximate.", "method": "hand-drawn", "refs": ["Britannica 'Pearl River Delta' (text)"]}, "geometry": {"type": "Polygon", "coordinates": [[[113.25, 23.22], [113.55, 23.15], [113.85, 23.08], [114.05, 22.85], [114.05, 22.55], [114.2, 22.3], [113.9, 22.2], [113.55, 22.12], [113.2, 22.15], [113.0, 22.5], [112.85, 22.8], [112.88, 23.18], [113.25, 23.22]]]}}
+  ]
+}

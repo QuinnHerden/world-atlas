@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Wikipedia 'Cumberland Gap' coordinates 36 36'15\"N 83 40'25\"W (497 m; matches USGS GNIS feature).", "method": "reference-coords", "refs": ["Wikipedia 'Cumberland Gap'"]}, "geometry": {"type": "Point", "coordinates": [-83.674, 36.604]}}
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Short link from the seaward end of the Natural Earth 10m v5.1.2 (public domain) 'Huang' 66 line (119.03E 37.80N) east across the delta lobe Natural Earth's own coastline shows to its tip (119.26E 37.77N), where the river has entered the Bohai since the 1976 Qingshuigou diversion. Start point is the NE vertex; the course between is by general knowledge. Approximate (~21 km).", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[119.033214, 37.802558], [119.1, 37.79], [119.17, 37.78], [119.26, 37.77]]}}
+  ]
+}

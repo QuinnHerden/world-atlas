@@ -14,18 +14,19 @@ import geopandas as gpd
 import shapely
 from pyproj import Transformer
 from shapely import unary_union
-from shapely.geometry import MultiLineString, Point
+from shapely.geometry import MultiLineString, Point, Polygon
 from shapely.geometry.base import BaseGeometry
 
 from geofeat.frame import laea, project
-from geofeat.model import DECK, MEDIA_INDEX, ROOT, ROOT_DECK, Feature, active, load_features
+from geofeat.model import DECK, GEOMETRY, MEDIA_INDEX, ROOT, ROOT_DECK, Feature, active, load_features
 from geofeat.pairs import NEAR_M, find_pairs
-from geofeat.resolve import features_by_id, flow_lines, layer, resolve_with_trim
+from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
 
 RIVER_GAP_M = 20_000
 MOUTH_M = 5_000
 JUNCTION_M = 2_000  # Natural Earth river parts meet within about a kilometre, not on shared nodes
 MOUTH_WATER = {"sea": "10m_ocean", "lake": "10m_lakes"}  # NE puts the Caspian in the ocean layer
+WATER_HOLE_KM2 = 10_000
 STYLE_GEOMETRY = {
     "area": {"Polygon", "MultiPolygon"},
     "band": {"Polygon", "MultiPolygon"},
@@ -80,6 +81,13 @@ def _near(water: gpd.GeoDataFrame, lon: float, lat: float) -> bool:
     return False
 
 
+def water_holes(geometry: BaseGeometry) -> list[float]:
+    """km² of each hole in a water body that isn't land: a hole there means a neighbouring sea was left out."""
+    holes = [Polygon(ring) for part in shapely.get_parts(geometry) if part.geom_type == "Polygon" for ring in part.interiors]
+    holes = [hole for hole in holes if area_km2(hole) > WATER_HOLE_KM2]  # a smaller hole can't hold enough water
+    return [area for hole in holes if (area := area_km2(hole.difference(land_within(hole.bounds)))) > WATER_HOLE_KM2]
+
+
 def _check_feature(feature: Feature, geometry: BaseGeometry) -> list[str]:
     if geometry.is_empty:
         return [f"{feature.id}: empty geometry"]
@@ -98,6 +106,8 @@ def _check_feature(feature: Feature, geometry: BaseGeometry) -> list[str]:
         return [f"{feature.id}: flow features can't subtract parts; the cut would split lines where they cross"]
     if feature.style.startswith("flow") and _chain_breaks(geometry):
         return [f"{feature.id}: flow lines don't chain head-to-tail; a piece is drawn backwards"]
+    if feature.type in ("Ocean", "Sea") and (holes := water_holes(geometry)):
+        return [f"{feature.id}: {len(holes)} hole(s) of open water over {WATER_HOLE_KM2:,} km² ({max(holes):,.0f} km²); union the missing sea"]
     mouth = feature.expect.mouth
     if feature.type == "River" and feature.style == "line" and mouth != "none" and not _reaches(geometry, MOUTH_WATER[mouth]):
         return [f"{feature.id}: no end within {MOUTH_M // 1000} km of the {mouth} (expect.mouth: {mouth})"]
@@ -108,6 +118,8 @@ def check_data() -> tuple[list[str], list[str]]:
     """Errors, and notes that must stay visible: trims, nesting overrides, and flagged or nested sibling pairs."""
     features = active(load_features())
     errors = [f"{f.id}: no uid (run `make ids` and commit)" for f in features if f.uid is None]
+    for path in sorted(GEOMETRY.glob("*.geojson")):
+        errors += provenance_errors(path.name, json.loads(path.read_text()))
     notes = []
     clean = {}
     for feature in features:

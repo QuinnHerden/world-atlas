@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Wikipedia 'Thermopylae' coordinates 38 48'19\"N 22 33'46\"E (ancient pass between Mt Kallidromo and the Malian Gulf).", "method": "reference-coords", "refs": ["Wikipedia 'Thermopylae'"]}, "geometry": {"type": "Point", "coordinates": [22.563, 38.805]}}
+  ]
+}

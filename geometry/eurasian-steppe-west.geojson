@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Drawn by hand from Britannica's text description, not its map images. Western outlier of the Eurasian Steppe: the Hungarian puszta of the Great Hungarian Plain (Hortobagy, Nagykunsag, Kiskunsag), drawn at continental scale from Britannica 'Great Alfold'/'Puszta'. Approximate.", "method": "hand-drawn", "refs": ["Britannica 'Great Alfold', 'Puszta' (text)"]}, "geometry": {"type": "Polygon", "coordinates": [[[20.0, 47.9], [21.2, 48.1], [22.0, 47.8], [21.9, 47.0], [21.3, 46.3], [20.3, 46.1], [19.3, 46.2], [19.0, 46.8], [19.0, 47.6], [20.0, 47.9]]]}}
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Clip polygon (subtract) removing the Oder upstream of the Neisse confluence at Ratzdorf (52.07N 14.76E), so only the border stretch is drawn. Hand-drawn box; clear of the Neisse.", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "Polygon", "coordinates": [[[19.0, 52.095], [19.0, 49.0], [15.35, 49.0], [15.35, 52.0], [14.765, 52.03], [14.765, 52.095], [19.0, 52.095]]]}}
+  ]
+}

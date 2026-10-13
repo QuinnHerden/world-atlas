@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Wikipedia 'Dzungarian Gate' coordinates 45 21'N 82 25'E (gap between the Dzungarian Alatau and Barlyk ranges, Kazakhstan–China border).", "method": "reference-coords", "refs": ["Wikipedia 'Dzungarian Gate'"]}, "geometry": {"type": "Point", "coordinates": [82.42, 45.35]}}
+  ]
+}

@@ -41,6 +41,10 @@
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115057}}
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115149}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159120667}}  # Sargasso Sea
+  - {feature: caribbean-sea}
+  - {feature: gulf-of-mexico}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115419}}  # Labrador Sea
   expect: {bbox: [-100, -61, 25, 69]}
 
 - id: bosporus
@@ -57,7 +61,7 @@
 - id: khyber-pass
   uid: xiBxfhWifB
   name: Khyber Pass
-  type: Mountain pass
+  type: Pass
   category: Passes & Corridors
   tier: 1
   style: point
@@ -119,7 +123,7 @@
   style: flow-current
   geometry:
   - {file: gulf-stream.geojson}
-  expect: {bbox: [-82, 24, 5, 66]}
+  expect: {bbox: [-82, 23, 5, 66], length_km: [7700, 9400]}
 
 - id: pacific-ocean
   uid: 9dKZ99t54a
@@ -142,7 +146,36 @@
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115017}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115359}}  # Beaufort Sea
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116037}}  # Chukchi Sea
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117337}}  # East Siberian Sea
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116253}}  # Laptev Sea
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116231}}  # Kara Sea
+  - {feature: barents-sea}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117355}}  # Lincoln Sea
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115695}}  # Greenland Sea
+  # The seas' own arms and the straits between them, so no unhighlighted water cuts into or across the ocean
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116395}}  # White Sea
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117223}}  # Amundsen Gulf
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117427}}  # M'Clure Strait
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117989}}  # Mackenzie Bay
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118029}}  # Kotzebue Sound
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117683}}  # Storfjorden
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117755}}  # Karskiye Strait
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159120015}}  # Matochkin Shar Strait
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159120055}}  # Guba Gusinaya
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159119119}}  # Gulf of Ob
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159119141}}  # Yenisey Gulf
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159119075}}  # Khatanga Gulf
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117771}}  # Vil'kitskogo Strait
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118351}}  # Gulf of Olenyok
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118193}}  # Gulf of Yana
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118213}}  # Dmitriy Laptev Strait
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159119047}}  # Chaun Bay
   expect: {bbox: [-180, 60, 180, 90]}
+  allow_nested:
+  - id: barents-sea
+    reason: The Barents is a marginal sea of the Arctic Ocean; cutting it out would leave a hole in the ocean
 
 - id: kerch-strait
   uid: aAfAczxNPs
@@ -153,19 +186,19 @@
   style: strait
   geometry:
   - {file: kerch-strait.geojson}
-  expect: {bbox: [36.3, 44.9, 36.9, 45.6]}
+  expect: {bbox: [36.4, 45.0, 36.8, 45.5], length_km: [35, 50]}
 
 - id: subtropical-highs
   uid: FXLN9Bdl59
   name: Subtropical highs
   alt_names: [horse latitudes]
-  type: Pressure belt
+  type: Climate belt
   category: Climate Systems
   tier: 2
   style: band
   geometry:
   - {file: subtropical-highs.geojson}
-  expect: {bbox: [-180, -36, 180, 36]}
+  expect: {bbox: [-180, -44, 180, 47], area_km2: [47000000, 57000000]}
 
 - id: dardanelles
   uid: fvaL0bjWEc
@@ -188,7 +221,7 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104185}}
   expect: {bbox: [74.8, 33.2, 80.0, 38.0]}
-  frame: {centre: [72.5, 36.0], min_span_km: 1800}
+  frame: {centre: [72.5, 36.0]}
 
 - id: pamirs
   uid: cucDLcxgiQ
@@ -200,7 +233,7 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104181}}
   expect: {bbox: [71.1, 37.0, 77.1, 39.7]}
-  frame: {centre: [72.5, 36.0], min_span_km: 1800}
+  frame: {centre: [72.5, 36.0]}
 
 - id: hindu-kush
   uid: FsC3qGSzTF
@@ -212,7 +245,7 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104183}}
   expect: {bbox: [66.5, 34.0, 75.8, 37.6]}
-  frame: {centre: [72.5, 36.0], min_span_km: 1800}
+  frame: {centre: [72.5, 36.0]}
 
 - id: tibetan-plateau
   uid: yrr5stmbG1
@@ -251,15 +284,1784 @@
   style: flow-current
   geometry:
   - {file: canary-current.geojson}
-  expect: {bbox: [-28.0, 17.0, -13.5, 38.5]}
+  expect: {bbox: [-28, 17, -11, 37], length_km: [2700, 3200]}
 
 - id: trade-winds
   uid: ezAhmdLnju
   name: Trade winds
-  type: Prevailing winds
+  type: Wind system
   category: Climate Systems
   tier: 1
   style: flow-wind
   geometry:
   - {file: trade-winds.geojson}
-  expect: {bbox: [-180, -28, 180, 28]}
+  expect: {bbox: [-180, -22, 174, 24], length_km: [26000, 32000]}
+
+- id: indian-ocean
+  uid: KPgnUeNLWJ
+  name: Indian Ocean
+  type: Ocean
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115123}}
+  expect: {bbox: [19.5, -61, 166.5, 10.5], area_km2: [63000000, 78000000]}
+
+- id: mediterranean-sea
+  uid: Q6rYtpkMsK
+  name: Mediterranean Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115321}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118457}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117105}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116571}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118439}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116377}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116607}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116697}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118407}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117973}}
+  - {feature: aegean-sea}
+  expect: {bbox: [-6, 30, 36.5, 46], area_km2: [2200000, 2800000]}
+  allow_nested:
+  - id: aegean-sea
+    reason: The Aegean is an arm of the Mediterranean; cutting it out leaves a hole that misdraws the Med
+
+- id: persian-gulf
+  uid: U6CuanzyYG
+  name: Persian Gulf
+  alt_names: [Arabian Gulf]
+  type: Sea
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115597}}
+  expect: {bbox: [47.5, 23.5, 57.5, 31], area_km2: [210000, 270000]}
+
+- id: red-sea
+  uid: q1Iq7BXdVe
+  name: Red Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115521}}
+  expect: {bbox: [33.5, 12, 43.5, 28.5], area_km2: [400000, 500000]}
+
+- id: south-china-sea
+  uid: IoIARhSc6m
+  name: South China Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115273}}
+  expect: {bbox: [102, -3.5, 122.5, 24], area_km2: [2800000, 3500000]}
+
+- id: baltic-sea
+  uid: pvbVXAQYs0
+  name: Baltic Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115831}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116589}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116517}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118365}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159120643}}
+  expect: {bbox: [10.5, 53.5, 30.5, 66], area_km2: [340000, 420000]}
+
+- id: arabian-sea
+  uid: s6WOivGCI6
+  name: Arabian Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115343}}
+  expect: {bbox: [51, -1, 74.5, 26], area_km2: [3600000, 4600000]}
+
+- id: east-china-sea
+  uid: BZ6svqX5X1
+  name: East China Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116027}}
+  expect: {bbox: [119, 23.5, 131, 33.5], area_km2: [650000, 810000]}  # NE's polygon is ~40% under the published 1.25 million km², which takes in more of the shelf
+
+- id: sea-of-japan
+  uid: gePhYMksmv
+  name: Sea of Japan
+  alt_names: [East Sea]
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115305}}
+  expect: {bbox: [128, 34, 142.5, 52], area_km2: [860000, 1100000]}
+
+- id: caribbean-sea
+  uid: K5aQ3QCkLJ
+  name: Caribbean Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115379}}
+  expect: {bbox: [-88.5, 8, -59, 23], area_km2: [2500000, 3200000]}
+
+- id: gulf-of-mexico
+  uid: AAboaHSLjx
+  name: Gulf of Mexico
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115399}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116059}}  # Bahía de Campeche
+  expect: {bbox: [-98, 18, -79.5, 31], area_km2: [1200000, 1600000]}
+
+- id: north-sea
+  uid: Cpm5OlGDhU
+  name: North Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115879}}
+  expect: {bbox: [-4.5, 50.5, 10, 61], area_km2: [450000, 600000]}  # published 570,000 km²
+
+- id: aegean-sea
+  uid: 9XnYuJCtNV
+  name: Aegean Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117123}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118425}}
+  expect: {bbox: [22.5, 35, 28.5, 41], area_km2: [170000, 220000]}
+
+- id: gulf-of-aden
+  uid: FhpFsM6630
+  name: Gulf of Aden
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116333}}
+  expect: {bbox: [42.5, 10, 51.5, 15.5], area_km2: [230000, 290000]}
+
+- id: barents-sea
+  uid: ktopkzjfbd
+  name: Barents Sea
+  type: Sea
+  category: Oceans & Seas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115861}}
+  expect: {bbox: [17, 66.5, 69, 82], area_km2: [1200000, 1600000]}
+
+- id: strait-of-malacca
+  uid: PMSW3O0wVz
+  name: Strait of Malacca
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116835}}
+  expect: {bbox: [95, 0.5, 104, 8.5]}
+
+- id: suez-canal
+  uid: 5tUpLoLohS
+  name: Suez Canal
+  type: Canal
+  category: Straits & Chokepoints
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Suez Canal, rivernum: 209}, rows: 2}
+  expect: {bbox: [32.2, 30, 32.6, 31.3], length_km: [130, 170]}  # NE's line is ~21% short of the published 193 km, which includes the approach channels
+
+- id: panama-canal
+  uid: y6rQUc44ZU
+  name: Panama Canal
+  type: Canal
+  category: Straits & Chokepoints
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Panama Canal, rivernum: 227}, rows: 2}
+  expect: {bbox: [-80, 8.9, -79.5, 9.4], length_km: [50, 70]}  # NE's line is ~25% short of the published 82 km
+
+- id: english-channel
+  uid: oiDNVRsmYG
+  name: English Channel
+  alt_names: [Strait of Dover, La Manche]
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116535}}
+  expect: {bbox: [-7, 48, 2, 51.5]}
+
+- id: taiwan-strait
+  uid: KSzflb6fF2
+  name: Taiwan Strait
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116947}}
+  expect: {bbox: [117.4, 23, 121.1, 25.3]}
+
+- id: cape-of-good-hope
+  uid: chwOpF2aWb
+  name: Cape of Good Hope
+  type: Cape
+  category: Straits & Chokepoints
+  tier: 1
+  style: point
+  geometry:
+  - {layer: 10m_geography_regions_points, select: {ne_id: 1159105165}}
+  expect: {bbox: [18.4, -34.4, 18.5, -34.3]}
+
+- id: danish-straits
+  uid: T3Htmo4EnY
+  name: Danish Straits
+  alt_names: ['Øresund, Great Belt and Little Belt']
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159120609}}
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159120631}}
+  expect: {bbox: [9.4, 54.3, 13, 56.4]}
+
+- id: korea-strait
+  uid: 3yYfTA76uu
+  name: Korea Strait
+  alt_names: [Tsushima Strait]
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116907}}
+  expect: {bbox: [126, 32, 131, 36.5]}
+
+- id: strait-of-magellan
+  uid: zg1MDs00Dp
+  name: Strait of Magellan
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118553}}
+  expect: {bbox: [-75, -54.5, -68.5, -52]}
+
+- id: cape-horn
+  uid: xGGoFNWAr6
+  name: Cape Horn
+  alt_names: [Cabo de Hornos]
+  type: Cape
+  category: Straits & Chokepoints
+  tier: 2
+  style: point
+  geometry:
+  - {layer: 10m_geography_regions_points, select: {ne_id: 1159105049}}
+  expect: {bbox: [-67.35, -56.05, -67.1, -55.8]}  # NE point and the true cape (55.980S 67.289W, Wikipedia)
+
+- id: caucasus
+  uid: ePXVWlJ55D
+  name: Caucasus
+  alt_names: [Caucasus Mountains]
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104305}}
+  expect: {bbox: [37, 40, 49.5, 45.5], area_km2: [140000, 180000]}
+
+- id: andes
+  uid: DScYgogELP
+  name: Andes
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104309}}
+  expect: {bbox: [-81, -55.5, -63, 11.5], area_km2: [2700000, 3400000]}
+  frame: {centre: [-66, -22]}  # the fitted frame for this tall range wraps past a hemisphere
+
+- id: pyrenees
+  uid: P6md72ek3p
+  name: Pyrenees
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103941}}
+  expect: {bbox: [-2.5, 41.5, 3.5, 43.5], area_km2: [35000, 43000]}
+
+- id: carpathians
+  uid: UD2bGuwSe6
+  name: Carpathians
+  alt_names: [Carpathian Mountains]
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103937}}
+  expect: {bbox: [17, 44.5, 27.5, 50.5], area_km2: [190000, 250000]}
+
+- id: ural-mountains
+  uid: z6j3VIpZi0
+  name: Ural Mountains
+  alt_names: [Urals]
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104301}}
+  expect: {bbox: [56, 51.5, 67, 68.5], area_km2: [180000, 240000]}
+
+- id: zagros-mountains
+  uid: UjGivL1xWT
+  name: Zagros Mountains
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104167}}
+  expect: {bbox: [46, 26.5, 57, 36], area_km2: [210000, 270000]}
+
+- id: rocky-mountains
+  uid: Y2EW8YEkcD
+  name: Rocky Mountains
+  alt_names: [Rockies]
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104311}}
+  expect: {bbox: [-127.5, 35, -104, 60], area_km2: [970000, 1200000]}
+
+- id: appalachians
+  uid: sALBoHUhOB
+  name: Appalachians
+  alt_names: [Appalachian Mountains]
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104191}}
+  expect: {bbox: [-89, 32.5, -64, 49.5], area_km2: [760000, 940000]}
+
+- id: tian-shan
+  uid: htaQrQou31
+  name: Tian Shan
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104299}}
+  expect: {bbox: [72.5, 39.5, 95.5, 44.5], area_km2: [370000, 460000]}
+
+- id: qinling-mountains
+  uid: S6xwitlXLX
+  name: Qinling Mountains
+  alt_names: [Qinling]
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103573}}
+  expect: {bbox: [105, 32.5, 114.5, 35], area_km2: [120000, 150000]}
+
+- id: atlas-mountains
+  uid: TJreemtnZV
+  name: Atlas Mountains
+  alt_names: [Atlas]
+  type: Mountain range
+  category: Mountain Ranges
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104189}}
+  expect: {bbox: [-11, 28, 10.5, 37.5], area_km2: [610000, 750000]}
+
+- id: hexi-corridor
+  uid: lsWxDLZUoZ
+  name: Hexi Corridor
+  alt_names: [Gansu Corridor]
+  type: Corridor
+  category: Passes & Corridors
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103735}}
+  expect: {bbox: [95.5, 37.5, 104, 41.5], area_km2: [91000, 120000]}
+
+- id: tigris-euphrates
+  uid: tH9DZfJImO
+  name: Tigris–Euphrates
+  alt_names: [Tigris, Euphrates]
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Tigris, rivernum: 135}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Dicle, rivernum: 120}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Euphrates, rivernum: 62}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Al Furat, rivernum: 69}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Firat, rivernum: 65}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Shatt al Arab, rivernum: 94}}
+  expect: {bbox: [37.5, 29.5, 49, 40.5], length_km: [3810, 4670]}
+
+- id: indus
+  uid: HrhU2FOZ5S
+  name: Indus
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Indus, rivernum: 56}, rows: 2}
+  expect: {bbox: [67.5, 23.5, 80, 36], length_km: [2520, 3300]}  # published 3,180 km
+
+- id: yellow-river
+  uid: fAU6K6zAAC
+  name: Yellow River
+  alt_names: [Huang He]
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Huang, rivernum: 66}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Huang, rivernum: 95}}
+  - {file: yellow-river-mouth.geojson}
+  expect: {bbox: [96, 33, 119.5, 41], length_km: [4320, 5600]}  # published 5,464 km
+
+- id: yangtze
+  uid: UzBw6fI17F
+  name: Yangtze
+  alt_names: [Chang Jiang]
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Tongtian, rivernum: 13}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Jinsha, rivernum: 15}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Chang Jiang, rivernum: 18}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Yangtze, rivernum: 1}}
+  expect: {bbox: [92.5, 25.5, 120, 35], length_km: [4550, 5570]}  # NE's generalised line is ~20% short of the published 6,300 km
+
+- id: rhine
+  uid: TczlLuhbSV
+  name: Rhine
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Rhein, rivernum: 105}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Rhin, rivernum: 140}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Rhine, rivernum: 150}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Waal, rivernum: 151}}
+  expect: {bbox: [4, 46.5, 10, 52], length_km: [1030, 1270]}
+
+- id: danube
+  uid: O7AHjZ9fjm
+  name: Danube
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Donau, rivernum: 38}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Danube, rivernum: 25}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Bratul Chillia, rivernum: 48}}
+  expect: {bbox: [8, 43.5, 30, 49.5], length_km: [2420, 2970]}
+
+- id: brahmaputra
+  uid: 7oxBRLGVy8
+  name: Brahmaputra
+  alt_names: [Yarlung Tsangpo]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Yarlung, rivernum: 42}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Dihang, rivernum: 47}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Brahmaputra, rivernum: 51}}
+  expect: {bbox: [87.5, 23, 95.5, 30], length_km: [2160, 2650]}  # NE's line is ~17% short of the published 2,900 km
+
+- id: mekong
+  uid: nlFHweVURH
+  name: Mekong
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Lancang, rivernum: 40}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Mekong, rivernum: 46}}
+  expect: {bbox: [96.5, 10, 106.5, 32], length_km: [3800, 4660]}
+
+- id: volga
+  uid: eynvwLG5tX
+  name: Volga
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Volga, rivernum: 68}, rows: 2}
+  expect: {bbox: [32.5, 45.5, 50.5, 58.5], length_km: [3080, 3780]}
+
+- id: dnieper
+  uid: CCrkTz7Iye
+  name: Dnieper
+  alt_names: [Dnipro]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Dnipro, rivernum: 116}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Dnepre, rivernum: 121}}
+  expect: {bbox: [30, 46.5, 35.5, 56], length_km: [1610, 1980]}  # NE's line is ~19% short of the published 2,201 km
+
+- id: amazon
+  uid: OyjSiP9vvN
+  name: Amazon
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Amazonas, rivernum: 2}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Ucayali, rivernum: 10}}
+  expect: {bbox: [-75.5, -15.5, -52.5, -1.5], length_km: [4790, 5870]}  # NE's line is ~17% short of the published 6,400 km
+
+- id: rio-grande
+  uid: PJ4Pj3IINx
+  name: Rio Grande
+  alt_names: [Río Bravo]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Rio Grande, rivernum: 110}, rows: 2}
+  expect: {bbox: [-107.5, 25.5, -97, 38], length_km: [2180, 2670]}  # NE's line is ~20% short of the published 3,030 km
+
+- id: amur
+  uid: IpeoM6jT1K
+  name: Amur
+  alt_names: [Heilongjiang]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Amur, rivernum: 72}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Heilong Jiang, rivernum: 93}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Argun’, rivernum: 84}}
+  expect: {bbox: [117.5, 47.5, 141, 54], length_km: [2800, 3620]}  # published 2,824 km from the Shilka–Argun confluence
+
+- id: jordan
+  uid: Y6OL8n5ldT
+  name: Jordan River
+  alt_names: [Jordan]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Jordan, rivernum: 229}, rows: 2}
+  expect: {bbox: [35.3, 31.2, 35.9, 33.6], length_km: [245, 365], mouth: lake}  # published 251 km direct, about 360 km with meanders
+
+- id: amu-darya
+  uid: BRXi9sxovk
+  name: Amu Darya
+  alt_names: [Oxus]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Amu  Darya, rivernum: 199}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Panj, rivernum: 195}}
+  expect: {bbox: [58, 36.5, 73, 44.5], length_km: [2130, 2620], mouth: lake}
+
+- id: niger
+  uid: uZwmdfhqNb
+  name: Niger
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Niger, rivernum: 59}, rows: 2}
+  expect: {bbox: [-11, 4, 7, 17.5], length_km: [4150, 5090]}
+
+- id: congo
+  uid: hJWl9DkKtV
+  name: Congo
+  alt_names: [Zaire]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Congo, rivernum: 45}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Lualaba, rivernum: 43}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Congo, rivernum: 41}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Lualaba, rivernum: 37}}
+  expect: {bbox: [13, -12, 27.5, 2.5], length_km: [3420, 4190]}  # NE's line is ~19% short of the published 4,700 km
+
+- id: pearl-river
+  uid: 1kmmT8KAU4
+  name: Pearl River
+  alt_names: [Zhujiang, Xi Jiang]
+  type: River
+  category: Rivers
+  tier: 3
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Xi, rivernum: 96}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Xun, rivernum: 149}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Quan, rivernum: 148}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Hongshui, rivernum: 147}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Nanpan, rivernum: 128}}
+  expect: {bbox: [103, 22.5, 114, 26], length_km: [1880, 2310]}
+
+- id: north-european-plain
+  uid: DPBwKSxWqd
+  name: North European Plain
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104317}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321201}, subtract: true}  # Russia, incl. Kaliningrad
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320427}, subtract: true}  # Belarus
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321029}, subtract: true}  # Lithuania
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321033}, subtract: true}  # Latvia
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320615}, subtract: true}  # Estonia
+  expect: {bbox: [-5, 43, 24.5, 55.5], area_km2: [440000, 550000]}
+
+- id: sahara
+  uid: n5BdbVaVfE
+  name: Sahara
+  type: Desert
+  category: Deserts, Plateaus & Plains
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104337}}
+  - {feature: sahel, subtract: true}
+  expect: {bbox: [-17.5, 16.5, 36, 35], area_km2: [6000000, 7100000]}  # ~30% under the published 9.2 million km²: NE's polygon is narrower, and the Sahel is cut out
+  trim_to_largest: true
+
+- id: north-china-plain
+  uid: mxanpel4Ty
+  name: North China Plain
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104313}}
+  expect: {bbox: [113, 30, 122, 40.5], area_km2: [410000, 510000]}
+
+- id: great-plains
+  uid: BLWHbP0dD3
+  name: Great Plains
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104319}}
+  expect: {bbox: [-114.5, 28, -95.5, 54.5], area_km2: [1700000, 2200000]}
+
+- id: arabian-desert
+  uid: gkgxco8RgV
+  name: Arabian Desert
+  type: Desert
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  # The peninsula's interior: the peninsula less NE's highland and coastal-plain polygons, the Syrian Desert to the
+  # north, and a hand-drawn Yemen highlands cut; the largest piece is kept, dropping cut-off coastal scraps.
+  # Britannica gives about 2.33 million km², but that leaves the highlight 82% the peninsula's (IoU limit 0.8).
+  geometry:
+  - {feature: arabian-peninsula}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730073417}, subtract: true}  # Hejaz Mts.
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730073421}, subtract: true}  # Asir Mts.
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730072137}, subtract: true}  # Tihamah
+  - {file: yemen-highlands-clip.geojson, subtract: true}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730072769}, subtract: true}  # Hadhramaut
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730071661}, subtract: true}  # Al Hajar Mts.
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103173}, subtract: true}  # Musandam Peninsula
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730072141}, subtract: true}  # Hasa Plain (Gulf coastal lowland)
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104075}, subtract: true}  # Syrian Desert, a separate desert
+  trim_to_largest: true
+  expect: {bbox: [34.5, 12.5, 60, 31.5], area_km2: [2100000, 2500000]}
+  allow_nested:
+  - id: arabian-peninsula
+    reason: Different features (desert vs peninsula); the desert excludes the Hejaz/Asir, Yemen and Oman highlands and the coastal plains
+
+- id: gobi
+  uid: FOiLqDUoMB
+  name: Gobi
+  alt_names: [Gobi Desert]
+  type: Desert
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104335}}
+  expect: {bbox: [94, 37.5, 118, 48], area_km2: [980000, 1300000]}
+
+- id: tarim-basin
+  uid: PlSONDu3A6
+  name: Tarim Basin
+  alt_names: [Taklamakan Desert]
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104093}}
+  expect: {bbox: [76, 36.5, 91, 42], area_km2: [380000, 470000]}
+
+- id: pontic-caspian-steppe
+  uid: p2WBzhhSql
+  name: Pontic–Caspian Steppe
+  alt_names: [Pontic Steppe, Western Steppe]
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730073981}}
+  expect: {bbox: [26.5, 42, 56.5, 55.5], area_km2: [1000000, 1300000]}
+
+- id: sahel
+  uid: TbJE2rCJOU
+  name: Sahel
+  type: Region
+  category: Regions, Rifts & Deltas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104207}}
+  expect: {bbox: [-16.5, 9, 38.5, 23], area_km2: [3700000, 4700000]}  # NE's band is ~35% over the published ~3.05 million km²
+
+- id: deccan-plateau
+  uid: sbPkxOpy3p
+  name: Deccan Plateau
+  alt_names: [Deccan]
+  type: Plateau
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104233}}
+  expect: {bbox: [74, 12, 81.5, 20.5], area_km2: [320000, 430000]}  # published ~422,000 km²
+
+- id: pannonian-plain
+  uid: u5fcjiiXme
+  name: Pannonian Plain
+  alt_names: [Great Hungarian Plain, Alföld]
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103307}}
+  expect: {bbox: [17.5, 44.5, 23.5, 49], area_km2: [90000, 120000]}
+
+- id: fergana-valley
+  uid: 3bKooQUa8k
+  name: Fergana Valley
+  alt_names: [Ferghana Valley]
+  type: Valley
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104237}}
+  expect: {bbox: [69.7, 40.1, 73.2, 41.2], area_km2: [16000, 23000]}  # published ~22,000 km²
+
+- id: ethiopian-highlands
+  uid: VDzFzv3LAh
+  name: Ethiopian Highlands
+  type: Plateau
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104165}}
+  expect: {bbox: [33.5, 4, 43.5, 18.5], area_km2: [590000, 730000]}
+
+- id: mongolian-plateau
+  uid: GzvJcmyJPO
+  name: Mongolian Plateau
+  type: Plateau
+  category: Deserts, Plateaus & Plains
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104229}}
+  expect: {bbox: [97, 41.5, 115.5, 51], area_km2: [810000, 1000000]}  # NE's polygon is ~65% under the published 2.6 million km², which includes the Gobi
+
+- id: arabian-peninsula
+  uid: gPUzEYfTK9
+  name: Arabian Peninsula
+  alt_names: [Arabia]
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104333}}
+  expect: {bbox: [34.5, 12.5, 60, 31.5], area_km2: [2500000, 3300000]}  # published 3.24 million km²
+
+- id: anatolia
+  uid: 91rRvC0W6S
+  name: Anatolia
+  alt_names: [Asia Minor]
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104259}}
+  expect: {bbox: [26, 36, 44.5, 42.5], area_km2: [660000, 820000]}
+
+- id: balkan-peninsula
+  uid: 2Os3ar0EAs
+  name: Balkan Peninsula
+  alt_names: [Balkans]
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104241}}
+  expect: {bbox: [13.5, 36, 30, 46.5], area_km2: [430000, 530000]}
+
+- id: korean-peninsula
+  uid: GqSNgr5JFA
+  name: Korean Peninsula
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321181}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320985}}
+  expect: {bbox: [124, 33, 132, 43.5], area_km2: [190000, 250000]}
+
+- id: crimea
+  uid: mu7RWnc1HL
+  name: Crimea
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103999}}
+  expect: {bbox: [32.5, 44, 37, 46.5], area_km2: [22000, 28000]}
+
+- id: great-britain
+  uid: IX4hYyVu9S
+  name: Great Britain
+  type: Island
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104133}}
+  expect: {bbox: [-6.5, 50, 2, 59], area_km2: [190000, 240000]}
+
+- id: japanese-archipelago
+  uid: t9b0oNfVXA
+  name: Japanese archipelago
+  alt_names: [Japan]
+  type: Island
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104129}}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103801}}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103795}}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103797}}
+  expect: {bbox: [129.5, 31, 146, 46], area_km2: [320000, 400000]}
+
+- id: taiwan
+  uid: ippC7nxLXz
+  name: Taiwan
+  type: Island
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103793}}
+  expect: {bbox: [120, 21.9, 122, 25.3], area_km2: [31000, 40000]}
+
+- id: iberian-peninsula
+  uid: 5LKT5HE6WY
+  name: Iberian Peninsula
+  alt_names: [Iberia]
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104343}}
+  expect: {bbox: [-9.5, 36, 3.5, 44], area_km2: [520000, 640000]}
+
+- id: malay-peninsula
+  uid: EDEuFT6MuC
+  name: Malay Peninsula
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104157}}
+  - {feature: singapore, subtract: true}
+  expect: {bbox: [98, 1, 104.5, 9.5], area_km2: [160000, 210000]}
+
+- id: kola-peninsula
+  uid: EnMk3w8RQR
+  name: Kola Peninsula
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104001}}
+  expect: {bbox: [32, 66, 41.5, 69.5], area_km2: [80000, 105000]}  # published ~100,000 km²
+
+- id: singapore
+  uid: Hb2MdpB4UL
+  name: Singapore
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321247}}
+  expect: {bbox: [103.6, 1.2, 104.1, 1.5]}
+
+- id: sri-lanka
+  uid: pkslq9nINA
+  name: Sri Lanka
+  alt_names: [Ceylon]
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104117}}
+  expect: {bbox: [79.7, 5.9, 81.9, 9.9], area_km2: [59000, 73000]}
+
+- id: cyprus
+  uid: RRTwjkFCAi
+  name: Cyprus
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103411}}
+  expect: {bbox: [32.3, 34.5, 34.6, 35.7]}
+
+- id: sicily
+  uid: RH830tFKOr
+  name: Sicily
+  alt_names: [Sicilia]
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103809}}
+  expect: {bbox: [12.4, 36.6, 15.7, 38.3], area_km2: [22000, 28000]}
+
+- id: greenland
+  uid: hHXfbt0zCf
+  name: Greenland
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104263}}
+  expect: {bbox: [-73, 59.5, -11, 84], area_km2: [1900000, 2400000]}
+
+- id: cuba
+  uid: vgO5uomViN
+  name: Cuba
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103429}}
+  expect: {bbox: [-85, 19.5, -74, 23.5], area_km2: [92000, 120000]}
+
+- id: oahu
+  uid: hl0LArzmIt
+  name: Oahu
+  alt_names: [Hawaii]
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103471}}
+  expect: {bbox: [-158.3, 21.2, -157.6, 21.8]}
+
+- id: okinawa
+  uid: 54mhSPTtwd
+  name: Okinawa
+  alt_names: [Ryukyu Islands]
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1730072495}}
+  expect: {bbox: [127.6, 26, 128.4, 26.9]}
+
+- id: spratly-islands
+  uid: pnsQqFcCbx
+  name: Spratly Islands
+  type: Island
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103863}}
+  expect: {bbox: [111.5, 7, 118, 12.5], area_km2: [160000, 210000]}  # NE's envelope is ~55% under the published 425,000 km² sea area
+
+- id: isthmus-of-kra
+  uid: XQjnIWChbv
+  name: Isthmus of Kra
+  type: Isthmus
+  category: Peninsulas & Islands
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104095}}
+  expect: {bbox: [98.3, 9.2, 99.3, 10.8], area_km2: [10000, 14000]}
+
+- id: isthmus-of-panama
+  uid: TFW0XVkK7g
+  name: Isthmus of Panama
+  type: Isthmus
+  category: Peninsulas & Islands
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104085}}
+  expect: {bbox: [-80.1, 8.3, -77.6, 9.6], area_km2: [15000, 19000]}
+
+- id: diego-garcia
+  uid: Gj5a6S5k7H
+  name: Diego Garcia
+  alt_names: [Chagos Archipelago]
+  type: Island
+  category: Peninsulas & Islands
+  tier: 3
+  style: point
+  geometry:
+  - {layer: 10m_geography_regions_points, select: {ne_id: 1159104715}}
+  expect: {bbox: [72.4, -7.4, 72.5, -7.3]}
+  frame: {min_span_km: 7000}
+
+- id: falkland-islands
+  uid: klYnVNGTPP
+  name: Falkland Islands
+  alt_names: [Malvinas]
+  type: Island
+  category: Peninsulas & Islands
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320711}}
+  expect: {bbox: [-61.4, -52.5, -57.7, -51], area_km2: [10000, 13000]}
+
+- id: caspian-sea
+  uid: 5sPHyX6RC5
+  name: Caspian Sea
+  type: Lake
+  category: Lakes
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115461}}
+  expect: {bbox: [46.5, 36.5, 54.5, 47.5], area_km2: [340000, 420000]}
+
+- id: great-lakes
+  uid: EyhRws00Ih
+  name: Great Lakes
+  type: Lake
+  category: Lakes
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_lakes, select: {ne_id: 1159112991}}
+  - {layer: 10m_lakes, select: {ne_id: 1159113005}}
+  - {layer: 10m_lakes, select: {ne_id: 1159113021}}
+  - {layer: 10m_lakes, select: {ne_id: 1159106757}}
+  - {layer: 10m_lakes, select: {ne_id: 1159106765}}
+  expect: {bbox: [-92.5, 41, -75.5, 49.5], area_km2: [220000, 270000]}
+
+- id: lake-victoria
+  uid: Q33TW9AIYb
+  name: Lake Victoria
+  alt_names: [Nyanza]
+  type: Lake
+  category: Lakes
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_lakes, select: {ne_id: 1159113191}}
+  expect: {bbox: [31.6, -3.1, 34.9, 0.5], area_km2: [60000, 74000]}
+
+- id: aral-sea
+  uid: HTwuBX9dFV
+  name: Aral Sea
+  type: Lake
+  category: Lakes
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_lakes, select: {ne_id: 1729982865}}
+  - {layer: 10m_lakes, select: {ne_id: 1159126555}}
+  expect: {bbox: [58.2, 44.4, 61.6, 46.8]}
+  frame: {former: aral-sea-1960.geojson}
+
+- id: lake-baikal
+  uid: Z2Zv4Y2364
+  name: Lake Baikal
+  alt_names: [Baikal]
+  type: Lake
+  category: Lakes
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_lakes, select: {ne_id: 1159113127}}
+  expect: {bbox: [103.5, 51, 110, 56], area_km2: [28000, 35000]}
+
+- id: lake-titicaca
+  uid: YsO7NqsK21
+  name: Lake Titicaca
+  alt_names: [Titicaca]
+  type: Lake
+  category: Lakes
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_lakes, select: {ne_id: 1159113279}}
+  expect: {bbox: [-70.1, -16.7, -68.5, -15.2]}
+
+- id: lake-chad
+  uid: jMgCBQTIQi
+  name: Lake Chad
+  type: Lake
+  category: Lakes
+  tier: 3
+  style: area
+  geometry:
+  - {layer: 10m_lakes, select: {ne_id: 1159113219}}
+  expect: {bbox: [14.2, 12.8, 14.8, 13.3]}
+  frame: {centre: [12.5, 9.0]}  # south of the lake, so the Bight of Biafra is in frame
+
+- id: great-rift-valley
+  uid: VxhY9uRJFG
+  name: Great Rift Valley
+  alt_names: [East African Rift]
+  type: Valley
+  category: Regions, Rifts & Deltas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103991}, rows: 2}
+  expect: {bbox: [28.5, -16, 44.5, 15.5], area_km2: [500000, 620000]}
+
+- id: ganges-brahmaputra-delta
+  uid: tvux6zEn1w
+  name: Ganges–Brahmaputra Delta
+  alt_names: [Bengal Delta, Sundarbans Delta]
+  type: Delta
+  category: Regions, Rifts & Deltas
+  tier: 2
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103515}}
+  expect: {bbox: [87.5, 21.5, 91.5, 24.5], area_km2: [76000, 94000]}  # NE's polygon is ~20% under the published 105,000 km²
+
+- id: strait-of-hormuz
+  uid: bBac0j3A9j
+  name: Strait of Hormuz
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {file: strait-of-hormuz.geojson}
+  expect: {bbox: [55.8, 25.9, 57.0, 26.7], length_km: [140, 180]}
+
+- id: bab-el-mandeb
+  uid: NVM5J9JGbE
+  name: Bab el-Mandeb
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {file: bab-el-mandeb.geojson}
+  expect: {bbox: [43.2, 12.25, 43.7, 13.1], length_km: [90, 115]}
+
+- id: strait-of-gibraltar
+  uid: eGBotNQ3ps
+  name: Strait of Gibraltar
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 1
+  style: strait
+  geometry:
+  - {file: strait-of-gibraltar.geojson}
+  expect: {bbox: [-6.05, 35.9, -5.27, 36.07], length_km: [55, 75]}
+
+- id: strait-of-tiran
+  uid: Nb3zz6P9Mo
+  name: Strait of Tiran
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {file: strait-of-tiran.geojson}
+  expect: {bbox: [34.35, 27.83, 34.58, 28.2]}
+
+- id: luzon-strait
+  uid: f9P0mozGAE
+  name: Luzon Strait
+  alt_names: [Bashi Channel]
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {file: luzon-strait.geojson}
+  expect: {bbox: [120.4, 18.5, 122.25, 22.05], area_km2: [35000, 55000]}
+
+- id: bering-strait
+  uid: 2lthRtl4LD
+  name: Bering Strait
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {file: bering-strait.geojson}
+  expect: {bbox: [-169.25, 65.3, -168.7, 66.35], length_km: [95, 125]}
+
+- id: giuk-gap
+  uid: M4Edjpe30k
+  name: GIUK Gap
+  alt_names: [Greenland–Iceland–UK Gap]
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 2
+  style: strait
+  geometry:
+  - {file: giuk-gap.geojson}
+  expect: {bbox: [-27.1, 60.4, -1.5, 68.7], length_km: [950, 1150]}
+
+- id: northern-sea-route
+  uid: dyu2UgSEOD
+  name: Northern Sea Route
+  type: Sea route
+  category: Straits & Chokepoints
+  tier: 2
+  style: line
+  geometry:
+  - {file: northern-sea-route.geojson}
+  expect: {bbox: [58.2, 65.5, -169.1, 78.0], length_km: [4500, 5600]}
+
+- id: grand-canal
+  uid: iyQKc1iIwb
+  name: Grand Canal
+  alt_names: [Beijing–Hangzhou Grand Canal]
+  type: Canal
+  category: Straits & Chokepoints
+  tier: 2
+  style: line
+  geometry:
+  - {file: grand-canal.geojson}
+  expect: {bbox: [115.6, 30.25, 120.85, 40.0], length_km: [1200, 1900]}
+
+- id: lombok-strait
+  uid: OwkiXEFY8A
+  name: Lombok Strait
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 3
+  style: strait
+  geometry:
+  - {file: lombok-strait.geojson}
+  expect: {bbox: [115.65, -9.1, 115.87, -8.1], length_km: [55, 115]}  # published ~60 km; the line includes both approaches
+
+- id: sunda-strait
+  uid: YH68xC0sUE
+  name: Sunda Strait
+  type: Strait
+  category: Straits & Chokepoints
+  tier: 3
+  style: strait
+  geometry:
+  - {file: sunda-strait.geojson}
+  expect: {bbox: [104.9, -6.75, 106.0, -5.67], length_km: [135, 175]}
+
+- id: dzungarian-gate
+  uid: wVORPM9UXK
+  name: Dzungarian Gate
+  type: Pass
+  category: Passes & Corridors
+  tier: 2
+  style: point
+  geometry:
+  - {file: dzungarian-gate.geojson}
+  expect: {bbox: [82.37, 45.3, 82.47, 45.4]}
+
+- id: brenner-pass
+  uid: 5zyC6LQy7u
+  name: Brenner Pass
+  type: Pass
+  category: Passes & Corridors
+  tier: 2
+  style: point
+  geometry:
+  - {file: brenner-pass.geojson}
+  expect: {bbox: [11.46, 46.95, 11.56, 47.05]}
+
+- id: siliguri-corridor
+  uid: 9kvm9djcAd
+  name: Siliguri Corridor
+  alt_names: [Chicken's Neck]
+  type: Corridor
+  category: Passes & Corridors
+  tier: 2
+  style: area
+  geometry:
+  - {file: siliguri-corridor.geojson}
+  expect: {bbox: [87.6, 25.9, 88.7, 27.1], area_km2: [3000, 6000]}
+
+- id: cumberland-gap
+  uid: YStmW1wD7s
+  name: Cumberland Gap
+  type: Pass
+  category: Passes & Corridors
+  tier: 3
+  style: point
+  geometry:
+  - {file: cumberland-gap.geojson}
+  expect: {bbox: [-83.72, 36.55, -83.62, 36.65]}
+  frame: {admin1: true}  # the gap is at the KY/VA/TN tripoint
+
+- id: thermopylae
+  uid: nJnS0WbtQX
+  name: Thermopylae
+  type: Pass
+  category: Passes & Corridors
+  tier: 3
+  style: point
+  geometry:
+  - {file: thermopylae.geojson}
+  expect: {bbox: [22.51, 38.75, 22.61, 38.85]}
+
+- id: wakhan-corridor
+  uid: jQvQNGLRv2
+  name: Wakhan Corridor
+  type: Corridor
+  category: Passes & Corridors
+  tier: 3
+  style: area
+  geometry:
+  - {file: wakhan-corridor.geojson}
+  expect: {bbox: [71.5, 36.3, 74.95, 37.55], area_km2: [9000, 13500]}
+
+- id: darial-pass
+  uid: IaiqcpPeU5
+  name: Darial Pass
+  alt_names: [Georgian Military Road]
+  type: Pass
+  category: Passes & Corridors
+  tier: 3
+  style: point
+  geometry:
+  - {file: darial-pass.geojson}
+  expect: {bbox: [44.57, 42.69, 44.67, 42.79]}
+
+- id: khunjerab-pass
+  uid: 4rlxOzaoto
+  name: Khunjerab Pass
+  alt_names: [Karakoram Highway]
+  type: Pass
+  category: Passes & Corridors
+  tier: 3
+  style: point
+  geometry:
+  - {file: khunjerab-pass.geojson}
+  expect: {bbox: [75.38, 36.8, 75.48, 36.9]}
+
+- id: ganges
+  uid: KsZZ5ueKwD
+  name: Ganges
+  alt_names: [Ganga]
+  type: River
+  category: Rivers
+  tier: 1
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Ganges, rivernum: 55}}
+  - {file: ganges-padma-link.geojson}
+  expect: {bbox: [77.9, 21.9, 90.5, 31.0], length_km: [3300, 4000]}  # length sums the delta distributaries (Hooghly and others); the main stem is ~2,525 km
+
+- id: st-lawrence
+  uid: FHcywCTHVw
+  name: St. Lawrence River
+  alt_names: [St. Lawrence Seaway]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: St. Lawrence, rivernum: 23}}
+  - {file: st-lawrence-lower.geojson}
+  expect: {bbox: [-75.85, 44.45, -64.5, 50.0], length_km: [1000, 1400]}
+
+- id: parana-rio-de-la-plata
+  uid: c8LkvFNH05
+  name: Paraná–Río de la Plata
+  alt_names: [Paraná, Río de la Plata]
+  type: River
+  category: Rivers
+  tier: 2
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Paraná, rivernum: 36}}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Paraná, rivernum: 99}, rows: 2}
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Paranaíba, rivernum: 108}, rows: 2}
+  - {file: rio-de-la-plata-axis.geojson}
+  - {file: paraguay-clip.geojson, subtract: true}
+  expect: {bbox: [-60.85, -35.7, -46.25, -18.0], length_km: [3200, 4200]}  # NE's line is ~22% short of the published 4,880 km Paraná
+
+- id: oder-neisse
+  uid: 9ZBYfbZw8j
+  name: Oder–Neisse
+  alt_names: [Oder–Neisse line]
+  type: River
+  category: Rivers
+  tier: 3
+  style: line
+  geometry:
+  - {layer: 10m_rivers_lake_centerlines, select: {name: Oder, rivernum: 130}}
+  - {file: neisse.geojson}
+  - {file: oder-upper-clip.geojson, subtract: true}
+  expect: {bbox: [14.05, 50.8, 15.05, 53.65], length_km: [320, 420]}  # the line is ~24% short of the published 472 km border; hand-drawn Neisse is generalised
+
+- id: eurasian-steppe
+  uid: Wif3peZYli
+  name: Eurasian Steppe
+  alt_names: [Great Steppe]
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 1
+  style: area
+  geometry:
+  - {feature: pontic-caspian-steppe}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104315}}
+  - {file: eurasian-steppe-east.geojson}
+  - {file: eurasian-steppe-west.geojson}
+  expect: {bbox: [18.9, 41.9, 125.6, 55.5], area_km2: [4000000, 5000000]}
+  allow_nested:
+  - id: pontic-caspian-steppe
+    reason: The Pontic–Caspian Steppe is the western section of the Eurasian Steppe, which is built from it
+
+- id: indo-gangetic-plain
+  uid: Wzx2XJBoDN
+  name: Indo-Gangetic Plain
+  type: Plain
+  category: Deserts, Plateaus & Plains
+  tier: 1
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104223}}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104245}}
+  - {file: indus-plain.geojson}
+  - {feature: ganges-brahmaputra-delta, subtract: true}
+  expect: {bbox: [66.7, 21.8, 91.4, 33.1], area_km2: [650000, 830000]}
+
+- id: iranian-plateau
+  uid: NCIAyqs6XI
+  name: Iranian Plateau
+  type: Plateau
+  category: Deserts, Plateaus & Plains
+  tier: 2
+  style: area
+  geometry:
+  - {file: iranian-plateau.geojson}
+  expect: {bbox: [43.7, 24.8, 71.7, 39.8], area_km2: [2200000, 2800000]}  # ~34% under the published 3.7 million km², which also counts the rim ranges' outer slopes
+  allow_nested:
+  - id: zagros-mountains
+    reason: The Zagros is the plateau's south-western rim (Britannica); the plateau card shows the whole plateau, the range card a narrow band (IoU 0.10)
+
+- id: italian-peninsula
+  uid: HZF3aGf7mv
+  name: Italian Peninsula
+  alt_names: [Apennine Peninsula]
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {file: italian-peninsula.geojson}
+  expect: {bbox: [7.3, 37.85, 18.6, 46.15], area_km2: [180000, 220000]}
+
+- id: sinai-peninsula
+  uid: sC5yjm2u8x
+  name: Sinai Peninsula
+  alt_names: [Sinai]
+  type: Peninsula
+  category: Peninsulas & Islands
+  tier: 2
+  style: area
+  geometry:
+  - {file: sinai-peninsula.geojson}
+  expect: {bbox: [32.25, 27.7, 34.95, 31.35], area_km2: [55000, 65000]}
+
+- id: fertile-crescent
+  uid: 7mjXflnxVZ
+  name: Fertile Crescent
+  type: Region
+  category: Regions, Rifts & Deltas
+  tier: 1
+  style: area
+  geometry:
+  - {feature: levant}
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104115}}
+  - {file: fertile-crescent-west.geojson}
+  expect: {bbox: [34.15, 30.8, 47.5, 37.45], area_km2: [240000, 310000]}
+
+- id: levant
+  uid: JhYVnLae8v
+  name: Levant
+  type: Region
+  category: Regions, Rifts & Deltas
+  tier: 2
+  style: area
+  geometry:
+  - {file: levant.geojson}
+  expect: {bbox: [34.15, 31.05, 36.8, 36.8], area_km2: [35000, 52000]}
+  allow_nested:
+  - id: fertile-crescent
+    reason: The Levant is the western limb of the Fertile Crescent; both are taught as regions and neither type word fits better
+
+- id: pearl-river-delta
+  uid: fWzUdRCmmH
+  name: Pearl River Delta
+  type: Delta
+  category: Regions, Rifts & Deltas
+  tier: 2
+  style: area
+  geometry:
+  - {file: pearl-river-delta.geojson}
+  expect: {bbox: [112.8, 22.07, 114.25, 23.27], area_km2: [9000, 15000]}
+
+- id: south-asian-monsoon
+  uid: uZkjSL2B6S
+  name: South Asian monsoon
+  alt_names: [Indian monsoon, Southwest monsoon]
+  type: Wind system
+  qualifier: July
+  category: Climate Systems
+  tier: 1
+  style: flow-wind
+  geometry:
+  - {file: south-asian-monsoon.geojson}
+  expect: {bbox: [49, -3, 92, 28], length_km: [7000, 8500]}
+
+- id: westerlies
+  uid: 4Zk5pYhODg
+  name: Westerlies & Roaring Forties
+  alt_names: [Westerlies, Roaring Forties, Prevailing westerlies]
+  type: Wind system
+  category: Climate Systems
+  tier: 1
+  style: flow-wind
+  geometry:
+  - {file: westerlies.geojson}
+  expect: {bbox: [-180, -51, 180, 56], length_km: [29000, 35000]}
+
+- id: humboldt-current
+  uid: 7SmyyAJMgo
+  name: Humboldt Current
+  alt_names: [Peru Current]
+  type: Ocean current
+  category: Climate Systems
+  tier: 1
+  style: flow-current
+  geometry:
+  - {file: humboldt-current.geojson}
+  expect: {bbox: [-89, -44, -72, -1], length_km: [4800, 5900]}
+  frame: {centre: [-78, -21], min_span_km: 13000}
+
+- id: east-asian-monsoon
+  uid: feHY0ji3ZH
+  name: East Asian monsoon
+  alt_names: [Meiyu, Baiu, Plum rains]
+  type: Wind system
+  qualifier: June
+  category: Climate Systems
+  tier: 2
+  style: flow-wind
+  geometry:
+  - {file: east-asian-monsoon.geojson}
+  expect: {bbox: [109, 7, 136, 36], length_km: [6100, 7400]}
+
+- id: west-african-monsoon
+  uid: OKdxuOj4YB
+  name: West African monsoon
+  type: Wind system
+  qualifier: August
+  category: Climate Systems
+  tier: 2
+  style: flow-wind
+  geometry:
+  - {file: west-african-monsoon.geojson}
+  expect: {bbox: [-20, -4, 13, 17], length_km: [6200, 7600]}
+
+- id: itcz
+  uid: mnt1erWkkZ
+  name: ITCZ & doldrums
+  alt_names: [Intertropical Convergence Zone, Doldrums, Equatorial trough]
+  type: Climate belt
+  qualifier: July
+  category: Climate Systems
+  tier: 2
+  style: band
+  geometry:
+  - {file: itcz.geojson}
+  expect: {bbox: [-180, 3, 180, 31], area_km2: [23000000, 28000000]}
+
+- id: atlantic-hurricane-belt
+  uid: VcrojRrSZw
+  name: Atlantic hurricane belt
+  type: Climate belt
+  category: Climate Systems
+  tier: 2
+  style: band
+  geometry:
+  - {file: atlantic-hurricane-belt.geojson}
+  expect: {bbox: [-101, 9, -28, 46], area_km2: [17000000, 21000000]}
+
+- id: typhoon-alley
+  uid: 4rpLRhsDwf
+  name: Western Pacific typhoon belt
+  alt_names: [Typhoon Alley]
+  type: Climate belt
+  category: Climate Systems
+  tier: 2
+  style: band
+  geometry:
+  - {file: typhoon-alley.geojson}
+  expect: {bbox: [105, 8, 159, 35], area_km2: [10000000, 13000000]}
+
+- id: benguela-current
+  uid: 3vD9LlO0sc
+  name: Benguela Current
+  type: Ocean current
+  category: Climate Systems
+  tier: 3
+  style: flow-current
+  geometry:
+  - {file: benguela-current.geojson}
+  expect: {bbox: [0, -36, 19, -15], length_km: [2600, 3100]}
+
+- id: kuroshio
+  uid: GlVn6ZfUs2
+  name: Kuroshio
+  alt_names: [Kuroshio Current, Japan Current, Black Current]
+  type: Ocean current
+  category: Climate Systems
+  tier: 3
+  style: flow-current
+  geometry:
+  - {file: kuroshio.geojson}
+  expect: {bbox: [120, 13, 154, 37], length_km: [4200, 5100]}
+
+- id: bay-of-bengal-cyclones
+  uid: cPhkYgDN9Y
+  name: Bay of Bengal cyclones
+  type: Climate belt
+  category: Climate Systems
+  tier: 3
+  style: band
+  geometry:
+  - {file: bay-of-bengal-cyclones.geojson}
+  expect: {bbox: [78, 5, 95, 25], area_km2: [2000000, 2500000]}

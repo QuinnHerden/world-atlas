@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Hand-traced simplified axis, checked against streamlines of the NOAA AOML Global Drifter Program annual-mean near-surface velocity climatology (Laurindo, Mariano & Lumpkin 2017; public domain). North-west from off the Cape Peninsula along the Namibian coast about 150-250 km offshore, leaving the coast north of Walvis Bay (about 23 S) and turning north-west into the South Equatorial Current; the drifter mean shows the offshore part turning west between 22 and 28 S. Eastern boundary currents are broad (several hundred km) and slow in the mean, so the single line is schematic.", "method": "hand-drawn", "refs": ["NOAA AOML GDP drifter annual-mean climatology (Laurindo, Mariano & Lumpkin 2017, doi:10.1016/j.dsr.2017.04.009; dataset doi:10.7266/N7SJ1HN5; accessed 2026-10-12)", "tools/README.md"]}, "geometry": {"type": "LineString", "coordinates": [[17.6, -34.6], [16.5, -32.0], [15.0, -29.5], [13.5, -27.0], [12.3, -24.5], [10.5, -21.5], [8.0, -19.0], [4.5, -17.0], [1.0, -15.5]]}}
+  ]
+}

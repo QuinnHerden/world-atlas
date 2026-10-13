@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 
 from geofeat.model import BUILD, MEDIA_INDEX
-from geofeat.sheet import card_image, contact_sheet
+from geofeat.sheet import contact_sheet, thumbnail
 from geofeat.style import AREA_ALPHA, COAST, HIGHLIGHT, LAND, OCEAN, WATER_AREA_ALPHA
 
 MACHADO = {
@@ -69,7 +69,7 @@ def main() -> None:
 
     cells = []
     for feature_id in sys.argv[1:] or sorted(json.loads(MEDIA_INDEX.read_text())):
-        image = card_image(feature_id)
+        image = thumbnail(feature_id)
         rgb = np.asarray(image, dtype=np.float64) / 255
         cells.append((feature_id, image))
         for kind in MACHADO:

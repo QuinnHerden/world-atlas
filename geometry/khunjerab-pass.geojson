@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Wikipedia 'Khunjerab Pass' coordinates 36 51'00\"N 75 25'42\"E (4,693 m, China–Pakistan border on the Karakoram Highway).", "method": "reference-coords", "refs": ["Wikipedia 'Khunjerab Pass'"]}, "geometry": {"type": "Point", "coordinates": [75.428, 36.85]}}
+  ]
+}

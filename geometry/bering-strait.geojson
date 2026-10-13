@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Channel centreline drawn by hand between Cape Dezhnev (169.65W) and Cape Prince of Wales (168.08W), passing between Big and Little Diomede on the 168.977W maritime boundary, per Wikipedia 'Bering Strait' (65.75N 168.98W, ~82 km wide). Checked to stay in water on Natural Earth 10m v5.1.2 (public domain) land.", "method": "reference-coords", "refs": ["Wikipedia 'Bering Strait'", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[-169.2, 65.35], [-169.0, 65.6], [-168.98, 65.76], [-168.9, 65.95], [-168.75, 66.3]]}}
+  ]
+}

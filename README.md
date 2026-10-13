@@ -17,18 +17,18 @@ Output: `dist/geographic-features.apkg`. Import it in Anki with **File → Impor
 
 ## Edit
 
-- `data/features.yaml`: the feature list. Each entry has geometry selectors, `expect` sanity bounds, a style, a category and a tier.
-- `geometry/*.geojson`: hand-drawn geometry for anything Natural Earth lacks. Every feature in a file needs a `source` property.
-- **Type words:** `type` must be one of the base types in `src/geofeat/model.py`. Add a `qualifier` for a detail such as a season; the card shows "Monsoon, July".
+- `data/features.yaml`: the feature list. Each entry has geometry selectors, `expect` bounds, a style, a category and a tier. `expect` is a drift check, not a fact check: its bbox and size range bracket what the geometry measures now. Where Natural Earth's generalised shape can't reach a published value, a comment notes it.
+- `geometry/*.geojson`: geometry for anything Natural Earth lacks. Every feature in a file needs a `source`, a `method` (`ne-derived`, `pd-dataset`, `reference-coords` or `hand-drawn`) and a list of `refs`. `make check-data` fails if any is missing, or if `source` says the shape is unverified or a placeholder. The scripts that made the derived shapes are in `tools/`.
+- **Type words:** `type` must be one of the 23 words in `src/geofeat/model.py`. Each word belongs to a family (a Pass and a Corridor are both land passages). Area features in a land family are clipped to land. Add a `qualifier` only for a detail that doesn't give the answer away, such as a season: the card shows "Wind system, July".
 - **Feature references:** a geometry part can be `{feature: <id>, subtract: true}`, which cuts a sibling out of a feature (e.g. the ranges out of the Tibetan Plateau). Add `trim_to_largest: true` to keep only the largest piece left by the cut; `make check-data` reports how much it dropped.
-- **Nesting overrides:** `allow_nested: [{id: <sibling>, reason: <why>}]` accepts one same-type pair that nests. A reason is required, and `make check-data` lists every override.
-- **Framing:** `frame` takes `min_span_km`; `centre: [lon, lat]`, which lets siblings share one frame; and `context: [<id>]`, which draws a parent river faintly underneath.
+- **Nesting overrides:** first try subtracting the inner card. If the inner feature is a named part of the outer one and cutting it out would misdraw the outer shape, `allow_nested: [{id: <sibling>, reason: <why>}]` accepts one same-family pair that nests. A reason is required, and `make check-data` lists every override. See PLAN.md for the policy.
+- **Framing:** `frame` takes `min_span_km`; `centre: [lon, lat]`, which lets siblings share one frame; `context: [<id>]`, which draws a parent river faintly underneath; `admin1: true`, which adds state borders; and `former: <file>.geojson`, a past extent drawn as a dashed line. Regional frames are north-up and at least 2,600 km wide; small features get a ring.
 
 `make ids` gives each new entry a permanent `uid` (the Anki note GUID); `make all` refuses to build while any is missing. Never edit or reuse a uid. To retire a feature, set `retired: true` and keep the rest of the entry. A feature's `id`, `name` and tier can change freely without losing review history.
 
-`make sheet` writes `build/sheet.png`, a grid of every map for visual review; `make sheet IDS="bosporus kerch-strait"` limits it to the maps you name. `make pairs` writes `build/pairs.png`, showing neighbouring features side by side. `make cvd` (which also takes `IDS`) writes `build/cvd.png`, showing each map beside its deuteranopia and protanopia simulations.
+`make sheet` writes `build/sheet.png`, a grid of every map for visual review, and `make phone` writes `build/phone-NN.png` with each map 390 px wide, as on a phone; `make sheet IDS="bosporus kerch-strait"` limits it to the maps you name. `make pairs` writes every neighbouring pair to `build/pairs.log`. It draws the ones worth a look (flagged, nested, allowed, or near a limit) side by side in `build/pairs-NN.png`, 50 to a page. `make cvd` (which also takes `IDS`) writes `build/cvd.png`, showing each map beside its deuteranopia and protanopia simulations.
 
-`make check-data` also compares sibling pairs, meaning features within 300 km of each other or overlapping. It fails if two highlights are near-identical, or if one covers another and both have the same type. Nested features with different types are reported but allowed. A river must have an end within 5 km of the sea; set `expect.mouth: lake` or `none` for rivers that end in a lake or an inland sink.
+`make check-data` also compares sibling pairs, meaning features within 300 km of each other or overlapping. It fails if two highlights are near-identical, or if one covers another and both types are in the same family. Nested features from different families are reported but allowed. It also fails if an ocean or sea has a hole of open water over 10,000 km², which means a neighbouring sea was left out. A river must have an end within 5 km of the sea; set `expect.mouth: lake` or `none` for rivers that end in a lake or an inland sink.
 
 ## Notes
 

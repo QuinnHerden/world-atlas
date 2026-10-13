@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Short Padma link joining the end of the main Natural Earth 10m v5.1.2 (public domain) 'Ganges' 55 line (Goalundo, 89.75E 23.85N) to its detached lower piece (90.09E 23.58N); end points are the NE vertices, the course between follows the Padma by general knowledge. Approximate (~45 km).", "method": "hand-drawn", "refs": ["Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[89.749, 23.848], [89.85, 23.77], [89.95, 23.69], [90.03, 23.62], [90.087, 23.579]]}}
+  ]
+}

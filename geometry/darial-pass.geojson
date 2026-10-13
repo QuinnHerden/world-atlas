@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "Wikipedia 'Darial Gorge' coordinates 42 44'41\"N 44 37'21\"E (gorge of the Terek on the Georgian Military Road).", "method": "reference-coords", "refs": ["Wikipedia 'Darial Gorge'"]}, "geometry": {"type": "Point", "coordinates": [44.623, 42.745]}}
+  ]
+}

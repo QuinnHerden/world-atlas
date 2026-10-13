@@ -27,10 +27,38 @@ Category = Literal[
     "Regions, Rifts & Deltas",
     "Climate Systems",
 ]
+# The type word shown on the card. Each covers 3+ cards, except Isthmus (tells Kra from the Malay Peninsula), Valley
+# and Sea route (the user's merges) and Cape (no honest merge); see docs/adr/0001-type-vocabulary.md.
 FeatureType = Literal[
-    "Ocean", "Sea", "Strait", "Mountain range", "Mountain pass", "River", "Plateau", "Island", "Delta",
-    "Ocean current", "Prevailing winds", "Pressure belt",
+    "Ocean", "Sea", "Lake",
+    "River", "Delta",
+    "Strait", "Canal", "Sea route", "Pass", "Corridor",
+    "Mountain range", "Plateau",
+    "Plain", "Desert", "Valley",
+    "Region",
+    "Peninsula", "Isthmus", "Island", "Cape",
+    "Ocean current", "Wind system", "Climate belt",
 ]
+# A coarse grouping of type words. The pair check treats one highlight covering another as a clash when both share
+# a family, whatever their words; area features of a land family are clipped to land.
+Family = Literal[
+    "water body", "river", "sea passage", "land passage", "relief", "lowland", "region", "landmass", "island", "climate",
+]
+FAMILY: dict[str, Family] = {
+    "Ocean": "water body", "Sea": "water body", "Lake": "water body",
+    "River": "river",
+    "Strait": "sea passage", "Canal": "sea passage", "Sea route": "sea passage",
+    "Pass": "land passage", "Corridor": "land passage",
+    "Mountain range": "relief", "Plateau": "relief",
+    "Plain": "lowland", "Desert": "lowland", "Valley": "lowland", "Delta": "lowland",
+    "Region": "region",
+    "Peninsula": "landmass", "Isthmus": "landmass", "Cape": "landmass",
+    "Island": "island",  # own family: NE draws some island groups (Spratlys) as a sea-area envelope, so never land-clipped
+    "Ocean current": "climate", "Wind system": "climate", "Climate belt": "climate",
+}
+LAND_FAMILIES: frozenset[Family] = frozenset({"land passage", "relief", "lowland", "region", "landmass"})
+# How a hand-authored GeoJSON feature was made; every feature in geometry/ carries one, plus `refs`.
+Method = Literal["ne-derived", "pd-dataset", "reference-coords", "hand-drawn"]
 Style = Literal["area", "line", "point", "strait", "flow-current", "flow-wind", "band"]
 
 _UNSAFE_TEXT = re.compile(r"[\n<>]|:::|\[\^|^-{3}")
@@ -83,6 +111,9 @@ class FrameOptions(Strict):
     min_span_km: float | None = None
     centre: tuple[float, float] | None = None  # lon, lat; siblings sharing a centre and span share a frame
     context: list[str] = []  # ids of line features drawn faintly underneath, e.g. a delta's river
+    admin1: bool = False  # draw first-level (state/province) borders, where one locates the feature
+    # a geometry/ file outlining a past extent, drawn as a dashed grey line (the Aral Sea's 1960 shore)
+    former: Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*\.geojson$")] | None = None
 
 
 class AllowNested(Strict):
@@ -108,6 +139,10 @@ class Feature(Strict):
     allow_nested: list[AllowNested] = []
     trim_to_largest: bool = False  # after subtracting, keep only the largest polygon (drops cut-off scraps)
     retired: bool = False
+
+    @property
+    def family(self) -> Family:
+        return FAMILY[self.type]
 
     @property
     def type_text(self) -> str:

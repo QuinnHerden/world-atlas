@@ -1,12 +1,6 @@
 {
   "type": "FeatureCollection",
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "source": "Approximate channel centreline between the Sea of Azov and the Black Sea, from general knowledge of the Kerch Peninsula and Taman coast. Unverified: check against a public-domain nautical chart before release."
-      },
-      "geometry": {"type": "LineString", "coordinates": [[36.63, 45.44], [36.58, 45.33], [36.61, 45.22], [36.55, 45.07]]}
-    }
+    {"type": "Feature", "properties": {"source": "Channel centreline from the Sea of Azov to the Black Sea through reference points: the northern entrance between Cape Fonar (45.383N 36.645E, Wikipedia 'Cape Fonar') and the Chushka Spit (45.350N 36.695E, Wikipedia 'Chushka Spit'), west of Tuzla Island (45.267N 36.550E, Wikipedia 'Tuzla Island'), past the strait's centre (45.25N 36.50E, Wikipedia 'Kerch Strait'), to the southern entrance between Cape Takhil and Cape Panagia. The two southern capes have no published coordinates there, so they are the Natural Earth 10m v5.1.2 (public domain) land vertices at 45.107N 36.442E and 45.128N 36.641E. Every vertex and segment was checked to lie in water on NE 10m land; NE 10m has no Tuzla Island. Wikipedia gives 35 km length and 3.1-15 km width; this line runs about 43 km, entrance to entrance, along the bends.", "method": "reference-coords", "refs": ["Wikipedia 'Kerch Strait'", "Wikipedia 'Cape Fonar'", "Wikipedia 'Chushka Spit'", "Wikipedia 'Tuzla Island'", "Wikipedia 'Kerch Peninsula'", "Natural Earth 10m v5.1.2 (public domain), commit f1890d9"]}, "geometry": {"type": "LineString", "coordinates": [[36.69, 45.415], [36.65, 45.36], [36.635, 45.33], [36.585, 45.29], [36.52, 45.265], [36.51, 45.2], [36.54, 45.115], [36.535, 45.08]]}}
   ]
 }
