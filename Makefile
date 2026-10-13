@@ -2,7 +2,7 @@ PY := uv run python -m geofeat
 DECK := Geographic Features
 IDS ?=
 
-.PHONY: all test fetch ids check-data render deck check build sheet phone pairs cvd clean
+.PHONY: all test fetch ids check-data render deck check build sheet phone pairs cvd guide clean
 
 all: build
 
@@ -45,6 +45,9 @@ pairs: render
 
 cvd: render
 	$(PY).cvd $(IDS)
+
+guide: render
+	uv run --group guide python -m geofeat.guide
 
 clean:
 	rm -rf build deck dist

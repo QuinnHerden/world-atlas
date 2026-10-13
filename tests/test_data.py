@@ -6,8 +6,9 @@ import geopandas as gpd
 from shapely.geometry import Point, box
 
 import geofeat.resolve as resolve
-from geofeat.check import provenance_errors
-from geofeat.model import FAMILY, AllowNested, Expect, Feature, FeatureType, Part
+from geofeat.check import missing_notes, provenance_errors, retired_references
+from geofeat.deckgen import card
+from geofeat.model import FAMILY, AllowNested, Expect, Feature, FeatureType, FrameOptions, Part
 from geofeat.pairs import Pair, compare
 from geofeat.resolve import area_km2, _drop_slivers, clip_to_land
 
@@ -125,3 +126,51 @@ class ProvenanceTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RetiredReferenceTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.old = feature("old", "Island", retired=True)
+
+    def test_subtracting_a_retired_feature_is_noted(self) -> None:
+        user = feature("p", "Peninsula").model_copy(
+            update={"geometry": [Part(file="x.geojson"), Part(feature="old", subtract=True)]})
+        errors, notes = retired_references([self.old, user])
+        self.assertEqual(errors, [])
+        self.assertEqual(notes, ["retired input: p subtracts retired 'old' in its geometry"])
+
+    def test_adding_a_retired_feature_is_noted(self) -> None:
+        user = feature("p", "Peninsula").model_copy(update={"geometry": [Part(feature="old")]})
+        self.assertEqual(retired_references([self.old, user])[1], ["retired input: p adds retired 'old' in its geometry"])
+
+    def test_retired_context_is_noted(self) -> None:
+        user = feature("d", "Delta", frame=FrameOptions(context=["old"]))
+        self.assertEqual(retired_references([self.old, user])[1], ["retired input: d draws retired 'old' as frame.context"])
+
+    def test_allow_nested_on_a_retired_feature_is_an_error(self) -> None:
+        user = feature("p", "Peninsula", allow_nested=[AllowNested(id="old", reason="old is a named part of p")])
+        errors, _ = retired_references([self.old, user])
+        self.assertEqual(errors, ["p: allow_nested names retired feature 'old'; drop it"])
+
+    def test_retired_features_are_not_checked(self) -> None:
+        gone = feature("gone", "Island", retired=True).model_copy(update={"geometry": [Part(feature="old")]})
+        self.assertEqual(retired_references([self.old, gone]), ([], []))
+
+
+class NoteTest(unittest.TestCase):
+    def test_active_feature_without_a_note_is_an_error(self) -> None:
+        self.assertEqual(missing_notes([feature("a", "Plain")]), ["a: no note (1-3 sentences on why it matters)"])
+
+    def test_retired_feature_needs_no_note(self) -> None:
+        self.assertEqual(missing_notes([feature("a", "Plain", retired=True), feature("b", "Plain", note="Why.")]), [])
+
+    def test_note_must_be_card_safe(self) -> None:
+        with self.assertRaises(ValueError):
+            feature("a", "Plain", note="one <b>bold</b> claim")
+
+
+class DeckgenTest(unittest.TestCase):
+    def test_card_carries_its_tags(self) -> None:
+        text = card(feature("bosporus", "Strait", uid="MAPQnshVtc"), "abc.png")
+        self.assertIn("[^uid]: MAPQnshVtc\n[^tag]: tier::1\n[^tag]: category::deserts-plateaus-plains\n"
+                      "[^tag]: id_bosporus\n", text)

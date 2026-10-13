@@ -38,7 +38,7 @@ JOBS = int(os.environ.get("JOBS", "1"))  # each worker loads its own copy of the
 WIDTH_PX, HEIGHT_PX, DPI = 1600, 900, 100
 SCALE = 2  # stroke sizes below are specified for an 800 px wide card
 
-WATER_CATEGORIES = {"Oceans & Seas", "Straits & Chokepoints", "Lakes"}
+WATER_CATEGORIES = {"Water Bodies", "Straits & Chokepoints"}
 # px at 1600 wide: an area smaller than a disc ~16 px across on a phone, or under ~25 px long there, also gets a ring
 SMALL_HIGHLIGHT_PX, SHORT_HIGHLIGHT_PX = 66, 100
 SMALL_RING_CLEAR_PX = 24

@@ -47,6 +47,6 @@ The rule that widened a frame until it showed sea, a lake or a major river is dr
 ## Consequences
 
 - Nothing is rotated or fanned. The cost is east–west stretch away from the centre parallel: wide high-latitude frames (Gulf Stream, Greenland) widen northwards, and the Arctic Ocean's frame stretches the pole across the top edge.
-- At 2,600 km, passes, short straits and small islands are found by their ring, with little local detail.
+- At 2,600 km, short straits and capes are found by their ring, with little local detail. This applied to passes and small islands too, until those cards were retired.
 - The Danish Straits and the Strait of Magellan fall under 24 px mean width at this zoom, so they draw as channel lines.
-- Lake Chad and the Hindu Kush/Pamirs/Karakoram trio keep a fixed `frame.centre`. Cumberland Gap keeps `admin1`, which draws state borders.
+- Lake Chad and the Hindu Kush/Pamirs/Karakoram trio keep a fixed `frame.centre`. Cumberland Gap (since retired) kept `admin1`, which draws state borders.

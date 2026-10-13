@@ -35,6 +35,7 @@ class Pair:
     iou: float
     cover: float
     allowed: str | None = None  # the `allow_nested` reason, if one feature declares this pair
+    inner: str = ""  # the id whose highlight is smaller: the one nested, when the pair nests
 
     @property
     def flagged(self) -> bool:
@@ -89,6 +90,7 @@ def compare(fa: Feature, ga: BaseGeometry, fb: Feature, gb: BaseGeometry) -> Pai
     return Pair(
         fa.id, fb.id, fa.family == fb.family, distance / 1000,
         iou=overlap / a.union(b).area, cover=overlap / min(a.area, b.area), allowed=_allowed(fa, fb),
+        inner=fa.id if a.area <= b.area else fb.id,
     )
 
 

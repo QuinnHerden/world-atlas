@@ -4,6 +4,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 1
+  note: >-
+    The Roman expansion depended on controlling Alpine passes. They separate the Italian and Germanic worlds and are
+    crossed by key EU freight routes (Brenner, Gotthard).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104297}}
@@ -15,6 +18,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 1
+  note: >-
+    They wall off South Asia from China and Tibet and feed the Indus, Ganges and Brahmaputra. They are the site of
+    the 1962 Sino-Indian War and the 2020 Galwan clash on the disputed Line of Actual Control.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104307}}
@@ -24,8 +30,11 @@
   uid: 64NBXpNOKv
   name: Black Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    It is Russia's main warm-water outlet and was the cause of the Crimean War. After Russia's 2022 invasion of
+    Ukraine, 32.8 Mt of Ukrainian grain and foodstuffs left under the 2022–23 Black Sea Grain Initiative.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115171}}
@@ -35,8 +44,11 @@
   uid: N3NGMxsbci
   name: Atlantic Ocean
   type: Ocean
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    It was the axis of the Columbian Exchange, the transatlantic slave trade and European colonial empires. Today
+    the North Atlantic is the reinforcement route that defines NATO's geography (the "North Atlantic" in its name).
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115057}}
@@ -53,6 +65,10 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    Constantinople/Istanbul controls this boundary between Europe and Asia. Turkey regulates it under the 1936
+    Montreux Convention, which governs Russian naval access to the Black Sea. Turkish Straits oil flow was 3.7 mb/d
+    in 1H25.
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118835}}
@@ -63,6 +79,7 @@
   name: Khyber Pass
   type: Pass
   category: Passes & Corridors
+  retired: true
   tier: 1
   style: point
   geometry:
@@ -73,7 +90,8 @@
   uid: NwuUPtkuvb
   name: Malta
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 3
   style: area
   geometry:
@@ -84,8 +102,11 @@
   uid: w5NtfRCzSA
   name: Nile
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    It created Pharaonic Egypt, and most Egyptians still live along the river or its delta. Ethiopia's GERD dam on
+    the Blue Nile, inaugurated in September 2025, is the core of an Egypt–Ethiopia dispute.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Nile, rivernum: 4}, rows: 2}
@@ -104,8 +125,12 @@
   name: Mississippi–Missouri–Ohio
   alt_names: [Mississippi]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    It is the world's most extensive navigable network inside one country and the reason the US became an
+    agricultural and commercial superpower. Mississippi Gulf ports handled about 48% of inspected US grain exports
+    in 2024.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Mississippi, rivernum: 3}}
@@ -120,6 +145,9 @@
   type: Ocean current
   category: Climate Systems
   tier: 2
+  note: >-
+    This warm current mattered to Atlantic sailing. The popular claim that it keeps Europe mild is contested: Seager
+    et al. (2002) credit mostly the westerlies.
   style: flow-current
   geometry:
   - {file: gulf-stream.geojson}
@@ -129,8 +157,12 @@
   uid: 9dKZ99t54a
   name: Pacific Ocean
   type: Ocean
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    It was the theater of the 1941–45 Pacific War, and today it is the main arena of US–China naval competition and
+    trans-Pacific trade. Mahan's sea-power thesis drove US acquisition of Pacific bases (Hawaii, Guam, Philippines)
+    after 1898.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115079}}
@@ -141,8 +173,11 @@
   uid: wSxtLBdr0g
   name: Arctic Ocean
   type: Ocean
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    Russia's Northern Fleet bastion sits here. Melting ice is opening the Northern Sea Route, which carried about 37
+    Mt of cargo in 2025, of which only about 3.2 Mt was true transit.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115017}}
@@ -183,6 +218,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    It links the Black Sea and the Sea of Azov, and the Crimean Bridge crosses it. Russia's control of it after 2014
+    made the Sea of Azov effectively Russian.
   style: strait
   geometry:
   - {file: kerch-strait.geojson}
@@ -195,6 +233,9 @@
   type: Climate belt
   category: Climate Systems
   tier: 2
+  note: >-
+    Sinking dry air in this belt creates the great desert belt (Sahara, Arabian, Kalahari, Australian). The calm
+    horse latitudes were a sailing hazard.
   style: band
   geometry:
   - {file: subtropical-highs.geojson}
@@ -206,6 +247,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    The Allied attempt to force it in 1915 failed and led to the Gallipoli campaign (about 214,000 Allied
+    casualties). With the Bosporus it forms the Black Sea's only exit.
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159119155}}
@@ -217,6 +261,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They hold the Siachen Glacier conflict zone (India–Pakistan) and Aksai Chin. The Karakoram Highway, the CPEC
+    spine, crosses them at Khunjerab.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104185}}
@@ -229,6 +276,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    The "Roof of the World" was where the British and Russian empires met in the Great Game. The Wakhan buffer was
+    drawn there (1895).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104181}}
@@ -241,6 +291,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 1
+  note: >-
+    They are the backbone of Afghanistan and were the route of Alexander, the Mughals and others into India. They
+    defeated the British, the Soviets and the US-led coalition in turn ("graveyard of empires").
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104183}}
@@ -253,6 +306,9 @@
   type: Plateau
   category: Deserts, Plateaus & Plains
   tier: 1
+  note: >-
+    It is the "water tower" source of the Yangtze, Yellow, Mekong, Brahmaputra and Indus. China's control of it
+    since 1950 gives Beijing upstream leverage over South and Southeast Asia.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104345}}
@@ -267,8 +323,10 @@
   uid: Vy73Ga6Z2h
   name: Nile Delta
   type: Delta
-  category: Regions, Rifts & Deltas
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It holds a large share of Egypt's population on a small, sinking and salinizing coastal plain.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103505}}
@@ -281,6 +339,9 @@
   type: Ocean current
   category: Climate Systems
   tier: 3
+  note: >-
+    It is the southbound leg of the Iberian volta do mar, carrying ships to the Canaries and the trade winds.
+    Saharan-coast upwelling feeds the Moroccan and Mauritanian fisheries.
   style: flow-current
   geometry:
   - {file: canary-current.geojson}
@@ -292,6 +353,9 @@
   type: Wind system
   category: Climate Systems
   tier: 1
+  note: >-
+    They carried Iberian ships out to the Americas and powered the volta do mar loop. They set the outbound legs of
+    the Atlantic slave trade and the westbound Manila galleon. Their weakening is the trigger of El Niño.
   style: flow-wind
   geometry:
   - {file: trade-winds.geojson}
@@ -301,8 +365,11 @@
   uid: KPgnUeNLWJ
   name: Indian Ocean
   type: Ocean
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    Monsoon-driven trade linked East Africa, Arabia, India and China long before Europeans arrived. Today it carries
+    Gulf energy to Asia: 84% of Hormuz crude and condensate went to Asian markets in 2024.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115123}}
@@ -312,8 +379,12 @@
   uid: Q6rYtpkMsK
   name: Mediterranean Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    It was the shared sea of Phoenicia, Greece, Rome ("mare nostrum"), Byzantium, the Arab caliphates, Venice and
+    the Ottomans, and the subject of Braudel's founding work on geographic history. Today it is the Suez–Gibraltar
+    trunk route between Asia and Europe and a main migration route into the EU.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115321}}
@@ -337,8 +408,11 @@
   name: Persian Gulf
   alt_names: [Arabian Gulf]
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    It is the export basin for Saudi, Iraqi, Kuwaiti, Emirati, Qatari and Iranian oil and gas, and was the scene of
+    the 1980s Tanker War and the 1991 Gulf War.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115597}}
@@ -348,8 +422,11 @@
   uid: q1Iq7BXdVe
   name: Red Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    It is the Suez–Bab el-Mandeb trunk between Europe and Asia. Houthi attacks from late 2023 diverted most
+    container lines around the Cape.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115521}}
@@ -359,8 +436,12 @@
   uid: IoIARhSc6m
   name: South China Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 1
+  note: >-
+    It sits on the Malacca–Northeast Asia trunk route. China's "nine-dash line" claim overlaps the claims of
+    Vietnam, the Philippines, Malaysia and Brunei, and an arbitral tribunal (Philippines v. China) rejected the
+    line's legal basis.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115273}}
@@ -370,8 +451,11 @@
   uid: pvbVXAQYs0
   name: Baltic Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It was the sea of the Hanseatic League and the Swedish and Russian empires. The Danish Straits exit carried 4.9
+    mb/d of oil in 1H25.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115831}}
@@ -385,8 +469,11 @@
   uid: s6WOivGCI6
   name: Arabian Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It links Hormuz and the Red Sea route to India. Gulf energy flows to Asia and Indian naval reach both run
+    through it.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115343}}
@@ -396,8 +483,11 @@
   uid: BZ6svqX5X1
   name: East China Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It holds the Senkaku/Diaoyu dispute (Japan vs China/Taiwan), and the waters off Taiwan's north and Okinawa lie
+    inside the First Island Chain.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116027}}
@@ -408,8 +498,11 @@
   name: Sea of Japan
   alt_names: [East Sea]
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    Japan defeated the Russian fleet here in 1905 (see Korea Strait). The sea's name itself is disputed between
+    Japan and the Koreas.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115305}}
@@ -419,8 +512,11 @@
   uid: K5aQ3QCkLJ
   name: Caribbean Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It was the hub of the Spanish treasure fleets and the sugar-and-slave economy, and the setting of the 1962 Cuban
+    Missile Crisis. It is also the Atlantic approach to the Panama Canal.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115379}}
@@ -430,8 +526,11 @@
   uid: AAboaHSLjx
   name: Gulf of Mexico
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It is the Mississippi system's outlet: Mississippi Gulf ports handled about 48% of inspected US grain exports in
+    2024.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115399}}
@@ -442,8 +541,11 @@
   uid: Cpm5OlGDhU
   name: North Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It was the arena of the Anglo-Dutch wars and the Battle of Jutland (1916), and later a major oil and gas
+    province for the UK and Norway.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115879}}
@@ -453,8 +555,11 @@
   uid: 9XnYuJCtNV
   name: Aegean Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It was the cradle of Greek city-state civilization, and the Persian invasion was turned back at Salamis (480
+    BCE). Greek–Turkish airspace and continental-shelf disputes continue.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159117123}}
@@ -465,8 +570,11 @@
   uid: FhpFsM6630
   name: Gulf of Aden
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It is the approach to Bab el-Mandeb, the scene of the Somali piracy wave from about 2008–2011 and of the
+    post-2023 Houthi attacks. UNCTAD reported steep falls in tonnage through it.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116333}}
@@ -476,8 +584,11 @@
   uid: ktopkzjfbd
   name: Barents Sea
   type: Sea
-  category: Oceans & Seas
+  category: Water Bodies
   tier: 2
+  note: >-
+    It is the Kola Peninsula's outlet for Russia's Northern Fleet, and WWII Allied Arctic convoys to Murmansk
+    crossed it.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115861}}
@@ -489,6 +600,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    It is the world's largest oil chokepoint (23.2 mb/d in 1H25). Srivijaya, then the Melaka sultanate, then
+    Portugal (1511), the Dutch (1641) and Britain controlled it. It is the core of China's "Malacca dilemma."
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116835}}
@@ -500,6 +614,9 @@
   type: Canal
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    It opened in 1869 and shortened the Europe–Asia route. It was the cause of the 1956 Suez Crisis and was closed
+    1967–75. Red Sea attacks from late 2023 halved transits.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Suez Canal, rivernum: 209}, rows: 2}
@@ -511,6 +628,9 @@
   type: Canal
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    It opened in 1914 and handed the US a two-ocean navy, and Panama took it over in 1999. In FY2025 it handled
+    13,404 transits, up 19% after the 2023–24 drought cut capacity.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Panama Canal, rivernum: 227}, rows: 2}
@@ -523,6 +643,10 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    It is the moat that let England and Britain avoid invasion after 1066. It saw the Spanish Armada (1588), the
+    blocking of Napoleon's and Hitler's invasion plans, and the Normandy landings (1944). It is one of the world's
+    busiest shipping lanes.
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116535}}
@@ -534,6 +658,8 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    It is the potential flashpoint of a US–China war, and a large share of global maritime trade passes through it.
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116947}}
@@ -545,6 +671,9 @@
   type: Cape
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    Dias rounded it in 1488 and da Gama used it in 1497 to open the sea route to India, which broke the overland and
+    Venetian monopoly. It is again a main bypass, carrying 9.1 mb/d of oil in 1H25 during the Red Sea crisis.
   style: point
   geometry:
   - {layer: 10m_geography_regions_points, select: {ne_id: 1159105165}}
@@ -557,6 +686,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    Denmark levied the Sound Dues on Baltic shipping for centuries. They are the Baltic's only exit and carry
+    Russian Baltic oil exports (4.9 mb/d in 1H25).
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159120609}}
@@ -570,6 +702,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    At the Battle of Tsushima (1905), Japan sank about two-thirds of Russia's Baltic Fleet, which led to Japanese
+    primacy in Korea. It is the link between Japan and Korea and the Sea of Japan's southern gate.
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159116907}}
@@ -581,6 +716,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    Magellan's 1520 passage linked the Atlantic and Pacific. With Cape Horn it is the fallback route between the
+    oceans if Panama fails.
   style: strait
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159118553}}
@@ -593,6 +731,9 @@
   type: Cape
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    Rounding it was the sailing-era route between the Atlantic and Pacific until the Panama Canal opened in 1914,
+    and it is still the fallback if Panama fails.
   style: point
   geometry:
   - {layer: 10m_geography_regions_points, select: {ne_id: 1159105049}}
@@ -605,6 +746,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 1
+  note: >-
+    It is the isthmus between the Black Sea and the Caspian and the barrier between Russia and Persia/Turkey. It was
+    the scene of the Chechen wars, the 2008 Russia–Georgia war and the Armenia–Azerbaijan wars (2020, 2023).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104305}}
@@ -616,6 +760,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 1
+  note: >-
+    They are the heartland of the Inca Empire and the mountain source of colonial silver (Potosí). They define the
+    Chile–Argentina border and hold large copper and lithium reserves.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104309}}
@@ -628,6 +775,8 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They mark the long-stable France–Spain border and were the Charlemagne-era frontier with al-Andalus.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103941}}
@@ -640,6 +789,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They are the arc that shields the Pannonian basin and Transylvania and were Hungary's historic frontier. They
+    are a defensive anchor for NATO's eastern flank (Romania, Poland).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103937}}
@@ -652,6 +804,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They are the conventional Europe–Asia divide. Low and passable, they did not stop Russian expansion into
+    Siberia, and in WWII Soviet industry was evacuated behind them.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104301}}
@@ -663,6 +818,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They are Iran's western fortress wall facing Mesopotamia, and they make a ground invasion of Iran extremely
+    difficult.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104167}}
@@ -675,6 +833,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They were the barrier to US westward expansion and are the Continental Divide. The first transcontinental
+    railroad crossed them in 1869.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104311}}
@@ -687,6 +848,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They held the Thirteen Colonies to the coast. The British Proclamation Line of 1763 followed them, and crossing
+    them opened the Mississippi basin.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104191}}
@@ -698,6 +862,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    Silk Road oases strung along their flanks, and they divide Xinjiang into the Dzungarian and Tarim basins. The
+    Dzungarian Gate cuts through their northern edge.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104299}}
@@ -710,6 +877,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  note: >-
+    They are China's north–south divide (wheat/millet versus rice; the ~0°C January line) and shielded the Wei
+    valley capitals (Xi'an).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103573}}
@@ -722,6 +892,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 3
+  note: >-
+    They separate the Maghreb's fertile coast from the Sahara and were the Berber/Amazigh highland refuge from
+    successive conquerors.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104189}}
@@ -733,6 +906,7 @@
   alt_names: [Gansu Corridor]
   type: Corridor
   category: Passes & Corridors
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -744,8 +918,11 @@
   name: Tigris–Euphrates
   alt_names: [Tigris, Euphrates]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    The first cities, writing and empires (Sumer, Akkad, Babylon, Assyria) arose here, and later Baghdad. Upstream
+    Turkish dams versus Syria and Iraq is a live water conflict.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Tigris, rivernum: 135}}
@@ -760,8 +937,11 @@
   uid: HrhU2FOZ5S
   name: Indus
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    It nourished the Indus Valley (Harappan) civilization and is Pakistan's agricultural lifeline. Its waters are a
+    long-running source of India–Pakistan tension.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Indus, rivernum: 56}, rows: 2}
@@ -772,8 +952,11 @@
   name: Yellow River
   alt_names: [Huang He]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    It is the cradle of Chinese civilization, called "China's Sorrow" for floods such as 1887 and 1938 (dikes
+    deliberately breached against Japan). It has changed course across the North China Plain several times.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Huang, rivernum: 66}, rows: 2}
@@ -786,8 +969,11 @@
   name: Yangtze
   alt_names: [Chang Jiang]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    Its basin holds a large share of China's population and economy. It has been the north–south divide of Chinese
+    warfare, and the Three Gorges Dam is on it.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Tongtian, rivernum: 13}}
@@ -800,8 +986,11 @@
   uid: TczlLuhbSV
   name: Rhine
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    It was Rome's frontier (limes) against the Germanic peoples and a Franco-German bone of contention (Rhineland
+    1936), and today it is Europe's busiest inland waterway, reaching the sea at Rotterdam.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Rhein, rivernum: 105}, rows: 2}
@@ -814,8 +1003,11 @@
   uid: O7AHjZ9fjm
   name: Danube
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    It was Rome's other frontier. Ottoman armies advanced up it to Vienna (1529, 1683). It is Europe's east–west
+    trade river and carried Ukrainian grain exports after 2022.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Donau, rivernum: 38}}
@@ -828,8 +1020,11 @@
   name: Brahmaputra
   alt_names: [Yarlung Tsangpo]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It flows from Tibet to Assam to Bangladesh. China's dam building on the Tsangpo is a source of India–China water
+    tension.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Yarlung, rivernum: 42}}
@@ -841,8 +1036,11 @@
   uid: nlFHweVURH
   name: Mekong
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    About 72 million people in the basin live off it, and fish are the main protein source. Upstream Chinese and Lao
+    dams versus downstream Vietnam and Cambodia is a live dispute.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Lancang, rivernum: 40}}
@@ -853,8 +1051,10 @@
   uid: eynvwLG5tX
   name: Volga
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is Russia's historic core artery to the Caspian, and the Battle of Stalingrad (1942–43) was fought on it.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Volga, rivernum: 68}, rows: 2}
@@ -865,8 +1065,11 @@
   name: Dnieper
   alt_names: [Dnipro]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is the river of Kyivan Rus' origins and the Varangian–Greek route. It became a front line in the
+    Russia–Ukraine war that began in 2022, and the Kakhovka dam on it was destroyed in 2023.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Dnipro, rivernum: 116}, rows: 2}
@@ -877,8 +1080,11 @@
   uid: OyjSiP9vvN
   name: Amazon
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is the largest river by discharge, and its basin rainforest is a global climate stake. Historically it was a
+    barrier to settlement rather than a cradle.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Amazonas, rivernum: 2}, rows: 2}
@@ -890,8 +1096,11 @@
   name: Rio Grande
   alt_names: [Río Bravo]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It marks the US–Mexico border along Texas, fixed after the 1846–48 war, and is the scene of continuing migration
+    and water-sharing disputes.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Rio Grande, rivernum: 110}, rows: 2}
@@ -902,8 +1111,11 @@
   name: Amur
   alt_names: [Heilongjiang]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is the Russia–China border, fixed in 19th-century treaties China calls "unequal", and the scene of the 1969
+    border clashes on its tributary, the Ussuri.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Amur, rivernum: 72}, rows: 2}
@@ -916,8 +1128,10 @@
   name: Jordan River
   alt_names: [Jordan]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is a sacred river and the Israel/West Bank–Jordan boundary, and its waters are bitterly contested.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Jordan, rivernum: 229}, rows: 2}
@@ -928,8 +1142,11 @@
   name: Amu Darya
   alt_names: [Oxus]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It was the ancient boundary between Iran and Turan, and Alexander, the Arabs and the Mongols crossed it. It is
+    now the Afghanistan border and was diverted (with the Syr Darya) to the point of killing the Aral Sea.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Amu  Darya, rivernum: 199}}
@@ -940,8 +1157,10 @@
   uid: uZwmdfhqNb
   name: Niger
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    Its inland delta and bend sustained Mali and Songhay. Timbuktu and Gao were trans-Saharan trade hubs.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Niger, rivernum: 59}, rows: 2}
@@ -952,8 +1171,11 @@
   name: Congo
   alt_names: [Zaire]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is the second-largest river by discharge. Leopold II's Congo Free State and the 1884–85 Berlin Conference
+    were organized around access to it.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Congo, rivernum: 45}}
@@ -967,8 +1189,10 @@
   name: Pearl River
   alt_names: [Zhujiang, Xi Jiang]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 3
+  note: >-
+    It is Canton's river and the site of the Opium Wars.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Xi, rivernum: 96}}
@@ -984,6 +1208,9 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 1
+  note: >-
+    It runs flat from France to the Urals and was the invasion route of Napoleon (1812), the Kaiser and Hitler
+    (1941). Russia's fear of this corridor drives its policy on Poland, the Baltics and Ukraine.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104317}}
@@ -1000,6 +1227,9 @@
   type: Desert
   category: Deserts, Plateaus & Plains
   tier: 1
+  note: >-
+    It is the barrier dividing North from sub-Saharan Africa. Camel caravans traded gold for salt, building Ghana
+    and Mali (Mansa Musa, 1324). Today it is a Sahel-linked insecurity zone and migration route.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104337}}
@@ -1013,6 +1243,9 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 1
+  note: >-
+    It is the core of Chinese civilization and population, built from Yellow River silt and exposed to the steppe to
+    the north, which drove the Great Wall.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104313}}
@@ -1024,6 +1257,9 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    It is the breadbasket of North America. Taking it from the Plains nations, and the railroad, built US
+    agricultural power.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104319}}
@@ -1035,6 +1271,9 @@
   type: Desert
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    It is the cradle of Arab tribes and Islam (Hejaz) and the frankincense caravan routes. Beneath it lies the
+    world's largest concentration of conventional oil (Ghawar).
   style: area
   # The peninsula's interior: the peninsula less NE's highland and coastal-plain polygons, the Syrian Desert to the
   # north, and a hand-drawn Yemen highlands cut; the largest piece is kept, dropping cut-off coastal scraps.
@@ -1063,6 +1302,9 @@
   type: Desert
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    It separated China from Mongolian steppe powers and was the Mongol Empire's homeland. Today it is a
+    China–Mongolia mining frontier.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104335}}
@@ -1075,6 +1317,9 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    Silk Road oasis cities (Kashgar, Khotan) ringed the desert. It is the core of Xinjiang and the scene of Chinese
+    repression of Uyghurs.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104093}}
@@ -1087,6 +1332,8 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    Scythians, Cumans and Tatars held it in turn. Ukraine's black-earth grain belt lies here.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1730073981}}
@@ -1096,8 +1343,11 @@
   uid: TbJE2rCJOU
   name: Sahel
   type: Region
-  category: Regions, Rifts & Deltas
+  category: Regions & Rifts
   tier: 2
+  note: >-
+    It is the transition belt that sustained Ghana, Mali and Songhay, and the Islam–Africa frontier. Today it has a
+    coup belt and jihadist insurgency (Mali, Burkina Faso, Niger).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104207}}
@@ -1110,6 +1360,9 @@
   type: Plateau
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    It is peninsular India's plateau, which kept the south distinct and often independent of northern empires
+    (Vijayanagara, Deccan sultanates, Marathas).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104233}}
@@ -1122,6 +1375,9 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    It is the western terminus of the steppe, where the Huns, Avars and Magyars settled. It was the Ottoman–Habsburg
+    battleground.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103307}}
@@ -1134,6 +1390,9 @@
   type: Valley
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    It is Central Asia's most fertile and populous valley, sliced among Uzbekistan, Kyrgyzstan and Tajikistan by
+    Soviet borders, with recurring clashes (Kyrgyz–Tajik 2021–22).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104237}}
@@ -1145,6 +1404,9 @@
   type: Plateau
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    The highland fortress let Ethiopia avoid colonization (Adwa 1896). It feeds the Blue Nile, the source of most of
+    the Nile's water, and is the site of Ethiopia's GERD dam.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104165}}
@@ -1156,6 +1418,8 @@
   type: Plateau
   category: Deserts, Plateaus & Plains
   tier: 3
+  note: >-
+    It is the launch platform of the Xiongnu and the Mongol Empire.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104229}}
@@ -1166,8 +1430,11 @@
   name: Arabian Peninsula
   alt_names: [Arabia]
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 1
+  note: >-
+    It is the birthplace of Islam (Mecca, Medina) and holds the Gulf oil states. It is flanked by Hormuz and Bab
+    el-Mandeb.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104333}}
@@ -1178,8 +1445,11 @@
   name: Anatolia
   alt_names: [Asia Minor]
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 1
+  note: >-
+    It is the land bridge between Europe and Asia: Hittite, Greek, Byzantine and Seljuk/Ottoman. Turkey's control of
+    it and the Straits makes it a NATO pivot.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104259}}
@@ -1190,8 +1460,11 @@
   name: Balkan Peninsula
   alt_names: [Balkans]
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 1
+  note: >-
+    It is the fault line among Rome and Byzantium, Catholicism, Orthodoxy and Islam, and the Habsburg and Ottoman
+    empires. WWI was triggered here (Sarajevo 1914), and the Yugoslav wars were fought here in the 1990s.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104241}}
@@ -1201,8 +1474,11 @@
   uid: GqSNgr5JFA
   name: Korean Peninsula
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 1
+  note: >-
+    It is the land bridge between China and Japan, invaded by Japan (1592–98) and occupied 1910–45. It has been
+    divided since 1945, and the Korean War of 1950–53 ended only in an armistice.
   style: area
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321181}}
@@ -1213,8 +1489,11 @@
   uid: mu7RWnc1HL
   name: Crimea
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 1
+  note: >-
+    It is the Black Sea fleet base (Sevastopol) and the scene of the Crimean War (1853–56). Russia annexed it in
+    2014, a move most states don't recognize, and it became a target in the war that began in 2022.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103999}}
@@ -1224,7 +1503,8 @@
   uid: IX4hYyVu9S
   name: Great Britain
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 1
   style: area
   geometry:
@@ -1236,7 +1516,8 @@
   name: Japanese archipelago
   alt_names: [Japan]
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 1
   style: area
   geometry:
@@ -1250,7 +1531,8 @@
   uid: ippC7nxLXz
   name: Taiwan
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 1
   style: area
   geometry:
@@ -1262,8 +1544,10 @@
   name: Iberian Peninsula
   alt_names: [Iberia]
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 2
+  note: >-
+    It was al-Andalus (711–1492) and launched the Portuguese and Spanish oceanic empires.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104343}}
@@ -1273,20 +1557,24 @@
   uid: EDEuFT6MuC
   name: Malay Peninsula
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 2
+  note: >-
+    It forms the Strait of Malacca's eastern shore and was the Melaka sultanate's base.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104157}}
-  - {feature: singapore, subtract: true}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321247}, subtract: true}  # Singapore (retired card)
   expect: {bbox: [98, 1, 104.5, 9.5], area_km2: [160000, 210000]}
 
 - id: kola-peninsula
   uid: EnMk3w8RQR
   name: Kola Peninsula
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 2
+  note: >-
+    It is the home of Russia's Northern Fleet and its nuclear missile submarines.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104001}}
@@ -1296,7 +1584,8 @@
   uid: Hb2MdpB4UL
   name: Singapore
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1308,7 +1597,8 @@
   name: Sri Lanka
   alt_names: [Ceylon]
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1319,7 +1609,8 @@
   uid: RRTwjkFCAi
   name: Cyprus
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1331,7 +1622,8 @@
   name: Sicily
   alt_names: [Sicilia]
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1342,7 +1634,8 @@
   uid: hHXfbt0zCf
   name: Greenland
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1353,7 +1646,8 @@
   uid: vgO5uomViN
   name: Cuba
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1365,7 +1659,8 @@
   name: Oahu
   alt_names: [Hawaii]
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1377,7 +1672,8 @@
   name: Okinawa
   alt_names: [Ryukyu Islands]
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1388,7 +1684,8 @@
   uid: pnsQqFcCbx
   name: Spratly Islands
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1399,8 +1696,10 @@
   uid: XQjnIWChbv
   name: Isthmus of Kra
   type: Isthmus
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 3
+  note: >-
+    It is the narrow neck of the Malay Peninsula, the subject of repeated canal proposals to bypass Malacca.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104095}}
@@ -1410,8 +1709,11 @@
   uid: TFW0XVkK7g
   name: Isthmus of Panama
   type: Isthmus
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 1
+  note: >-
+    It is the narrow land bridge between the Americas and between the Atlantic and Pacific. The Panama Canal, opened
+    across it in 1914, handed the US a two-ocean navy.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104085}}
@@ -1422,7 +1724,8 @@
   name: Diego Garcia
   alt_names: [Chagos Archipelago]
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 3
   style: point
   geometry:
@@ -1435,7 +1738,8 @@
   name: Falkland Islands
   alt_names: [Malvinas]
   type: Island
-  category: Peninsulas & Islands
+  category: Islands
+  retired: true
   tier: 3
   style: area
   geometry:
@@ -1446,8 +1750,11 @@
   uid: 5sPHyX6RC5
   name: Caspian Sea
   type: Lake
-  category: Lakes
+  category: Water Bodies
   tier: 2
+  note: >-
+    It is the world's largest lake and an oil and gas basin (Baku), and a corridor between Russia, Iran and Central
+    Asia.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115461}}
@@ -1457,8 +1764,11 @@
   uid: EyhRws00Ih
   name: Great Lakes
   type: Lake
-  category: Lakes
+  category: Water Bodies
   tier: 2
+  note: >-
+    Together with the St. Lawrence Seaway, they form the industrial heartland of North America, and they define much
+    of the US–Canada border.
   style: area
   geometry:
   - {layer: 10m_lakes, select: {ne_id: 1159112991}}
@@ -1473,8 +1783,11 @@
   name: Lake Victoria
   alt_names: [Nyanza]
   type: Lake
-  category: Lakes
+  category: Water Bodies
   tier: 2
+  note: >-
+    It is the largest lake in Africa and the White Nile's main source, identified by Speke in 1858. Millions of
+    people around its shores depend on it.
   style: area
   geometry:
   - {layer: 10m_lakes, select: {ne_id: 1159113191}}
@@ -1484,8 +1797,11 @@
   uid: HTwuBX9dFV
   name: Aral Sea
   type: Lake
-  category: Lakes
+  category: Water Bodies
   tier: 2
+  note: >-
+    Soviet irrigation diverted its feeder rivers and largely destroyed it. It is the textbook water-management
+    disaster.
   style: area
   geometry:
   - {layer: 10m_lakes, select: {ne_id: 1729982865}}
@@ -1498,8 +1814,11 @@
   name: Lake Baikal
   alt_names: [Baikal]
   type: Lake
-  category: Lakes
+  category: Water Bodies
   tier: 3
+  note: >-
+    It is the deepest and oldest lake on Earth and holds a large share of the world's unfrozen surface fresh water.
+    The Trans-Siberian railway skirts it.
   style: area
   geometry:
   - {layer: 10m_lakes, select: {ne_id: 1159113127}}
@@ -1510,8 +1829,10 @@
   name: Lake Titicaca
   alt_names: [Titicaca]
   type: Lake
-  category: Lakes
+  category: Water Bodies
   tier: 3
+  note: >-
+    It is the cradle of Tiwanaku and of Inca origin myths, and the Peru–Bolivia border.
   style: area
   geometry:
   - {layer: 10m_lakes, select: {ne_id: 1159113279}}
@@ -1521,8 +1842,10 @@
   uid: jMgCBQTIQi
   name: Lake Chad
   type: Lake
-  category: Lakes
+  category: Water Bodies
   tier: 3
+  note: >-
+    It has shrunk dramatically since the 1960s, and Boko Haram operates around it in a four-country border zone.
   style: area
   geometry:
   - {layer: 10m_lakes, select: {ne_id: 1159113219}}
@@ -1534,8 +1857,11 @@
   name: Great Rift Valley
   alt_names: [East African Rift]
   type: Valley
-  category: Regions, Rifts & Deltas
+  category: Regions & Rifts
   tier: 2
+  note: >-
+    Its fossil sites (Olduvai, Turkana, Afar) make it the cradle of the human lineage. The rift lakes and highlands
+    shape East African settlement.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103991}, rows: 2}
@@ -1546,8 +1872,11 @@
   name: Ganges–Brahmaputra Delta
   alt_names: [Bengal Delta, Sundarbans Delta]
   type: Delta
-  category: Regions, Rifts & Deltas
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is the world's largest delta and one of the most densely populated regions on Earth (Bangladesh). It was the
+    base of the British East India Company's power (Plassey, 1757).
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103515}}
@@ -1559,6 +1888,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    It carried about 20% of world petroleum liquids consumption in 2024, plus about one-fifth of world LNG trade,
+    and bypass pipelines can carry only a fraction of that.
   style: strait
   geometry:
   - {file: strait-of-hormuz.geojson}
@@ -1570,6 +1902,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    It is the Red Sea's southern gate between Yemen and Djibouti, where China, the US, France and others keep bases.
+    Oil flow through it was 4.2 mb/d in 1H25.
   style: strait
   geometry:
   - {file: bab-el-mandeb.geojson}
@@ -1581,6 +1916,10 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 1
+  note: >-
+    Ṭāriq ibn Ziyād crossed it in 711 to begin the Muslim conquest of Iberia, and Spain ceded Gibraltar to Britain
+    in 1713 (Utrecht). It is the Mediterranean's only natural Atlantic outlet and a major migration crossing into
+    Europe.
   style: strait
   geometry:
   - {file: strait-of-gibraltar.geojson}
@@ -1592,6 +1931,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    Egypt's closure of it in May 1967 cut Israel's port of Eilat off from the Gulf of Aqaba and helped trigger the
+    Six-Day War.
   style: strait
   geometry:
   - {file: strait-of-tiran.geojson}
@@ -1604,6 +1946,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    It is the deep-water gap between Taiwan and the Philippines, a key route for Chinese submarines and carriers
+    into the Pacific and a focus of US–Philippine basing.
   style: strait
   geometry:
   - {file: luzon-strait.geojson}
@@ -1615,6 +1960,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    It sits on the Beringia land bridge by which humans first entered the Americas, and today it is the US–Russia
+    maritime border and the Arctic gateway.
   style: strait
   geometry:
   - {file: bering-strait.geojson}
@@ -1627,6 +1975,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    In the Cold War it was the choke line for Soviet submarines leaving Kola, guarded by SOSUS hydrophones. Its
+    importance is reviving with Arctic access.
   style: strait
   geometry:
   - {file: giuk-gap.geojson}
@@ -1638,6 +1989,9 @@
   type: Sea route
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    Russia's Arctic coastal route carried about 37 Mt in 2025, mostly destination traffic (Yamal LNG) rather than
+    Asia–Europe transit (about 3.2 Mt).
   style: line
   geometry:
   - {file: northern-sea-route.geojson}
@@ -1650,6 +2004,9 @@
   type: Canal
   category: Straits & Chokepoints
   tier: 2
+  note: >-
+    The Sui (from 605) and later dynasties built it to ship Yangtze-valley grain north to the capitals and armies.
+    It was the backbone of imperial unity.
   style: line
   geometry:
   - {file: grand-canal.geojson}
@@ -1661,6 +2018,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 3
+  note: >-
+    It is a deep-water alternative to Malacca for the largest ships, central to any blockade or "Malacca dilemma"
+    scenario.
   style: strait
   geometry:
   - {file: lombok-strait.geojson}
@@ -1672,6 +2032,8 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 3
+  note: >-
+    It is an alternative to Malacca between Sumatra and Java, though too shallow for the largest ships.
   style: strait
   geometry:
   - {file: sunda-strait.geojson}
@@ -1682,6 +2044,7 @@
   name: Dzungarian Gate
   type: Pass
   category: Passes & Corridors
+  retired: true
   tier: 2
   style: point
   geometry:
@@ -1693,6 +2056,7 @@
   name: Brenner Pass
   type: Pass
   category: Passes & Corridors
+  retired: true
   tier: 2
   style: point
   geometry:
@@ -1705,6 +2069,7 @@
   alt_names: [Chicken's Neck]
   type: Corridor
   category: Passes & Corridors
+  retired: true
   tier: 2
   style: area
   geometry:
@@ -1716,6 +2081,7 @@
   name: Cumberland Gap
   type: Pass
   category: Passes & Corridors
+  retired: true
   tier: 3
   style: point
   geometry:
@@ -1728,6 +2094,7 @@
   name: Thermopylae
   type: Pass
   category: Passes & Corridors
+  retired: true
   tier: 3
   style: point
   geometry:
@@ -1739,6 +2106,7 @@
   name: Wakhan Corridor
   type: Corridor
   category: Passes & Corridors
+  retired: true
   tier: 3
   style: area
   geometry:
@@ -1751,6 +2119,7 @@
   alt_names: [Georgian Military Road]
   type: Pass
   category: Passes & Corridors
+  retired: true
   tier: 3
   style: point
   geometry:
@@ -1763,6 +2132,7 @@
   alt_names: [Karakoram Highway]
   type: Pass
   category: Passes & Corridors
+  retired: true
   tier: 3
   style: point
   geometry:
@@ -1774,8 +2144,11 @@
   name: Ganges
   alt_names: [Ganga]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 1
+  note: >-
+    Its basin is one of the most populous on Earth. It is the heartland of the Maurya, Gupta and Mughal states and
+    sacred in Hinduism.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Ganges, rivernum: 55}}
@@ -1787,8 +2160,11 @@
   name: St. Lawrence River
   alt_names: [St. Lawrence Seaway]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It was the entry to New France and the fur trade, and the 1759 fall of Quebec decided the continent. The 1959
+    Seaway gives ocean ships access to the Great Lakes.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: St. Lawrence, rivernum: 23}}
@@ -1800,8 +2176,11 @@
   name: Paraná–Río de la Plata
   alt_names: [Paraná, Río de la Plata]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It is the outlet of the Southern Cone and the cause of the Paraguayan War (1864–70). Today it carries Argentine,
+    Paraguayan and Brazilian soy exports.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Paraná, rivernum: 36}}
@@ -1816,8 +2195,10 @@
   name: Oder–Neisse
   alt_names: [Oder–Neisse line]
   type: River
-  category: Rivers
+  category: Rivers & Deltas
   tier: 3
+  note: >-
+    It has been the Germany–Poland border since 1945, confirmed in 1990.
   style: line
   geometry:
   - {layer: 10m_rivers_lake_centerlines, select: {name: Oder, rivernum: 130}}
@@ -1832,6 +2213,9 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 1
+  note: >-
+    It was the grassland highway for horse nomads (Scythians, Xiongnu, Huns, Turks, Mongols) and gave Eurasia a
+    common history. Mackinder's Heartland thesis was built on it.
   style: area
   geometry:
   - {feature: pontic-caspian-steppe}
@@ -1849,6 +2233,9 @@
   type: Plain
   category: Deserts, Plateaus & Plains
   tier: 1
+  note: >-
+    It is the densest large agricultural plain on Earth and the prize of every invasion through the northwest
+    passes. Three battles were fought at Panipat, north of Delhi.
   style: area
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104223}}
@@ -1863,6 +2250,9 @@
   type: Plateau
   category: Deserts, Plateaus & Plains
   tier: 2
+  note: >-
+    It is the core of Persian empires from the Achaemenids onward, a mountain-ringed fortress (Zagros, Elburz) that
+    has resisted occupation.
   style: area
   geometry:
   - {file: iranian-plateau.geojson}
@@ -1876,8 +2266,11 @@
   name: Italian Peninsula
   alt_names: [Apennine Peninsula]
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 2
+  note: >-
+    It is the core of the Roman Empire and Renaissance city-states, central in the Mediterranean, and was invaded
+    through the Alpine passes.
   style: area
   geometry:
   - {file: italian-peninsula.geojson}
@@ -1888,8 +2281,11 @@
   name: Sinai Peninsula
   alt_names: [Sinai]
   type: Peninsula
-  category: Peninsulas & Islands
+  category: Peninsulas & Isthmuses
   tier: 2
+  note: >-
+    It is the land bridge between Africa and Asia, fought over in 1956, 1967 and 1973 and returned to Egypt after
+    the 1979 treaty. It borders Gaza.
   style: area
   geometry:
   - {file: sinai-peninsula.geojson}
@@ -1899,8 +2295,11 @@
   uid: 7mjXflnxVZ
   name: Fertile Crescent
   type: Region
-  category: Regions, Rifts & Deltas
+  category: Regions & Rifts
   tier: 1
+  note: >-
+    It runs from the Nile valley to the Persian Gulf, and the first settled farming communities appeared here (early
+    9th millennium BCE). It is the cradle of wheat, barley and the first cities.
   style: area
   geometry:
   - {feature: levant}
@@ -1912,8 +2311,11 @@
   uid: JhYVnLae8v
   name: Levant
   type: Region
-  category: Regions, Rifts & Deltas
+  category: Regions & Rifts
   tier: 2
+  note: >-
+    It is the eastern Mediterranean coastal corridor between Egypt and Mesopotamia, contested by every empire.
+    Israel, Palestine, Lebanon and Syria are all here.
   style: area
   geometry:
   - {file: levant.geojson}
@@ -1926,8 +2328,11 @@
   uid: fWzUdRCmmH
   name: Pearl River Delta
   type: Delta
-  category: Regions, Rifts & Deltas
+  category: Rivers & Deltas
   tier: 2
+  note: >-
+    It became the factory of the world after 1978: Guangzhou, Shenzhen and Hong Kong. Its ports cluster among the
+    world's busiest.
   style: area
   geometry:
   - {file: pearl-river-delta.geojson}
@@ -1941,6 +2346,10 @@
   qualifier: July
   category: Climate Systems
   tier: 1
+  note: >-
+    The June–September rains supply most of India's annual rainfall, and much of its farmland is rain-fed. The
+    reversing winds let Roman-era ships sail straight across the Arabian Sea and drove Indian Ocean trade from Egypt
+    to India and beyond.
   style: flow-wind
   geometry:
   - {file: south-asian-monsoon.geojson}
@@ -1953,6 +2362,10 @@
   type: Wind system
   category: Climate Systems
   tier: 1
+  note: >-
+    They were the return leg of every sailing gyre. The Dutch "Brouwer route" through the 40s–50°S cut the
+    Cape-to-Java passage from about a year to about six months. Seager et al. (2002) argue that mean westerly winds,
+    more than ocean heat, keep western Europe mild.
   style: flow-wind
   geometry:
   - {file: westerlies.geojson}
@@ -1965,6 +2378,10 @@
   type: Ocean current
   category: Climate Systems
   tier: 1
+  note: >-
+    Cold upwelling feeds the world's largest single-species fishery, the Peruvian anchoveta. Seabird guano from the
+    same food web was Peru's main source of state revenue for decades after the 1840s, and fed the 1864 Spanish
+    seizure of the Chincha Islands and the War of the Pacific.
   style: flow-current
   geometry:
   - {file: humboldt-current.geojson}
@@ -1979,6 +2396,9 @@
   qualifier: June
   category: Climate Systems
   tier: 2
+  note: >-
+    Its summer rains underwrite wet-rice farming in southern China, Korea and Japan, and its failures and floods
+    (e.g., Yangtze floods) recur in Chinese dynastic history.
   style: flow-wind
   geometry:
   - {file: east-asian-monsoon.geojson}
@@ -1991,6 +2411,9 @@
   qualifier: August
   category: Climate Systems
   tier: 2
+  note: >-
+    It is the Sahel's only rain source. A regime shift around 1968 brought the 1970s–80s Sahel drought, with
+    rainfall deficits up to 50% in the northern Sahel and mass famine. Recovery is still incomplete in the west.
   style: flow-wind
   geometry:
   - {file: west-african-monsoon.geojson}
@@ -2004,6 +2427,9 @@
   qualifier: July
   category: Climate Systems
   tier: 2
+  note: >-
+    Sailing ships were becalmed here, and Iberian pilots chose where to cross it. Its seasonal north–south migration
+    sets the timing of tropical rainy seasons, so it is the engine behind the monsoons.
   style: band
   geometry:
   - {file: itcz.geojson}
@@ -2015,6 +2441,8 @@
   type: Climate belt
   category: Climate Systems
   tier: 2
+  note: >-
+    It wrecked Spanish treasure fleets and still threatens the US Gulf Coast's ports and energy infrastructure.
   style: band
   geometry:
   - {file: atlantic-hurricane-belt.geojson}
@@ -2027,6 +2455,9 @@
   type: Climate belt
   category: Climate Systems
   tier: 2
+  note: >-
+    Typhoons in 1274 and 1281 (the *kamikaze*, "divine wind") wrecked Kublai Khan's invasion fleets at Hakata Bay.
+    It is the most active cyclone basin on Earth, hitting the Philippines, Taiwan, South China and Japan.
   style: band
   geometry:
   - {file: typhoon-alley.geojson}
@@ -2038,6 +2469,9 @@
   type: Ocean current
   category: Climate Systems
   tier: 3
+  note: >-
+    It is the cold upwelling that makes the Namib a coastal desert and supports Namibian and South African
+    fisheries.
   style: flow-current
   geometry:
   - {file: benguela-current.geojson}
@@ -2050,6 +2484,9 @@
   type: Ocean current
   category: Climate Systems
   tier: 3
+  note: >-
+    It is Japan's warm "Black Current" and a driver of its rich fisheries, and it carried drifting junks to the
+    Americas.
   style: flow-current
   geometry:
   - {file: kuroshio.geojson}
@@ -2061,6 +2498,9 @@
   type: Climate belt
   category: Climate Systems
   tier: 3
+  note: >-
+    Storm surge on the Ganges–Brahmaputra delta is among the deadliest anywhere. The Bhola cyclone and the botched
+    response fed into Bangladesh's 1971 independence war.
   style: band
   geometry:
   - {file: bay-of-bengal-cyclones.geojson}

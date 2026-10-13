@@ -10,7 +10,7 @@ Separately, the sibling-pair check flagged nesting only when two cards had the i
 
 ## Decision
 
-**23 shown words.** Every word covers at least 3 cards, with these exceptions:
+**23 words.** Every word covers at least 3 active cards, with these exceptions (Pass, Corridor and Island, which now cover only retired cards, are covered under Retired categories below):
 
 | Word | Cards | Why it stays |
 |---|---|---|
@@ -35,7 +35,15 @@ Separately, the sibling-pair check flagged nesting only when two cards had the i
 
 **Qualifier.** `qualifier` adds only the season a climate map shows ("Wind system, July"). "Monsoon" isn't used as a qualifier, because it would give away part of the answer.
 
-**Region category.** Region is used in one category only (Regions, Rifts & Deltas), so the Sahel moved there from Deserts, Plateaus & Plains.
+**Region category.** Region is used in one category only (now Regions & Rifts), so the Sahel moved there from Deserts, Plateaus & Plains.
+
+**Water Bodies category.** Lakes merged into a "Water Bodies" category (oceans, seas, lakes) at the user's request; card fronts still show the Ocean/Sea/Lake type.
+
+**Rivers & Deltas category.** Deltas live with their rivers in 'Rivers & Deltas'; the remaining category is renamed 'Regions & Rifts'.
+
+**Retired categories.** All Passes & Corridors cards and the islands in the former Peninsulas & Islands are retired at the user's request; that category is now Peninsulas & Isthmuses. Pass, Corridor and Island stay in the vocabulary and families so the retired entries still validate, but no active card shows them. For the same reason the category list keeps "Passes & Corridors" and a separate "Islands" value, used only by retired entries.
+
+**Retirement means archived.** A retired entry is validated against the schema only: it is not resolved, rendered, pair-checked or required to have a note. Its geometry may drift out of date, so un-retiring one needs a `make check-data` run. An active card should not depend on a retired one; `make check-data` notes any geometry or `frame.context` reference to a retired feature and fails on an `allow_nested` that names one.
 
 **Families.** Each word has a coarse family (`model.FAMILY`):
 
@@ -63,5 +71,5 @@ Island is a family of its own. NE draws some island groups as sea-area envelopes
 
 - Re-typing a card usually changes only the note text. The map re-renders when the new word moves it into or out of a land family (the land clip changes its geometry, and the render hash records this, including through `{feature:}` references), or changes its fill opacity or close-up borders.
 - Moving the Sahel to another category leaves an already-imported card in its old subdeck; see the tier note in the README.
-- The vocabulary is 23 words, above the 15–18 first estimated. The ≥3 rule keeps every word that covers 3 or more cards. Fewer words would mean merging informative ones, for example Delta into Plain, Corridor into Pass, or Canal and Sea route into one word.
-- Switching the pair check to families surfaced three nestings: Singapore in the Malay Peninsula, now subtracted; Barents in the Arctic Ocean, allowed; and the Zagros in the Iranian Plateau, allowed.
+- The vocabulary is 23 words, above the 15–18 first estimated. The ≥3 rule kept every word that covered 3 or more cards when it was adopted; retiring the passes and islands has since left Pass, Corridor and Island with no active card. Fewer words would mean merging informative ones, for example Delta into Plain, Corridor into Pass, or Canal and Sea route into one word.
+- Switching the pair check to families surfaced three nestings: Singapore in the Malay Peninsula, now subtracted (Singapore is since retired, so the peninsula subtracts Singapore's Natural Earth row directly and its shape is unchanged); Barents in the Arctic Ocean, allowed; and the Zagros in the Iranian Plateau, allowed.

@@ -8,7 +8,7 @@ from geofeat.model import Expect, Feature, FrameOptions, Part
 
 
 def feature(**frame_options) -> Feature:
-    return Feature(id="x", name="X", type="Plain", category="Regions, Rifts & Deltas", tier=3, style="area",
+    return Feature(id="x", name="X", type="Plain", category="Regions & Rifts", tier=3, style="area",
                    geometry=[Part(layer="10m_land", select={"x": 1})], expect=Expect(bbox=(-180, -90, 180, 90)),
                    frame=FrameOptions(**frame_options))
 

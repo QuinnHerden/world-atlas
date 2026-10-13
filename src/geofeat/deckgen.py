@@ -1,15 +1,27 @@
-"""Write the deck markdown for ankc: one file per category and tier, one card per feature."""
+"""Write the deck markdown for ankc: one file, every card in the one deck, in study order (see order.py)."""
 
 import html
 import json
 import re
-from collections import defaultdict
 
-from geofeat.model import DECK, MEDIA_INDEX, Feature, active, load_features
+from geofeat.model import DECK, MEDIA_INDEX, ROOT_DECK, Feature, active, load_features
+from geofeat.order import Siblings, dependencies, inverted, load_siblings, study_order
+
+DECK_FILE = DECK / "geographic-features.md"
 
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def id_tag(feature: Feature) -> str:
+    """Lets Anki find a card again once it is retired; see "Retired cards" in the README. Kept as id_<id> because
+    ankc before 0.5 cut a footnote tag at its first colon, and cards already imported carry this form."""
+    return f"id_{feature.id}"
+
+
+def tags(feature: Feature) -> list[str]:
+    return [f"tier::{feature.tier}", f"category::{_slug(feature.category)}", id_tag(feature)]
 
 
 def card(feature: Feature, image: str) -> str:
@@ -17,7 +29,12 @@ def card(feature: Feature, image: str) -> str:
     if feature.alt_names:
         answer += f" ({', '.join(feature.alt_names)})"
     front = f"**{html.escape(feature.type_text)}**<br>![]({image})"
-    return f"---\n\n{front} ::: {html.escape(answer)}\n\n---\n[^uid]: {feature.uid}\n"
+    footnotes = "".join(f"[^tag]: {tag}\n" for tag in tags(feature))
+    return f"---\n\n{front} ::: {html.escape(answer)}\n\n---\n[^uid]: {feature.uid}\n{footnotes}"
+
+
+def ordered(features: list[Feature], siblings: Siblings) -> list[Feature]:
+    return study_order(features, dependencies(features, siblings), {frozenset(pair) for pair in siblings.close})
 
 
 def main() -> None:
@@ -26,19 +43,16 @@ def main() -> None:
     if missing:
         raise SystemExit(f"features without a uid (run `make ids`): {missing}")
     media = json.loads(MEDIA_INDEX.read_text())
-
-    files: dict[tuple[str, int], list[Feature]] = defaultdict(list)
-    for feature in features:
-        files[(feature.category, feature.tier)].append(feature)
+    siblings = load_siblings()
+    for parent, child in inverted(features, dependencies(features, siblings)):
+        print(f"order: {child} comes before its parent {parent}, which is in a later tier")
 
     DECK.mkdir(exist_ok=True)
     for old in DECK.glob("*.md"):
         old.unlink()
-    for (category, tier), members in sorted(files.items()):
-        header = f"---\ndeck: \"{members[0].subdeck}\"\ntags:\n  - tier::{tier}\n---\n"
-        body = "\n".join(card(f, media[f.id]) for f in members)
-        (DECK / f"{_slug(category)}-tier-{tier}.md").write_text(header + body)
-    print(f"wrote {len(features)} cards in {len(files)} files")
+    header = f"---\ndeck: \"{ROOT_DECK}\"\n---\n"
+    DECK_FILE.write_text(header + "\n".join(card(f, media[f.id]) for f in ordered(features, siblings)))
+    print(f"wrote {len(features)} cards to {DECK_FILE.name}")
 
 
 if __name__ == "__main__":

@@ -16,19 +16,20 @@ MEDIA_INDEX = BUILD / "media.json"  # feature id -> rendered PNG name
 ROOT_DECK = "Geographic Features"
 
 Category = Literal[
-    "Oceans & Seas",
+    "Water Bodies",
     "Straits & Chokepoints",
     "Mountain Ranges",
-    "Passes & Corridors",
-    "Rivers",
+    "Passes & Corridors",  # retired entries only
+    "Rivers & Deltas",
     "Deserts, Plateaus & Plains",
-    "Peninsulas & Islands",
-    "Lakes",
-    "Regions, Rifts & Deltas",
+    "Peninsulas & Isthmuses",
+    "Islands",  # retired entries only
+    "Regions & Rifts",
     "Climate Systems",
 ]
-# The type word shown on the card. Each covers 3+ cards, except Isthmus (tells Kra from the Malay Peninsula), Valley
-# and Sea route (the user's merges) and Cape (no honest merge); see docs/adr/0001-type-vocabulary.md.
+# The type word shown on the card. Each covers 3+ active cards, except Isthmus (tells Kra from the Malay Peninsula),
+# Valley and Sea route (the user's merges) and Cape (no honest merge); Pass, Corridor and Island are kept only for
+# retired entries. See docs/adr/0001-type-vocabulary.md.
 FeatureType = Literal[
     "Ocean", "Sea", "Lake",
     "River", "Delta",
@@ -130,6 +131,7 @@ class Feature(Strict):
     alt_names: list[CardText] = []
     type: FeatureType
     qualifier: CardText | None = None  # e.g. the season a climate map shows: "Monsoon, July"
+    note: CardText | None = None  # why it matters, 1-3 sentences; shown in the PDF guide, required on active cards
     category: Category
     tier: Literal[1, 2, 3]
     style: Style
@@ -147,10 +149,6 @@ class Feature(Strict):
     @property
     def type_text(self) -> str:
         return f"{self.type}, {self.qualifier}" if self.qualifier else self.type
-
-    @property
-    def subdeck(self) -> str:
-        return f"{ROOT_DECK}::{self.category}::Tier {self.tier}"
 
 
 def load_features() -> list[Feature]:

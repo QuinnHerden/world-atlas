@@ -18,7 +18,9 @@ from shapely.geometry import MultiLineString, Point, Polygon
 from shapely.geometry.base import BaseGeometry
 
 from geofeat.frame import laea, project
+from geofeat.deckgen import ordered, tags
 from geofeat.model import DECK, GEOMETRY, MEDIA_INDEX, ROOT, ROOT_DECK, Feature, active, load_features
+from geofeat.order import Siblings, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
 
@@ -114,10 +116,33 @@ def _check_feature(feature: Feature, geometry: BaseGeometry) -> list[str]:
     return []
 
 
+def missing_notes(features: list[Feature]) -> list[str]:
+    return [f"{f.id}: no note (1-3 sentences on why it matters)" for f in active(features) if not f.note]
+
+
+def retired_references(features: list[Feature]) -> tuple[list[str], list[str]]:
+    """Errors and notes for active features that point at retired ones. Retired entries aren't re-validated, so a
+    reference keeps working only as long as the retired shape still resolves."""
+    retired = {f.id for f in features if f.retired}
+    errors, notes = [], []
+    for feature in active(features):
+        for part in feature.geometry:
+            if part.feature in retired:
+                use = "subtracts" if part.subtract else "adds"
+                notes.append(f"retired input: {feature.id} {use} retired {part.feature!r} in its geometry")
+        notes += [f"retired input: {feature.id} draws retired {other!r} as frame.context"
+                  for other in feature.frame.context if other in retired]
+        errors += [f"{feature.id}: allow_nested names retired feature {o.id!r}; drop it"
+                   for o in feature.allow_nested if o.id in retired]
+    return errors, notes
+
+
 def check_data() -> tuple[list[str], list[str]]:
     """Errors, and notes that must stay visible: trims, nesting overrides, and flagged or nested sibling pairs."""
-    features = active(load_features())
+    all_features = load_features()
+    features = active(all_features)
     errors = [f"{f.id}: no uid (run `make ids` and commit)" for f in features if f.uid is None]
+    errors += missing_notes(all_features)
     for path in sorted(GEOMETRY.glob("*.geojson")):
         errors += provenance_errors(path.name, json.loads(path.read_text()))
     notes = []
@@ -135,8 +160,23 @@ def check_data() -> tuple[list[str], list[str]]:
         if feature.trim_to_largest:
             notes.append(f"trim: {feature.id} keeps its largest piece, dropping {trimmed:,.0f} km²")
         notes += [f"override: {feature.id} ~ {o.id} may nest: {o.reason}" for o in feature.allow_nested]
-    pairs = [p for p in find_pairs(clean) if p.flagged or p.nested]
+    retired_errors, retired_notes = retired_references(all_features)
+    errors += retired_errors
+    notes += retired_notes
+    all_pairs = find_pairs(clean)
+    pairs = [p for p in all_pairs if p.flagged or p.nested]
     errors += [f"{p.a} ~ {p.b}: highlights too alike (IoU {p.iou:.2f}, cover {p.cover:.2f})" for p in pairs if p.flagged]
+    if not errors:
+        siblings = Siblings(
+            area_km2={i: area_km2(g) for i, (_, g) in clean.items()},
+            close=[(p.a, p.b) for p in all_pairs],
+            nested=[(p.b if p.inner == p.a else p.a, p.inner) for p in pairs if p.nested],
+        )
+        try:
+            ordered(features, siblings)
+            save_siblings(siblings)
+        except ValueError as exc:
+            errors.append(f"study order: {exc}")
     notes.append(f"sibling pairs flagged or nested (within {NEAR_M // 1000} km or overlapping; `make pairs` lists all):")
     return errors, notes + [f"  {p}" for p in pairs]
 
@@ -149,8 +189,9 @@ def check_deck() -> list[str]:
             errors.append(f"{f.id}: not rendered (run `make render`)")
 
     version = subprocess.run(["ankc", "--version"], capture_output=True, text=True).stdout.strip()
-    if not re.fullmatch(r"0\.4\.\d+", version):
-        errors.append(f"ankc {version!r} found; 0.4.x required")
+    # 0.5 keeps `::` in footnote tags and numbers new cards in source order
+    if not re.fullmatch(r"0\.5\.\d+", version):
+        errors.append(f"ankc {version!r} found; 0.5.x required")
     result = subprocess.run(["ankc", "check", "--deck", ROOT_DECK, "--path", str(DECK)], capture_output=True, text=True)
     if result.returncode != 0:
         errors.append(f"ankc check failed:\n{result.stdout}{result.stderr}")
@@ -161,13 +202,27 @@ def check_package() -> list[str]:
     packages = list((ROOT / "dist").glob("*.apkg"))
     if len(packages) != 1:
         return [f"expected exactly one package in dist/, found {len(packages)}"]
-    expected = {f.uid for f in active(load_features())}
+    features = active(load_features())
+    features = ordered(features, load_siblings())
+    expected = {f.uid for f in features}
     with zipfile.ZipFile(packages[0]) as archive, tempfile.TemporaryDirectory() as tmp:
         archive.extract("collection.anki2", tmp)
         db = sqlite3.connect(Path(tmp) / "collection.anki2")
-        guids = {row[0] for row in db.execute("select guid from notes")}
+        decks = json.loads(db.execute("select decks from col").fetchone()[0])
+        rows = db.execute("select n.guid, n.tags, c.did, c.type, c.queue, c.due from notes n join cards c on c.nid = n.id").fetchall()
         db.close()
-    errors = []
+    note_tags = {guid: set(tags.split()) for guid, tags, *_ in rows}
+    guids = set(note_tags)
+    name = packages[0].name
+    errors = [f"{name}: note {f.uid} ({f.id}) lacks tags {sorted(missing)}" for f in features
+              if f.uid in note_tags and (missing := set(tags(f)) - note_tags[f.uid])]
+    if wrong := sorted({decks[str(did)]["name"] for _, _, did, *_ in rows} - {ROOT_DECK}):
+        errors.append(f"{name}: cards outside the {ROOT_DECK!r} deck: {wrong}")
+    if any((ctype, queue) != (0, 0) for *_, ctype, queue, _ in rows):
+        errors.append(f"{name}: some cards aren't new")
+    due = sorted((d, guid) for guid, *_, d in rows)
+    if [guid for _, guid in due] != [f.uid for f in features] or len({d for d, _ in due}) != len(due):
+        errors.append(f"{name}: new-card positions don't follow the study order")
     if missing := expected - guids:
         errors.append(f"{packages[0].name}: missing notes for uids {sorted(missing)}")
     if extra := guids - expected:

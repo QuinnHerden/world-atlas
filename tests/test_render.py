@@ -5,7 +5,7 @@ from geofeat.render import input_hash
 
 
 def area_feature(feature_type: str) -> Feature:
-    return Feature(id="x", name="X", type=feature_type, category="Regions, Rifts & Deltas", tier=3, style="area",
+    return Feature(id="x", name="X", type=feature_type, category="Regions & Rifts", tier=3, style="area",
                    geometry=[Part(layer="10m_land", select={"x": 1})], expect=Expect(bbox=(0, 0, 1, 1)))
 
 
