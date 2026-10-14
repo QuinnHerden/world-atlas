@@ -2,7 +2,6 @@
 
 import json
 import math
-import re
 import sqlite3
 import subprocess
 import sys

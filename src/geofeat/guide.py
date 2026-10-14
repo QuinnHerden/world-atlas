@@ -108,6 +108,10 @@ def _rank(section: Section) -> tuple[int, int]:
     return (0, 0) if section.study_pass == "orientation" else (int(section.study_pass), section.region or 0)
 
 
+def _place(study: Pass, region: int | None) -> str:
+    return pass_title(study) + ("" if region is None else f", region {region:02d}")
+
+
 def pass_title(study: Pass) -> str:
     return "Orientation" if study == "orientation" else f"Pass {study}"
 
@@ -273,9 +277,7 @@ def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     unrendered, has no note, or whose note carries a research marker."""
     from geofeat.countries_ne import state_ids
     from geofeat.curriculum import load_curriculum
-    from geofeat.order import frames, region_of
-    from geofeat.order.engine import lookup
-    from geofeat.order.inputs import feature_frames
+    from geofeat.order.inputs import card_region
     from geofeat.sources import all_cards
 
     cards = all_cards()
@@ -287,17 +289,18 @@ def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     if marked := sorted(c.key for c in cards if NOTE_MARKER.search(c.note or "")):
         raise SystemExit(f"notes with research markers: {marked}; run `make check-data`")
     curriculum = load_curriculum(state_ids())
-    frame_of = lookup(feature_frames(frames.load(), curriculum))
-
-    def region(c: Card) -> int:
-        return region_of(c, frame_of)  # the engine's own rule, so sections match how the cards were ordered
-
+    region = card_region(curriculum)  # the engine's own rule, so sections match how the cards were ordered
     parts = sections(entries(cards, positions.read().positions), region)
+    owned = set()
     for section in parts:
         for e in section.entries:
-            if e.card.study_pass != section.study_pass or (section.region and region(e.card) != section.region):
-                print(f"card {e.number} ({e.card.key}) sits in {pass_title(section.study_pass)}, region "
-                      f"{section.region}, outside its own; the guide shows it where Anki does")
+            own = (e.card.study_pass, None if e.card.study_pass == "orientation" else region(e.card))
+            owned.add(own)
+            if own != (section.study_pass, section.region):
+                print(f"card {e.number} ({e.card.key}, {_place(*own)}) sits in "
+                      f"{_place(section.study_pass, section.region)}; the guide shows it where Anki does")
+    for own in sorted(owned - {(s.study_pass, s.region) for s in parts}, key=lambda k: _rank(Section(*k, []))):
+        print(f"warning: {_place(*own)} has no section of its own; its cards are in the sections around it")
     return parts, {r.number: r.name for r in curriculum.regions}, {k: DECK / v for k, v in media.items()}
 
 
@@ -313,7 +316,7 @@ def main() -> None:
             raise SystemExit(f"no region {args.region}; the ring has {min(names)}-{max(names)}")
         parts = [s for s in parts if s.region == args.region]
         if not parts:
-            raise SystemExit(f"region {args.region} has no cards")
+            raise SystemExit(f"region {args.region} has no section of its own; see the warnings above")
         subtitle = f"Region {args.region:02d} · {names[args.region]}"
     out = out_path(args.region)
     doc = build(parts, names, images, out, subtitle)

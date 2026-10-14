@@ -97,7 +97,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
   alt_names: []               # shown in brackets after the name
   type: River                 # the word on the card front; one of 23
   qualifier: null             # optional detail after the type word, e.g. the season: "Wind system, July"
-  category: Rivers & Deltas   # category::<slug> tag; groups the PDF guide
+  category: Rivers & Deltas   # category::<slug> tag and area highlight opacity
   tier: 1
   note: >-                    # 1–3 sentences on why it matters; PDF guide only; required on active cards
     It created Pharaonic Egypt, ...
@@ -146,7 +146,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 
 ### Cards
 
-Rendering, deckgen's output and the deck and package checks read `Card` (`card.py`), not `Feature` ([ADR 0005](adr/0005-card-sources-and-card-dto.md)). The study order, the PDF guide and `make pairs` still read `Feature` until P3. Each module in `src/geofeat/sources/` adapts one data file to Cards: `features.py` (one card per active feature), `political.py` (a country card, a capital card unless `capital: null`, and the territory and dispute cards) and `cities.py`. `sources.all_cards()` collects them and fails on a key or uid that repeats.
+Rendering, deckgen's output and the deck and package checks read `Card` (`card.py`), not `Feature` ([ADR 0005](adr/0005-card-sources-and-card-dto.md)). The study order and the PDF guide work on Cards too, but the order engine still takes its feature facts (frames and parent edges) from `Feature`, and the pair check and `make pairs` read `Feature` only. Each module in `src/geofeat/sources/` adapts one data file to Cards: `features.py` (one card per active feature), `political.py` (a country card, a capital card unless `capital: null`, and the territory and dispute cards) and `cities.py`. `sources.all_cards()` collects them and fails on a key or uid that repeats.
 
 A `Card` is a frozen pydantic model:
 
@@ -213,7 +213,7 @@ Alternate names follow the name in brackets.
 
 ### Categories
 
-`model.Category` has 10 values. Eight are used by active cards: Water Bodies, Straits & Chokepoints, Mountain Ranges, Rivers & Deltas, Deserts, Plateaus & Plains, Peninsulas & Isthmuses, Regions & Rifts, Climate Systems. Passes & Corridors and Islands are kept for retired entries only. A category sets the card's tag, its place in the PDF guide and the fill opacity of an area highlight (lighter for Water Bodies and Straits & Chokepoints); nothing else.
+`model.Category` has 10 values. Eight are used by active cards: Water Bodies, Straits & Chokepoints, Mountain Ranges, Rivers & Deltas, Deserts, Plateaus & Plains, Peninsulas & Isthmuses, Regions & Rifts, Climate Systems. Passes & Corridors and Islands are kept for retired entries only. A category sets the card's tag and the fill opacity of an area highlight (lighter for Water Bodies and Straits & Chokepoints); nothing else.
 
 ## Geometry and provenance
 
@@ -354,7 +354,13 @@ The order uses the pair results that `check data` caches in `build/siblings.json
 
 ## PDF guide
 
-`make guide` writes `build/guide.pdf` (A4, reportlab, in the optional `guide` dependency group). It holds every active feature card's map, name, type, tier and note, grouped by category, then tier, then name, with a linked table of contents and PDF bookmarks. It fails if a card is unrendered or has no note. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12), without the figures its verify flags mark as unchecked.
+`make guide` writes `build/world-atlas-guide.pdf` (A4, reportlab, in the optional `guide` dependency group). The name comes from the deck name. It holds every active card, of every kind, in the new-card study order from `data/positions.lock`, so entry N is the Nth new card Anki shows. Each entry gives the card number, the prompt, the answer lines, the map and the note.
+
+Sections: Orientation, then Pass 1 and Pass 2, each by ring region in ring order. A section's region uses `geofeat.order.region_of`, the order engine's own rule. A card can sit outside its own region: the engine moves a parent to just before its child, and a card whose region or pass changes after the lock is frozen keeps its old slot. The guide shows such a card where Anki shows it, and prints a line for each. To do that, it takes the heaviest chain of (pass, region) runs that never goes back in ring order as the sections; every other run joins the section after it. A linked contents page and PDF bookmarks cover each pass, each region and each card.
+
+`make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with only that region's pass 1 and pass 2 sections.
+
+The build fails if a card is unrendered, has no note, or has a note carrying a research marker (`NOTE_MARKER` in `model.py`). It warns if the PDF is over the 80 MB budget. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12).
 
 ## Review tools
 

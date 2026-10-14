@@ -2,6 +2,8 @@
 checks and later the walk maps and the guide get the study order from. Policy is applied here, over the geometry facts
 geofeat.order.frames measures and caches."""
 
+from collections.abc import Callable
+
 from geofeat import adjacency
 from geofeat.pairs import COVER_MAX
 from geofeat.card import Card, card_key
@@ -9,7 +11,7 @@ from geofeat.countries_ne import state_ids
 from geofeat.curriculum import Curriculum, load_curriculum
 from geofeat.model import active, load_features
 from geofeat.order import frames
-from geofeat.order.engine import Frame, Ordering, OrderError, curriculum_order
+from geofeat.order.engine import Frame, Ordering, OrderError, curriculum_order, lookup, region_of
 from geofeat.order.legacy import Siblings, dependencies, load_siblings
 from geofeat.sources import all_cards
 
@@ -83,6 +85,12 @@ def ordering(siblings: Siblings | None = None) -> Ordering:
     edges = [(card_key("feature", p), card_key("feature", c)) for p, c in sorted(dependencies(features, siblings))]
     return curriculum_order(cards, curriculum, adjacency.neighbours(adjacency.graph()), feature_frames(facts, curriculum),
                             edges, lookalikes(cards, curriculum, facts))
+
+
+def card_region(curriculum: Curriculum) -> Callable[[Card], int]:
+    """Each card's ring region by the engine's rule, over the same feature frames `ordering` uses."""
+    frame_of = lookup(feature_frames(frames.load(), curriculum))
+    return lambda c: region_of(c, frame_of)
 
 
 def ideal_order(siblings: Siblings | None = None) -> list[Card]:

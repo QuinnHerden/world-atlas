@@ -1,6 +1,6 @@
 # 7. Rename to World Atlas, and migration
 
-Status: accepted for the deck rename, built in P5 (2026-10-14); device-tested in P6. The repo rename (decision 11) and GitHub-only distribution (decision 12) are defaults waiting for the user's confirmation ([open decisions](../world-atlas-plan.md#open-decisions)); the repo is renamed by hand after the P5 merge.
+Status: accepted for the deck rename, built in P5 (2026-10-14); device-tested in P6. The repo was renamed to `world-atlas` after the P5 merge (decision 11). GitHub-only distribution (decision 12) is a default waiting for the user's confirmation ([open decisions](../world-atlas-plan.md#open-decisions)).
 
 ## Context
 
@@ -15,7 +15,7 @@ The deck is called **Geographic Features**, and it becomes **World Atlas** (deci
 **Rename once, at the first World Atlas release (v2.0.0).** Every card added after the rename would also need moving, so the first release is the cheapest point.
 
 - **Deck:** `World Atlas` (`ROOT_DECK` in `model.py`). The Makefile `DECK`, the deck source file (`deck/world-atlas.md`) and the package (`dist/world-atlas.apkg`, named by ankc from the deck name) change with it.
-- **Repo:** rename to `world-atlas` (default, decision 11). GitHub redirects the old URL. Update the remote and the README links.
+- **Repo:** renamed to `world-atlas` (decision 11). GitHub redirects the old URL. Update the remote and the README links.
 - **Package:** keep `geofeat`. It's internal, and renaming it is churn no user sees.
 
 **Identity doesn't change.**

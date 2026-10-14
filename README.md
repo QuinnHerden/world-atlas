@@ -29,7 +29,7 @@ Output: `dist/world-atlas.apkg`. Import it in Anki with **File → Import**.
 
 Rendering takes about 10 s per map and is cached, so only changed maps re-render. `JOBS=2 make all` renders in parallel; each worker needs about 1.5 GB of RAM.
 
-`make guide` writes `build/guide.pdf`, a printable guide to the active cards: each map with its name, type, tier and a short note on why it matters, grouped by category. It uses the optional `guide` dependency group (reportlab).
+`make guide` writes `build/world-atlas-guide.pdf`, a printable guide to every card in the order Anki shows new cards: entry N is the Nth new card, with its map, answer and a short note on why it matters. It is sectioned into orientation, then pass 1 and pass 2 by region. `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with one region only. It uses the optional `guide` dependency group (reportlab).
 
 ## Study
 
