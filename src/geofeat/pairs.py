@@ -5,7 +5,8 @@ widened by their stroke. A pair fails when the highlights are near-identical (Io
 both types share a family (`model.FAMILY`: "Pass" and "Corridor" are both land passages), unless one feature declares
 the pair in `allow_nested`. Nesting across families ("Delta" in a "River" frame, a "Pass" in a "Mountain range") is
 reported as info. World-map features (oceans, global belts) are only compared with each other: a regional card never
-shares their frame.
+shares their frame. Continents aren't compared at all: no other card shares their family, so a continent can't clash,
+and it covers whatever lies on it.
 """
 
 import math
@@ -24,6 +25,7 @@ IOU_MAX = 0.8
 COVER_MAX = 0.9
 IOU_NEAR, COVER_NEAR = 0.5, 0.7  # close enough to a limit to be worth a look on the pairs sheet
 WORLD_SPAN_M = 40_000_000  # width of a world map (plate carrée, the equator's length)
+UNCOMPARED_FAMILIES = frozenset({"continent"})  # no other card shares the family, and a continent covers all on it
 
 
 @dataclass(frozen=True)
@@ -100,7 +102,7 @@ def _allowed(fa: Feature, fb: Feature) -> str | None:
 
 
 def find_pairs(geometries: dict[str, tuple[Feature, BaseGeometry]]) -> list[Pair]:
-    items = sorted(geometries.items())
+    items = sorted((i, fg) for i, fg in geometries.items() if fg[0].family not in UNCOMPARED_FAMILIES)
     world = {i for i, (f, g) in items if frame(f, g).extent is None}
     pairs = []
     for i, (ia, (fa, ga)) in enumerate(items):

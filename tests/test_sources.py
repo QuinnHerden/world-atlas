@@ -448,7 +448,8 @@ class PassTest(unittest.TestCase):
     def test_feature_cards(self) -> None:
         cards = by_key(features_source.cards())
         orientation = {c.id for c in cards.values() if c.study_pass == "orientation"}
-        self.assertEqual(orientation, {"atlantic-ocean", "pacific-ocean", "indian-ocean", "arctic-ocean", "trade-winds", "westerlies"})
+        self.assertEqual(orientation, {"atlantic-ocean", "pacific-ocean", "indian-ocean", "arctic-ocean", "trade-winds", "westerlies",
+                                       "africa", "antarctica", "asia", "europe", "north-america", "oceania", "south-america"})
         for c in cards.values():
             self.assertEqual(c.study_pass, "orientation" if c.id in orientation else 1 if c.tier <= 2 else 2)
             self.assertIn(pass_tag(c.study_pass), c.tags)

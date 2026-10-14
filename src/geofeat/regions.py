@@ -1,4 +1,4 @@
-"""Which ring region each physical feature belongs to, and how continents are composed from countries.
+"""Which ring region each physical feature belongs to.
 
 The rules are docs/world-atlas-plan.md's "Assigning physical features to regions", applied in order:
 
@@ -52,10 +52,15 @@ def region_outline(members: Iterable[BaseGeometry], disputes: Iterable[BaseGeome
 
 
 @cache
+def held_land() -> BaseGeometry:
+    """The land some state's outline holds."""
+    return unary_union([outline(c) for r in ring().values() for c in r.countries])
+
+
+@cache
 def region_outlines() -> dict[int, BaseGeometry]:
-    held = unary_union([outline(c) for r in ring().values() for c in r.countries])
     return {n: region_outline([outline(c) for c in (*r.countries, *r.territories)],
-                              [outline(d) for d in r.disputes], held)
+                              [outline(d) for d in r.disputes], held_land())
             for n, r in ring().items()}
 
 
@@ -201,53 +206,6 @@ def report(features: list[Feature], assignments: Mapping[str, Assignment]) -> st
     lines += ["", "| Region | Features |", "|---|---|"]
     lines += [f"| {n} {region_name(n)} | {count} |" for n, count in counts.items()]
     return "\n".join(lines)
-
-
-# Continents (P2.6). The orientation block's continent cards are the union of their member countries' outlines
-# (decision 7 in the plan). A transcontinental state is split along Natural Earth's continent line: the union of
-# `ne_10m_geography_regions_polys` rows of one REGION with FEATURECLA in {Continent, Island, Island group, Isthmus},
-# per docs/research/continents.md. Wiring this to real data waits for P2.2's country outlines.
-TRANSCONTINENTAL = frozenset({
-    "russia", "turkey", "kazakhstan", "azerbaijan", "georgia",  # the Europe–Asia line: Urals, Ural River, Caspian, Caucasus crest, Straits
-    "egypt",  # Suez; NE draws the Africa–Asia line along Egypt's border with Israel, so Sinai falls in Africa
-    "indonesia",  # western New Guinea is Oceania in NE
-    "united-states", "chile",  # Hawaii and Easter Island are Oceania in NE
-    "spain", "portugal",  # the Canaries and Madeira are Africa in NE
-})
-
-
-def disjoint(landmasses: Mapping[str, BaseGeometry]) -> dict[str, BaseGeometry]:
-    """NE's continents overlap a little (Europe and Asia in the Caucasus, Africa and Asia near Sinai). Give each
-    overlap to the smaller continent, per continents.md, so no land is on two continent cards."""
-    by_size = sorted(landmasses, key=lambda name: (landmasses[name].area, name))
-    result = {}
-    for i, name in enumerate(by_size):
-        smaller = unary_union([landmasses[other] for other in by_size[:i]])
-        result[name] = landmasses[name].difference(smaller) if i else landmasses[name]
-    return result
-
-
-def continent_geometry(continent: str, members: Mapping[str, str | tuple[str, ...]],
-                       countries: Mapping[str, BaseGeometry], landmasses: Mapping[str, BaseGeometry]) -> BaseGeometry:
-    """The union of `continent`'s member countries. `members` maps a country to its continent, or to every continent
-    it spans if it is in TRANSCONTINENTAL. Such a country gives each continent the part of it on that continent's
-    landmass, plus any part off every landmass (an island NE leaves out) that lies nearest that landmass."""
-    lands = disjoint(landmasses)
-    pieces = []
-    for country, continents in members.items():
-        spans = (continents,) if isinstance(continents, str) else continents
-        if continent not in spans:
-            continue
-        outline = countries[country]
-        if country not in TRANSCONTINENTAL:
-            pieces.append(outline)
-            continue
-        pieces.append(outline.intersection(lands[continent]))
-        stray = outline.difference(unary_union([lands[c] for c in spans]))
-        for part in shapely.get_parts(stray):
-            if min(spans, key=lambda c: (lands[c].distance(part), c)) == continent:
-                pieces.append(part)
-    return unary_union(pieces)
 
 
 def main() -> None:

@@ -16,6 +16,7 @@ MEDIA_INDEX = BUILD / "media.json"  # card key (kind:id, e.g. feature:nile) -> r
 ROOT_DECK = "Geographic Features"
 
 Category = Literal[
+    "Continents",
     "Water Bodies",
     "Straits & Chokepoints",
     "Mountain Ranges",
@@ -29,8 +30,8 @@ Category = Literal[
 ]
 # The type word shown on the card. Each covers 3+ active cards, except Isthmus, Valley, Cape and Climate belt (2 each)
 # and Sea route and Ocean current (1 each); Pass, Corridor and Island are kept only for retired entries; Continent is
-# reserved for the orientation block's continent cards (P2.6), which no entry uses yet. See
-# docs/adr/0001-type-vocabulary.md for the reason behind each.
+# the orientation block's 7 continent cards, composed in continents.py. See docs/adr/0001-type-vocabulary.md for the
+# reason behind each.
 FeatureType = Literal[
     "Ocean", "Sea", "Lake",
     "River", "Delta",

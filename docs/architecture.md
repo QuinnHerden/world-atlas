@@ -74,7 +74,8 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 | `countries_ne.py` | Each state's, territory's and dispute's full outline, never cropped, read from the yaml `geometry`. What the adjacency graph and the region outlines use. |
 | `curriculum.py` | The `curriculum.yaml` schema and its checks: every state in exactly one region, regions numbered in ring order, entry, exit and hosts being walk nodes, ambiguous placements at their default, confusables naming known cards. |
 | `adjacency.py` | The country adjacency graph: land edges (1 km buffer), sea edges (200 km), the `adjacency.yaml` edits, the cache and the report. |
-| `regions.py` | Each feature's ring region by the plan's rules, the `region` override check, and continent geometry from country outlines. |
+| `regions.py` | Each feature's ring region by the plan's rules and the `region` override check. |
+| `continents.py` | The 7 continents' geometry: member states' and territories' outlines by UN geoscheme, transcontinental states split on Natural Earth's line. A feature part `{layer: continent, select: {id: …}}` draws one. |
 | `resolve.py` | Resolves a feature's geometry parts: Natural Earth rows, `geometry/` files, other features. |
 | `ne.py` | Natural Earth layer loading (only layers pinned in `sources.lock`) and flow-line helpers. The renderer reads it, so it is in the render cache key. |
 | `spec.py` | `RenderSpec`, the visual treatment of a card, and `BASEMAP_LAYERS`. |
@@ -151,7 +152,7 @@ Rendering, deckgen's output and the deck and package checks read `Card` (`card.p
 
 A `Card` is a frozen pydantic model:
 
-- `uid`, `kind` and `id`, which is unique within its kind. Kinds: `feature`, `country`, `capital`, `city`, `territory`, `dispute`, and `continent` (in progress).
+- `uid`, `kind` and `id`, which is unique within its kind. Kinds: `feature`, `country`, `capital`, `city`, `territory`, `dispute`, and `continent`.
 - `prompt`, the type word on the front, and `answer_lines`, which deckgen escapes and joins with `<br>`. Both reject markdown and HTML syntax, since ankc renders card text unsanitised.
 - `tags`, `tier`, `region` (`"NN"` for political and city cards; unset on features) and `note`.
 - Curriculum links for P3: `host`, the country key a pocket sits after; `anchor`, the key of the card this one comes right after (a city's feature); `parents`, keys that must come first (a capital's country, a city's country and capital); `orientation`, true for the orientation block.
