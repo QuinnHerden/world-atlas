@@ -28,7 +28,7 @@ from reportlab.platypus.tableofcontents import TableOfContents
 
 import geofeat.positions as positions
 from geofeat.card import Card, Pass, load_media
-from geofeat.model import BUILD, DECK, ROOT, ROOT_DECK
+from geofeat.model import BUILD, DECK, NOTE_MARKER, ROOT, ROOT_DECK
 
 TITLE = f"{ROOT_DECK} — Study Guide"
 RESEARCH_AS_OF = "2026-10-12"  # the research the notes were drawn from (docs/research/)
@@ -271,11 +271,10 @@ def build(parts: list[Section], names: dict[int, str], images: dict[str, Path], 
 def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     """The real cards, in lock order and sectioned, with region names and rendered maps. Fails on a card that is
     unrendered, has no note, or whose note carries a research marker."""
-    from geofeat.check import NOTE_MARKER
     from geofeat.countries_ne import state_ids
     from geofeat.curriculum import load_curriculum
-    from geofeat.order import frames
-    from geofeat.order.engine import _region, lookup
+    from geofeat.order import frames, region_of
+    from geofeat.order.engine import lookup
     from geofeat.order.inputs import feature_frames
     from geofeat.sources import all_cards
 
@@ -290,13 +289,13 @@ def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     curriculum = load_curriculum(state_ids())
     frame_of = lookup(feature_frames(frames.load(), curriculum))
 
-    def region_of(c: Card) -> int:
-        return _region(c, frame_of)  # the engine's own rule, so sections match how the cards were ordered
+    def region(c: Card) -> int:
+        return region_of(c, frame_of)  # the engine's own rule, so sections match how the cards were ordered
 
-    parts = sections(entries(cards, positions.read().positions), region_of)
+    parts = sections(entries(cards, positions.read().positions), region)
     for section in parts:
         for e in section.entries:
-            if e.card.study_pass != section.study_pass or (section.region and region_of(e.card) != section.region):
+            if e.card.study_pass != section.study_pass or (section.region and region(e.card) != section.region):
                 print(f"card {e.number} ({e.card.key}) sits in {pass_title(section.study_pass)}, region "
                       f"{section.region}, outside its own; the guide shows it where Anki does")
     return parts, {r.number: r.name for r in curriculum.regions}, {k: DECK / v for k, v in media.items()}

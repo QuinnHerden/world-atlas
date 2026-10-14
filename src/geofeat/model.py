@@ -95,6 +95,11 @@ def _note(value: str) -> str:
 
 Note = Annotated[str, AfterValidator(_note)]
 
+# Research markers a note must not carry into the guide; the claim goes in the entry's `verify` list instead.
+# "as of" alone is ordinary prose ("as of 2014 it hosted..."); an "(as of" or an "as of" a 2020s-or-later year is a
+# marker. Trade-offs: genuine 2020s prose ("as of 2021 the city had") must be reworded, and "as of October 2026" passes.
+NOTE_MARKER = re.compile(r"\(as of|as of 20[2-9]\d|verify|\[v\]|\[s\]|tbd", re.IGNORECASE)
+
 
 class Strict(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
