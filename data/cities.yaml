@@ -143,9 +143,6 @@
     A major Syrian city at the crossroads of several trade routes since the 2nd millennium BC; Hittites, Assyrians,
     Greeks, Romans, Umayyads, Ayyubids, Mamluks and Ottomans ruled it in turn. Its walled Old City, built round a
     citadel, was put on UNESCO's List of World Heritage in Danger in 2013.
-  verify:
-  - claim: Aleppo's Old City is on UNESCO's List of World Heritage in Danger (since 2013).
-    as_of: '2026-10'
 
 - id: mecca
   uid: tUu2L7hnrA
@@ -246,9 +243,6 @@
     Named for its site by the Cape of Good Hope, it was founded by Dutch traders in 1652 as a stopover on the spice
     route between the Netherlands and the Far East. It is South Africa's legislative capital; Pretoria is the
     administrative capital.
-  verify:
-  - claim: Cape Town is South Africa's legislative capital.
-    as_of: '2026-10'
 
 - id: mumbai
   uid: SCyHCXE86E
@@ -501,9 +495,6 @@
     On the plateau above the Serra do Mar in southeastern Brazil, it grew from a college that Jesuits founded in 1554,
     the origin of the village of São Paulo de Piratininga. The state government credits coffee, and later industry, with
     São Paulo's growth into the country's largest industrial centre. It is Brazil's largest urban area.
-  verify:
-  - claim: São Paulo is Brazil's largest urban area.
-    as_of: '2026-10'
 
 - id: rio-de-janeiro
   uid: vR6h37Mc18

@@ -598,9 +598,6 @@
     A landlocked country on the main land route from Western Europe to Turkey, with the Danube flowing through it.
     When Yugoslavia broke up, Serbia and Montenegro stayed together until Montenegro left in 2006. Serbia rejects
     Kosovo's 2008 declaration of independence.
-  verify:
-  - claim: Serbia rejects Kosovo's 2008 declaration of independence.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321267}}
   expect: [18.84, 42.23, 22.99, 46.18]
@@ -620,9 +617,6 @@
     Landlocked between Serbia, Montenegro, Albania and North Macedonia. It declared independence from Serbia in
     2008. Serbia does not recognise it, and it is not a UN member. In 2010 the International Court of Justice found
     the declaration did not violate international law.
-  verify:
-  - claim: Serbia does not recognise Kosovo, and Kosovo is not a UN member.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321007}}
   expect: [20.02, 41.84, 21.78, 43.27]
@@ -748,9 +742,6 @@
   note: >-
     Landlocked between Romania and Ukraine. Russian forces remain in the breakaway region of Transnistria, east of
     the Nistru (Dniester); the card shows Moldova's internationally recognised borders, which include it.
-  verify:
-  - claim: Russian forces remain in Transnistria; Moldova's internationally recognised borders include it.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321045}}
   expect: [26.61, 45.46, 30.14, 48.49]
@@ -769,9 +760,6 @@
     On the Black Sea, the second-largest country in Europe after Russia. It borders Russia, Belarus, Poland,
     Slovakia, Hungary, Romania and Moldova. Russia seized Crimea in 2014 and launched a full-scale invasion in 2022.
     The card shows Ukraine's internationally recognised borders.
-  verify:
-  - claim: Ukraine's internationally recognised borders (as the card shows them) are unchanged.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321345}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}}
@@ -792,9 +780,6 @@
     Landlocked and flat, with many glacial lakes, between Poland, Lithuania, Latvia, Russia and Ukraine. Of the
     former Soviet republics, it has kept the closest ties to Russia, and Russia's 2022 invasion of Ukraine was
     launched partly from its territory.
-  verify:
-  - claim: Belarus has kept the closest ties to Russia of the former Soviet republics; the 2022 invasion of Ukraine was launched partly from its territory.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320427}}
   expect: [23.16, 51.23, 32.72, 56.16]
@@ -834,9 +819,6 @@
     through the Caucasus. It made Christianity its state religion in the 330s. After the 2008 war, Russia recognised
     the breakaway regions of Abkhazia and South Ossetia and keeps forces there. The card shows Georgia's recognised
     borders, which include both.
-  verify:
-  - claim: Russia recognises Abkhazia and South Ossetia and keeps forces there; Georgia's recognised borders include both.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320779}}
   expect: [39.98, 41.04, 46.7, 43.58]
@@ -873,9 +855,6 @@
     Landlocked in the Lesser Caucasus, home to Lake Sevan, between Georgia, Azerbaijan, Iran and Turkey. It regards
     itself as the first state to formally adopt Christianity, in the early 4th century. Turkey closed their border in
     1993.
-  verify:
-  - claim: Turkey has kept its border with Armenia closed since 1993.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320333}}
   expect: [43.43, 38.86, 46.61, 41.3]
@@ -915,9 +894,6 @@
     areas, Akrotiri and Dhekelia. Since 1974 a UN buffer zone has divided the island. The Turkish
     Cypriot-administered north declared itself the "Turkish Republic of Northern Cyprus", which only Turkey
     recognises. The card shows the whole island as Cyprus.
-  verify:
-  - claim: Only Turkey recognises the Turkish Republic of Northern Cyprus; the recognised Cyprus is the whole island.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320533}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320531}}
@@ -930,9 +906,6 @@
     note: >-
       A city divided by the UN buffer zone, which in parts of old Nicosia is only a few metres wide; crossing points
       opened from 2003. Its Greek name Lefkosia and Turkish name Lefkoşa both mean "white city".
-    verify:
-    - claim: Crossing points across the UN buffer zone in Nicosia, opened from 2003, remain open.
-      as_of: '2026-10'
 
 - id: syria
   name: Syria
@@ -943,9 +916,6 @@
     it on its way from Turkey to Iraq, and it shares the Tigris. A French mandate until independence in 1946, it
     fell into civil war from 2011. Israel has controlled the Golan Heights since 1967, and the card shows them in
     Syria, per the recognised borders.
-  verify:
-  - claim: Israel controls the Golan Heights; the recognised borders place them in Syria.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321295}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}}
@@ -1002,9 +972,6 @@
       Israel designates Jerusalem as its capital, but this status is disputed internationally. Israel took the city's
       eastern part in 1967 and has administered it since. The ancient name appears in Egyptian texts of the 14th
       century BC.
-    verify:
-    - claim: Israel designates Jerusalem as its capital, and this status is disputed internationally.
-      as_of: '2026-10'
 
 - id: palestine
   name: Palestine
@@ -1014,9 +981,6 @@
     Two separate areas: the West Bank, including East Jerusalem, between Israel and Jordan; and the Gaza Strip on
     the Mediterranean, between Israel and Egypt. The UN General Assembly granted Palestine non-member observer State
     status in 2012. Under the deck's rules Palestine has no capital card.
-  verify:
-  - claim: Palestine has UN non-member observer State status, granted in 2012.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320899}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1746265961}}
@@ -1180,9 +1144,6 @@
     Yemen occupies the south-west corner of the Arabian Peninsula, south of Saudi Arabia and west of Oman, on the
     Bab el-Mandeb strait into the Red Sea. North and South Yemen merged in 1990. Houthi forces overran the capital
     in 2014, and the civil war that followed divided the country.
-  verify:
-  - claim: The civil war that followed the 2014 Houthi takeover still divides Yemen.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321425}}
   expect: [42.54, 12.11, 54.55, 19.0]
@@ -1193,9 +1154,6 @@
     note: >-
       Sanaa lies inland in western Yemen, and its name is reputed to mean "fortified place". The Houthi movement
       seized it in 2014.
-    verify:
-    - claim: The Houthi movement still holds Sanaa.
-      as_of: '2026-10'
 
 - id: djibouti
   name: Djibouti
@@ -1328,11 +1286,8 @@
     expect: [29.79, -3.48, 29.89, -3.38]
     note: >-
       Gitega, inland from Lake Tanganyika, became Burundi's political capital by a vote of parliament in 2019.
-      Bujumbura, on the lake shore, remains the economic capital, and the government's move to Gitega was still
-      incomplete in 2023.
-    verify:
-    - claim: The government's move from Bujumbura to Gitega is still incomplete.
-      as_of: '2026-10'
+      Bujumbura, on the lake shore, remains the economic capital. The government's move to Gitega, expected to
+      finish around 2022, ran on for years after that.
 
 - id: rwanda
   name: Rwanda
@@ -1395,9 +1350,6 @@
     Sudan lies south of Egypt on the Red Sea, and the Blue Nile and White Nile meet within it to form the Nile.
     Independent from Egypt and the UK since 1956, it lost its south when South Sudan became independent in 2011. In
     2023 war broke out between the army and the Rapid Support Forces.
-  verify:
-  - claim: War between the army and the Rapid Support Forces is still going on.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321229}}
   expect: [21.8, 8.68, 38.61, 22.23]
@@ -1409,9 +1361,6 @@
       Khartoum stands where the Blue Nile and White Nile meet; its name refers to the "elephant's trunk" of land
       between them. During the war the government ran from Port Sudan, and it announced its return to Khartoum in
       January 2026.
-    verify:
-    - claim: Sudan's government announced its return to Khartoum in January 2026.
-      as_of: '2026-10'
 
 - id: egypt
   name: Egypt
@@ -1439,9 +1388,6 @@
   note: >-
     Libya stretches along the Mediterranean between Egypt and Tunisia, with Algeria, Niger, Chad and Sudan to the
     south and west. After the 2011 uprising, it split between rival governments based in the east and the west.
-  verify:
-  - claim: Libya is still split between rival governments based in the east and the west.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321017}}
   expect: [9.28, 19.49, 25.16, 33.19]
@@ -1678,11 +1624,6 @@
     16th centuries; under later Songhai rule, Timbuktu became a centre of trade and scholarship. After military coups
     in 2020 and 2021, it founded the Alliance of Sahel States with Burkina Faso and Niger in 2023, and it left ECOWAS
     in 2025.
-  verify:
-  - claim: Mali is under military rule, left ECOWAS in 2025, and is in the Alliance of Sahel States with Burkina Faso and Niger.
-    as_of: '2026-10'
-  - claim: Mali, Burkina Faso and Niger founded the Alliance of Sahel States in September 2023.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321063}}
   expect: [-12.27, 10.14, 4.24, 25.0]
@@ -1701,11 +1642,6 @@
     Burkina Faso is a landlocked country north of Ghana, ringed by Mali, Niger, Benin, Togo and Côte d'Ivoire.
     Formerly called Upper Volta, it had two military coups in 2022. It founded the Alliance of Sahel States with Mali
     and Niger in 2023, and it left ECOWAS in 2025.
-  verify:
-  - claim: Burkina Faso is under military rule, left ECOWAS in 2025, and is in the Alliance of Sahel States with Mali and Niger.
-    as_of: '2026-10'
-  - claim: Mali, Burkina Faso and Niger founded the Alliance of Sahel States in September 2023.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320405}}
   expect: [-5.53, 9.39, 2.4, 15.08]
@@ -1795,11 +1731,6 @@
     Niger is a landlocked country south-east of Algeria. It is mostly desert, with savanna in the south and the
     Niger River crossing its south-west. Its army seized power in July 2023, and that September it founded the
     Alliance of Sahel States with Mali and Burkina Faso; in 2025 it left ECOWAS.
-  verify:
-  - claim: Niger is under military rule, left ECOWAS in 2025, and is in the Alliance of Sahel States with Mali and Burkina Faso.
-    as_of: '2026-10'
-  - claim: Mali, Burkina Faso and Niger founded the Alliance of Sahel States in September 2023.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321087}}
   expect: [0.15, 11.69, 15.98, 23.52]
@@ -1884,9 +1815,6 @@
     note: >-
       Malabo, on the island of Bioko in the Bight of Biafra, was Equatorial Guinea's capital until January 2026,
       when a decree named Ciudad de la Paz on the mainland as capital.
-    verify:
-    - claim: The move of government from Malabo to Ciudad de la Paz is still under way.
-      as_of: '2026-10'
 
 - id: sao-tome-and-principe
   name: São Tomé and Príncipe
@@ -1950,13 +1878,8 @@
   note: >-
     DR Congo spans the Congo River basin in the heart of Africa, and its only outlet to the Atlantic is a short
     coast at the river's mouth. King Leopold II ruled it as his own colony until international condemnation forced
-    him to hand it to Belgium; Mobutu later renamed it Zaire. Armed groups have fought in the east since the 1990s,
-    among them the M23 since 2012.
-  verify:
-  - claim: Armed groups, including the M23, are still fighting in eastern DR Congo.
-    as_of: '2026-10'
-  - claim: The M23 rebellion began in 2012.
-    as_of: '2026-10'
+    him to hand it to Belgium; Mobutu later renamed it Zaire. Armed groups have fought in the east since the 1990s;
+    among them, the M23 rebellion began in 2012.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320513}}
   expect: [12.21, -13.46, 31.29, 5.38]
@@ -2201,9 +2124,6 @@
     Mauritius is an island nation in the Indian Ocean, east of Madagascar. The island was uninhabited until the
     Dutch settled it in 1638, and their arrival brought the rapid extinction of the dodo; France and then Britain
     later ruled it. It long claimed the Chagos Archipelago from the UK, and a 2025 treaty provides for its transfer.
-  verify:
-  - claim: Mauritius claims the Chagos Archipelago from the UK (the 2025 transfer treaty is not in force).
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321079}}
   expect: [56.52, -20.52, 63.5, -10.32]
@@ -2370,9 +2290,6 @@
   note: >-
     A landlocked, mountainous country between Pakistan and Iran, split by the Hindu Kush; its thin Wakhan Corridor
     reaches east to touch China. The Taliban took back control in 2021, when US-led forces withdrew.
-  verify:
-  - claim: Very few states formally recognise the Taliban government.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320319}}
   expect: [60.48, 29.38, 74.9, 38.48]
@@ -2598,9 +2515,6 @@
     has been governed from Taipei under the name Republic of China since the Nationalist government withdrew there
     at the end of the Chinese civil war; the People's Republic of China claims it. Only a small number of states
     recognise it diplomatically.
-  verify:
-  - claim: Only a small number of states recognise Taiwan diplomatically.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321335}}
   expect: [118.27, 21.9, 122.01, 25.29]
@@ -2710,9 +2624,6 @@
     India to the west and China, Laos and Thailand to the east. It is also called Burma, and it was under British
     rule until independence. Its armed forces have dominated government for most of the time since, including after
     a 2021 coup.
-  verify:
-  - claim: Myanmar's armed forces dominate government after the 2021 coup.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321067}}
   expect: [92.17, 9.79, 101.18, 28.54]
@@ -2795,13 +2706,6 @@
     note: >-
       Indonesia's capital, on the northwest coast of Java on the Java Sea; under Dutch rule it was called Batavia. A
       2022 law made Nusantara, a new city on Borneo, the future capital; the move takes effect by presidential decree.
-    verify:
-    - claim: Jakarta stays Indonesia's legal capital; no presidential decree has moved it to Nusantara.
-      as_of: '2026-10'
-    - claim: Indonesia's parliament passed the State Capital law providing for the move to Nusantara in January 2022.
-      as_of: '2026-10'
-    - claim: The move to Nusantara takes effect by presidential decree (UU 21/2023, UU 2/2024); check Perpres 79/2025.
-      as_of: '2026-10'
 
 - id: timor-leste
   name: Timor-Leste
@@ -3016,9 +2920,6 @@
     A single raised coral island in the central Pacific, south of the Marshall Islands, one of the world's smallest
     states. Its economy was built on phosphate mining. In 2026 it told the UN that it had changed its name to the
     Republic of Naoero.
-  verify:
-  - claim: In 2026 Nauru told the UN it had changed its name to the Republic of Naoero.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321123}}
   expect: [166.9, -0.56, 166.96, -0.49]
@@ -3037,9 +2938,6 @@
   note: >-
     Two parallel chains of coral atolls in the North Pacific, part of Micronesia, in free association with the
     United States. Bikini and Enewetak atolls were US nuclear test sites after the Second World War.
-  verify:
-  - claim: The Marshall Islands are in free association with the United States.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321057}}
   expect: [165.28, 4.57, 172.03, 14.62]
@@ -3058,9 +2956,6 @@
   note: >-
     The Federated States of Micronesia: four island states (Yap, Chuuk, Pohnpei and Kosrae) spread across the
     Caroline Islands in the North Pacific, north of New Guinea. It is in free association with the United States.
-  verify:
-  - claim: The Federated States of Micronesia are in free association with the United States.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320691}}
   expect: [138.06, 0.91, 163.05, 9.78]
@@ -3079,9 +2974,6 @@
   note: >-
     The westernmost Caroline Islands, in the North Pacific southeast of the Philippines. A Micronesian republic in
     free association with the United States.
-  verify:
-  - claim: Palau is in free association with the United States.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321171}}
   expect: [131.13, 2.94, 134.73, 8.1]
@@ -3184,11 +3076,6 @@
     American country with no Pacific coast. Formerly the colony of British Honduras, it became independent in 1981.
     Guatemala's long-standing territorial claim against Belize went to the International Court of Justice after
     referendums in Guatemala in 2018 and Belize in 2019.
-  verify:
-  - claim: The International Court of Justice has not ruled on Guatemala's claim against Belize.
-    as_of: '2026-10'
-  - claim: Guatemala (April 2018) and Belize (May 2019) voted in referendums to send the claim to the International Court of Justice.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320431}}
   expect: [-89.24, 15.87, -87.78, 18.5]
@@ -3395,9 +3282,6 @@
       legislature sit in La Paz, the seat of government. The split dates from a civil war over moving the capital in
       1898–99, after which the executive and legislature settled in La Paz. The city is named after Antonio José de
       Sucre, Bolivia's second president.
-    verify:
-    - claim: After the 1898–99 civil war over moving the capital, the executive and legislature settled in La Paz.
-      as_of: '2026-10'
 
 - id: argentina
   name: Argentina
@@ -3509,11 +3393,6 @@
     the interior is largely rainforest and highland. A Dutch and then British colony, independent since 1966, it has
     English as its official language. Venezuela claims the region west of the Essequibo River, which Guyana
     administers, and in 2018 Guyana took the dispute to the International Court of Justice.
-  verify:
-  - claim: The International Court of Justice has heard the merits of the Essequibo case but not ruled.
-    as_of: '2026-10'
-  - claim: Guyana filed the Essequibo case at the International Court of Justice in March 2018.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320817}}
   expect: [-61.4, 1.18, -56.48, 8.56]
@@ -3534,11 +3413,6 @@
     plains along the Orinoco River in the centre, and the Guiana Highlands in the south-east. Its name means "Little
     Venice", after the stilt houses explorers saw on Lake Maracaibo in 1499. It claims the region west of the
     Essequibo River that Guyana administers, a dispute Guyana took to the International Court of Justice in 2018.
-  verify:
-  - claim: The International Court of Justice has heard the Essequibo case but not ruled.
-    as_of: '2026-10'
-  - claim: Guyana filed the Essequibo case at the International Court of Justice in March 2018.
-    as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321411}}
   expect: [-73.4, 0.64, -59.81, 15.71]
