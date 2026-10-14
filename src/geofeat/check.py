@@ -2,7 +2,6 @@
 
 import json
 import math
-import re
 import sqlite3
 import subprocess
 import sys
@@ -17,12 +16,17 @@ from shapely import unary_union
 from shapely.geometry import MultiLineString, Point, Polygon
 from shapely.geometry.base import BaseGeometry
 
+import geofeat.positions as positions
+from geofeat.ankc import ankc_command, ankc_version, ankc_version_text, writes_pos
+from geofeat.card import load_media
 from geofeat.frame import laea, project
-from geofeat.deckgen import ordered, tags
-from geofeat.model import DECK, GEOMETRY, MEDIA_INDEX, ROOT, ROOT_DECK, Feature, active, load_features
+from geofeat.deckgen import ideal_order, ordered
+from geofeat.ids import duplicate_uids
+from geofeat.model import DECK, GEOMETRY, ROOT, ROOT_DECK, Feature, active, load_features
 from geofeat.order import Siblings, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
+from geofeat.sources import PATHS, all_cards
 
 RIVER_GAP_M = 20_000
 MOUTH_M = 5_000
@@ -143,6 +147,13 @@ def check_data() -> tuple[list[str], list[str]]:
     features = active(all_features)
     errors = [f"{f.id}: no uid (run `make ids` and commit)" for f in features if f.uid is None]
     errors += missing_notes(all_features)
+    errors += [f"uid {uid} is used more than once across {', '.join(p.name for p in PATHS)}"
+               for uid in duplicate_uids(list(PATHS))]
+    if not errors:
+        try:
+            all_cards()
+        except ValueError as exc:
+            errors.append(str(exc))
     for path in sorted(GEOMETRY.glob("*.geojson")):
         errors += provenance_errors(path.name, json.loads(path.read_text()))
     notes = []
@@ -181,18 +192,31 @@ def check_data() -> tuple[list[str], list[str]]:
     return errors, notes + [f"  {p}" for p in pairs]
 
 
+def ankc_supported() -> str | None:
+    """An error unless the configured ankc is 0.5.x or 0.6.x: both keep `::` in footnote tags and number new cards
+    in source order; 0.6 also reads `[^pos]`."""
+    version = ankc_version()
+    if version is None or not (0, 5) <= version < (0, 7):
+        return f"`{' '.join(ankc_command())} --version` says {ankc_version_text()!r}; >=0.5,<0.7 required"
+    return None
+
+
 def check_deck() -> list[str]:
     errors = []
-    media = json.loads(MEDIA_INDEX.read_text()) if MEDIA_INDEX.exists() else {}
-    for f in active(load_features()):
-        if f.id not in media or not (DECK / media[f.id]).exists():
-            errors.append(f"{f.id}: not rendered (run `make render`)")
-
-    version = subprocess.run(["ankc", "--version"], capture_output=True, text=True).stdout.strip()
-    # 0.5 keeps `::` in footnote tags and numbers new cards in source order
-    if not re.fullmatch(r"0\.5\.\d+", version):
-        errors.append(f"ankc {version!r} found; 0.5.x required")
-    result = subprocess.run(["ankc", "check", "--deck", ROOT_DECK, "--path", str(DECK)], capture_output=True, text=True)
+    media = load_media()
+    cards = all_cards()
+    for c in cards:
+        if c.key not in media or not (DECK / media[c.key]).exists():
+            errors.append(f"{c.key}: not rendered (run `make render`)")
+    lock = positions.read()
+    if missing := sorted(c.uid for c in cards if c.uid not in lock.positions):
+        errors.append(f"uids not in {positions.LOCK_FILE.name} (run `make positions`): {missing}")
+    if error := ankc_supported():
+        return errors + [error]
+    if not lock.draft and not writes_pos():
+        errors.append(f"{positions.LOCK_FILE.name} is frozen (draft: false), so ankc 0.6+ is required to write it")
+    command = [*ankc_command(), "check", "--deck", ROOT_DECK, "--path", str(DECK)]
+    result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0:
         errors.append(f"ankc check failed:\n{result.stdout}{result.stderr}")
     return errors
@@ -202,11 +226,11 @@ def check_package() -> list[str]:
     packages = list((ROOT / "dist").glob("*.apkg"))
     if len(packages) != 1:
         return [f"expected exactly one package in dist/, found {len(packages)}"]
-    features = active(load_features())
-    features = ordered(features, load_siblings())
-    expected = {f.uid for f in features}
+    cards = ideal_order()
+    expected = {c.uid for c in all_cards()}
     with zipfile.ZipFile(packages[0]) as archive, tempfile.TemporaryDirectory() as tmp:
         archive.extract("collection.anki2", tmp)
+        packaged_media = set(json.loads(archive.read("media")).values())
         db = sqlite3.connect(Path(tmp) / "collection.anki2")
         decks = json.loads(db.execute("select decks from col").fetchone()[0])
         rows = db.execute("select n.guid, n.tags, c.did, c.type, c.queue, c.due from notes n join cards c on c.nid = n.id").fetchall()
@@ -214,19 +238,27 @@ def check_package() -> list[str]:
     note_tags = {guid: set(tags.split()) for guid, tags, *_ in rows}
     guids = set(note_tags)
     name = packages[0].name
-    errors = [f"{name}: note {f.uid} ({f.id}) lacks tags {sorted(missing)}" for f in features
-              if f.uid in note_tags and (missing := set(tags(f)) - note_tags[f.uid])]
+    errors = [f"{name}: note {c.uid} ({c.key}) lacks tags {sorted(missing)}" for c in cards
+              if c.uid in note_tags and (missing := set(c.tags) - note_tags[c.uid])]
     if wrong := sorted({decks[str(did)]["name"] for _, _, did, *_ in rows} - {ROOT_DECK}):
         errors.append(f"{name}: cards outside the {ROOT_DECK!r} deck: {wrong}")
     if any((ctype, queue) != (0, 0) for *_, ctype, queue, _ in rows):
         errors.append(f"{name}: some cards aren't new")
-    due = sorted((d, guid) for guid, *_, d in rows)
-    if [guid for _, guid in due] != [f.uid for f in features] or len({d for d, _ in due}) != len(due):
-        errors.append(f"{name}: new-card positions don't follow the study order")
+    media = load_media()
+    if odd := packaged_media ^ {media.get(c.key) for c in cards}:  # nothing a card's text pulled in from elsewhere
+        errors.append(f"{name}: packaged media differ from the rendered maps: {sorted(map(str, odd))}")
+    lock = positions.read()
+    if writes_pos() or not lock.draft:
+        if wrong := sorted(g for g, *_, due in rows if g in expected and due != lock.positions.get(g)):
+            errors.append(f"{name}: new-card positions differ from {positions.LOCK_FILE.name} for {wrong}")
+    else:
+        due = sorted((d, guid) for guid, *_, d in rows)
+        if [guid for _, guid in due] != [c.uid for c in cards] or len({d for d, _ in due}) != len(due):
+            errors.append(f"{name}: new-card positions don't follow the study order")
     if missing := expected - guids:
-        errors.append(f"{packages[0].name}: missing notes for uids {sorted(missing)}")
+        errors.append(f"{name}: missing notes for uids {sorted(missing)}")
     if extra := guids - expected:
-        errors.append(f"{packages[0].name}: unexpected note guids {sorted(extra)}")
+        errors.append(f"{name}: unexpected note guids {sorted(extra)}")
     return errors
 
 

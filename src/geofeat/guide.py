@@ -1,7 +1,6 @@
 """Write build/guide.pdf: every active card with its map and its note on why it matters."""
 
 import io
-import json
 import re
 from datetime import date
 from pathlib import Path
@@ -23,7 +22,8 @@ from reportlab.platypus import (
 )
 from reportlab.platypus.tableofcontents import TableOfContents
 
-from geofeat.model import BUILD, DECK, MEDIA_INDEX, ROOT, Category, Feature, active, load_features
+from geofeat.card import card_key, load_media
+from geofeat.model import BUILD, DECK, ROOT, Category, Feature, active, load_features
 
 OUT = BUILD / "guide.pdf"
 TITLE = "Geographic Features — Card Guide"
@@ -118,7 +118,7 @@ def card_block(feature: Feature, media: dict[str, str], width: float) -> KeepTog
         text.append(Paragraph(escape(f"[{', '.join(feature.alt_names)}]"), S["alt"]))
     text.append(Paragraph(escape(f"{feature.type_text} · Tier {feature.tier}"), S["meta"]))
     text.append(_markdown(feature.note or "", S["note"]))
-    table = Table([[map_image(DECK / media[feature.id], image_w), text]], colWidths=[image_w, width - image_w])
+    table = Table([[map_image(DECK / media[card_key("feature", feature.id)], image_w), text]], colWidths=[image_w, width - image_w])
     table.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ("LEFTPADDING", (0, 0), (0, 0), 0),
@@ -133,8 +133,9 @@ def card_block(feature: Feature, media: dict[str, str], width: float) -> KeepTog
 
 def main() -> None:
     features = active(load_features())
-    media = json.loads(MEDIA_INDEX.read_text()) if MEDIA_INDEX.exists() else {}
-    unrendered = sorted(f.id for f in features if f.id not in media or not (DECK / media[f.id]).exists())
+    media = load_media()
+    keys = {f.id: card_key("feature", f.id) for f in features}
+    unrendered = sorted(f.id for f in features if keys[f.id] not in media or not (DECK / media[keys[f.id]]).exists())
     if unrendered:
         raise SystemExit(f"no rendered map for {unrendered}; run `make render` first")
     if missing := sorted(f.id for f in features if not f.note):
