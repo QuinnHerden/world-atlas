@@ -4,7 +4,7 @@ How the Geographic Features deck is built. This describes the system as it is no
 
 The released deck is the 166 entries in `data/features.yaml`: 132 active cards (126 places and 6 climate systems) and 34 retired ones (7 passes, 3 corridors, 15 islands and 9 climate systems). One command turns the data into an `.apkg`, with no manual step per build.
 
-The World Atlas sources are on `main` too, and they already produce cards: 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`. Continent cards are in progress. Only feature cards have a study order until the P3 order engine, so **`make deck` and `make positions` stop with an error while the political sources exist**, and `make all` doesn't complete on `main`.
+The World Atlas sources are on `main` too, and they already produce cards: 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`. Continent cards are in progress. The curriculum order engine (P3, `order/`) orders every kind. Only feature cards have maps until P4, so **`ALLOW_UNRENDERED=1`** lets `make render` and `make deck` leave the other kinds out, loudly (`card.UNRENDERED_KINDS`; feature cards always need their maps; remove at the end of P4). `make check` and `make build` still fail on unrendered cards, so `make all` doesn't complete on `main`.
 
 ## Pipeline
 
@@ -32,7 +32,7 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make positions` | `positions.py` | Places new uids in `data/positions.lock` (below). The lock's only writer; commit the result. Not part of `make all`. |
 | `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
 | `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). |
-| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Stops while any non-feature card exists, until P3. |
+| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Under `ALLOW_UNRENDERED=1`, leaves out the kinds with no maps yet (P4). |
 | `make check` | `check.py deck` | Every card rendered and in the lock; ankc `>=0.5,<0.7`; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/geographic-features.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
@@ -81,7 +81,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 | `jobs.py` | Turns cards into render jobs, keys them, and renders what the cache lacks. Not in the cache key. |
 | `render.py`, `frame.py`, `style.py` | Drawing, framing and the style constants. |
 | `positions.py` | Reads, places and writes `positions.lock`. |
-| `order.py` | The current study order, features only (ADR 0004). Replaced by the P3 `order/` package. |
+| `order/` | The curriculum order (ADR 0009): `engine.py` (pure: passes, regions, walks, anchoring, repair, report), `walk.py`, `frames.py` (geometry facts cached in `build/frames.json`), `inputs.py` (real-data wiring and policy), `legacy.py` (ADR 0004's feature order and the sibling cache). |
 | `deckgen.py` | The deck markdown. |
 | `ankc.py` | Runs the configured ankc and reads its version. |
 | `check.py` | `check data`, `check deck`, `check package`. |
@@ -330,12 +330,12 @@ It prints every trim, every `allow_nested` override, references to retired featu
 
 **One deck,** `Geographic Features`, with no subdecks ([ADR 0004](adr/0004-flat-deck-and-study-order.md)). Each card carries the [tags](#tags) above. All cards go, in study order, into one file, `deck/geographic-features.md`.
 
-**Study order** (`order.py`, features only; the P3 order engine replaces it, per [ADR 0009](adr/0009-curriculum-order.md)):
+**Study order** (`order/`, [ADR 0009](adr/0009-curriculum-order.md)):
 
-1. Tier 1, then 2, then 3. A parent in a later tier isn't promoted; `make deck` lists those cases.
-2. Within a tier, a parent comes before its children. Edges come from the data: a `subtract` or `frame.context` reference makes the referenced feature the parent; an added `feature` part or an `allow_nested` makes the larger feature the parent; a nested pair from the pair check puts the outer first, unless that contradicts an edge above or only one of the two is a climate system.
-3. Categories alternate, each spread evenly across the tier. Features within 300 km of each other are kept at least 3 cards apart where the other rules allow.
-4. Ties go to `features.yaml` order, so the order is deterministic.
+1. Orientation (continents, oceans, planetary winds), then pass 1, then pass 2; within a pass, the 21 regions in ring order.
+2. Within a region, countries follow the frozen `walk:` in `curriculum.yaml`, or a generated neighbour walk (most recent neighbour, then Warnsdorff, then id). A capital comes 2–3 cards after its country; pockets, territories and disputes after the host's capital; a feature right after the last country of its region it touches, or before the first country it mostly covers if it is the region's `opener:`; a city right after its `anchor` feature, else after its capital.
+3. Repair, in precedence order: parent before child (a `frame.context` reference, an added part, an `allow_nested` or a nested pair; never a `subtract`); the capital gap; no two cards with the same id side by side; look-alikes 3–10 cards apart within a region (curated confusables, same-family features within 50 km that don't contain one another, and a feature and a country with outline IoU ≥ 0.6). Walk countries never move. What can't be repaired is a waiver, printed per region with the walk's jumps.
+4. Every tie-break ends in an id, so the order is deterministic.
 
 The order uses the pair results that `check data` caches in `build/siblings.json`, keyed by a hash of its inputs; deckgen refuses a stale copy. Anki keeps a new card's position on first import. With ankc 0.6 that position is the card's `[^pos]` from the lock; ankc 0.5 numbers new cards in source order, which is the study order.
 

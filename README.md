@@ -12,7 +12,7 @@ Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. 
 
 Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x or 0.6.x (0.6.0 is on PyPI as `ankcompiler`) and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
 
-**World Atlas in progress.** `main` also holds the country, territory and city data. Until the P3 order engine can order those cards, `make deck` and `make positions` stop with an error, so `make all` doesn't complete on `main`.
+**World Atlas in progress.** `main` also holds the country, territory and city data. The curriculum order engine (P3) orders every card, but only feature cards have maps until P4. Until then, `make deck ALLOW_UNRENDERED=1` renders and writes the feature cards only, with a warning, while `make positions` still places every card. `make check` and `make build` still fail on the unrendered cards, so `make all` doesn't complete on `main`.
 
 ```sh
 make ids        # mint uids for new entries, then commit features.yaml
