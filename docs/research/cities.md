@@ -42,10 +42,10 @@ No region is empty.
 | 5 | Eastern Europe | 3 | 5 | 8 |
 | 6 | Caucasus & Anatolia | 1 | 2 | 3 |
 | 7 | Levant & Mesopotamia | 1 | 2 | 3 |
-| 8 | Arabian Peninsula | 2 | 2 | 4 |
+| 8 | Arabian Peninsula | 2 | 3 | 5 |
 | 9 | Horn & East Africa | 2 | 1 | 3 |
 | 10 | North Africa | 2 | 4 | 6 |
-| 11 | West Africa | 2 | 2 | 4 |
+| 11 | West Africa | 2 | 3 | 5 |
 | 12 | Central Africa | 0 | 2 | 2 |
 | 13 | Southern Africa & Indian Ocean | 2 | 1 | 3 |
 | 14 | South Asia | 4 | 7 | 11 |
@@ -56,9 +56,9 @@ No region is empty.
 | 19 | North & Central America | 7 | 11 | 18 |
 | 20 | South America | 4 | 6 | 10 |
 | 21 | Caribbean | 0 | 2 | 2 |
-| | **Total** | **55** | **85** | **140** |
+| | **Total** | **55** | **87** | **142** |
 
-The plan's pacing table assumed 55 core cities, so the count matches. With 85 secondary cities, pass 2 is larger than the plan's "about 65" for features plus secondary cities. To trim, cut secondary rows from the densest regions first (19, 16, 3, 14).
+The plan's pacing table assumed 55 core cities, so the count matches. With 87 secondary cities, pass 2 is larger than the plan's "about 65" for features plus secondary cities. To trim, cut secondary rows from the densest regions first (19, 16, 3, 14).
 
 ## Flags
 
@@ -86,7 +86,7 @@ Distances are great-circle distances between NE point coordinates (computed). **
 
 ## Held out pending plan decisions
 
-- **Cape Town** is listed as core but is South Africa's legislative capital (ZAGOV-CAPITALS [V]). If the "several capitals" decision gives South Africa one dot per seat, drop Cape Town from this list. If the decision is one dot (Pretoria), keep it.
+- **Cape Town** is listed as core but is South Africa's legislative capital (ZAGOV-CAPITALS [V]). **Resolved (PM decision, 2026-10-14):** South Africa's capital card is Pretoria only, so Cape Town stays a city card.
 - **Not listed because they are capitals, or may become capital dots:**
   - **Jerusalem:** Israel's claimed capital; East Jerusalem is Palestine's claimed capital.
   - **Amsterdam and The Hague** (Netherlands).
@@ -95,9 +95,9 @@ Distances are great-circle distances between NE point coordinates (computed). **
   - **Jakarta:** still the legal capital until a presidential decree moves it to Nusantara. The Constitutional Court ruled this on 12 May 2026, and no decree was found through mid-October 2026 (MKRI-CAPITAL [S], Decision 71/PUU-XXIV/2026). **Re-check before shipping.**
   - If the plan settles any of these on a single other dot (for example Colombo not carded as capital), the city becomes a candidate here.
 - **Hong Kong and Macau** go with the territory cards, per the plan.
-- **Removed after fact-check, because each is a current seat of government:**
-  - **Aden** is the internationally recognised government's declared temporary or interim capital of Yemen. Wikidata Q131694 describes it as "temporary capital of Yemen", and the Presidential Leadership Council's site calls it the "interim capital" (PLC-ADEN [S]). Sanaa is the constitutional capital. Re-add Aden as a secondary city if the Yemen capital card uses Sanaa and dot spacing allows (Aden is far from Sanaa).
-  - **Abidjan** remains the administrative capital and seat of government (BRIT-COTEDIVOIRE [S]; CIA-CI [S]). Re-add it if the Côte d'Ivoire capital card is Yamoussoukro only.
+- **Removed after fact-check, because each is a current seat of government, then re-added** (see the rows in regions 8 and 11):
+  - **Aden** is the internationally recognised government's declared temporary or interim capital of Yemen. Wikidata Q131694 describes it as "temporary capital of Yemen", and the Presidential Leadership Council's site calls it the "interim capital" (PLC-ADEN [S]). Sanaa is the constitutional capital. **Re-added as a secondary city by PM decision (2026-10-14):** the Yemen capital card is Sanaa, the constitutional capital.
+  - **Abidjan** remains the administrative capital and seat of government (BRIT-COTEDIVOIRE [S]; CIA-CI [S]). **Re-added as a secondary city by PM decision (2026-10-14):** the Côte d'Ivoire capital card is Yamoussoukro only.
 - **Valparaíso stays** as a secondary city. It hosts Congress (SENADO-CONGRESO [V]) but is not a capital: Santiago is. Cape Town is different, because it is constitutionally one of South Africa's three capitals. Treat them alike only if the plan decides that seats of a branch count as capitals.
 
 ## The list
@@ -186,6 +186,7 @@ Within each region, core rows come first; the in-region order is set later by th
 | Dubai | United Arab Emirates | core | Gulf trade, aviation and finance hub | 1159151497 | Q612 | BRIT-DUBAI [S] | P: Abu Dhabi 125 km |
 | Medina | Saudi Arabia | secondary | Muhammad's city after the Hijra; Islam's second holiest city | 1159149443 | Q35484 | BRIT-MEDINA [S] |  |
 | Jeddah | Saudi Arabia | secondary | Red Sea gateway for Mecca pilgrims | 1159151277 | Q374365 | UNESCO-JEDDAH [S] | N: Mecca 63 km |
+| Aden | Yemen | secondary | Historic Gulf of Aden port; Yemen government's interim seat | 1159150595 | Q131694 | BRIT-ADEN [S]; PLC-ADEN [S] | Re-added by PM decision; NE `Admin-1 capital` |
 
 ### 9. Horn & East Africa
 
@@ -214,6 +215,7 @@ Within each region, core rows come first; the in-region order is set later by th
 | Timbuktu | Mali | core | Trans-Saharan trade and Islamic learning centre | 1159150921 | Q9427 | UNESCO-TIMBUKTU [S]; BRIT-TIMBUKTU [S] |  |
 | Kano | Nigeria | secondary | Ancient Hausa city-state; major trans-Saharan trading centre | 1159151297 | Q182984 | BRIT-KANO [S] |  |
 | Kumasi | Ghana | secondary | Capital of the Asante Empire | 1159148507 | Q182059 | BRIT-GHANA-HIST [S] |  |
+| Abidjan | Côte d'Ivoire | secondary | Côte d'Ivoire's economic hub, main port and seat of government | 1159151439 | Q1515 | BRIT-COTEDIVOIRE [S]; CIA-CI [S] | Re-added by PM decision; NE marks it ADM0CAP=1 (Yamoussoukro is the capital) |
 
 ### 12. Central Africa
 

@@ -25,7 +25,8 @@ Disputed areas also get their own cards: the 15 "card" entries in the plan's [Li
 
 **Capital cards.**
 
-- A state with several capitals gets one card, for the official seat (NE's `Admin-0 capital` row).
+- A state with several capitals gets one card, for the official/constitutional capital (Porto-Novo, Dodoma, Sri Jayawardenepura Kotte, Sucre, Pretoria, Yamoussoukro, Naypyidaw), not necessarily NE's `Admin-0 capital` row. The blurb names the seat of government. Stale NE names are fixed (Astana).
+- Nauru's capital, Yaren, is hand-placed from reference coordinates; NE has no row for it.
 - No capital card where the capital shares the country's name and dot: Monaco, Vatican, Singapore, San Marino, Luxembourg.
 - No capital card for Palestine, the territories or the disputed areas.
 
