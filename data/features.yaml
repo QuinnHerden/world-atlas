@@ -1998,6 +1998,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  region: 2
+  region_reason: >-
+    The plan puts it in 2, between Iceland and the UK; Greenland, placed in 19 by geography, would make 19 the later shore.
   note: >-
     In the Cold War it was the choke line for Soviet submarines leaving Kola, guarded by SOSUS hydrophones. Its
     importance is reviving with Arctic access.

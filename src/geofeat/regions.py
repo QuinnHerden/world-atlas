@@ -11,8 +11,9 @@ The rules are docs/world-atlas-plan.md's "Assigning physical features to regions
 A `region:` override in features.yaml replaces the derived region. Rule 5 there (parent before child) is the order
 engine's job, not this module's. `python -m geofeat.regions` prints the assignment of every active feature.
 
-A region's outline is the union of its member countries' outlines. Until P2.2 and data/curriculum.yaml land, the
-members come from the plan's ring table and the outlines from `country_geometry`.
+Ring membership comes from data/curriculum.yaml. A region's outline is the union of its member states and the
+territories placed in it, plus any land of a dispute placed there that no state's outline holds (Western Sahara);
+the outlines come from countries_ne.py.
 """
 
 from collections.abc import Iterable, Mapping
@@ -24,8 +25,10 @@ import shapely
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import unary_union
 
+from geofeat.adjacency import Region, load_curriculum
+from geofeat.countries_ne import outline
 from geofeat.model import Feature, active, load_features
-from geofeat.ne import GEOD, layer
+from geofeat.ne import GEOD
 from geofeat.resolve import area_km2, resolve
 from geofeat.sources.features import orientation
 
@@ -37,154 +40,23 @@ CLIMATE_BUFFER_DEG = 3.0  # how far either side of a flow line its climate reach
 SHORELINE_EPS_DEG = 0.1  # how close to a region a water body's edge counts as its shore
 COVERED_SHARE = 0.5  # below this share of its area inside countries, a water body is measured by its shoreline
 
-# The ring, from the plan's table: number -> (name, country ids in walk order). Northern Cyprus and Somaliland are
-# inside Cyprus and Somalia's composed outlines; Western Sahara is a pocket of region 10.
-REGIONS: dict[int, tuple[str, tuple[str, ...]]] = {
-    1: ("Western Europe", ("portugal", "spain", "andorra", "france", "monaco", "belgium", "luxembourg", "netherlands", "united-kingdom", "ireland")),
-    2: ("Nordic & Baltic", ("iceland", "norway", "sweden", "denmark", "finland", "estonia", "latvia", "lithuania")),
-    3: ("Central Europe & Italy",
-        ("poland", "germany", "czechia", "austria", "switzerland", "liechtenstein", "italy", "san-marino", "vatican-city", "malta", "slovenia", "hungary", "slovakia")),
-    4: ("Balkans", ("croatia", "bosnia-and-herzegovina", "serbia", "kosovo", "montenegro", "albania", "north-macedonia", "greece", "bulgaria", "romania")),
-    5: ("Eastern Europe", ("moldova", "ukraine", "belarus", "russia")),
-    6: ("Caucasus & Anatolia", ("georgia", "azerbaijan", "armenia", "turkey", "cyprus")),
-    7: ("Levant & Mesopotamia", ("syria", "lebanon", "israel", "palestine", "jordan", "iraq")),
-    8: ("Arabian Peninsula", ("kuwait", "saudi-arabia", "bahrain", "qatar", "united-arab-emirates", "oman", "yemen")),
-    9: ("Horn & East Africa", ("djibouti", "eritrea", "ethiopia", "somalia", "kenya", "tanzania", "burundi", "rwanda", "uganda", "south-sudan", "sudan")),
-    10: ("North Africa", ("egypt", "libya", "tunisia", "algeria", "morocco", "western-sahara")),
-    11: ("West Africa", ("mauritania", "senegal", "gambia", "cabo-verde", "guinea-bissau", "guinea", "sierra-leone", "liberia", "cote-divoire", "mali", "burkina-faso", "ghana", "togo",
-                         "benin", "nigeria", "niger")),
-    12: ("Central Africa", ("chad", "cameroon", "central-african-republic", "equatorial-guinea", "sao-tome-and-principe", "gabon", "congo", "dr-congo")),
-    13: ("Southern Africa & Indian Ocean", ("angola", "zambia", "malawi", "mozambique", "zimbabwe", "botswana", "namibia", "south-africa", "lesotho", "eswatini",
-                                            "madagascar", "comoros", "mauritius", "seychelles")),
-    14: ("South Asia", ("maldives", "sri-lanka", "india", "bangladesh", "bhutan", "nepal", "pakistan")),
-    15: ("Iran & Central Asia", ("afghanistan", "iran", "turkmenistan", "uzbekistan", "tajikistan", "kyrgyzstan", "kazakhstan")),
-    16: ("East Asia", ("china", "mongolia", "north-korea", "south-korea", "japan", "taiwan")),
-    17: ("Southeast Asia", ("philippines", "malaysia", "brunei", "singapore", "thailand", "myanmar", "laos", "vietnam", "cambodia", "indonesia", "timor-leste")),
-    18: ("Oceania", ("australia", "papua-new-guinea", "solomon-islands", "vanuatu", "new-zealand", "fiji", "tonga", "samoa", "tuvalu", "kiribati", "nauru", "marshall-islands", "micronesia",
-                     "palau")),
-    19: ("North & Central America", ("united-states", "canada", "mexico", "guatemala", "belize", "el-salvador", "honduras", "nicaragua", "costa-rica", "panama")),
-    20: ("South America", ("colombia", "ecuador", "peru", "chile", "bolivia", "argentina", "uruguay", "paraguay", "brazil", "suriname", "guyana", "venezuela")),
-    21: ("Caribbean", ("trinidad-and-tobago", "grenada", "saint-vincent-and-the-grenadines", "barbados", "saint-lucia", "dominica", "antigua-and-barbuda", "saint-kitts-and-nevis", "dominican-republic", "haiti", "jamaica", "cuba", "bahamas")),
-}
-# Territories have no place in the ring yet (open decision 5, default: geographic pockets). Their land still frames
-# features, so each counts towards the region it lies in. Greenland and Bermuda wait for the manual look the decision
-# names; Antarctica is in no region.
-TERRITORIES: dict[int, tuple[str, ...]] = {
-    1: ("gibraltar",),
-    2: ("aland", "faroe-islands"),
-    6: ("dhekelia", "akrotiri"),  # the UK's Cyprus base areas
-    13: ("reunion", "mayotte"),
-    16: ("hong-kong", "macau"),
-    18: ("new-caledonia", "french-polynesia"),
-    20: ("french-guiana", "falkland-islands"),
-    21: ("puerto-rico", "us-virgin-islands", "british-virgin-islands", "cayman-islands", "turks-and-caicos-islands", "aruba", "curacao", "sint-maarten", "saint-martin", "saint-barthelemy", "anguilla", "montserrat", "guadeloupe", "martinique"),
-}
-
-# Country outlines, per docs/research/ne-political-layers.md (a) and (c): the admin_0 row, or the map unit for the four
-# states whose row carries overseas parts (and France's overseas departments), composed with the recognised-border rows.
-# id -> NE admin_0 ADM0_A3, or map-unit GU_A3.
-_ADMIN_0 = {
-    "portugal": "PRT", "spain": "ESP", "andorra": "AND", "monaco": "MCO",
-    "belgium": "BEL", "luxembourg": "LUX", "united-kingdom": "GBR", "ireland": "IRL",
-    "iceland": "ISL", "sweden": "SWE", "denmark": "DNK", "finland": "FIN",
-    "estonia": "EST", "latvia": "LVA", "lithuania": "LTU", "poland": "POL",
-    "germany": "DEU", "czechia": "CZE", "austria": "AUT", "switzerland": "CHE",
-    "liechtenstein": "LIE", "italy": "ITA", "san-marino": "SMR", "vatican-city": "VAT",
-    "malta": "MLT", "slovenia": "SVN", "hungary": "HUN", "slovakia": "SVK",
-    "croatia": "HRV", "bosnia-and-herzegovina": "BIH", "serbia": "SRB", "kosovo": "KOS",
-    "montenegro": "MNE", "albania": "ALB", "north-macedonia": "MKD", "greece": "GRC",
-    "bulgaria": "BGR", "romania": "ROU", "moldova": "MDA", "ukraine": "UKR",
-    "belarus": "BLR", "russia": "RUS", "georgia": "GEO", "azerbaijan": "AZE",
-    "armenia": "ARM", "turkey": "TUR", "cyprus": "CYP", "syria": "SYR",
-    "lebanon": "LBN", "israel": "ISR", "palestine": "PSX", "jordan": "JOR",
-    "iraq": "IRQ", "kuwait": "KWT", "saudi-arabia": "SAU", "bahrain": "BHR",
-    "qatar": "QAT", "united-arab-emirates": "ARE", "oman": "OMN", "yemen": "YEM",
-    "djibouti": "DJI", "eritrea": "ERI", "ethiopia": "ETH", "somalia": "SOM",
-    "kenya": "KEN", "tanzania": "TZA", "burundi": "BDI", "rwanda": "RWA",
-    "uganda": "UGA", "south-sudan": "SDS", "sudan": "SDN", "egypt": "EGY",
-    "libya": "LBY", "tunisia": "TUN", "algeria": "DZA", "morocco": "MAR",
-    "western-sahara": "SAH", "mauritania": "MRT", "senegal": "SEN", "gambia": "GMB",
-    "cabo-verde": "CPV", "guinea-bissau": "GNB", "guinea": "GIN", "sierra-leone": "SLE",
-    "liberia": "LBR", "cote-divoire": "CIV", "mali": "MLI", "burkina-faso": "BFA",
-    "ghana": "GHA", "togo": "TGO", "benin": "BEN", "nigeria": "NGA",
-    "niger": "NER", "chad": "TCD", "cameroon": "CMR", "central-african-republic": "CAF",
-    "equatorial-guinea": "GNQ", "sao-tome-and-principe": "STP", "gabon": "GAB", "congo": "COG",
-    "dr-congo": "COD", "angola": "AGO", "zambia": "ZMB", "malawi": "MWI",
-    "mozambique": "MOZ", "zimbabwe": "ZWE", "botswana": "BWA", "namibia": "NAM",
-    "south-africa": "ZAF", "lesotho": "LSO", "eswatini": "SWZ", "madagascar": "MDG",
-    "comoros": "COM", "mauritius": "MUS", "seychelles": "SYC", "maldives": "MDV",
-    "sri-lanka": "LKA", "india": "IND", "bangladesh": "BGD", "bhutan": "BTN",
-    "nepal": "NPL", "pakistan": "PAK", "afghanistan": "AFG", "iran": "IRN",
-    "turkmenistan": "TKM", "uzbekistan": "UZB", "tajikistan": "TJK", "kyrgyzstan": "KGZ",
-    "kazakhstan": "KAZ", "china": "CHN", "mongolia": "MNG", "north-korea": "PRK",
-    "south-korea": "KOR", "japan": "JPN", "taiwan": "TWN", "philippines": "PHL",
-    "malaysia": "MYS", "brunei": "BRN", "singapore": "SGP", "thailand": "THA",
-    "myanmar": "MMR", "laos": "LAO", "vietnam": "VNM", "cambodia": "KHM",
-    "indonesia": "IDN", "timor-leste": "TLS", "australia": "AUS", "papua-new-guinea": "PNG",
-    "solomon-islands": "SLB", "vanuatu": "VUT", "fiji": "FJI", "tonga": "TON",
-    "samoa": "WSM", "tuvalu": "TUV", "kiribati": "KIR", "nauru": "NRU",
-    "marshall-islands": "MHL", "micronesia": "FSM", "palau": "PLW", "united-states": "USA",
-    "canada": "CAN", "mexico": "MEX", "guatemala": "GTM", "belize": "BLZ",
-    "el-salvador": "SLV", "honduras": "HND", "nicaragua": "NIC", "costa-rica": "CRI",
-    "panama": "PAN", "colombia": "COL", "ecuador": "ECU", "peru": "PER",
-    "chile": "CHL", "bolivia": "BOL", "argentina": "ARG", "uruguay": "URY",
-    "paraguay": "PRY", "brazil": "BRA", "suriname": "SUR", "guyana": "GUY",
-    "venezuela": "VEN", "trinidad-and-tobago": "TTO", "grenada": "GRD", "saint-vincent-and-the-grenadines": "VCT",
-    "barbados": "BRB", "saint-lucia": "LCA", "dominica": "DMA", "antigua-and-barbuda": "ATG",
-    "saint-kitts-and-nevis": "KNA", "dominican-republic": "DOM", "haiti": "HTI", "jamaica": "JAM",
-    "cuba": "CUB", "bahamas": "BHS", "gibraltar": "GIB", "aland": "ALD",
-    "faroe-islands": "FRO", "dhekelia": "ESB", "akrotiri": "WSB", "hong-kong": "HKG",
-    "macau": "MAC", "new-caledonia": "NCL", "french-polynesia": "PYF", "falkland-islands": "FLK",
-    "puerto-rico": "PRI", "us-virgin-islands": "VIR", "british-virgin-islands": "VGB", "cayman-islands": "CYM",
-    "turks-and-caicos-islands": "TCA", "aruba": "ABW", "curacao": "CUW", "sint-maarten": "SXM",
-    "saint-martin": "MAF", "saint-barthelemy": "BLM", "anguilla": "AIA", "montserrat": "MSR",
-}
-_MAP_UNIT = {
-    "france": "FXX", "netherlands": "NLX", "norway": "NOW", "new-zealand": "NZL",
-    "reunion": "REU", "mayotte": "MYT", "french-guiana": "GUF", "guadeloupe": "GLP",
-    "martinique": "MTQ",
-}
-_COMPOSITION: dict[str, tuple[tuple[Literal["+", "-"], str, int], ...]] = {
-    "ukraine": (("+", "10m_admin_0_disputed_areas", 1159321217),),  # Crimea
-    "russia": (("-", "10m_admin_0_disputed_areas", 1159321217),),
-    "cyprus": (("+", "10m_admin_0_countries", 1159320531), ("+", "10m_admin_0_countries", 1159320511)),  # N. Cyprus, buffer zone
-    "syria": (("+", "10m_admin_0_disputed_areas", 1159320905),),  # Golan
-    "israel": (("-", "10m_admin_0_disputed_areas", 1159320905),),
-    "morocco": (("-", "10m_admin_0_disputed_areas", 1159321037),),  # Western Sahara's Moroccan-held part
-    "western-sahara": (("+", "10m_admin_0_disputed_areas", 1159321037),),
-    "somalia": (("+", "10m_admin_0_countries", 1159321259),),  # Somaliland
-    "india": (("+", "10m_admin_0_countries", 1159320963),),  # Siachen
-    "kazakhstan": (("+", "10m_admin_0_countries", 1159320965),),  # Baikonur
-    "cuba": (("+", "10m_admin_0_countries", 1159320529),),  # Guantanamo Bay
-}
-
-
-def _row(layer_name: str, ne_id: int) -> BaseGeometry:
-    rows = layer(layer_name)
-    return shapely.make_valid(rows[rows.ne_id == ne_id].geometry.iloc[0])
-
-
 @cache
-def country_geometry(id: str) -> BaseGeometry:
-    """A country's or territory's recognised-border outline, keyed by its slug id. A stand-in until P2.2's
-    countries.yaml and territories.yaml replace it."""
-    if id in _MAP_UNIT:
-        units = layer("10m_admin_0_map_units")
-        base = units[units.gu_a3 == _MAP_UNIT[id]].geometry.iloc[0]
-    else:
-        rows = layer("10m_admin_0_countries")
-        base = rows[rows.adm0_a3 == _ADMIN_0[id]].geometry.iloc[0]
-    geometry = shapely.make_valid(base)
-    for op, layer_name, ne_id in _COMPOSITION.get(id, ()):
-        part = _row(layer_name, ne_id)
-        geometry = geometry.union(part) if op == "+" else geometry.difference(part)
-    return geometry
+def ring() -> dict[int, Region]:
+    return {r.number: r for r in load_curriculum().regions}
+
+
+def _uncovered(dispute: BaseGeometry, states: Iterable[str]) -> BaseGeometry:
+    """The dispute's land that no state's outline holds."""
+    box = shapely.box(*dispute.bounds)
+    return dispute.difference(unary_union([outline(s) for s in states if outline(s).intersects(box)]))
 
 
 @cache
 def region_outlines() -> dict[int, BaseGeometry]:
-    return {n: unary_union([country_geometry(c) for c in (*members, *TERRITORIES.get(n, ()))])
-            for n, (_, members) in REGIONS.items()}
+    states = [c for r in ring().values() for c in r.countries]
+    return {n: unary_union([*(outline(c) for c in (*r.countries, *r.territories)),
+                            *(_uncovered(outline(d), states) for d in r.disputes)])
+            for n, r in ring().items()}
 
 
 Rule = Literal["orientation", "shore", "owner", "climate", "extent", "override"]
@@ -275,15 +147,16 @@ def _top(feature: Feature, shares: Mapping[int, float]) -> int:
     return next(iter(shares))
 
 
-def override_errors(features: Iterable[Feature]) -> list[str]:
-    """A `region:` override must name a region of the ring (the plan's table until data/curriculum.yaml lands)."""
+def override_errors(features: Iterable[Feature], ring: Iterable[int]) -> list[str]:
+    """A `region:` override must name a region of the ring."""
+    numbers = set(ring)
     return [f"{f.id}: region {f.region} is not in the ring" for f in features
-            if f.region is not None and f.region not in REGIONS]
+            if f.region is not None and f.region not in numbers]
 
 
 def derive(feature: Feature, geometry: BaseGeometry, regions: Mapping[int, BaseGeometry]) -> Assignment:
     """The feature's region by the plan's rules, then its `region:` override if it has one."""
-    if errors := override_errors([feature]):
+    if errors := override_errors([feature], regions):
         raise ValueError(errors[0])
     if orientation(feature):
         rule, measure, shares, derived = "orientation", "none", {}, ORIENTATION
@@ -311,7 +184,7 @@ def assign(features: Iterable[Feature]) -> dict[str, Assignment]:
 
 
 def region_name(n: int) -> str:
-    return "Orientation" if n == ORIENTATION else REGIONS[n][0]
+    return "Orientation" if n == ORIENTATION else ring()[n].name
 
 
 def report(features: list[Feature], assignments: Mapping[str, Assignment]) -> str:
@@ -324,7 +197,7 @@ def report(features: list[Feature], assignments: Mapping[str, Assignment]) -> st
         share = f"{a.share:.0%}" if a.shares else ""
         lines.append(f"| {f.id} | {f.type} | {a.rule}{note} | {a.measure} | {a.region} {region_name(a.region)} "
                      f"| {share} | {runner} |")
-    counts = {n: sum(a.region == n for a in assignments.values()) for n in (ORIENTATION, *REGIONS)}
+    counts = {n: sum(a.region == n for a in assignments.values()) for n in (ORIENTATION, *ring())}
     lines += ["", "| Region | Features |", "|---|---|"]
     lines += [f"| {n} {region_name(n)} | {count} |" for n, count in counts.items()]
     return "\n".join(lines)

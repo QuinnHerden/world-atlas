@@ -1,12 +1,11 @@
 import unittest
-from unittest import mock
 
 from pydantic import ValidationError
 from shapely.geometry import LineString, Point, box
 from shapely.ops import unary_union
 
 from geofeat.model import Expect, Feature, Part, load_features
-from geofeat.regions import ORIENTATION, REGIONS, continent_geometry, derive, disjoint, override_errors
+from geofeat.regions import ORIENTATION, continent_geometry, derive, disjoint, override_errors, ring
 
 # A synthetic ring on the equator: regions 1 and 3 face each other across a 1° strait, region 2 lies north of both.
 WORLD = {1: box(0, 0, 10, 10), 2: box(0, 12, 25, 20), 3: box(11, 0, 25, 10)}
@@ -70,12 +69,11 @@ class DeriveTest(unittest.TestCase):
 
 class OverrideFieldTest(unittest.TestCase):
     def test_every_override_is_in_the_ring(self) -> None:
-        self.assertEqual(override_errors(load_features()), [])
-        with mock.patch.dict(REGIONS, clear=True):
-            plain = feature("Plain", region=3, region_reason="a region the ring lacks")
-            self.assertEqual(override_errors([plain]), ["x: region 3 is not in the ring"])
-            with self.assertRaisesRegex(ValueError, "not in the ring"):
-                derive(plain, box(0, 0, 1, 1), WORLD)
+        self.assertEqual(override_errors(load_features(), ring()), [])
+        plain = feature("Plain", region=4, region_reason="a region the ring lacks")
+        self.assertEqual(override_errors([plain], WORLD), ["x: region 4 is not in the ring"])
+        with self.assertRaisesRegex(ValueError, "not in the ring"):
+            derive(plain, box(0, 0, 1, 1), WORLD)
 
     def test_region_needs_a_reason(self) -> None:
         with self.assertRaises(ValidationError):
