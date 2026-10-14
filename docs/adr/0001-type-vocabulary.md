@@ -18,6 +18,8 @@ Separately, the sibling-pair check flagged nesting only when two cards had the i
 | Valley | 2 | The user merged Rift valley into Valley. |
 | Sea route | 1 | The user's name for the Northern Sea Route. |
 | Cape | 2 | No honest merge exists: Cape Horn isn't on a peninsula, and neither cape is an island. |
+| Ocean current | 1 | Only the Gulf Stream is left since 9 climate cards were retired; no other word describes a current. |
+| Climate belt | 2 | The hurricane and typhoon belts, left since 9 climate cards were retired. |
 
 **Merges:**
 
@@ -71,5 +73,5 @@ Island is a family of its own. NE draws some island groups as sea-area envelopes
 
 - Re-typing a card usually changes only the note text. The map re-renders when the new word moves it into or out of a land family (the land clip changes its geometry, and the render hash records this, including through `{feature:}` references), or changes its fill opacity or close-up borders.
 - Moving the Sahel to another category leaves an already-imported card in its old subdeck; see the tier note in the README.
-- The vocabulary is 23 words, above the 15–18 first estimated. The ≥3 rule kept every word that covered 3 or more cards when it was adopted; retiring the passes and islands has since left Pass, Corridor and Island with no active card. Fewer words would mean merging informative ones, for example Delta into Plain, Corridor into Pass, or Canal and Sea route into one word.
+- The vocabulary is 23 words, above the 15–18 first estimated. The ≥3 rule kept every word that covered 3 or more cards when it was adopted; retiring the passes and islands has since left Pass, Corridor and Island with no active card, and retiring 9 climate cards left Ocean current and Climate belt under 3. Fewer words would mean merging informative ones, for example Delta into Plain, Corridor into Pass, or Canal and Sea route into one word.
 - Switching the pair check to families surfaced three nestings: Singapore in the Malay Peninsula, now subtracted (Singapore is since retired, so the peninsula subtracts Singapore's Natural Earth row directly and its shape is unchanged); Barents in the Arctic Ocean, allowed; and the Zagros in the Iranian Plateau, allowed.

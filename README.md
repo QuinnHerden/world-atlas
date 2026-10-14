@@ -60,6 +60,12 @@ Re-importing the package never deletes notes, so a retired card stays in your co
 
 Each card carries an `id_<feature-id>` tag. To find cards retired after this tag was added, search for their tags, e.g. `tag:id_khyber-pass OR tag:id_malta`.
 
+The 9 climate cards retired after v1 carry the tag, so this search finds them:
+
+```
+tag:id_subtropical-highs OR tag:id_itcz OR tag:id_east-asian-monsoon OR tag:id_west-african-monsoon OR tag:id_canary-current OR tag:id_benguela-current OR tag:id_kuroshio OR tag:id_humboldt-current OR tag:id_bay-of-bengal-cyclones
+```
+
 The 25 cards retired after v1 (the passes, corridors and islands) were imported without that tag. Their type words, Pass, Corridor and Island, are used by no active card, so this search finds exactly those 25:
 
 ```

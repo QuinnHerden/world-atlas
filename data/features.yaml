@@ -232,6 +232,7 @@
   alt_names: [horse latitudes]
   type: Climate belt
   category: Climate Systems
+  retired: true
   tier: 2
   note: >-
     Sinking dry air in this belt creates the great desert belt (Sahara, Arabian, Kalahari, Australian). The calm
@@ -338,6 +339,7 @@
   name: Canary Current
   type: Ocean current
   category: Climate Systems
+  retired: true
   tier: 3
   note: >-
     It is the southbound leg of the Iberian volta do mar, carrying ships to the Canaries and the trade winds.
@@ -2377,6 +2379,7 @@
   alt_names: [Peru Current]
   type: Ocean current
   category: Climate Systems
+  retired: true
   tier: 1
   note: >-
     Cold upwelling feeds the world's largest single-species fishery, the Peruvian anchoveta. Seabird guano from the
@@ -2395,6 +2398,7 @@
   type: Wind system
   qualifier: June
   category: Climate Systems
+  retired: true
   tier: 2
   note: >-
     Its summer rains underwrite wet-rice farming in southern China, Korea and Japan, and its failures and floods
@@ -2410,6 +2414,7 @@
   type: Wind system
   qualifier: August
   category: Climate Systems
+  retired: true
   tier: 2
   note: >-
     It is the Sahel's only rain source. A regime shift around 1968 brought the 1970s–80s Sahel drought, with
@@ -2426,6 +2431,7 @@
   type: Climate belt
   qualifier: July
   category: Climate Systems
+  retired: true
   tier: 2
   note: >-
     Sailing ships were becalmed here, and Iberian pilots chose where to cross it. Its seasonal north–south migration
@@ -2468,6 +2474,7 @@
   name: Benguela Current
   type: Ocean current
   category: Climate Systems
+  retired: true
   tier: 3
   note: >-
     It is the cold upwelling that makes the Namib a coastal desert and supports Namibian and South African
@@ -2483,6 +2490,7 @@
   alt_names: [Kuroshio Current, Japan Current, Black Current]
   type: Ocean current
   category: Climate Systems
+  retired: true
   tier: 3
   note: >-
     It is Japan's warm "Black Current" and a driver of its rich fisheries, and it carried drifting junks to the
@@ -2497,6 +2505,7 @@
   name: Bay of Bengal cyclones
   type: Climate belt
   category: Climate Systems
+  retired: true
   tier: 3
   note: >-
     Storm surge on the Ganges–Brahmaputra delta is among the deadliest anywhere. The Bhola cyclone and the botched
