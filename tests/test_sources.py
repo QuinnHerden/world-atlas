@@ -16,6 +16,9 @@ import geofeat.resolve as resolve
 import geofeat.sources as sources
 import geofeat.sources.cities as cities
 import geofeat.sources.political as political
+import geofeat.sources.features as features_source
+from geofeat.card import PASS_ORDER, Card, pass_tag, study_pass
+from geofeat.model import Feature, load_features
 from geofeat.model import Part
 from geofeat.sources.political import Country, Dispute, in_bbox, outline
 
@@ -47,9 +50,15 @@ def territories() -> list[dict]:
     return [
         {"kind": "territory", "id": "gamma", "name": "Gamma Isle", "uid": "TerritoryG", "sovereign": "alpha",
          "status_line": "Overseas department of Alpha", "region": 3, "geometry": [a0(3)], "expect": [20, 20, 21, 21]},
-        {"kind": "dispute", "id": "delta", "name": "Delta", "uid": "DisputeDDD", "parties": ["Zeta", "Alpha", "Éire"],
+        {"kind": "dispute", "id": "delta", "name": "Delta", "uid": "DisputeDDD", "parties": ["beta", {"label": "Éire Front"}, "alpha"],
+         "host": "alpha",
          "region": 1, "geometry": [{"layer": DA, "select": {"ne_id": 4}}], "expect": [0, 0, 2, 2]},
     ]
+
+
+def feature_entry() -> dict:
+    return {"id": "x", "name": "X", "type": "Plain", "category": "Deserts, Plateaus & Plains", "tier": 3, "style": "area",
+            "geometry": [a0(1)], "expect": {"bbox": [0, 0, 1, 1]}}
 
 
 def cities_data() -> list[dict]:
@@ -67,7 +76,7 @@ def data(countries=None, territories=None, cities_=None):
             if entries is not None:
                 YAML().dump(entries, paths[name])
         with mock.patch.multiple(political, COUNTRIES=paths["countries"], TERRITORIES=paths["territories"],
-                                 layer=LAYERS.__getitem__), \
+                                 layer=LAYERS.__getitem__), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
                 mock.patch.object(cities, "PATH", paths["cities"]):
             yield paths
 
@@ -88,16 +97,27 @@ class CardTextTest(unittest.TestCase):
             "capital:alpha": ("City", ("Alphaville", "Capital of Alpha")),
             "country:beta": ("Country", ("Beta",)),
             "territory:gamma": ("Territory", ("Gamma Isle", "Overseas department of Alpha")),
-            "dispute:delta": ("Disputed territory", ("Delta", "Disputed: Alpha, Éire, Zeta")),
+            "dispute:delta": ("Disputed territory", ("Delta", "Disputed: Alpha, Beta, Éire Front")),
             "city:alpha-port": ("City", ("Alpha Port", "Alpha")),
         })
 
     def test_tags(self) -> None:
-        self.assertEqual(self.cards["country:alpha"].tags, ("tier::1", "category::countries", "id_country_alpha", "kind::country"))
-        self.assertEqual(self.cards["capital:alpha"].tags, ("tier::1", "category::cities", "id_capital_alpha", "kind::capital"))
-        self.assertEqual(self.cards["city:alpha-port"].tags, ("tier::2", "category::cities", "id_city_alpha-port", "kind::city"))
-        self.assertEqual(self.cards["territory:gamma"].tags[2:], ("id_territory_gamma", "kind::territory"))
-        self.assertEqual(self.cards["dispute:delta"].tags[2:], ("id_dispute_delta", "kind::dispute"))
+        self.assertEqual(self.cards["country:alpha"].tags,
+                         ("tier::1", "category::countries", "id_country_alpha", "kind::country", "region::01", "pass::1"))
+        self.assertEqual(self.cards["capital:alpha"].tags,
+                         ("tier::1", "category::cities", "id_capital_alpha", "kind::capital", "region::01", "pass::1"))
+        self.assertEqual(self.cards["city:alpha-port"].tags,
+                         ("tier::2", "category::cities", "id_city_alpha-port", "kind::city", "region::01", "pass::1"))
+        self.assertEqual(self.cards["territory:gamma"].tags[2:], ("id_territory_gamma", "kind::territory", "region::03", "pass::1"))
+        self.assertEqual(self.cards["dispute:delta"].tags[2:], ("id_dispute_delta", "kind::dispute", "region::01", "pass::1"))
+
+    def test_passes(self) -> None:
+        self.assertEqual({k: c.study_pass for k, c in self.cards.items()}, dict.fromkeys(self.cards, 1))
+        self.assertEqual(self.cards["country:beta"].tier, 3)  # a tier-3 microstate stays in pass 1
+        secondary = cities_data()[0] | {"tier": "secondary"}
+        with data(countries(), cities_=[secondary]):
+            (city,) = cities.cards()
+        self.assertEqual((city.study_pass, city.tags[-1]), (2, "pass::2"))
 
     def test_regions_notes_and_parents(self) -> None:
         self.assertEqual(self.cards["city:alpha-port"].region, "01")  # inherited from its country
@@ -105,9 +125,12 @@ class CardTextTest(unittest.TestCase):
         self.assertEqual(self.cards["capital:alpha"].note, "Middle.")
         self.assertEqual(self.cards["capital:alpha"].parents, ("country:alpha",))
         self.assertEqual(self.cards["city:alpha-port"].parents, ("country:alpha", "capital:alpha"))
+        self.assertEqual(self.cards["dispute:delta"].host, "country:alpha")
+        self.assertEqual((self.cards["dispute:delta"].anchor, self.cards["country:alpha"].host), (None, None))
 
     def test_render_specs(self) -> None:
-        spec = {k: c.render.spec for k, c in self.cards.items()}
+        with data(countries(), territories(), cities_data()):
+            spec = {k: c.render.resolve()[0] for k, c in self.cards.items()}
         self.assertEqual((spec["country:alpha"].country, spec["country:alpha"].dot), ("subject", None))
         self.assertEqual((spec["capital:alpha"].country, spec["capital:alpha"].dot), ("context", (5.0, 5.0)))
         self.assertEqual((spec["city:alpha-port"].country, spec["city:alpha-port"].dot), ("context", (1.0, 1.0)))
@@ -116,7 +139,7 @@ class CardTextTest(unittest.TestCase):
 
     def test_dot_cards_draw_their_country(self) -> None:
         with data(countries(), territories(), cities_data()):
-            shape, context, former = self.cards["city:alpha-port"].render.geometry()
+            _, shape, context, former = self.cards["city:alpha-port"].render.resolve()
         self.assertTrue(shape.equals(box(0, 0, 10, 10)))
         self.assertEqual((context, former), ((), None))
 
@@ -162,17 +185,28 @@ class NullCapitalTest(unittest.TestCase):
 
 
 class PartiesTest(unittest.TestCase):
-    def dispute(self, parties: list[str]) -> Dispute:
+    names = {"alpha": "argentina", "beta": "United Kingdom", "gamma": "Eagle"}
+
+    def dispute(self, parties: list) -> Dispute:
         return Dispute.model_validate(territories()[1] | {"parties": parties})
 
     def test_alphabetical_ignoring_case_and_accents(self) -> None:
-        self.assertEqual(self.dispute(["United Kingdom", "argentina"]).parties_line, "Disputed: argentina, United Kingdom")
-        self.assertEqual(self.dispute(["Zeta", "Éire", "Eagle"]).parties_line, "Disputed: Eagle, Éire, Zeta")
+        self.assertEqual(self.dispute(["beta", "alpha"]).parties_line(self.names), "Disputed: argentina, United Kingdom")
+        self.assertEqual(self.dispute([{"label": "Zeta"}, {"label": "Éire"}, "gamma"]).parties_line(self.names),
+                         "Disputed: Eagle, Éire, Zeta")
 
     def test_at_least_two_distinct(self) -> None:
-        for parties in (["Alpha"], ["Alpha", "alpha"]):
-            with self.assertRaises(ValidationError):
+        for parties in (["alpha"], ["alpha", "alpha"], [{"label": "X"}, {"label": "X"}]):
+            with self.subTest(parties=parties), self.assertRaises(ValidationError):
                 self.dispute(parties)
+        with self.assertRaisesRegex(ValueError, "party names repeat"):
+            self.dispute(["beta", {"label": "united kingdom"}]).parties_line(self.names)
+
+    def test_party_refs_must_be_countries(self) -> None:
+        with self.assertRaisesRegex(ValueError, r"parties \['omega'\] are not countries"):
+            self.dispute(["alpha", "omega"]).parties_line(self.names)
+        with self.assertRaises(ValidationError):
+            self.dispute(["alpha", "Polisario Front"])  # free text needs {label: ...}
 
 
 class UniquenessTest(unittest.TestCase):
@@ -241,11 +275,54 @@ class CheckTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "omega"):
                 cities.cards()
 
-    def test_unknown_sovereign(self) -> None:
+    def test_unknown_references(self) -> None:
         bad = territories()
-        bad[0]["sovereign"] = "omega"
-        with data(countries(), bad):
-            self.assertEqual(political.check()[0], ["gamma: sovereign 'omega' is not a country"])
+        bad[0] |= {"sovereign": "omega", "host": "omega"}
+        bad[1]["parties"] = ["alpha", "omega"]
+        microstate = countries()
+        microstate[1]["host"] = "beta"
+        with data(microstate, bad):
+            self.assertEqual(political.check()[0], [
+                "beta: host 'beta' is itself",
+                "gamma: host 'omega' is not a country",
+                "gamma: sovereign 'omega' is not a country",
+                "delta: parties ['omega'] are not countries (use `{label: ...}` for a non-state party)",
+            ])
+
+    def test_hosts_are_one_level_deep_and_in_region(self) -> None:
+        nested = countries()
+        nested[0]["host"] = "beta"
+        nested[1] |= {"host": "alpha", "region": 1}
+        with data(nested):
+            self.assertEqual(political.check()[0], [
+                "alpha: host 'beta' is itself hosted by 'alpha'; hosts are one level deep",
+                "beta: host 'alpha' is itself hosted by 'beta'; hosts are one level deep",
+            ])
+        elsewhere = territories()
+        elsewhere[0]["host"] = "alpha"
+        with data(countries(), elsewhere):
+            self.assertEqual(political.check()[0], ["gamma: region 3 differs from its host alpha's region 1"])
+
+    def test_city_anchor_pass(self) -> None:
+        cases = {("atlantic-ocean", "core"): "pass orientation", ("lake-baikal", "secondary"): None}
+        tier3 = next(f.id for f in load_features() if f.tier == 3 and not f.retired)
+        cases[(tier3, "core")] = "is in pass 2, the city in pass 1"
+        cases[(tier3, "secondary")] = None
+        for (anchor, tier), error in cases.items():
+            with self.subTest(anchor=anchor, tier=tier), \
+                    data(countries(), cities_=[cities_data()[0] | {"anchor": anchor, "tier": tier}]):
+                errors = cities.check(political.check()[1])
+                if error:
+                    self.assertIn(error, errors[0])
+                else:
+                    self.assertEqual(errors, [])
+
+    def test_city_anchor(self) -> None:
+        with data(countries(), cities_=[cities_data()[0] | {"anchor": "nile"}]):
+            self.assertEqual(cities.check(political.check()[1]), [])
+            self.assertEqual(cities.cards()[0].anchor, "feature:nile")
+        with data(countries(), cities_=[cities_data()[0] | {"anchor": "atlantis"}]):
+            self.assertEqual(cities.check(political.check()[1]), ["alpha-port: anchor 'atlantis' is not an active feature"])
 
     def test_expect_and_point_box(self) -> None:
         entry = countries()[0]
@@ -258,7 +335,7 @@ class CheckTest(unittest.TestCase):
         entry = countries()[0]
         entry["capital"] |= {"expect": [0, 0, 1, 1]}
         with data([entry]), self.assertRaisesRegex(ValueError, "alpha capital: point .* outside expected bbox"):
-            political.cards()
+            by_key(political.cards())["capital:alpha"].render.resolve()
 
     def test_composition(self) -> None:
         entry = countries()[0]
@@ -278,7 +355,7 @@ class CheckTest(unittest.TestCase):
 
 class OutlineTest(unittest.TestCase):
     def test_mainland_drops_overseas_parts(self) -> None:
-        with mock.patch.object(political, "layer", LAYERS.__getitem__):
+        with mock.patch.object(resolve, "layer", LAYERS.__getitem__):
             shape = outline("x", [Part(**a0(5))], expect=(0, 0, 10, 10), mainland=(-1, -1, 11, 11))
             self.assertTrue(shape.equals(box(0, 0, 10, 10)))
             with self.assertRaisesRegex(ValueError, "outside expected bbox"):
@@ -299,7 +376,7 @@ class EdgeCaseTest(unittest.TestCase):
             self.assertIn("has no area", political.check()[0][0])
 
     def test_empty_select(self) -> None:
-        with mock.patch.object(political, "layer", LAYERS.__getitem__), self.assertRaisesRegex(ValueError, "empty select"):
+        with self.assertRaisesRegex(ValueError, "empty select"):
             outline("x", [Part(layer=A0, select={})], expect=(0, 0, 10, 10))
 
     def test_city_that_is_its_capital(self) -> None:
@@ -321,14 +398,70 @@ class EdgeCaseTest(unittest.TestCase):
             entry = countries()[0]
             entry["capital"] = {"name": "Yaren", "file": "yaren.geojson", "expect": [2, 2, 4, 4]}
             with data([entry]), mock.patch.object(resolve, "GEOMETRY", Path(tmp)):
-                self.assertEqual(by_key(political.cards())["capital:alpha"].render.spec.dot, (3.0, 3.0))
+                self.assertEqual(by_key(political.cards())["capital:alpha"].render.resolve()[0].dot, (3.0, 3.0))
                 self.assertEqual(political.check()[0], [])
 
     def test_ne_id_must_match_one_row(self) -> None:
         entry = countries()[0]
         entry["capital"] |= {"ne_id": 999}
         with data([entry]), self.assertRaisesRegex(ValueError, "ne_id 999 matched 0 rows"):
-            political.cards()
+            by_key(political.cards())["capital:alpha"].render.resolve()
+
+
+class PassTest(unittest.TestCase):
+    def test_rules(self) -> None:
+        self.assertEqual(study_pass("feature", 1), 1)
+        self.assertEqual(study_pass("feature", 3), 2)
+        self.assertEqual(study_pass("feature", 1, orientation=True), "orientation")
+        self.assertEqual(study_pass("country", 3), 1)
+        self.assertEqual(study_pass("capital", 3), 1)
+        self.assertEqual(study_pass("city", 2), 1)
+        self.assertEqual(study_pass("city", 3), 2)
+        self.assertEqual(study_pass("continent", 1), "orientation")
+        self.assertEqual(sorted(["orientation", 2, 1], key=PASS_ORDER.__getitem__), ["orientation", 1, 2])
+
+    def test_feature_cards(self) -> None:
+        cards = by_key(features_source.cards())
+        orientation = {c.id for c in cards.values() if c.study_pass == "orientation"}
+        self.assertEqual(orientation, {"atlantic-ocean", "pacific-ocean", "indian-ocean", "arctic-ocean", "trade-winds", "westerlies"})
+        for c in cards.values():
+            self.assertEqual(c.study_pass, "orientation" if c.id in orientation else 1 if c.tier <= 2 else 2)
+            self.assertIn(pass_tag(c.study_pass), c.tags)
+
+    def test_tag_must_match(self) -> None:
+        card = by_key(features_source.cards())["feature:nile"]
+        with self.assertRaisesRegex(ValidationError, "needs exactly the tag pass::1"):
+            Card(**dict(card) | {"tags": card.tags[:-1]})
+
+
+class TextRulesTest(unittest.TestCase):
+    def test_line_breaks_and_cloze_are_rejected_everywhere(self) -> None:
+        for text in ("a\rb", "a\u2028b", "a\x00b", "{{c1::a}}", "a\u202eb", "a\u200bb", "a\x90b", "a\ufeffb"):
+            with self.subTest(text=text):
+                with self.assertRaises(ValidationError):
+                    Feature.model_validate(feature_entry() | {"name": text})
+                with self.assertRaises(ValidationError):
+                    Country.model_validate(countries()[0] | {"note": text})
+
+    def test_notes(self) -> None:
+        Country.model_validate(countries()[0] | {"note": "The *kamikaze* wind, 1274."})  # emphasis is fine
+        for note in ("![](https://x/y.png)", "[x](https://x)", "<b>", "`code`", "# Heading"):
+            with self.subTest(note=note), self.assertRaises(ValidationError):
+                Country.model_validate(countries()[0] | {"note": note})
+
+
+class LazyDotTest(unittest.TestCase):
+    def test_building_cards_reads_no_points(self) -> None:
+        layers = {k: v for k, v in LAYERS.items() if k != political.PLACES}
+        with data(countries(), territories(), cities_data()), mock.patch.object(political, "layer", layers.__getitem__):
+            built = by_key(political.cards() + cities.cards())
+            self.assertIsNone(built["capital:alpha"].render.spec.dot)
+            with self.assertRaises(KeyError):
+                built["capital:alpha"].render.resolve()
+
+    def test_a_card_without_a_dot_keeps_its_spec(self) -> None:
+        card = by_key(features_source.cards())["feature:nile"]
+        self.assertIs(card.render.resolve()[0], card.render.spec)
 
 
 class WiringTest(unittest.TestCase):

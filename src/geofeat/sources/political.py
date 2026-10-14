@@ -1,22 +1,21 @@
 """Political card sources: data/countries.yaml (a country card and, unless `capital: null`, a capital card per state)
 and data/territories.yaml (territory and dispute cards, told apart by `kind`). See docs/adr/0005 and 0008."""
 
-import re
 import unicodedata
 from pathlib import Path
 from typing import Annotated, Literal
 
 import shapely
-from pydantic import AfterValidator, Field, model_validator
+from pydantic import Field, model_validator
 from ruamel.yaml import YAML, YAMLError
 from shapely import unary_union
 from shapely.errors import GEOSException
 from shapely.geometry import Point
 from shapely.geometry.base import BaseGeometry
 
-from geofeat.card import Card, Geometry, RenderRef, Text, id_tag
-from geofeat.model import ROOT, CardText, Part, Strict
-from geofeat.resolve import area_km2, custom, features_by_id, layer, resolve
+from geofeat.card import Card, Geometry, Kind, Note, RenderRef, Text, card_key, id_tag, pass_tag, study_pass
+from geofeat.model import ROOT, Part, Strict
+from geofeat.resolve import area_km2, custom, features_by_id, layer, resolve, select_rows
 from geofeat.spec import RenderSpec
 
 COUNTRIES = ROOT / "data/countries.yaml"
@@ -27,28 +26,16 @@ PLACES = "10m_populated_places"
 # the base, an added row lies outside it.
 INSIDE_SHARE = 0.999
 OUTSIDE_SHARE = 0.001
-TERRITORY_TIER = 2  # pass 1; territory and dispute entries carry no tier of their own
+TERRITORY_TIER = 2  # territory and dispute entries carry no tier of their own; their pass is 1 by kind
 
 Id = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*$")]
 Uid = Annotated[str, Field(pattern=r"^[A-Za-z0-9]{10}$")]
-Region = Annotated[int, Field(ge=1, le=21)]  # ring order; the slugs live in data/curriculum.yaml (P3)
+Region = Annotated[int, Field(ge=1, le=21)]  # ring order; the slugs will come from data/curriculum.yaml (P3)
 GeojsonFile = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*\.geojson$")]
 Lon = Annotated[float, Field(ge=-180, le=180, allow_inf_nan=False)]
 Lat = Annotated[float, Field(ge=-90, le=90, allow_inf_nan=False)]
 # lon_min, lat_min, lon_max, lat_max; lon_min > lon_max means the box crosses 180°
 BBox = tuple[Lon, Lat, Lon, Lat]
-# card.Text bans \n but not \r or Unicode line breaks, which ankc reads as new lines; and `{{` reads as cloze. Remove
-# once card.py bans them itself.
-_NOT_ONE_LINE = re.compile(r"[\x00-\x1f\x7f\u0085\u2028\u2029]|\{\{")
-
-
-def _one_line(value: str) -> str:
-    if _NOT_ONE_LINE.search(value):
-        raise ValueError(f"{value!r} contains a control character, line break or `{{{{`")
-    return value
-
-
-Line = Annotated[Text, AfterValidator(_one_line)]
 
 
 def in_bbox(geometry: BaseGeometry, bbox: BBox) -> bool:
@@ -63,22 +50,6 @@ def answer(name: str, alt_names: list[str]) -> str:
     return f"{name} ({', '.join(alt_names)})" if alt_names else name
 
 
-def _select(owner: str, part: Part) -> BaseGeometry:
-    """resolve.py's row selection, which takes a Feature; keep the two in step."""
-    if not part.select:
-        raise ValueError(f"{owner}: {part.layer} has an empty select")
-    gdf = layer(part.layer)
-    if unknown := {k.lower() for k in part.select} - set(gdf.columns):
-        raise ValueError(f"{owner}: {part.layer} has no column(s) {sorted(unknown)}")
-    mask = True
-    for key, value in part.select.items():
-        mask = mask & (gdf[key.lower()] == value)
-    matched = gdf[mask]
-    if len(matched) != part.rows:
-        raise ValueError(f"{owner}: {part.layer} {part.select} matched {len(matched)} rows, expected {part.rows}")
-    return unary_union(matched.geometry.values)
-
-
 def part_geometry(owner: str, part: Part) -> BaseGeometry:
     """One part, by the same grammar as features.yaml: Natural Earth rows, a geometry/ file, or a feature's shape."""
     if part.file:
@@ -87,7 +58,7 @@ def part_geometry(owner: str, part: Part) -> BaseGeometry:
         if part.feature not in features_by_id():
             raise ValueError(f"{owner}: references unknown feature {part.feature!r}")
         return resolve(features_by_id()[part.feature])
-    return _select(owner, part)
+    return select_rows(owner, part)
 
 
 def outline(owner: str, parts: list[Part], expect: BBox, mainland: BBox | None = None) -> BaseGeometry:
@@ -148,8 +119,9 @@ def country_spec() -> RenderSpec:
     return RenderSpec(style="area", country="subject")
 
 
-def dot_spec(point: Point) -> RenderSpec:
-    return RenderSpec(style="area", country="context", dot=(point.x, point.y))
+def dot_spec() -> RenderSpec:
+    """A city's dot over its country; RenderRef.dot fills in the point when the card is rendered."""
+    return RenderSpec(style="area", country="context")
 
 
 def outline_spec() -> RenderSpec:
@@ -157,8 +129,18 @@ def outline_spec() -> RenderSpec:
     return RenderSpec(style="area", country="subject")
 
 
-def tags(kind: str, id: str, tier: int, category: str) -> tuple[str, ...]:
-    return (f"tier::{tier}", f"category::{category}", id_tag(kind, id), f"kind::{kind}")
+def tags(kind: Kind, id: str, tier: int, category: str, region: int) -> tuple[str, ...]:
+    return (f"tier::{tier}", f"category::{category}", id_tag(kind, id), f"kind::{kind}", f"region::{region:02d}",
+            pass_tag(study_pass(kind, tier)))
+
+
+def coordinates(point: Point) -> tuple[float, float]:
+    return point.x, point.y
+
+
+def host_key(host: str | None) -> str | None:
+    """A pocket's host: its host country's card. P3 places the pocket in the host's run, after its capital."""
+    return card_key("country", host) if host else None
 
 
 def require_uid(owner: str, uid: str | None) -> str:
@@ -168,12 +150,12 @@ def require_uid(owner: str, uid: str | None) -> str:
 
 
 class Capital(Strict):
-    name: Line
-    alt_names: list[Line] = []
+    name: Text
+    alt_names: list[Text] = []
     ne_id: int | None = None
     file: GeojsonFile | None = None
     expect: BBox
-    note: CardText | None = None
+    note: Note | None = None
 
     @model_validator(mode="after")
     def _one_source(self) -> "Capital":
@@ -184,12 +166,13 @@ class Capital(Strict):
 
 class Country(Strict):
     id: Id
-    name: Line
-    alt_names: list[Line] = []
+    name: Text
+    alt_names: list[Text] = []
     uids: dict[Literal["country", "capital"], Uid | None]
     region: Region
-    tier: Literal[1, 2, 3]  # microstates and small island states are 3
-    note: CardText | None = None
+    tier: Literal[1, 2, 3]  # microstates and small island states are 3; every country is in pass 1 all the same
+    host: Id | None = None  # the country a microstate sits inside or beside, as a pocket in its run (P3)
+    note: Note | None = None
     geometry: Annotated[list[Part], Field(min_length=1)]
     mainland: BBox | None = None  # keep only the outline's parts inside this box (drops overseas parts)
     expect: BBox
@@ -217,17 +200,17 @@ class Country(Strict):
         region = f"{self.region:02d}"
         out = [Card(
             uid=require_uid(self.id, self.uids["country"]), kind="country", id=self.id, prompt="Country",
-            answer_lines=(answer(self.name, self.alt_names),), tags=tags("country", self.id, self.tier, "countries"),
-            region=region, tier=self.tier, note=self.note,
-            render=RenderRef(spec=country_spec(), geometry=geometry),
+            answer_lines=(answer(self.name, self.alt_names),),
+            tags=tags("country", self.id, self.tier, "countries", self.region), region=region, tier=self.tier,
+            host=host_key(self.host), note=self.note, render=RenderRef(spec=country_spec(), geometry=geometry),
         )]
         if c := self.capital:
             out.append(Card(
                 uid=require_uid(f"{self.id} capital", self.uids["capital"]), kind="capital", id=self.id, prompt="City",
                 answer_lines=(answer(c.name, c.alt_names), f"Capital of {self.name}"),
-                tags=tags("capital", self.id, self.tier, "cities"), region=region, tier=self.tier,
+                tags=tags("capital", self.id, self.tier, "cities", self.region), region=region, tier=self.tier,
                 parents=(out[0].key,), note=c.note,
-                render=RenderRef(spec=dot_spec(self.capital_point()), geometry=geometry),
+                render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(self.capital_point())),
             ))
         return out
 
@@ -235,15 +218,16 @@ class Country(Strict):
 class Territory(Strict):
     kind: Literal["territory"]
     id: Id
-    name: Line
-    alt_names: list[Line] = []
+    name: Text
+    alt_names: list[Text] = []
     uid: Uid | None = None
     sovereign: Id  # a country id
-    status_line: Line  # back line 2, e.g. "Overseas department of France"
+    status_line: Text  # back line 2, e.g. "Overseas department of France"
+    host: Id | None = None  # the country whose run it sits in as a pocket (P3), when not placed on its own
     region: Region
     geometry: Annotated[list[Part], Field(min_length=1)]
     expect: BBox
-    note: CardText | None = None
+    note: Note | None = None
 
     def outline(self) -> BaseGeometry:
         return outline(self.id, self.geometry, self.expect)
@@ -252,8 +236,8 @@ class Territory(Strict):
         return [Card(
             uid=require_uid(self.id, self.uid), kind="territory", id=self.id, prompt="Territory",
             answer_lines=(answer(self.name, self.alt_names), self.status_line),
-            tags=tags("territory", self.id, TERRITORY_TIER, "territories"), region=f"{self.region:02d}",
-            tier=TERRITORY_TIER, note=self.note,
+            tags=tags("territory", self.id, TERRITORY_TIER, "territories", self.region), region=f"{self.region:02d}",
+            tier=TERRITORY_TIER, host=host_key(self.host), note=self.note,
             render=RenderRef(spec=outline_spec(), geometry=lambda: (self.outline(), (), None)),
         )]
 
@@ -262,37 +246,56 @@ def _alphabetical(name: str) -> str:
     return unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().casefold()
 
 
+class PartyLabel(Strict):
+    """A party that isn't one of the 197 states, e.g. Polisario Front / SADR."""
+
+    label: Text
+
+
+Party = Id | PartyLabel  # a country id, or an explicit label
+
+
 class Dispute(Strict):
     kind: Literal["dispute"]
     id: Id
-    name: Line
-    alt_names: list[Line] = []
+    name: Text
+    alt_names: list[Text] = []
     uid: Uid | None = None
-    parties: Annotated[list[Line], Field(min_length=2)]
+    parties: Annotated[list[Party], Field(min_length=2)]
+    host: Id | None = None  # the country whose run it sits in as a pocket (P3), e.g. Somalia for Somaliland
     region: Region
     geometry: Annotated[list[Part], Field(min_length=1)]  # disputed-areas rows
     expect: BBox
-    note: CardText | None = None
+    note: Note | None = None
 
     @model_validator(mode="after")
     def _distinct_parties(self) -> "Dispute":
-        if len({_alphabetical(p) for p in self.parties}) != len(self.parties):
+        if len(set(self.parties)) != len(self.parties):
             raise ValueError(f"{self.id}: parties repeat")
         return self
 
-    @property
-    def parties_line(self) -> str:
-        return f"Disputed: {', '.join(sorted(self.parties, key=_alphabetical))}"
+    def party_names(self, countries: dict[str, str]) -> list[str]:
+        """Each party's display name: a country's name from countries.yaml, or the label as written."""
+        if unknown := [p for p in self.parties if isinstance(p, str) and p not in countries]:
+            raise ValueError(f"{self.id}: parties {unknown} are not countries (use `{{label: ...}}` for a non-state party)")
+        names = [countries[p] if isinstance(p, str) else p.label for p in self.parties]
+        if len({_alphabetical(n) for n in names}) != len(names):
+            raise ValueError(f"{self.id}: party names repeat: {names}")
+        return names
+
+    def parties_line(self, countries: dict[str, str]) -> str:
+        return f"Disputed: {', '.join(sorted(self.party_names(countries), key=_alphabetical))}"
 
     def outline(self) -> BaseGeometry:
         return outline(self.id, self.geometry, self.expect)
 
-    def cards(self) -> list[Card]:
+    def cards(self, countries: dict[str, str]) -> list[Card]:
+        """`countries` maps each country id to its name, for the parties line."""
         return [Card(
             uid=require_uid(self.id, self.uid), kind="dispute", id=self.id, prompt="Disputed territory",
-            answer_lines=(answer(self.name, self.alt_names), self.parties_line),
-            tags=tags("dispute", self.id, TERRITORY_TIER, "territories"), region=f"{self.region:02d}",
-            tier=TERRITORY_TIER, note=self.note,
+            answer_lines=(answer(self.name, self.alt_names), self.parties_line(countries)),
+            tags=tags("dispute", self.id, TERRITORY_TIER, "territories", self.region), region=f"{self.region:02d}",
+            tier=TERRITORY_TIER, host=host_key(self.host), note=self.note,
             render=RenderRef(spec=outline_spec(), geometry=lambda: (self.outline(), (), None)),
         )]
 
@@ -339,12 +342,43 @@ def load_disputes() -> list[Dispute]:
 
 def cards() -> list[Card]:
     """Each country's card and its capital's, then the territories and disputes, in file order."""
-    return [card for source in (*load_countries(), *_load_territory_file()) for card in source.cards()]
+    countries = load_countries()
+    names = {c.id: c.name for c in countries}
+    others = _load_territory_file()
+    return [card for source in countries for card in source.cards()] + [
+        card for other in others for card in (other.cards(names) if isinstance(other, Dispute) else other.cards())]
+
+
+def reference_errors(countries: list[Country], others: list[Territory | Dispute]) -> list[str]:
+    """Every country id a source names must exist: hosts, sovereigns and parties. A host is one level deep (it has
+    no host of its own, so there are no chains or cycles) and in the pocket's region, since the pocket sits in its run."""
+    by_id = {c.id: c for c in countries}
+    names = {c.id: c.name for c in countries}
+    errors = []
+    for entry in (*countries, *others):
+        if not entry.host:
+            continue
+        host = by_id.get(entry.host)
+        if host is None or host.id == entry.id:
+            errors.append(f"{entry.id}: host {entry.host!r} is {'itself' if entry.host == entry.id else 'not a country'}")
+        elif host.host:
+            errors.append(f"{entry.id}: host {host.id!r} is itself hosted by {host.host!r}; hosts are one level deep")
+        elif host.region != entry.region:
+            errors.append(f"{entry.id}: region {entry.region} differs from its host {host.id}'s region {host.region}")
+    for other in others:
+        if isinstance(other, Territory) and other.sovereign not in names:
+            errors.append(f"{other.id}: sovereign {other.sovereign!r} is not a country")
+        if isinstance(other, Dispute):
+            try:
+                other.party_names(names)
+            except ValueError as exc:
+                errors.append(str(exc))
+    return errors
 
 
 def check() -> tuple[list[str], dict[str, BaseGeometry]]:
     """Errors from resolving every outline and point, and the country outlines that resolved, for the city check.
-    Each capital must lie inside its country; each territory's sovereign must be a country."""
+    Each capital must lie inside its country, and every host, sovereign and party must be a country."""
     try:
         countries, others = load_countries(), _load_territory_file()
     except ValueError as exc:
@@ -362,10 +396,8 @@ def check() -> tuple[list[str], dict[str, BaseGeometry]]:
                 errors += outside_country(f"{country.id} capital", country.capital_point(), country.id, outlines[country.id])
             except (ValueError, OSError, GEOSException) as exc:
                 errors.append(str(exc))
-    known = {c.id for c in countries}
+    errors += reference_errors(countries, others)
     for other in others:
-        if isinstance(other, Territory) and other.sovereign not in known:
-            errors.append(f"{other.id}: sovereign {other.sovereign!r} is not a country")
         try:
             errors += composition_errors(other.id, other.geometry)
             other.outline()
