@@ -1,0 +1,38 @@
+# Hand edits to the computed country adjacency graph (ADR 0008; src/geofeat/adjacency.py). Computed edges: land where
+# recognised-border outlines are within 1 km, sea where they are within 200 km. Every entry needs a reason. An `add` for
+# an edge the geometry already gives, or a `remove` for one it doesn't, fails the build, so stale edits surface.
+#
+# Not needed: Morocco–Mauritania. With Western Sahara cut out of Morocco the land border goes, but the outlines are
+# still 42 km apart across it, so the computed distance edge carries the region 10 → 11 crossing.
+#
+# The report prints each added edge with its measured length; P3 counts an edge over 200 km as a jump.
+
+add:
+  # Island states beyond 200 km of any state, joined to their nearest state.
+  - {a: iceland, b: united-kingdom, reason: "isolated island; nearest state"}
+  - {a: cabo-verde, b: senegal, reason: "isolated island; nearest state"}
+  - {a: comoros, b: mozambique, reason: "isolated island; nearest state"}
+  - {a: madagascar, b: seychelles, reason: "isolated island; nearest state"}
+  - {a: mauritius, b: seychelles, reason: "isolated island; nearest state"}
+  - {a: fiji, b: tonga, reason: "isolated island; nearest state"}
+  - {a: samoa, b: tonga, reason: "isolated island; nearest state"}
+  - {a: kiribati, b: nauru, reason: "isolated island; nearest state of each"}
+  - {a: kiribati, b: marshall-islands, reason: "isolated island; nearest state of the Marshall Islands"}
+  - {a: kiribati, b: tuvalu, reason: "isolated island; nearest state of Tuvalu"}
+  - {a: micronesia, b: palau, reason: "isolated island; nearest state of Micronesia"}
+  - {a: indonesia, b: palau, reason: "isolated island; nearest state of Palau"}
+  - {a: australia, b: new-zealand, reason: "isolated island; nearest state, across the Tasman Sea"}
+
+  # Bridges that make a region a connected subgraph, each the shortest sensible link between its components. These are
+  # curricular, not geographic: if region membership changes, review them.
+  - {a: iceland, b: norway, reason: "region 2 connectivity; nearest Nordic state, across the Norwegian Sea"}
+  - {a: madagascar, b: mozambique, reason: "region 13 connectivity; across the Mozambique Channel to the island's mainland neighbour"}
+  - {a: fiji, b: vanuatu, reason: "region 18 connectivity; Polynesia to Melanesia"}
+  - {a: fiji, b: tuvalu, reason: "region 18 connectivity; Polynesia to the Kiribati–Tuvalu group"}
+  - {a: micronesia, b: papua-new-guinea, reason: "region 18 connectivity; Micronesia–Palau to Melanesia"}
+  - {a: dominican-republic, b: saint-kitts-and-nevis, reason: "region 21 connectivity; Greater to Lesser Antilles via Puerto Rico and the Virgin Islands"}
+
+  # Ring seams the plan treats as short sea crossings but which are over 200 km.
+  - {a: australia, b: timor-leste, reason: "ring seam 17 → 18 across the Timor Sea"}
+
+remove: []
