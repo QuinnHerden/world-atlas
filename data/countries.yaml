@@ -619,7 +619,7 @@
 - id: kosovo
   name: Kosovo
   uids: {country: DmgSAskvqt, capital: Uw1yRDLwe7}
-  tier: 3
+  tier: 1
   host: serbia
   note: >-
     Landlocked between Serbia, Montenegro, Albania and North Macedonia. It declared independence from Serbia in
@@ -897,7 +897,7 @@
 - id: cyprus
   name: Cyprus
   uids: {country: k1hnoO3vu4, capital: kMb5Fz8xPf}
-  tier: 3
+  tier: 1
   note: >-
     The third-largest island in the Mediterranean, south of Turkey; it also contains two British sovereign base
     areas, Akrotiri and Dhekelia. Since 1974 a UN buffer zone has divided the island. The Turkish
@@ -986,7 +986,7 @@
 - id: palestine
   name: Palestine
   uids: {country: bJM8iWYKUz}
-  tier: 3
+  tier: 1
   host: israel
   note: >-
     Two separate areas: the West Bank, including East Jerusalem, between Israel and Jordan; and the Gaza Strip on

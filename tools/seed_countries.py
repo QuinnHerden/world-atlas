@@ -32,11 +32,11 @@ from geofeat.resolve import layer
 
 RESEARCH = ROOT / "docs/research/ne-political-layers.md"
 
-# Microstates and small island states: the 38 states the PoC's ring rule rings (docs/poc-countries.md on
-# poc/countries), less Northern Cyprus, which has a dispute card only.
+# Microstates and small island states only: the 38 states the PoC's ring rule rings (docs/poc-countries.md on
+# poc/countries), less Northern Cyprus, which has a dispute card only, and less Kosovo, Palestine and Cyprus (tier 1).
 TIER_3 = {
-    "andorra", "bahrain", "barbados", "brunei", "cabo-verde", "comoros", "cyprus", "dominica", "grenada", "kosovo",
-    "liechtenstein", "luxembourg", "malta", "monaco", "nauru", "palestine", "saint-lucia", "san-marino", "singapore",
+    "andorra", "bahrain", "barbados", "brunei", "cabo-verde", "comoros", "dominica", "grenada",
+    "liechtenstein", "luxembourg", "malta", "monaco", "nauru", "saint-lucia", "san-marino", "singapore",
     "sao-tome-and-principe", "saint-kitts-and-nevis", "saint-vincent-and-the-grenadines", "trinidad-and-tobago",
     "vatican",
     "antigua-and-barbuda", "fiji", "kiribati", "maldives", "marshall-islands", "mauritius", "micronesia", "palau",
