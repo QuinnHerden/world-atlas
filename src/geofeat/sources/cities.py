@@ -8,7 +8,7 @@ from shapely.geometry.base import BaseGeometry
 
 from geofeat import regions
 from geofeat.card import PASS_ORDER, Card, Geometry, Note, RenderRef, Text, card_key, study_pass
-from geofeat.model import ROOT, Strict, active, load_features, orientation
+from geofeat.model import ROOT, Strict, Verify, active, load_features, orientation
 from geofeat.resolve import features_by_id, resolve
 from geofeat.sources.political import (
     BBox, Country, Id, Uid, answer, coordinates, dot_spec, load_countries, outside_country, place, read_entries, require_uid, tags, unique,
@@ -30,6 +30,7 @@ class City(Strict):
     expect: BBox  # a box round the point
     anchor: Id | None = None  # an active feature it comes right after: Alexandria after the Nile Delta (P3)
     note: Note | None = None
+    verify: list[Verify] = []
 
     def point(self) -> Point:
         return place(self.id, self.ne_id, None, self.expect)

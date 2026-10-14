@@ -99,6 +99,24 @@ class Strict(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
+def _one_line(value: str) -> str:
+    if re.search(NOT_ONE_LINE, value):
+        raise ValueError(f"{value!r} must be one line of plain text")
+    return value
+
+
+OneLine = Annotated[str, Field(min_length=1), AfterValidator(_one_line)]
+
+
+class Verify(Strict):
+    """A claim in a note that must be rechecked before release, kept out of the note so the guide never shows a
+    research marker. Never displayed; `make verify-report` lists them and `make check-data RELEASE=1` fails on any."""
+
+    claim: OneLine
+    as_of: Annotated[str, Field(pattern=r"^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$")]  # quote it in YAML
+    source: OneLine | None = None
+
+
 class Part(Strict):
     """One piece of a feature's geometry: rows from a Natural Earth layer, a hand-authored file, or another feature.
 
@@ -157,6 +175,7 @@ class Feature(Strict):
     type: FeatureType
     qualifier: CardText | None = None  # the season a climate map shows, after the type word: "Wind system, July"
     note: Note | None = None  # why it matters, 1-3 sentences; shown in the PDF guide, required on active cards
+    verify: list[Verify] = []
     category: Category
     tier: Literal[1, 2, 3]
     style: Style

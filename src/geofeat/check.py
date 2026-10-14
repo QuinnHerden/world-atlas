@@ -2,12 +2,15 @@
 
 import json
 import math
+import re
 import sqlite3
 import subprocess
 import sys
 import tempfile
 import zipfile
+from collections import Counter
 from pathlib import Path
+from typing import NamedTuple
 
 import geopandas as gpd
 import shapely
@@ -18,11 +21,12 @@ from shapely.geometry.base import BaseGeometry
 
 import geofeat.positions as positions
 from geofeat.ankc import ankc_command, ankc_version, ankc_version_text, writes_pos
-from geofeat.card import load_media
+from geofeat.card import card_key, load_media
 from geofeat.frame import laea, project
 from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids
-from geofeat.model import DECK, GEOMETRY, ROOT, ROOT_DECK, Feature, active, load_features
+from geofeat.model import DECK, GEOMETRY, ROOT, ROOT_DECK, Feature, Verify, active, load_features
+from geofeat.polities import read_countries, read_territory_file
 from geofeat.order import Siblings, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
@@ -124,6 +128,60 @@ def missing_notes(features: list[Feature]) -> list[str]:
     return [f"{f.id}: no note (1-3 sentences on why it matters)" for f in active(features) if not f.note]
 
 
+# Research markers a note must not carry into the guide; the claim goes in the entry's `verify` list instead.
+NOTE_MARKER = re.compile(r"verify|as of 20|\[v\]|\[s\]|tbd", re.IGNORECASE)
+
+
+class Noted(NamedTuple):
+    key: str  # card key, kind:id
+    note: str | None
+    verify: list[Verify]
+
+
+def noted() -> list[Noted]:
+    """Every card that can carry a note, in file order: active features, countries and their capitals, territories
+    and disputes, cities."""
+    rows = [Noted(card_key("feature", f.id), f.note, f.verify) for f in active(load_features())]
+    for c in read_countries():
+        rows.append(Noted(card_key("country", c.id), c.note, c.verify))
+        if c.capital:
+            rows.append(Noted(card_key("capital", c.id), c.capital.note, c.capital.verify))
+    rows += [Noted(card_key(e.kind, e.id), e.note, e.verify) for e in read_territory_file()]
+    rows += [Noted(card_key("city", c.id), c.note, c.verify) for c in cities.load_cities()]
+    return rows
+
+
+def note_markers(rows: list[Noted]) -> list[str]:
+    return [f"{r.key}: note has research marker {m.group()!r}; move the claim to `verify` and keep the note clean"
+            for r in rows if r.note and (m := NOTE_MARKER.search(r.note))]
+
+
+def open_verify(rows: list[Noted]) -> list[str]:
+    return [f"{r.key}: {len(r.verify)} open verify item(s); see `make verify-report`" for r in rows if r.verify]
+
+
+def verify_errors(release: bool) -> list[str]:
+    try:
+        rows = noted()
+    except (ValueError, OSError) as exc:
+        return [str(exc)]
+    return note_markers(rows) + (open_verify(rows) if release else [])
+
+
+def verify_report(rows: list[Noted]) -> str:
+    """Every open verify item, by card, and a count by kind."""
+    open_rows = [r for r in rows if r.verify]
+    lines = []
+    kinds: Counter[str] = Counter()
+    for r in open_rows:
+        lines.append(r.key)
+        lines += [f"  [{v.as_of}] {v.claim}" + (f" (source: {v.source})" if v.source else "") for v in r.verify]
+        kinds[r.key.partition(":")[0]] += len(r.verify)
+    by_kind = ", ".join(f"{k} {n}" for k, n in kinds.items())
+    lines.append(f"{kinds.total()} open verify item(s) on {len(open_rows)} card(s)" + (f": {by_kind}" if by_kind else ""))
+    return "\n".join(lines)
+
+
 def retired_references(features: list[Feature]) -> tuple[list[str], list[str]]:
     """Errors and notes for active features that point at retired ones. Retired entries aren't re-validated, so a
     reference keeps working only as long as the retired shape still resolves."""
@@ -141,8 +199,9 @@ def retired_references(features: list[Feature]) -> tuple[list[str], list[str]]:
     return errors, notes
 
 
-def check_data() -> tuple[list[str], list[str]]:
-    """Errors, and notes that must stay visible: trims, nesting overrides, and flagged or nested sibling pairs."""
+def check_data(release: bool = False) -> tuple[list[str], list[str]]:
+    """Errors, and notes that must stay visible: trims, nesting overrides, and flagged or nested sibling pairs. A
+    release also fails while any verify item is open."""
     all_features = load_features()
     features = active(all_features)
     errors = [f"{f.id}: no uid (run `make ids` and commit)" for f in features if f.uid is None]
@@ -190,6 +249,7 @@ def check_data() -> tuple[list[str], list[str]]:
             save_siblings(siblings)
         except ValueError as exc:
             errors.append(f"study order: {exc}")
+    errors += verify_errors(release)  # last, so that nothing it finds holds back the checks above
     notes.append(f"sibling pairs flagged or nested (within {NEAR_M // 1000} km or overlapping; `make pairs` lists all):")
     return errors, notes + [f"  {p}" for p in pairs]
 
@@ -265,9 +325,15 @@ def check_package() -> list[str]:
 
 
 def main() -> None:
-    stage = sys.argv[1]
+    stage, *flags = sys.argv[1:] or [""]
+    if stage not in ("data", "deck", "package", "verify-report") or flags not in ([], ["--release"]) \
+            or (flags and stage != "data"):
+        sys.exit("usage: python -m geofeat.check data [--release] | deck | package | verify-report")
+    if stage == "verify-report":
+        print(verify_report(noted()))
+        return
     if stage == "data":
-        errors, notes = check_data()
+        errors, notes = check_data(release=flags == ["--release"])
         print("\n".join(notes))
     else:
         errors = {"deck": check_deck, "package": check_package}[stage]()

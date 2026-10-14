@@ -16,7 +16,7 @@ from shapely.geometry.base import BaseGeometry
 
 from geofeat.card import Text
 from geofeat.curriculum import CURRICULUM, load_curriculum
-from geofeat.model import ROOT, Note, Part, Strict
+from geofeat.model import ROOT, Note, Part, Strict, Verify
 from geofeat.resolve import area_km2, custom, features_by_id, layer, resolve, select_rows
 
 COUNTRIES = ROOT / "data/countries.yaml"
@@ -123,6 +123,7 @@ class Capital(Strict):
     file: GeojsonFile | None = None
     expect: BBox
     note: Note | None = None
+    verify: list[Verify] = []
 
     @model_validator(mode="after")
     def _one_source(self) -> "Capital":
@@ -169,6 +170,7 @@ class Country(Placed):
     uids: dict[Literal["country", "capital"], Uid | None]
     tier: Literal[1, 2, 3]  # microstates and small island states are 3; every country is in pass 1 all the same
     note: Note | None = None
+    verify: list[Verify] = []
     geometry: Annotated[list[Part], Field(min_length=1)]
     mainland: BBox | None = None  # keep only the outline's parts inside this box (drops overseas parts)
     expect: BBox
@@ -200,6 +202,7 @@ class Territory(Placed):
     geometry: Annotated[list[Part], Field(min_length=1)]
     expect: BBox
     note: Note | None = None
+    verify: list[Verify] = []
 
     def outline(self) -> BaseGeometry:
         return outline(self.id, self.geometry, self.expect)
@@ -227,6 +230,7 @@ class Dispute(Placed):
     geometry: Annotated[list[Part], Field(min_length=1)]  # disputed-areas rows
     expect: BBox
     note: Note | None = None
+    verify: list[Verify] = []
 
     @model_validator(mode="after")
     def _distinct_parties(self) -> "Dispute":
