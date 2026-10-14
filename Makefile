@@ -5,7 +5,7 @@ IDS ?=
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions render deck check build sheet phone pairs cvd guide clean
+.PHONY: all test fetch ids check-data positions adjacency render deck check build sheet phone pairs cvd guide clean
 
 all: build
 
@@ -24,6 +24,10 @@ check-data: test fetch
 # The only writer of data/positions.lock; commit the result. Not part of `make all`.
 positions: check-data
 	$(PY).positions
+
+# The country adjacency graph (ADR 0008) and its report; cached in build/adjacency.json.
+adjacency: fetch
+	$(PY).adjacency
 
 render: check-data
 	$(PY).jobs
