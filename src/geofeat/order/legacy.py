@@ -31,11 +31,12 @@ class Siblings:
 def dependencies(features: list[Feature], siblings: Siblings) -> set[Edge]:
     """Parent-child edges among the features.
 
-    A feature cut out of another (`subtract`) or drawn as its context is the parent: the Himalayas before the
-    Tibetan Plateau, the Nile before its delta. A feature added into another's geometry, or named in `allow_nested`,
-    shares area with it, so the larger is the parent: the Mediterranean before the Aegean, the Arabian Peninsula
-    before the Arabian Desert. Pairs the pair check finds nested come outer first, unless that contradicts the edges
-    above or only one is a climate system: a strait inside a cyclone belt isn't part of it.
+    A feature drawn as another's context is the parent: the Nile before its delta. A feature added into another's
+    geometry, or named in `allow_nested`, shares area with it, so the larger is the parent: the Mediterranean before
+    the Aegean, the Eurasian Steppe before the Pontic-Caspian Steppe. Pairs the pair check finds nested (cover >= 0.9)
+    come outer first, unless that contradicts the edges above or only one is a climate system: a strait inside a
+    cyclone belt isn't part of it. A feature cut out of another (`subtract`) is not contained in it, so it is no
+    parent (PM, 2026-10-14): the Sahel doesn't come before the Sahara.
     """
     ids = {f.id for f in features}
     climate = {f.id for f in features if f.family == "climate"}
@@ -46,8 +47,8 @@ def dependencies(features: list[Feature], siblings: Siblings) -> set[Edge]:
 
     for f in features:
         for part in f.geometry:
-            if part.feature in ids:
-                edges.add((part.feature, f.id) if part.subtract else by_area(part.feature, f.id))
+            if part.feature in ids and not part.subtract:
+                edges.add(by_area(part.feature, f.id))
         edges |= {(other, f.id) for other in f.frame.context if other in ids}
         edges |= {by_area(o.id, f.id) for o in f.allow_nested if o.id in ids}
     for outer, inner in siblings.nested:

@@ -51,6 +51,7 @@ class Region(BaseModel):
     territories: dict[str, str] = {}
     disputes: dict[str, str] = {}
     walk: list[str] = []  # the frozen neighbour walk over the walk nodes (P3); empty: the order engine generates one
+    opener: str | None = None  # a region frame feature opening the region; geofeat.order.inputs checks it
 
     def placed(self) -> dict[str, str]:
         return self.territories | self.disputes

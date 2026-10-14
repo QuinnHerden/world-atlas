@@ -1,31 +1,39 @@
-"""Each physical feature's Frame from the real data: the region regions.py assigns it, and the countries of that region
-its shape touches. Measuring needs the Natural Earth outlines, so the result is cached in build/frames.json, keyed by
-a hash of everything it reads, as the pair check's siblings.json is."""
+"""Geometry facts the curriculum order needs, from the real data: each feature's region (regions.py), the countries of
+that region it touches with the share of each it holds and their outline IoU, and the distance between same-family
+features within the pair check's reach. Measuring needs the Natural Earth outlines, so the facts are cached in
+build/frames.json. The key hashes every data file the facts read and all of geofeat's code: coarse, so a policy edit
+in curriculum.yaml or the code re-measures too, but never stale. The policy itself (openers, which pairs count as
+look-alikes) is applied in geofeat.order.inputs."""
 
 import hashlib
 import json
+from dataclasses import asdict, dataclass
 
 from shapely.geometry.base import BaseGeometry
 
-from geofeat.card import card_key
 from geofeat.model import BUILD, FEATURES, GEOMETRY, LOCK, ROOT, active, load_features, orientation
-from geofeat.order.engine import Frame
 
 CACHE = BUILD / "frames.json"
+SCHEMA = 3
 TOUCH_DEG = 0.5  # a feature this close to a country frames it: a strait or sea touches its shores
-OPENS_SHARE = 0.5  # a region frame feature opens the cluster of the first country it holds this much of, else
-# the one it holds most of
-# Region frame features open their region, or the cluster of their first country (docs/world-atlas-plan.md, "Placing
-# each card type"). Policy that belongs in data/curriculum.yaml once its schema has a place for it.
-REGION_FRAMES = frozenset({
-    "iberian-peninsula", "italian-peninsula", "balkan-peninsula", "arabian-peninsula", "korean-peninsula",
-    "malay-peninsula", "anatolia", "levant",
-})
-SCHEMA = 1
+
+
+@dataclass(frozen=True)
+class Facts:
+    region: int
+    touches: tuple[str, ...]  # countries of its own region within TOUCH_DEG, in curriculum order
+    held: dict[str, float]  # share of each touched country's area inside the feature
+    iou: dict[str, float]  # each touched country's outline against the feature's
+
+
+@dataclass(frozen=True)
+class GeometryFacts:
+    features: dict[str, Facts]  # by feature id
+    same_family: list[tuple[str, str, float, float]]  # feature ids, km apart and cover, same family, within pairs.NEAR_M
 
 
 def inputs_hash() -> str:
-    """Every data file the frames read, and all of geofeat's code: coarse, but never stale."""
+    """Every data file the facts read, and all of geofeat's code: coarse, but never stale."""
     h = hashlib.sha256(f"schema {SCHEMA}\0".encode())
     data = ROOT / "data"
     paths = (FEATURES, LOCK, data / "countries.yaml", data / "territories.yaml", data / "curriculum.yaml",
@@ -36,53 +44,61 @@ def inputs_hash() -> str:
     return h.hexdigest()
 
 
-def compute() -> dict[str, Frame]:
-    from geofeat import regions
+def _iou(a: BaseGeometry, b: BaseGeometry) -> float:
+    union = a.union(b).area
+    return a.intersection(b).area / union if union else 0.0
+
+
+def compute() -> GeometryFacts:
+    from geofeat import pairs, regions
     from geofeat.countries_ne import outline
     from geofeat.resolve import resolve
 
     ring = regions.ring()
     outlines = regions.region_outlines()
     shapes: dict[str, BaseGeometry] = {}
-    frames = {}
-    for feature in active(load_features()):
-        if orientation(feature):
-            continue
-        geometry = resolve(feature)
+    features = [f for f in active(load_features()) if not orientation(f)]
+    geometries = {f.id: resolve(f) for f in features}
+    facts = {}
+    for feature in features:
+        geometry = geometries[feature.id]
         region = regions.derive(feature, geometry, outlines).region
-        opens = feature.id in REGION_FRAMES
         near = geometry.buffer(TOUCH_DEG)
-        countries, held = [], {}
+        touches, held, iou = [], {}, {}
         for country in ring[region].countries:
             if country not in shapes:
                 shapes[country] = outline(country)
             shape = shapes[country]
-            if opens and shape.area > 0:
-                held[country] = shape.intersection(geometry).area / shape.area
-                if held[country] >= OPENS_SHARE:
-                    countries.append(country)
-            elif near.intersects(shape):
-                countries.append(country)
-        if opens and not countries and held:  # a peninsula split from most of every state (Malaysia, Thailand)
-            countries.append(max(held, key=lambda c: (held[c], c)))
-        frames[card_key("feature", feature.id)] = Frame(region, tuple(countries), opens)
-    return frames
+            if near.intersects(shape):
+                touches.append(country)
+                held[country] = shape.intersection(geometry).area / shape.area if shape.area else 0.0
+                iou[country] = _iou(geometry, shape)  # in lon/lat: fine for these sizes, distorted near the poles
+        facts[feature.id] = Facts(region, tuple(touches), held, iou)
+    same_family = []
+    for i, a in enumerate(features):
+        for b in features[i + 1:]:
+            ga, gb = geometries[a.id], geometries[b.id]
+            if a.family == b.family and pairs._maybe_near(ga, gb) and (pair := pairs.compare(a, ga, b, gb)):
+                same_family.append((*sorted((a.id, b.id)), pair.distance_km, pair.cover))
+    return GeometryFacts(facts, sorted(same_family))
 
 
-def load() -> dict[str, Frame]:
-    """The frames, from the cache while its inputs are unchanged."""
+def load() -> GeometryFacts:
+    """The facts, from the cache while its inputs are unchanged."""
     key = inputs_hash()
     try:
         cached = json.loads(CACHE.read_text())
         if cached["inputs"] == key:
-            return {k: Frame(v["region"], tuple(v["countries"]), v["opens"]) for k, v in cached["frames"].items()}
+            return GeometryFacts(
+                {k: Facts(v["region"], tuple(v["touches"]), v["held"], v["iou"]) for k, v in cached["features"].items()},
+                [(a, b, km, cover) for a, b, km, cover in cached["same_family"]])
     except (OSError, ValueError, KeyError, TypeError):
-        pass  # missing or unreadable: recompute
-    frames = compute()
+        pass  # missing, stale or unreadable: recompute
+    facts = compute()
     BUILD.mkdir(exist_ok=True)
-    data = {"inputs": key, "frames": {k: {"region": f.region, "countries": list(f.countries), "opens": f.opens}
-                                      for k, f in sorted(frames.items())}}
+    data = {"inputs": key, "features": {k: asdict(f) for k, f in sorted(facts.features.items())},
+            "same_family": facts.same_family}
     tmp = CACHE.with_suffix(".tmp")
     tmp.write_text(json.dumps(data, indent=1) + "\n")
     tmp.replace(CACHE)
-    return frames
+    return facts

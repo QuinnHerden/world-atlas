@@ -54,9 +54,9 @@ class StudyOrderTest(unittest.TestCase):
 
 
 class DependenciesTest(unittest.TestCase):
-    def test_subtracted_feature_is_the_parent(self) -> None:
-        plateau = feature("plateau", geometry=[Part(file="x.geojson"), Part(feature="range", subtract=True)])
-        self.assertEqual(dependencies([plateau, feature("range")], NO_SIBLINGS), {("range", "plateau")})
+    def test_subtracted_feature_is_not_a_parent(self) -> None:
+        sahara = feature("sahara", geometry=[Part(file="x.geojson"), Part(feature="sahel", subtract=True)])
+        self.assertEqual(dependencies([sahara, feature("sahel")], NO_SIBLINGS), set())
 
     def test_context_feature_is_the_parent(self) -> None:
         delta = feature("delta", frame=FrameOptions(context=["river"]))
