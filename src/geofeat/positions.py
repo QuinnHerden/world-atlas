@@ -108,6 +108,26 @@ def place(locked: dict[str, int], ideal: list[str]) -> dict[str, int]:
     return result
 
 
+def stale_draft(lock: Lock, ideal: list[str]) -> bool:
+    """A draft lock that `make positions` would rewrite: the study order changed since it was written. A frozen lock
+    can't be compared: it keeps every card's old slot by design, and only `require` applies to it."""
+    return lock.draft and lock.positions != regenerate(ideal)
+
+
+def stale_draft_error(lock: Lock) -> str | None:
+    """Why the lock doesn't fit the current study order, if it's a stale draft or the order can't be built."""
+    from geofeat.order import OrderError
+    from geofeat.order.inputs import ordering  # imports the card sources; keep this module light for check.py
+
+    try:
+        ideal = [c.uid for c in ordering().cards]
+    except OrderError as exc:
+        return f"study order: {exc}"
+    if stale_draft(lock, ideal):
+        return f"{LOCK_FILE.name} is a draft written for an older study order; run `make positions` and commit it"
+    return None
+
+
 def update(lock: Lock, ideal: list[str]) -> Lock:
     return Lock(lock.draft, regenerate(ideal) if lock.draft else place(lock.positions, ideal))
 

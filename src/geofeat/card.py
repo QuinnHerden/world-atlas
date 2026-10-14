@@ -61,7 +61,7 @@ class Card(Frozen):
     tier: int
     anchor: str | None = None  # key of the card this one is placed after in the curriculum (P3)
     parents: tuple[str, ...] = ()  # keys of cards that must come first (P3; order.py derives feature edges itself)
-    note: Note | None = None  # why it matters; PDF guide only
+    note: Note | None = None  # why it matters; the PDF guide and the card back
     host: str | None = None  # key of the country whose run this pocket sits in, after its capital (P3)
     orientation: bool = False  # in the orientation block that opens the deck (oceans, planetary winds, continents)
     render: RenderRef
@@ -116,9 +116,16 @@ def migrate_media(media: dict[str, str]) -> dict[str, str]:
     return {key if ":" in key else card_key("feature", key): file for key, file in media.items()}
 
 
+MEDIA_NAME = re.compile(r"[A-Za-z0-9_-]+\.png")  # a bare file name, so `deck/<name>` can't leave deck/
+
+
 def load_media() -> dict[str, str]:
-    """build/media.json: card key -> rendered PNG name, written by `make render`."""
-    return migrate_media(json.loads(MEDIA_INDEX.read_text())) if MEDIA_INDEX.exists() else {}
+    """build/media.json: card key -> rendered PNG name, written by `make render`. Every name must be a bare PNG name:
+    the sheets, the guide and the checks open deck/<name>."""
+    media = migrate_media(json.loads(MEDIA_INDEX.read_text())) if MEDIA_INDEX.exists() else {}
+    if bad := sorted(key for key, name in media.items() if not isinstance(name, str) or not MEDIA_NAME.fullmatch(name)):
+        raise ValueError(f"{MEDIA_INDEX.name}: not a bare PNG file name for {bad}; delete it and run `make render`")
+    return media
 
 
 def match_keys(patterns: list[str], keys: list[str]) -> list[str]:

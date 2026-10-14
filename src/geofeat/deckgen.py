@@ -10,11 +10,15 @@ from geofeat.order import OrderError, Siblings, dependencies, report, study_orde
 from geofeat.order.inputs import ideal_order, ordering  # noqa: F401  ideal_order re-exported for check.py
 
 DECK_FILE = DECK / "world-atlas.md"
+# The note under the answer: smaller, and muted by opacity rather than a grey, so it reads in light and night mode.
+NOTE_STYLE = "font-size:0.8em;opacity:0.65;margin-top:0.4em"
 
 
 def card(c: Card, image: str, pos: int | None = None) -> str:
     front = f"**{html.escape(c.prompt)}**<br>![]({image})"
     back = "<br>".join(html.escape(line) for line in c.answer_lines)
+    if c.note:  # ankc renders the note's *italics* as <em>; the HTML passes through intact
+        back += f'<hr><div style="{NOTE_STYLE}">{html.escape(c.note)}</div>'
     footnotes = "".join(f"[^tag]: {tag}\n" for tag in c.tags)
     if pos is not None:
         footnotes += f"[^pos]: {pos}\n"

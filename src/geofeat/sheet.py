@@ -113,8 +113,9 @@ def main() -> None:
         return
     phone = args[:1] == ["--phone"]
     out, patterns = out_name(args[1:] if phone else args, None if phone else "sheet.png")
+    rendered = sorted(_media())
     try:
-        keys = match_keys(patterns, sorted(_media())) if patterns else sorted(_media())
+        keys = match_keys(patterns, rendered) if patterns else rendered
     except ValueError as exc:
         sys.exit(f"{exc} among the rendered cards")
     if not phone:

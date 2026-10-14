@@ -2,7 +2,7 @@ import random
 import string
 import unittest
 
-from geofeat.positions import LIMIT, STRIDE, GapExhausted, Lock, dump, parse, place, regenerate, update
+from geofeat.positions import LIMIT, STRIDE, GapExhausted, Lock, dump, parse, place, regenerate, stale_draft, update
 
 
 def uid(n: int) -> str:
@@ -28,6 +28,12 @@ class PlaceTest(unittest.TestCase):
         lock = update(Lock(True, {"a": 7, "gone": 9}), ["b", "a"])
         self.assertEqual(lock, Lock(True, {"b": 500, "a": 1000}))
         self.assertEqual(regenerate([]), {})
+
+    def test_stale_draft_is_one_the_current_order_would_rewrite(self) -> None:
+        self.assertFalse(stale_draft(Lock(True, {"a": 500, "b": 1000}), ["a", "b"]))
+        self.assertTrue(stale_draft(Lock(True, {"a": 500, "b": 1000}), ["b", "a"]))
+        self.assertTrue(stale_draft(Lock(True, {"a": 500}), ["a", "b"]))
+        self.assertFalse(stale_draft(Lock(False, {"a": 500, "b": 1000}), ["b", "a"]))  # frozen: old slots by design
 
     def test_after_pred_spread_evenly(self) -> None:
         self.assertEqual(place({"a": 500, "b": 1000}, ["a", "x", "y", "b"]), {"a": 500, "b": 1000, "x": 667, "y": 833})

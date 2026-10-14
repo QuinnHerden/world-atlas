@@ -5,8 +5,10 @@ DECK := World Atlas
 IDS ?=
 # OUT=name.png: sheet, phone or cvd to one named file in build/.
 OUT ?=
-# Each pattern single-quoted, so the shell neither globs nor interprets it.
-QIDS = $(foreach p,$(IDS),'$(p)')
+# Shell-quote a value: single-quoted, any ' inside closed, escaped and reopened, so the shell never interprets it.
+quote = '$(subst ','\'',$(1))'
+# Each pattern quoted, so the shell neither globs nor interprets it.
+QIDS = $(foreach p,$(IDS),$(call quote,$(p)))
 # RELEASE=1: check-data (and everything after it) also fails while any note has an open verify item.
 RELEASE ?=
 $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
@@ -14,7 +16,7 @@ $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone review pairs cvd guide verify-report clean
+.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone review pairs cvd guide verify-report import-test clean
 
 all: build
 
@@ -51,7 +53,7 @@ render: check-data
 	$(PY).jobs $(QIDS)
 
 deck: render
-	@test -z "$(IDS)" || { echo "IDS renders only some cards; unset it for deck, check, build and all" >&2; exit 1; }
+	$(if $(strip $(IDS)),$(error IDS renders only some cards; unset it for deck, check, build and all))
 	$(PY).deckgen
 
 check: deck
@@ -60,15 +62,15 @@ check: deck
 build: check
 	mkdir -p dist
 	rm -f dist/*.apkg
-	$(ANKC) build --deck "$(DECK)" --path deck --output dist
+	$(ANKC) build --deck $(call quote,$(DECK)) --path deck --output dist
 	$(PY).check package
 	@ls dist/*.apkg
 
 sheet:
-	$(PY).sheet $(if $(OUT),--out '$(OUT)') $(QIDS)
+	$(PY).sheet $(if $(OUT),--out $(call quote,$(OUT))) $(QIDS)
 
 phone:
-	$(PY).sheet --phone $(if $(OUT),--out '$(OUT)') $(QIDS)
+	$(PY).sheet --phone $(if $(OUT),--out $(call quote,$(OUT))) $(QIDS)
 
 # One phone-size sheet per ring region, in study order (build/review-NN.png), and build/review-orientation.png.
 review:
@@ -78,11 +80,16 @@ pairs: render
 	$(PY).sheet --pairs
 
 cvd: render
-	$(PY).cvd $(if $(OUT),--out '$(OUT)') $(QIDS)
+	$(PY).cvd $(if $(OUT),--out $(call quote,$(OUT))) $(QIDS)
 
 # The PDF guide in study order (build/<deck>-guide.pdf); REGION=NN writes one ring region's (build/<deck>-guide-NN.pdf).
 guide: render
-	uv run --group guide python -m geofeat.guide $(if $(REGION),--region '$(REGION)')
+	uv run --group guide python -m geofeat.guide $(if $(REGION),--region $(call quote,$(REGION)))
+
+# Import dist/world-atlas.apkg into fresh collections with the official Anki library: study order, a region filtered
+# deck, Check Database, and the upgrade from the v1 Geographic Features package (tools/import_test.py).
+import-test: build
+	uv run --with anki==26.09.3 python tools/import_test.py
 
 clean:
 	rm -rf build deck dist

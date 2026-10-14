@@ -22,7 +22,7 @@ def rows() -> list[Noted]:
         Noted("country:alpha", "Big square.", [Verify(**ITEM), Verify(claim="Its capital is Alphaville.", as_of="2026-10-14",
                                                                        source="https://example.org/alpha")]),
         Noted("capital:alpha", "Middle.", []),
-        Noted("city:alpha-port", None, [Verify(**ITEM)]),
+        Noted("city:alpha-port", "A port.", [Verify(**ITEM)]),
     ]
 
 
@@ -125,6 +125,11 @@ class ReleaseGateTest(unittest.TestCase):
         with mock.patch.object(check, "noted", lambda: dirty):
             self.assertEqual(len(verify_errors(release=False)), 1)
             self.assertEqual(verify_errors(release=True), verify_errors(release=False))
+
+    def test_a_political_card_without_a_note_fails(self) -> None:
+        bare = [Noted("capital:alpha", None, []), Noted("continent:asia", None, [])]  # features: missing_notes
+        with mock.patch.object(check, "noted", lambda: bare):
+            self.assertEqual(verify_errors(release=False), ["capital:alpha: no note (1-3 sentences on why it matters)"])
 
     def test_a_release_with_nothing_open_passes(self) -> None:
         with mock.patch.object(check, "noted", lambda: [Noted("capital:alpha", "Middle.", [])]):

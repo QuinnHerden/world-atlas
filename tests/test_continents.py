@@ -94,6 +94,11 @@ class PartTest(unittest.TestCase):
             with self.subTest(part=part), self.assertRaisesRegex(ValueError, "exactly"):
                 continents.part_geometry("x", part)
 
+    def test_a_continent_with_sea_in_it_fails(self) -> None:
+        with mock.patch.object(continents, "_checked", return_value=(box(0, 0, 1, 1), ["continent asia: 4.1% sea"])), \
+                self.assertRaisesRegex(ValueError, "4.1% sea"):
+            continents.geometry("asia")
+
     def test_only_composed_continents(self) -> None:
         with self.assertRaisesRegex(ValueError, "no composed continent"):
             continents.geometry("antarctica")

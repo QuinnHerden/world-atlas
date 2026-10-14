@@ -39,6 +39,13 @@ class FeatureCardTest(unittest.TestCase):
         self.assertIn("[^uid]: MAPQnshVtc\n[^tag]: tier::1\n[^tag]: category::straits-chokepoints\n"
                       "[^tag]: id_bosporus\n[^tag]: kind::feature\n[^tag]: pass::1\n", text)
 
+    def test_note_follows_the_answer_escaped_and_muted(self) -> None:
+        f = feature(note='It joins the Black Sea & the *Marmara*, "the strait".')
+        text = card(feature_card(f), "abc.png")
+        self.assertIn('::: Bosporus<hr><div style="font-size:0.8em;opacity:0.65;margin-top:0.4em">It joins the Black Sea '
+                      '&amp; the *Marmara*, &quot;the strait&quot;.</div>\n', text)
+        self.assertNotIn("<hr>", card(feature_card(feature()), "abc.png"))  # no note, nothing added
+
     def test_pos_only_when_given(self) -> None:
         c = feature_card(feature())
         self.assertNotIn("[^pos]", card(c, "abc.png"))

@@ -1,6 +1,6 @@
 # World Atlas
 
-An Anki deck of 607 map cards that teaches the political and physical map of the world together: 197 countries, 191 capitals, 42 other cities, 23 territories, 15 disputed areas, the 7 continents and 132 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name.
+An Anki deck of 607 map cards that teaches the political and physical map of the world together: 197 countries, 191 capitals, 42 other cities, 23 territories, 15 disputed areas, the 7 continents and 132 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name, and under a thin rule, in smaller muted text, a short note on why it matters (the same note the study guide prints).
 
 World Atlas grew out of the **Geographic Features** deck (v1), which held the 132 features alone. Its notes carry over; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
 
@@ -29,7 +29,7 @@ Output: `dist/world-atlas.apkg`. Import it in Anki with **File → Import**.
 
 Rendering takes about 10 s per map and is cached, so only changed maps re-render. `JOBS=2 make all` renders in parallel; each worker needs about 1.5 GB of RAM.
 
-`make guide` writes `build/world-atlas-guide.pdf`, a printable guide to every card in the order Anki shows new cards: entry N is the Nth new card, with its map, answer and a short note on why it matters. It is sectioned into orientation, then pass 1 and pass 2 by region. `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with one region only. It uses the optional `guide` dependency group (reportlab).
+`make guide` writes `build/world-atlas-guide.pdf`, a printable guide to every card in the order Anki shows new cards: entry N is the Nth new card, with its map, answer and a short note on why it matters. It is sectioned into orientation, then pass 1 and pass 2 by region. `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with one region only: that region's countries, capitals, cities, territories and disputed areas, plus the features the study order places in its run. The `tag:region::NN` filtered deck (see **Pacing**) holds the same political cards but no features, because features have no region tag. It uses the optional `guide` dependency group (reportlab).
 
 ## Study
 
@@ -46,7 +46,7 @@ New cards come up in a fixed order. An orientation block (the continents, the oc
 
 To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) with a search such as `deck:"World Atlas" tag:region::04` or `tag:kind::capital`.
 
-**Re-importing a new build** updates each note's text, map and tags, but not its card's deck or new-card position, and it never deletes notes:
+**Re-importing a new build** updates each note's text (every card's back, its note included), map and tags, but not its card's deck or new-card position, and it never deletes notes:
 
 - **Moved tier or category:** an unstudied card keeps its old place in the queue. To move it, select it in **Browse** and use **Cards → Reposition**.
 - **Old maps:** a re-rendered map gets a new file name. Run **Tools → Check Media** to delete the old image.
@@ -72,7 +72,7 @@ The moved cards keep their old queue positions (0 to 131), ahead of every new ca
 
 **Retired cards.** Importing never deletes notes, so the cards v1 retired stay in your collection and keep coming up. The searches in [Retired cards](#retired-cards) find them in any deck.
 
-**Card content.** The import updates each feature note's fields where they changed: most fronts point to a re-rendered map, the hidden Source field names the new deck file, and answers are now built from lines joined with `<br>` (a feature's answer text is unchanged). It also adds the `kind::`, `pass::` and other new tags. The notes stay the same notes, with the same history. Afterwards, run **Tools → Check Media** to delete the old maps.
+**Card content.** The import updates each feature note's fields where they changed: most fronts point to a re-rendered map, the hidden Source field names the new deck file, and answers are now built from lines joined with `<br>` (a feature's answer text is unchanged). Every back also gains the card's note under the answer. It also adds the `kind::`, `pass::` and other new tags. The notes stay the same notes, with the same history. Afterwards, run **Tools → Check Media** to delete the old maps.
 
 **Pacing.** At 15 new cards a day, the 607 cards take about 6 weeks. Set this under **New cards/day** in the deck's options. To work through one region alongside the main order, make a filtered deck (**Tools → Create Filtered Deck**) with this search, where `NN` is `01` to `21`:
 
@@ -95,7 +95,7 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 
 **Retiring a card.** Set `retired: true` and keep the rest of the entry. After un-retiring one, run `make check-data`.
 
-**Reviewing maps.** `make sheet` writes a grid of every map to `build/sheet.png`; `make phone` writes each map 390 px wide, as on a phone; `make pairs` shows neighbouring features side by side; `make cvd` simulates colour blindness. Each except `pairs` takes `IDS="bosporus country:france city:*"` to limit it to the maps you name (a bare id is a feature); `make review` writes one phone-size sheet per region in study order.
+**Reviewing maps.** `make sheet` writes a grid of every map to `build/sheet.png`; `make phone` writes each map 390 px wide, as on a phone; `make pairs` shows neighbouring features side by side; `make cvd` simulates colour blindness. Each except `pairs` takes `IDS="bosporus country:france city:*"` to limit it to the maps you name (a bare id is a feature); `make review` writes one phone-size sheet per region in study order. `make import-test` imports the package into fresh Anki collections and checks the study order, a region filtered deck, Check Database and the upgrade from v1; [docs/device-test-checklist.md](docs/device-test-checklist.md) repeats those checks by hand on Anki desktop, AnkiDroid and AnkiMobile.
 
 ## Retired cards
 

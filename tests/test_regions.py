@@ -1,11 +1,13 @@
 import unittest
+from unittest import mock
 
 from pydantic import ValidationError
 from shapely.geometry import LineString, Point, box
 from shapely.ops import unary_union
 
 from geofeat.model import Expect, Feature, Part, load_features
-from geofeat.regions import ORIENTATION, derive, later_shore, override_errors, region_outline, ring
+import geofeat.regions as regions
+from geofeat.regions import ORIENTATION, derive, later_shore, override_errors, region_outline, ring, sea_errors
 
 # A synthetic ring on the equator: regions 1 and 3 face each other across a 1° strait, region 2 lies north of both.
 WORLD = {1: box(0, 0, 10, 10), 2: box(0, 12, 25, 20), 3: box(11, 0, 25, 10)}
@@ -76,6 +78,18 @@ class OutlineTest(unittest.TestCase):
     def test_a_region_gets_none_of_a_disputes_sea(self) -> None:
         outline = region_outline([box(20, 0, 30, 10)], [box(5, 0, 15, 10)], box(0, 0, 10, 10), box(0, 0, 12, 10))
         self.assertTrue(outline.equals(unary_union([box(10, 0, 12, 10), box(20, 0, 30, 10)])))
+
+    def test_an_outline_with_sea_in_it_fails(self) -> None:
+        land = box(0, 0, 10, 10)
+        self.assertEqual(sea_errors({"region 01": box(0, 0, 10, 10), "region 02": box(2, 2, 4, 4)}, land), [])
+        errors = sea_errors({"region 03": box(0, 0, 11, 10)}, land)  # 9% sea; the Spratly envelope made region 17 4%
+        self.assertEqual(len(errors), 1)
+        self.assertTrue(errors[0].startswith("region 03: 9.1% of its outline"))
+
+    def test_region_outlines_raise_on_sea(self) -> None:
+        with mock.patch.object(regions, "_checked_outlines", return_value=({}, ["region 17: 4.1% sea", "region 18: x"])), \
+                self.assertRaisesRegex(ValueError, "region 17: 4.1% sea; region 18"):
+            regions.region_outlines()
 
     def test_later_shore_falls_back_to_the_largest_when_no_shore_is_real(self) -> None:
         self.assertEqual(later_shore({4: 0.14, 9: 0.13, 2: 0.12}), 4)
