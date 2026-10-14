@@ -36,12 +36,15 @@ def a0(ne_id: int, **kw) -> dict:
     return {"layer": A0, "select": {"ne_id": ne_id}, **kw}
 
 
+REGIONS = {"alpha": 1, "beta": 2, "gamma": 3, "delta": 1}  # what data/curriculum.yaml would give
+
+
 def countries() -> list[dict]:
     return [
         {"id": "alpha", "name": "Alpha", "alt_names": ["Alfa"], "uids": {"country": "CountryAAA", "capital": "CapitalAAA"},
-         "region": 1, "tier": 1, "note": "Big square.", "geometry": [a0(1)], "expect": [0, 0, 10, 10],
+         "tier": 1, "note": "Big square.", "geometry": [a0(1)], "expect": [0, 0, 10, 10],
          "capital": {"name": "Alphaville", "ne_id": 101, "expect": [4, 4, 6, 6], "note": "Middle."}},
-        {"id": "beta", "name": "Beta", "uids": {"country": "CountryBBB"}, "region": 2, "tier": 3,
+        {"id": "beta", "name": "Beta", "uids": {"country": "CountryBBB"}, "tier": 3,
          "geometry": [a0(2)], "expect": [10, 0, 11, 1], "capital": None},
     ]
 
@@ -76,7 +79,7 @@ def data(countries=None, territories=None, cities_=None):
             if entries is not None:
                 YAML().dump(entries, paths[name])
         with mock.patch.multiple(political, COUNTRIES=paths["countries"], TERRITORIES=paths["territories"],
-                                 layer=LAYERS.__getitem__), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
+                                 layer=LAYERS.__getitem__, curriculum_regions=lambda states: REGIONS), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
                 mock.patch.object(cities, "PATH", paths["cities"]):
             yield paths
 
@@ -89,6 +92,7 @@ class CardTextTest(unittest.TestCase):
     def setUp(self) -> None:
         with data(countries(), territories(), cities_data()):
             self.cards = by_key(political.cards() + cities.cards())
+            self.countries = political.load_countries()
 
     def test_every_kind(self) -> None:
         text = {k: (c.prompt, c.answer_lines) for k, c in self.cards.items()}
@@ -151,6 +155,18 @@ class CardTextTest(unittest.TestCase):
         for name in ("Alpha\r---\rB", "Alpha\u2028B", "{{c1::Alpha}}"):
             with self.subTest(name=name), self.assertRaises(ValidationError):
                 Country.model_validate(countries()[0] | {"name": name})
+
+    def test_region_comes_from_the_curriculum(self) -> None:
+        self.assertEqual([c.region for c in self.countries], [1, 2])
+        with self.assertRaises(ValidationError):
+            Country.model_validate(countries()[0] | {"region": 1})
+        with data(countries()), mock.patch.dict(REGIONS, clear=True), \
+                self.assertRaisesRegex(ValueError, "not in any region of curriculum.yaml: alpha, beta"):
+            political.load_countries()
+        with self.assertRaisesRegex(ValueError, "no region"):
+            Country.model_validate(countries()[0]).region
+        with data(countries(), territories()), mock.patch.dict(REGIONS, {"gamma": 2}):
+            self.assertEqual(political.check()[0], ["gamma: region 3 differs from its region in curriculum.yaml (2)"])
 
     def test_bbox_must_be_finite_and_in_range(self) -> None:
         for expect in ([float("-inf"), 0, 10, 10], [0, 0, 190, 10], [0, -91, 10, 10]):
@@ -292,8 +308,8 @@ class CheckTest(unittest.TestCase):
     def test_hosts_are_one_level_deep_and_in_region(self) -> None:
         nested = countries()
         nested[0]["host"] = "beta"
-        nested[1] |= {"host": "alpha", "region": 1}
-        with data(nested):
+        nested[1] |= {"host": "alpha"}
+        with data(nested), mock.patch.dict(REGIONS, {"beta": 1}):
             self.assertEqual(political.check()[0], [
                 "alpha: host 'beta' is itself hosted by 'alpha'; hosts are one level deep",
                 "beta: host 'alpha' is itself hosted by 'beta'; hosts are one level deep",
