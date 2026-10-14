@@ -13,7 +13,7 @@ from geofeat.model import ROOT
 
 LOCK_FILE = ROOT / "data/positions.lock"
 STRIDE = 500
-LIMIT = 1_000_000  # Anki's Check Database renumbers new cards at or above this
+LIMIT = 1_000_000  # a margin under 2,000,000, where Anki's Check Database rewrites new-card dues (ADR 0006)
 _HEADER = re.compile(r"draft: (true|false)")
 _ENTRY = re.compile(r"([A-Za-z0-9]{10}): (\d+)")
 

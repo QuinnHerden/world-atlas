@@ -7,34 +7,41 @@ The deck has 166 entries in `data/features.yaml`: 132 active cards (126 places a
 ## Pipeline
 
 ```
-data/features.yaml ─┐
-geometry/*.geojson ─┼─> resolve ─> render ─> deck/<sha256[:12]>.png ─┐
-vendor/ (NE, pinned)┘                                                ├─> deckgen ─> deck/geographic-features.md ─> ankc check ─> ankc build ─> dist/*.apkg
-                       check data ─> build/siblings.json ───────────┘
+data/features.yaml ─> sources/ ─> Card ─┐
+geometry/*.geojson ─┐                   │
+vendor/ (NE, pinned)┴─> resolve ────────┴─> render ─> deck/<sha256[:12]>.png + build/media.json ─┐
+                        check data ─> build/siblings.json ───────────────────────────────────────┼─> deckgen ─> deck/geographic-features.md ─> ankc check ─> ankc build ─> dist/*.apkg
+                        data/positions.lock (written by `make positions`) ───────────────────────┘
 ```
+
+The diagram is simplified: deckgen also reads the Cards and the study order, and `make positions` reads the study order too.
 
 `make all` runs `test → fetch → check-data → render → deck → check → build`. Each step is a module in `src/geofeat/`:
 
 | Target | Module | Does |
 |---|---|---|
-| `make ids` | `ids.py` | Mints a uid for each entry that lacks one with `ankc gen chunk` and writes it into `features.yaml`. Not part of `make all`. |
+| `make ids` | `ids.py` | Mints a uid for each entry in every card source that lacks one, with `ankc gen chunk`, and writes it into the source's YAML file. Not part of `make all`. |
 | `make fetch` | `fetch.py` | Downloads the pinned Natural Earth files through `gh api` and verifies their checksums against `data/sources.lock`. `--relock` re-pins. |
 | `make check-data` | `check.py data` | Schema, geometry, provenance and sibling-pair checks. Caches the pair results in `build/siblings.json`. |
-| `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its key (below). Writes `build/media.json` (feature id → file name). |
-| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`. |
-| `make check` | `check.py deck` | Every card rendered; `ankc --version` is 0.5.x; `ankc check` passes. |
+| `make positions` | `positions.py` | Places new uids in `data/positions.lock` (below). The lock's only writer; commit the result. Not part of `make all`. |
+| `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). |
+| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. |
+| `make check` | `check.py deck` | Every card rendered and in the lock; ankc `>=0.5,<0.7`; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/geographic-features.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
 
 `deck/`, `build/`, `dist/` and `vendor/` are gitignored. `deck/` is pure output: nothing reads it back.
 
+**ankc.** `ankc.py` runs the compiler named by `$ANKC`. The Makefile sets it (default `ankc`); it may be a full command line such as `uv run --with ../ankcompiler ankc`. `ids.py`, the checks and `make build` all go through it. `ankc.py` also reads `ankc --version`; `writes_pos()` is true from 0.6, the first version that reads `[^pos]`.
+
 ## Repo layout
 
 ```
 data/features.yaml     the feature list; the only hand-edited data besides geometry/
+data/positions.lock    each card's new-card position, keyed by uid; written only by `make positions`
 data/sources.lock      Natural Earth repo, commit, path, sha256 and git blob sha per file
 geometry/*.geojson     53 hand-authored or derived shapes, each with provenance
-src/geofeat/           the pipeline (model, fetch, ne, resolve, frame, spec, render, jobs, style, pairs, order, deckgen, check, guide, sheet, cvd, ids)
+src/geofeat/           the pipeline (model, card, sources/, fetch, ne, resolve, frame, spec, render, jobs, style, pairs, order, positions, deckgen, ankc, check, guide, sheet, cvd, ids)
 tests/                 unit tests (`make test`)
 tools/                 scripts that made the derived geometry; not part of the build (tools/README.md)
 docs/                  this file, the ADRs, the World Atlas plan, historical research
@@ -83,6 +90,25 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 **Retirement.** To drop a card, set `retired: true` and keep the entry, so its uid is never reused. A retired entry is archived: it is validated against the schema only, not resolved, rendered, pair-checked or required to have a note. Un-retiring one needs a `make check-data` run. An active card may still reference a retired one; `make check-data` notes geometry and `frame.context` references and fails on an `allow_nested` that names one.
 
 **Identity.** The uid is the note's identity, so `id`, `name`, tier and category can change without losing review history.
+
+### Cards
+
+Rendering, deckgen's output and the deck and package checks read `Card` (`card.py`), not `Feature` ([ADR 0005](adr/0005-card-sources-and-card-dto.md)). The study order, the PDF guide and `make pairs` still read `Feature` until P3. Each module in `src/geofeat/sources/` adapts one data file to Cards; today there is one, `sources/features.py`, giving one card per active feature. `sources.all_cards()` collects them and fails on a key or uid that repeats.
+
+A `Card` is a frozen pydantic model:
+
+- `uid`, `kind` (`feature` today; `country`, `capital`, `city`, `territory`, `dispute` and `continent` are reserved) and `id`, which is unique within its kind.
+- `prompt`, the type word on the front, and `answer_lines`, which deckgen escapes and joins with `<br>`. Both reject markdown and HTML syntax, since ankc renders card text unsanitised.
+- `tags`, `tier`, `region`, `anchor`, `parents` and `note`.
+- `render`: a `RenderSpec` and a function that resolves the geometry only when called, so building cards doesn't load Natural Earth.
+
+**`card.key` is `kind:id`,** for example `feature:nile`. Two kinds may share an id, so `build/media.json`, the render bookkeeping, the sheets and the guide key on `card.key`, not the id. A `media.json` written before cards had kinds, keyed by bare feature id, is read as `feature:<id>`.
+
+### Positions
+
+`data/positions.lock` gives every card its new-card position ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md)). The first line is `draft: true` or `draft: false`; each other line is `<uid>: <position>`, sorted by uid. Positions are unique and below 1,000,000.
+
+`make positions` is the only writer. While the lock is a draft it is regenerated from the study order at a stride of 500, so retired uids drop out. Once it is frozen, locked entries never move. A new uid goes after `pred`, the nearest earlier card in the study order that is in the lock. It takes a slot between `lock[pred]` and the next locked value above it. New uids that share a gap are spread evenly (after the last locked value, at successive strides of 500), and the command fails when a gap is exhausted. A retired uid keeps its entry, so no position is reused.
 
 ### Type words and families
 
@@ -171,7 +197,7 @@ A strait or line shorter than 123 px also gets a ring. Seasonal climate systems 
 
 **Locator inset.** On regional frames under 8,000 km wide. The same 320 × 160 px plate carrée world map on every card, centred on 0° and never re-centred. It marks the frame as a `#333` box, or a 12 px dot when the box would be under 32 px or would cross 180°. Nothing in it is red. It sits bottom-left unless that covers the highlight, then moves to another corner.
 
-**Render cache.** `build/render-cache.json` maps a cache key to a PNG. `jobs.py` resolves each active card into a `RenderJob`: a `RenderSpec` (`spec.py`: style, frame options, fill opacity, close-up borders, and the country/dot/outline overlays), the geometry, the `frame.context` shapes and the `frame.former` outline. `render()` draws a job and reads nothing but the basemap. The key hashes:
+**Render cache.** `build/render-cache.json` maps a cache key to a PNG. `jobs.py` turns each active card's `card.render` into a `RenderJob`: a `RenderSpec` (`spec.py`: style, frame options, fill opacity, close-up borders, and the country/dot/outline overlays), the geometry, the `frame.context` shapes and the `frame.former` outline. `render()` draws a job and reads nothing but the basemap. The key hashes:
 
 - the geometry, each context shape and the former outline, rounded to 1e-7° and normalised with `shapely.normalize`, so float noise and vertex or part order don't count. Flow geometry isn't normalised, because its arrows follow the vertex order.
 - the spec's fields, defaults included. Context ids and the former file name aren't in the spec; their shapes are hashed instead.
@@ -205,15 +231,15 @@ It prints every trim, every `allow_nested` override, references to retired featu
 - **Nested** pairs from different families (a delta in its river's frame, a strait inside a cyclone belt) are allowed and reported.
 - **Override policy.** Fix a same-family nesting in the data first: subtract the inner card when the outer shape shouldn't include it. Use `allow_nested: [{id, reason}]` only when the inner feature is a named part of the outer one and cutting it out would misdraw the outer shape. The reason must say why the cards still differ. Current overrides: Aegean/Mediterranean, Barents/Arctic Ocean, Levant/Fertile Crescent, Pontic–Caspian Steppe/Eurasian Steppe, Zagros/Iranian Plateau, and Arabian Desert/Arabian Peninsula (cross-family, so not required, but recorded because its IoU sits just under 0.8).
 
-**`check deck`** (before `ankc build`): every active card has a render, `ankc --version` is 0.5.x, and `ankc check --deck "Geographic Features"` passes.
+**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "Geographic Features"` passes.
 
-**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `Geographic Features` deck, every note carrying all its tags, every card new, and new-card positions following the study order.
+**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `Geographic Features` deck, every note carrying all its tags, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
 
 ## Deck and study order
 
 **Card.** Front: the type word in bold above the map. Back: the name, with alternate names in brackets. The uid comes from `features.yaml`.
 
-**One deck,** `Geographic Features`, with no subdecks ([ADR 0004](adr/0004-flat-deck-and-study-order.md)). Each card carries the tags `tier::<n>`, `category::<slug>` and `id_<feature-id>`. All cards go, in study order, into one file, `deck/geographic-features.md`.
+**One deck,** `Geographic Features`, with no subdecks ([ADR 0004](adr/0004-flat-deck-and-study-order.md)). Each card carries the tags `tier::<n>`, `category::<slug>`, `id_<feature-id>` and `kind::feature`. All cards go, in study order, into one file, `deck/geographic-features.md`.
 
 **Study order** (`order.py`):
 
@@ -222,7 +248,7 @@ It prints every trim, every `allow_nested` override, references to retired featu
 3. Categories alternate, each spread evenly across the tier. Features within 300 km of each other are kept at least 3 cards apart where the other rules allow.
 4. Ties go to `features.yaml` order, so the order is deterministic.
 
-The order uses the pair results that `check data` caches in `build/siblings.json`, keyed by a hash of its inputs; deckgen refuses a stale copy. ankc 0.5 numbers new cards in source order, and Anki keeps a new card's position on first import.
+The order uses the pair results that `check data` caches in `build/siblings.json`, keyed by a hash of its inputs; deckgen refuses a stale copy. Anki keeps a new card's position on first import. With ankc 0.6 that position is the card's `[^pos]` from the lock; ankc 0.5 numbers new cards in source order, which is the study order.
 
 **Known Anki behaviour.** Re-importing updates a note's fields and tags, but doesn't move its card to another deck or change its new-card position, and never deletes notes. The README covers what users do about each.
 

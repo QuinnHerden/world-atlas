@@ -12,7 +12,7 @@ GEOMETRY = ROOT / "geometry"
 VENDOR = ROOT / "vendor"
 DECK = ROOT / "deck"
 BUILD = ROOT / "build"
-MEDIA_INDEX = BUILD / "media.json"  # feature id -> rendered PNG name
+MEDIA_INDEX = BUILD / "media.json"  # card key (kind:id, e.g. feature:nile) -> rendered PNG name
 ROOT_DECK = "Geographic Features"
 
 Category = Literal[
