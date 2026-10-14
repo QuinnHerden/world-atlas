@@ -871,8 +871,8 @@
   tier: 1
   note: >-
     Landlocked in the Lesser Caucasus, home to Lake Sevan, between Georgia, Azerbaijan, Iran and Turkey. It regards
-    itself as the first state to formally adopt Christianity, in the early 4th century. Turkey has kept their border
-    closed since 1993.
+    itself as the first state to formally adopt Christianity, in the early 4th century. Turkey closed their border in
+    1993.
   verify:
   - claim: Turkey has kept its border with Armenia closed since 1993.
     as_of: '2026-10'
@@ -1179,7 +1179,7 @@
   note: >-
     Yemen occupies the south-west corner of the Arabian Peninsula, south of Saudi Arabia and west of Oman, on the
     Bab el-Mandeb strait into the Red Sea. North and South Yemen merged in 1990. Houthi forces overran the capital
-    in 2014, and the civil war that followed still divides the country.
+    in 2014, and the civil war that followed divided the country.
   verify:
   - claim: The civil war that followed the 2014 Houthi takeover still divides Yemen.
     as_of: '2026-10'
@@ -1191,8 +1191,8 @@
     ne_id: 1159151259
     expect: [44.15, 15.31, 44.25, 15.41]
     note: >-
-      Sanaa lies inland in western Yemen, and its name is reputed to mean "fortified place". The Houthi movement has
-      held it since 2014.
+      Sanaa lies inland in western Yemen, and its name is reputed to mean "fortified place". The Houthi movement
+      seized it in 2014.
     verify:
     - claim: The Houthi movement still holds Sanaa.
       as_of: '2026-10'
@@ -1393,8 +1393,8 @@
   tier: 1
   note: >-
     Sudan lies south of Egypt on the Red Sea, and the Blue Nile and White Nile meet within it to form the Nile.
-    Independent from Egypt and the UK since 1956, it lost its south when South Sudan became independent in 2011. War
-    between the army and the Rapid Support Forces has gone on since 2023.
+    Independent from Egypt and the UK since 1956, it lost its south when South Sudan became independent in 2011. In
+    2023 war broke out between the army and the Rapid Support Forces.
   verify:
   - claim: War between the army and the Rapid Support Forces is still going on.
     as_of: '2026-10'
@@ -1675,10 +1675,13 @@
   note: >-
     Mali is a large landlocked country in West Africa's interior, south-west of Algeria, and the Niger River arcs
     through its south and centre. It is named after the Mali Empire, which ruled the region between the 13th and
-    16th centuries; under later Songhai rule, Timbuktu became a centre of trade and scholarship. Under military rule
-    since 2020–21, it left ECOWAS in 2025 and is in the Alliance of Sahel States with Burkina Faso and Niger.
+    16th centuries; under later Songhai rule, Timbuktu became a centre of trade and scholarship. After military coups
+    in 2020 and 2021, it founded the Alliance of Sahel States with Burkina Faso and Niger in 2023, and it left ECOWAS
+    in 2025.
   verify:
   - claim: Mali is under military rule, left ECOWAS in 2025, and is in the Alliance of Sahel States with Burkina Faso and Niger.
+    as_of: '2026-10'
+  - claim: Mali, Burkina Faso and Niger founded the Alliance of Sahel States in September 2023.
     as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321063}}
@@ -1696,10 +1699,12 @@
   tier: 1
   note: >-
     Burkina Faso is a landlocked country north of Ghana, ringed by Mali, Niger, Benin, Togo and Côte d'Ivoire.
-    Formerly called Upper Volta, it has been under military rule since two coups in 2022. It left ECOWAS in 2025 and
-    is in the Alliance of Sahel States with Mali and Niger.
+    Formerly called Upper Volta, it had two military coups in 2022. It founded the Alliance of Sahel States with Mali
+    and Niger in 2023, and it left ECOWAS in 2025.
   verify:
   - claim: Burkina Faso is under military rule, left ECOWAS in 2025, and is in the Alliance of Sahel States with Mali and Niger.
+    as_of: '2026-10'
+  - claim: Mali, Burkina Faso and Niger founded the Alliance of Sahel States in September 2023.
     as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320405}}
@@ -1788,10 +1793,12 @@
   tier: 1
   note: >-
     Niger is a landlocked country south-east of Algeria. It is mostly desert, with savanna in the south and the
-    Niger River crossing its south-west. Its army seized power in July 2023, and in 2025 it left ECOWAS; it is in
-    the Alliance of Sahel States with Mali and Burkina Faso.
+    Niger River crossing its south-west. Its army seized power in July 2023, and that September it founded the
+    Alliance of Sahel States with Mali and Burkina Faso; in 2025 it left ECOWAS.
   verify:
   - claim: Niger is under military rule, left ECOWAS in 2025, and is in the Alliance of Sahel States with Mali and Burkina Faso.
+    as_of: '2026-10'
+  - claim: Mali, Burkina Faso and Niger founded the Alliance of Sahel States in September 2023.
     as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321087}}
@@ -1876,7 +1883,7 @@
     expect: [8.73, 3.7, 8.83, 3.8]
     note: >-
       Malabo, on the island of Bioko in the Bight of Biafra, was Equatorial Guinea's capital until January 2026,
-      when a decree named Ciudad de la Paz on the mainland as capital. The move of government is still under way.
+      when a decree named Ciudad de la Paz on the mainland as capital.
     verify:
     - claim: The move of government from Malabo to Ciudad de la Paz is still under way.
       as_of: '2026-10'
@@ -1943,10 +1950,12 @@
   note: >-
     DR Congo spans the Congo River basin in the heart of Africa, and its only outlet to the Atlantic is a short
     coast at the river's mouth. King Leopold II ruled it as his own colony until international condemnation forced
-    him to hand it to Belgium; Mobutu later renamed it Zaire. Armed groups, including the M23, have long fought in
-    the east.
+    him to hand it to Belgium; Mobutu later renamed it Zaire. Armed groups have fought in the east since the 1990s,
+    among them the M23 since 2012.
   verify:
   - claim: Armed groups, including the M23, are still fighting in eastern DR Congo.
+    as_of: '2026-10'
+  - claim: The M23 rebellion began in 2012.
     as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320513}}
@@ -2191,7 +2200,7 @@
   note: >-
     Mauritius is an island nation in the Indian Ocean, east of Madagascar. The island was uninhabited until the
     Dutch settled it in 1638, and their arrival brought the rapid extinction of the dodo; France and then Britain
-    later ruled it. It claims the Chagos Archipelago from the UK.
+    later ruled it. It long claimed the Chagos Archipelago from the UK, and a 2025 treaty provides for its transfer.
   verify:
   - claim: Mauritius claims the Chagos Archipelago from the UK (the 2025 transfer treaty is not in force).
     as_of: '2026-10'
@@ -2360,8 +2369,7 @@
   tier: 1
   note: >-
     A landlocked, mountainous country between Pakistan and Iran, split by the Hindu Kush; its thin Wakhan Corridor
-    reaches east to touch China. The Taliban took back control when US-led forces withdrew, and very few states
-    formally recognise their government.
+    reaches east to touch China. The Taliban took back control in 2021, when US-led forces withdrew.
   verify:
   - claim: Very few states formally recognise the Taliban government.
     as_of: '2026-10'
@@ -2786,10 +2794,13 @@
     expect: [106.78, -6.22, 106.88, -6.12]
     note: >-
       Indonesia's capital, on the northwest coast of Java on the Java Sea; under Dutch rule it was called Batavia. A
-      new capital, Nusantara, is being built on Borneo, but Jakarta stays the legal capital until a presidential
-      decree makes the move.
+      2022 law made Nusantara, a new city on Borneo, the future capital; the move takes effect by presidential decree.
     verify:
     - claim: Jakarta stays Indonesia's legal capital; no presidential decree has moved it to Nusantara.
+      as_of: '2026-10'
+    - claim: Indonesia's parliament passed the State Capital law providing for the move to Nusantara in January 2022.
+      as_of: '2026-10'
+    - claim: The move to Nusantara takes effect by presidential decree (UU 21/2023, UU 2/2024); check Perpres 79/2025.
       as_of: '2026-10'
 
 - id: timor-leste
@@ -3171,10 +3182,12 @@
   note: >-
     Belize lies on the Caribbean coast south of Mexico's Yucatán and east of Guatemala, and it is the only Central
     American country with no Pacific coast. Formerly the colony of British Honduras, it became independent in 1981.
-    Guatemala's long-standing territorial claim against Belize is before the International Court of Justice, which
-    has not ruled.
+    Guatemala's long-standing territorial claim against Belize went to the International Court of Justice after
+    referendums in Guatemala in 2018 and Belize in 2019.
   verify:
   - claim: The International Court of Justice has not ruled on Guatemala's claim against Belize.
+    as_of: '2026-10'
+  - claim: Guatemala (April 2018) and Belize (May 2019) voted in referendums to send the claim to the International Court of Justice.
     as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320431}}
@@ -3495,10 +3508,11 @@
     Guyana lies on the Atlantic coast between Venezuela and Suriname; most people live on the low coastal plain, and
     the interior is largely rainforest and highland. A Dutch and then British colony, independent since 1966, it has
     English as its official language. Venezuela claims the region west of the Essequibo River, which Guyana
-    administers, and the dispute is before the International Court of Justice, which has heard the merits but not
-    ruled.
+    administers, and in 2018 Guyana took the dispute to the International Court of Justice.
   verify:
   - claim: The International Court of Justice has heard the merits of the Essequibo case but not ruled.
+    as_of: '2026-10'
+  - claim: Guyana filed the Essequibo case at the International Court of Justice in March 2018.
     as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320817}}
@@ -3519,9 +3533,11 @@
     Venezuela faces the Caribbean across the top of South America, with the Andes in the north-west, the Llanos
     plains along the Orinoco River in the centre, and the Guiana Highlands in the south-east. Its name means "Little
     Venice", after the stilt houses explorers saw on Lake Maracaibo in 1499. It claims the region west of the
-    Essequibo River that Guyana administers; the International Court of Justice has heard the case but not ruled.
+    Essequibo River that Guyana administers, a dispute Guyana took to the International Court of Justice in 2018.
   verify:
   - claim: The International Court of Justice has heard the Essequibo case but not ruled.
+    as_of: '2026-10'
+  - claim: Guyana filed the Essequibo case at the International Court of Justice in March 2018.
     as_of: '2026-10'
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321411}}

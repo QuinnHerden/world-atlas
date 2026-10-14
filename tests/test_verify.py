@@ -54,19 +54,20 @@ class VerifyModelTest(unittest.TestCase):
 
 class NoteMarkerTest(unittest.TestCase):
     def test_markers_fail_whatever_their_case(self) -> None:
-        for note in ("Still true (verify).", "Status as of 2026-10.", "AS OF 2025, it was.", "Claim [V].", "Claim [s].",
-                     "Population tbd.", "Re-Verify this."):
+        for note in ("Still true (verify).", "Status as of 2026-10.", "AS OF 2025, it was.", "As of 2099 it is.",
+                     "Claim (As of October).", "Claim [V].", "Claim [s].", "Population tbd.", "Re-Verify this."):
             with self.subTest(note=note):
                 self.assertEqual(len(note_markers([Noted("city:x", note, [])])), 1)
 
     def test_clean_notes_pass(self) -> None:
-        for note in ("Founded in 1652, as of old a stopover.", "A verified fact, *emphasised*.", None):
+        for note in ("Founded in 1652, as of old a stopover.", "A verified fact, *emphasised*.", "As of 2014 it hosted the games.",
+                     "As of 2019 it was the largest port.", "Capital as of 1960, after independence.", None):
             with self.subTest(note=note):
                 self.assertEqual(note_markers([Noted("city:x", note, [])]), [])
 
     def test_the_error_names_the_card(self) -> None:
         [error] = note_markers([Noted("capital:alpha", "Middle (as of 2026-10; verify).", [])])
-        self.assertTrue(error.startswith("capital:alpha: note has research marker 'as of 20'"))
+        self.assertTrue(error.startswith("capital:alpha: note has research marker '(as of'"))
 
     def test_the_project_notes_are_clean(self) -> None:
         self.assertEqual(note_markers(noted()), [])

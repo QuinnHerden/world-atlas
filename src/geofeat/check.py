@@ -129,7 +129,9 @@ def missing_notes(features: list[Feature]) -> list[str]:
 
 
 # Research markers a note must not carry into the guide; the claim goes in the entry's `verify` list instead.
-NOTE_MARKER = re.compile(r"verify|as of 20|\[v\]|\[s\]|tbd", re.IGNORECASE)
+# "as of" alone is ordinary prose ("as of 2014 it hosted..."); an "(as of" or an "as of" a 2020s-or-later year is a
+# marker. Trade-offs: genuine 2020s prose ("as of 2021 the city had") must be reworded, and "as of October 2026" passes.
+NOTE_MARKER = re.compile(r"\(as of|as of 20[2-9]\d|verify|\[v\]|\[s\]|tbd", re.IGNORECASE)
 
 
 class Noted(NamedTuple):
