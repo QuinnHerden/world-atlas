@@ -2,6 +2,7 @@
 
 import math
 from dataclasses import dataclass
+from typing import Protocol
 
 import cartopy.crs as ccrs
 import numpy as np
@@ -12,7 +13,7 @@ from shapely.geometry import box
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 
-from geofeat.model import Feature
+from geofeat.model import FrameOptions
 
 ASPECT = 16 / 9
 FILL = 0.45  # share of the frame's long axis the highlight should cover
@@ -21,6 +22,13 @@ GLOBAL_SPAN_M = 10_000_000  # wider than this goes on a world map
 MIN_FRAME_M = 2_600_000
 EARTH_R_M = 6_371_008
 INSET_BELOW_M = 8_000_000  # wider frames show whole continents, and their box on the world inset wraps
+
+
+class Framed(Protocol):
+    """A Feature or a RenderSpec: anything carrying frame options."""
+
+    @property
+    def frame(self) -> FrameOptions: ...
 
 
 @dataclass(frozen=True)
@@ -74,7 +82,7 @@ def _fit(geometry: BaseGeometry, projection: ccrs.Projection, at: tuple[float, f
     return max(max(x1 - x0, (y1 - y0) * ASPECT) / FILL, min_w), (x0 + x1) / 2, (y0 + y1) / 2
 
 
-def frame(feature: Feature, geometry: BaseGeometry) -> Frame:
+def frame(feature: Framed, geometry: BaseGeometry) -> Frame:
     """Fit the highlight in an equirectangular map round its centre (or `frame.centre`), then redraw that frame with
     the projection centred on it, true to scale along its centre parallel, and refit. A highlight wider than
     GLOBAL_SPAN_M, or one the frame can't hold, goes on a world map."""

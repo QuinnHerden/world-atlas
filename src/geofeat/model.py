@@ -27,9 +27,9 @@ Category = Literal[
     "Regions & Rifts",
     "Climate Systems",
 ]
-# The type word shown on the card. Each covers 3+ active cards, except Isthmus (tells Kra from the Malay Peninsula),
-# Valley and Sea route (the user's merges) and Cape (no honest merge); Pass, Corridor and Island are kept only for
-# retired entries. See docs/adr/0001-type-vocabulary.md.
+# The type word shown on the card. Each covers 3+ active cards, except Isthmus, Valley, Cape and Climate belt (2 each)
+# and Sea route and Ocean current (1 each); Pass, Corridor and Island are kept only for retired entries. See
+# docs/adr/0001-type-vocabulary.md for the reason behind each.
 FeatureType = Literal[
     "Ocean", "Sea", "Lake",
     "River", "Delta",
@@ -130,7 +130,7 @@ class Feature(Strict):
     name: CardText
     alt_names: list[CardText] = []
     type: FeatureType
-    qualifier: CardText | None = None  # e.g. the season a climate map shows: "Monsoon, July"
+    qualifier: CardText | None = None  # the season a climate map shows, after the type word: "Wind system, July"
     note: CardText | None = None  # why it matters, 1-3 sentences; shown in the PDF guide, required on active cards
     category: Category
     tier: Literal[1, 2, 3]
