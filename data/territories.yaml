@@ -466,8 +466,8 @@
   name: Spratly Islands
   parties: [china, taiwan, vietnam, philippines, malaysia, brunei]
   geometry:
-  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321165}}
-  expect: [114, 9.6, 115.9, 11.2]
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103863}}
+  expect: [111.8, 7.1, 117.9, 12.1]
   note: The Spratly Islands are a scatter of small islands, reefs and shoals in the southern South China Sea, amid rich fishing grounds and possible oil and gas. China, Taiwan and Vietnam claim them all, Malaysia and the Philippines claim parts, and all five occupy some features; Brunei claims an overlapping maritime zone. In 2016 an arbitral tribunal in a case brought by the Philippines found no legal basis for China's claimed historic rights inside its "nine-dash line"; China rejects the ruling, and control is still split among the claimants.
   verify:
   - claim: Control of the Spratly Islands is still split among the claimants.

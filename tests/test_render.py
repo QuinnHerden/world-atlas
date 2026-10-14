@@ -47,7 +47,7 @@ class KeyTest(unittest.TestCase):
     def test_every_visual_field_changes_it(self) -> None:
         changes = {
             "style": "band", "fill_alpha": 0.3, "close_up_borders": True, "country": "subject", "dot": (11.0, 41.0),
-            "outline": "dashed", "frame": FrameOptions(min_span_km=4000),
+            "outline": "dashed", "frame": FrameOptions(min_span_km=4000), "world": True, "close_dot": True,
         }
         self.assertEqual(set(changes), set(RenderSpec.model_fields), "a new RenderSpec field needs a case here")
         for field, value in changes.items():

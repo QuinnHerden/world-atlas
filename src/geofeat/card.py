@@ -1,8 +1,8 @@
 """The Card DTO: what every source turns its entries into, and all that ordering, deckgen, the checks and the guide
 read. See docs/adr/0005-card-sources-and-card-dto.md."""
 
+import fnmatch
 import json
-import os
 import re
 from collections.abc import Callable
 from typing import Annotated, Literal
@@ -121,11 +121,13 @@ def load_media() -> dict[str, str]:
     return migrate_media(json.loads(MEDIA_INDEX.read_text())) if MEDIA_INDEX.exists() else {}
 
 
-# Kinds with no renders until P4. ALLOW_UNRENDERED=1 lets `make render` and `make deck` leave them out of the deck,
-# loudly; their positions are still computed and locked, and `make check` still fails on them. Feature cards always
-# need their maps. Remove at the end of P4.
-UNRENDERED_KINDS: frozenset[Kind] = frozenset({"country", "capital", "city", "territory", "dispute", "continent"})
-
-
-def allow_unrendered() -> bool:
-    return os.environ.get("ALLOW_UNRENDERED") == "1"
+def match_keys(patterns: list[str], keys: list[str]) -> list[str]:
+    """The keys each pattern names, in pattern order and each once: a key, a glob over keys, or a bare feature id.
+    Raises on a pattern that matches nothing, so a typo isn't silently dropped."""
+    out: dict[str, None] = {}
+    for pattern in patterns:
+        matched = sorted(fnmatch.filter(keys, pattern if ":" in pattern else card_key("feature", pattern)))
+        if not matched:
+            raise ValueError(f"no card matches {pattern!r}")
+        out |= dict.fromkeys(matched)
+    return list(out)
