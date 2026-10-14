@@ -216,7 +216,7 @@ SOURCES: dict[str, str] = {
 }
 
 # Territory and dispute cards, from docs/research/ne-political-layers.md (b). A dispute's land is mostly inside a
-# state's outline already; only Western Sahara's is in none.
+# state's outline already; Western Sahara's is the only sizeable part in none (the Kurils and Spratlys leave specks).
 TERRITORY_SOURCES: dict[str, str] = {
     "gibraltar": "A0 1159320719",
     "isle-of-man": "A0 1159320721",
@@ -260,6 +260,11 @@ DISPUTE_SOURCES: dict[str, str] = {
     "essequibo": "DA 1159320821",
 }
 RECIPES = SOURCES | TERRITORY_SOURCES | DISPUTE_SOURCES
+
+
+def state_ids() -> list[str]:
+    """The 197 states; P2.2's countries.yaml replaces this with its own ids."""
+    return sorted(SOURCES)
 
 
 

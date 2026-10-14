@@ -25,8 +25,8 @@ import shapely
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import unary_union
 
-from geofeat.adjacency import Region, load_curriculum
-from geofeat.countries_ne import outline
+from geofeat.countries_ne import outline, state_ids
+from geofeat.curriculum import Region, load_curriculum
 from geofeat.model import Feature, active, load_features
 from geofeat.ne import GEOD
 from geofeat.resolve import area_km2, resolve
@@ -40,22 +40,23 @@ CLIMATE_BUFFER_DEG = 3.0  # how far either side of a flow line its climate reach
 SHORELINE_EPS_DEG = 0.1  # how close to a region a water body's edge counts as its shore
 COVERED_SHARE = 0.5  # below this share of its area inside countries, a water body is measured by its shoreline
 
+
 @cache
 def ring() -> dict[int, Region]:
-    return {r.number: r for r in load_curriculum().regions}
+    return {r.number: r for r in load_curriculum(state_ids()).regions}
 
 
-def _uncovered(dispute: BaseGeometry, states: Iterable[str]) -> BaseGeometry:
-    """The dispute's land that no state's outline holds."""
-    box = shapely.box(*dispute.bounds)
-    return dispute.difference(unary_union([outline(s) for s in states if outline(s).intersects(box)]))
+def region_outline(members: Iterable[BaseGeometry], disputes: Iterable[BaseGeometry],
+                   held: BaseGeometry) -> BaseGeometry:
+    """A region's land: its member states and territories, plus whatever of its disputes no state holds (`held`)."""
+    return unary_union([*members, *(d.difference(held) for d in disputes)])
 
 
 @cache
 def region_outlines() -> dict[int, BaseGeometry]:
-    states = [c for r in ring().values() for c in r.countries]
-    return {n: unary_union([*(outline(c) for c in (*r.countries, *r.territories)),
-                            *(_uncovered(outline(d), states) for d in r.disputes)])
+    held = unary_union([outline(c) for r in ring().values() for c in r.countries])
+    return {n: region_outline([outline(c) for c in (*r.countries, *r.territories)],
+                              [outline(d) for d in r.disputes], held)
             for n, r in ring().items()}
 
 
@@ -129,7 +130,7 @@ def shore_shares(geometry: BaseGeometry, regions: Mapping[int, BaseGeometry]) ->
 
 def later_shore(shares: Mapping[int, float]) -> int:
     """Rule 2: of the regions holding a real share of the shore, the later in ring order."""
-    return max(n for n, share in shares.items() if share >= SHORE_MIN_SHARE)
+    return max((n for n, share in shares.items() if share >= SHORE_MIN_SHARE), default=next(iter(shares)))
 
 
 def climate_shares(geometry: BaseGeometry, regions: Mapping[int, BaseGeometry]) -> dict[int, float]:

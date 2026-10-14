@@ -5,7 +5,8 @@ from shapely.geometry import LineString, Point, box
 from shapely.ops import unary_union
 
 from geofeat.model import Expect, Feature, Part, load_features
-from geofeat.regions import ORIENTATION, continent_geometry, derive, disjoint, override_errors, ring
+from geofeat.regions import (ORIENTATION, continent_geometry, derive, disjoint, later_shore, override_errors,
+                             region_outline, ring)
 
 # A synthetic ring on the equator: regions 1 and 3 face each other across a 1° strait, region 2 lies north of both.
 WORLD = {1: box(0, 0, 10, 10), 2: box(0, 12, 25, 20), 3: box(11, 0, 25, 10)}
@@ -65,6 +66,16 @@ class DeriveTest(unittest.TestCase):
         plain = feature("Plain", region=1, region_reason="the plan puts it in region 1")
         assignment = derive(plain, box(8, 2, 14, 8), WORLD)
         self.assertEqual((assignment.region, assignment.derived, assignment.rule), (1, 3, "override"))
+
+
+class OutlineTest(unittest.TestCase):
+    def test_a_region_gets_only_dispute_land_no_state_holds(self) -> None:
+        held = box(0, 0, 10, 10)
+        outline = region_outline([box(20, 0, 30, 10)], [box(5, 0, 15, 10), box(1, 1, 2, 2)], held)
+        self.assertTrue(outline.equals(unary_union([box(10, 0, 15, 10), box(20, 0, 30, 10)])))
+
+    def test_later_shore_falls_back_to_the_largest_when_no_shore_is_real(self) -> None:
+        self.assertEqual(later_shore({4: 0.14, 9: 0.13, 2: 0.12}), 4)
 
 
 class OverrideFieldTest(unittest.TestCase):
