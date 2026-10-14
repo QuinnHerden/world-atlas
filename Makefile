@@ -2,7 +2,7 @@ PY := uv run python -m geofeat
 DECK := Geographic Features
 IDS ?=
 
-.PHONY: all test fetch ids check-data render deck check build sheet phone pairs cvd guide clean
+.PHONY: all test fetch ids check-data render deck check build sheet phone pairs cvd guide poc clean
 
 all: build
 
@@ -48,6 +48,18 @@ cvd: render
 
 guide: render
 	uv run --group guide python -m geofeat.guide
+
+# Countries PoC (docs/poc-countries.md): a separate deck, written to dist/poc-countries.apkg
+POC_DECK := Geography PoC — Countries
+
+poc: test fetch
+	$(PY).poc "$(POC_DECK)"
+	ankc check --deck "$(POC_DECK)" --path build/poc
+	rm -rf build/poc-dist && mkdir -p build/poc-dist
+	ankc build --deck "$(POC_DECK)" --path build/poc --output build/poc-dist
+	mkdir -p dist
+	mv build/poc-dist/*.apkg dist/poc-countries.apkg
+	@ls dist/poc-countries.apkg
 
 clean:
 	rm -rf build deck dist

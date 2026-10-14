@@ -131,5 +131,12 @@
     "path": "geojson/ne_50m_admin_1_states_provinces_lines.geojson",
     "sha256": "72cca93c850d412628a5da4bc5ebfe21ba4d376eb34611bde6b623ee73f0fdcf",
     "blob": "41da0731acea59ed0ffc499e517e185a0d033a14"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_populated_places.geojson",
+    "sha256": "9b8e3de09048ef00dfc70357dbb9fa324493f214b5e0ae4daf1aa79a8d10116b",
+    "blob": "376fb028c390a7a23213800ae4babaa6f534a0f3"
   }
 ]

@@ -8,6 +8,7 @@ import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import cache
 from pathlib import Path
+from typing import Literal
 
 import cartopy.crs as ccrs
 import matplotlib
@@ -26,10 +27,12 @@ from geofeat.frame import Frame, frame, project
 from geofeat.model import BUILD, DECK, LAND_FAMILIES, LOCK, MEDIA_INDEX, ROOT, VENDOR, Feature, active, load_features
 from geofeat.resolve import GEOD, custom, features_by_id, flow_lines, geometry_path, layer, resolve
 from geofeat.style import (
-    AREA_ALPHA, BORDER, BORDER_PX, CASING, CASING_PX, CLOSE_UP_BORDER_PX, COAST, COAST_PX, CONTEXT_RIVER,
-    CONTEXT_RIVER_PX, CURRENT_HEAD_EVERY_PX, CURRENT_HEAD_PX, FORMER_SHORE, FORMER_SHORE_PX, HIGHLIGHT, INSET_DOT_PX,
-    INSET_FRAME, INSET_FRAME_MIN_PX, INSET_FRAME_PX, INSET_LAND, INSET_OCEAN, LAND, OCEAN, PARENT_RIVER_PX, RING_PX,
-    STRAIT_OUTLINE_PX, STROKE_PX, WATER_AREA_ALPHA, WIND_CASING_PX, WIND_CHEVRON_ARM_PX, WIND_CHEVRON_PX, WIND_DASH_PX, WIND_GLYPH_PX,
+    AREA_ALPHA, BORDER, BORDER_PX, CASING, CASING_PX, CLOSE_UP_BORDER_PX, COAST, COAST_PX, CONTEXT_EDGE,
+    CONTEXT_EDGE_PX, CONTEXT_RIVER, CONTEXT_RIVER_PX, CONTEXT_TINT_ALPHA, CURRENT_HEAD_EVERY_PX, CURRENT_HEAD_PX,
+    DOT_PX, DOT_RING_PX, FORMER_SHORE, FORMER_SHORE_PX, HIGHLIGHT, INSET_DOT_PX, INSET_FRAME, INSET_FRAME_MIN_PX,
+    INSET_FRAME_PX, INSET_LAND, INSET_OCEAN, LAND, OCEAN, OUTLINE_ALPHA, OUTLINE_PX, PARENT_RIVER_PX, RING_PX,
+    STRAIT_OUTLINE_PX, STROKE_PX, WATER_AREA_ALPHA, WIND_CASING_PX, WIND_CHEVRON_ARM_PX, WIND_CHEVRON_PX, WIND_DASH_PX,
+    WIND_GLYPH_PX,
 )
 
 CACHE = BUILD / "render-cache.json"  # input hash -> rendered PNG name
@@ -232,6 +235,38 @@ def area_alpha(feature: Feature) -> float:
     return AREA_ALPHA if feature.style == "area" and feature.category not in WATER_CATEGORIES else WATER_AREA_ALPHA
 
 
+def _small_ring(ax, shape: BaseGeometry, frame_: Frame) -> None:
+    """Ring a projected area too small or short to find on a phone."""
+    px0, py0, px1, py1 = shape.bounds
+    across = max(px1 - px0, py1 - py0) / _metres_per_px(ax)
+    if 2 * math.sqrt(shape.area / math.pi) / _metres_per_px(ax) < SMALL_HIGHLIGHT_PX or across < SHORT_HIGHLIGHT_PX:
+        size = max(pt(RING_PX), pt_full(across + 2 * SMALL_RING_CLEAR_PX))
+        _ring(ax, (px0 + px1) / 2, (py0 + py1) / 2, frame_.projection, size=size)
+
+
+def _country(ax, geometry: BaseGeometry, frame_: Frame, subject: bool) -> None:
+    """A country, for the countries PoC. As the subject: a crisp red outline with a white casing over a faint fill,
+    ringed when small. As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
+    fuse = 2 * _metres_per_px(ax)
+    shape = project(geometry, frame_.projection).buffer(fuse).buffer(-fuse)
+    crs = frame_.projection
+    if not subject:
+        ax.add_geometries([shape], crs, facecolor=CASING, alpha=CONTEXT_TINT_ALPHA, edgecolor="none", zorder=4)
+        ax.add_geometries([shape], crs, facecolor="none", edgecolor=CONTEXT_EDGE, linewidth=pt(CONTEXT_EDGE_PX), zorder=4.1)
+        return
+    ax.add_geometries([shape], crs, facecolor=HIGHLIGHT, alpha=OUTLINE_ALPHA, edgecolor="none", zorder=4)
+    ax.add_geometries([shape], crs, facecolor="none", edgecolor=CASING, linewidth=pt(OUTLINE_PX + 2 * CASING_PX), zorder=4.05)
+    ax.add_geometries([shape], crs, facecolor="none", edgecolor=HIGHLIGHT, linewidth=pt(OUTLINE_PX), zorder=4.1)
+    _small_ring(ax, shape, frame_)
+
+
+def _dot(ax, lon: float, lat: float) -> None:
+    """A city: a red disc in a white casing edged in a dark hairline, so it reads on any fill, inside a ring."""
+    for size, colour in ((DOT_PX + 2 * CASING_PX + 1, CONTEXT_EDGE), (DOT_PX + 2 * CASING_PX, CASING), (DOT_PX, HIGHLIGHT)):
+        ax.plot(lon, lat, transform=PLATE, marker="o", ms=pt(size), mfc=colour, mec="none", zorder=6)
+    _ring(ax, lon, lat, PLATE, size=pt(DOT_RING_PX), core=pt(3))
+
+
 def _highlight(ax, feature: Feature, geometry: BaseGeometry, frame_: Frame) -> None:
     style = feature.style
     if style == "point":
@@ -245,12 +280,8 @@ def _highlight(ax, feature: Feature, geometry: BaseGeometry, frame_: Frame) -> N
         edge = {"linewidth": pt(2.75)} if style == "area" else {"linewidth": pt(2), "linestyle": (0, (5, 3))}
         ax.add_geometries([shape], frame_.projection, facecolor=HIGHLIGHT, alpha=alpha, edgecolor="none", zorder=4)
         ax.add_geometries([shape], frame_.projection, facecolor="none", edgecolor=HIGHLIGHT, zorder=4.1, **edge)
-        px0, py0, px1, py1 = shape.bounds
-        across = max(px1 - px0, py1 - py0) / _metres_per_px(ax)
-        small = 2 * math.sqrt(shape.area / math.pi) / _metres_per_px(ax) < SMALL_HIGHLIGHT_PX or across < SHORT_HIGHLIGHT_PX
-        if style == "area" and small:
-            size = max(pt(RING_PX), pt_full(across + 2 * SMALL_RING_CLEAR_PX))
-            _ring(ax, (px0 + px1) / 2, (py0 + py1) / 2, frame_.projection, size=size)
+        if style == "area":
+            _small_ring(ax, shape, frame_)
     else:
         core = STROKE_PX[style]
         polygons = [g for g in getattr(geometry, "geoms", [geometry]) if g.geom_type in POLYGONAL]
@@ -303,7 +334,10 @@ def _inset(fig, frame_: Frame, highlight_px: tuple[float, float, float, float]) 
     ax.add_geometries([outline], frame_.projection, facecolor="none", edgecolor=INSET_FRAME, linewidth=pt(INSET_FRAME_PX), zorder=2.1)
 
 
-def render(feature: Feature, geometry: BaseGeometry) -> bytes:
+def render(feature: Feature, geometry: BaseGeometry, country: Literal["subject", "context"] | None = None,
+           dot: tuple[float, float] | None = None) -> bytes:
+    """The card's map. For the countries PoC, `country` draws the geometry as a country in place of the feature's
+    style, and `dot` (lon, lat) marks a city on top."""
     frame_ = frame(feature, geometry)
     fig = plt.figure(figsize=(WIDTH_PX / DPI, HEIGHT_PX / DPI), dpi=DPI, facecolor=OCEAN)
     ax = fig.add_axes([0, 0, 1, 1], projection=frame_.projection)
@@ -321,7 +355,12 @@ def render(feature: Feature, geometry: BaseGeometry) -> bytes:
     if feature.frame.former:
         ax.add_geometries([custom(feature.frame.former).boundary], PLATE, facecolor="none", edgecolor=FORMER_SHORE,
                           linewidth=pt(FORMER_SHORE_PX), linestyle=(0, (4, 3)), zorder=1.45)
-    _highlight(ax, feature, geometry, frame_)
+    if country:
+        _country(ax, geometry, frame_, subject=country == "subject")
+    else:
+        _highlight(ax, feature, geometry, frame_)
+    if dot:
+        _dot(ax, *dot)
 
     if frame_.inset:
         x0, x1 = ax.get_xlim()

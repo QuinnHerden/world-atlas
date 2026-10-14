@@ -13,16 +13,23 @@ COAST = "#7F8A93"
 CONTEXT_RIVER = "#9DB8CC"
 HIGHLIGHT = "#B2182B"
 CASING = "#FFFFFF"
+CONTEXT_EDGE = "#4A463F"  # a country drawn as context for a city dot
 INSET_LAND = "#BDB6A8"
 INSET_OCEAN = "#DCE7EF"
 INSET_FRAME = "#333333"
 
 AREA_ALPHA = 0.40
 WATER_AREA_ALPHA = 0.30
+OUTLINE_ALPHA = 0.12  # fill under an "outline" highlight
+CONTEXT_TINT_ALPHA = 0.45  # white wash over a "context" country
 
 STROKE_PX = {"line": 5, "strait": 6, "flow-current": 5, "flow-wind": 4.5}
 CASING_PX = 1.5  # per side
 RING_PX = 48
+OUTLINE_PX = 3
+CONTEXT_EDGE_PX = 1.25
+DOT_PX = 10
+DOT_RING_PX = 36  # smaller than RING_PX, so it hides less of a small country
 CONTEXT_RIVER_PX = 1.0
 COAST_PX = 1.2
 BORDER_PX = 1.0

@@ -1,0 +1,32 @@
+# Countries PoC: a separate deck, kept apart from features.yaml. Borders are Natural Earth's default (de facto) view.
+# `mainland` keeps only the country's polygons inside a lon/lat box (drops overseas departments and remote islands);
+# `expect` is the bbox the selected geometry must fall in, as in features.yaml.
+- id: france
+  kind: capital
+  country: {name: France, ne_id: 1159320637, mainland: [-6, 41, 10, 52], expect: [-5.2, 41.3, 9.6, 51.1]}  # drops French Guiana, the Antilles, Réunion, Mayotte
+  city: {name: Paris, ne_id: 1159151613, expect: [2.2, 48.7, 2.5, 49.0]}  # Q90
+  uids: {country: aikY3ba3Cy, city: wy4EUbbeSG}
+
+- id: brazil
+  kind: capital
+  country: {name: Brazil, ne_id: 1159320441, mainland: [-75, -34, -32, 6], expect: [-74.1, -33.8, -32.3, 5.3]}  # drops Trindade, St Peter and St Paul Rocks
+  city: {name: Brasília, ne_id: 1159151443, expect: [-48.1, -15.9, -47.8, -15.6]}  # Q2844
+  uids: {country: 3gwaBA0KSq, city: eBTbfzPU0N}
+
+- id: japan
+  kind: capital
+  country: {name: Japan, ne_id: 1159320937, mainland: [122, 24, 146, 46], expect: [122.9, 24.0, 145.9, 45.6]}  # drops Minami-Torishima
+  city: {name: Tokyo, ne_id: 1159151609, expect: [139.6, 35.6, 139.9, 35.8]}  # Q1490
+  uids: {country: x0fLZsxH2m, city: LeOnBlbbZ6}
+
+- id: switzerland
+  kind: capital
+  country: {name: Switzerland, ne_id: 1159320491, expect: [5.9, 45.8, 10.5, 47.9]}
+  city: {name: Bern, ne_id: 1159149737, expect: [7.3, 46.8, 7.6, 47.0]}  # Q70
+  uids: {country: ukHYGwgbNs, city: DYkI45PPmA}
+
+- id: lagos
+  kind: city
+  country: {name: Nigeria, ne_id: 1159321089, expect: [2.6, 4.2, 14.7, 13.9]}
+  city: {name: Lagos, ne_id: 1159151591, expect: [3.2, 6.3, 3.6, 6.6]}  # Q8673
+  uids: {city: VKXqfeLioX}
