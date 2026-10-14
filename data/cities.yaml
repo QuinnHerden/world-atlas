@@ -2,7 +2,8 @@
 # Core cities only (pass 1); the deferred secondary tier is listed in docs/research/cities.md. Entries follow the ring.
 #
 # - country: a countries.yaml id. ne_id: the 10m_populated_places row; expect: a box round its point.
-# - anchor: an active feature the city comes right after in the walk (only where the city follows from it).
+# - anchor: an active feature the city comes right after in the walk (only where the city follows from it); it must
+#   derive to the region of the city's country.
 # - note: the P2.7e blurbs (docs/research/blurbs/e-cities.md), copied as written, apart from PM edits: dates added for
 #   Alexandria (332 BCE), Medina (622), Kolkata (move to Delhi announced in 1911) and Ho Chi Minh City (30 April 1975);
 #   Dubai says "Persian Gulf".

@@ -36,6 +36,7 @@ def a0(ne_id: int, **kw) -> dict:
     return {"layer": A0, "select": {"ne_id": ne_id}, **kw}
 
 
+FEATURE_REGIONS = {"nile": 1}  # what regions.py would derive; anything else is region 1 too
 PLACEMENTS = {"alpha": (1, None), "beta": (2, None), "gamma": (3, None), "delta": (1, "alpha")}  # what data/curriculum.yaml would give
 
 
@@ -79,7 +80,8 @@ def data(countries=None, territories=None, cities_=None):
                 YAML().dump(entries, paths[name])
         with mock.patch.multiple(political, COUNTRIES=paths["countries"], TERRITORIES=paths["territories"],
                                  layer=LAYERS.__getitem__, curriculum_placements=lambda states: PLACEMENTS), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
-                mock.patch.object(cities, "PATH", paths["cities"]):
+                mock.patch.object(cities, "PATH", paths["cities"]), \
+                mock.patch.object(cities, "feature_region", lambda f: FEATURE_REGIONS.get(f, 1)):
             yield paths
 
 
@@ -325,6 +327,8 @@ class CheckTest(unittest.TestCase):
             self.assertEqual(cities.cards()[0].anchor, "feature:nile")
         with data(countries(), cities_=[cities_data()[0] | {"anchor": "atlantis"}]):
             self.assertEqual(cities.check(political.check()[1]), ["alpha-port: anchor 'atlantis' is not an active feature"])
+        with data(countries(), cities_=[cities_data()[0] | {"anchor": "nile"}]), mock.patch.dict(FEATURE_REGIONS, {"nile": 10}):
+            self.assertEqual(cities.check(political.check()[1]), ["alpha-port: anchor 'nile' is in region 10, alpha in region 1"])
 
     def test_expect_and_point_box(self) -> None:
         entry = countries()[0]
