@@ -1,13 +1,14 @@
-"""Write the deck markdown for ankc: one file, every card in the one deck, in study order (see order.py)."""
+"""Write the deck markdown for ankc: one file, every card in the one deck, in the curriculum order (geofeat.order)."""
 
 import html
+import sys
 
 import geofeat.positions as positions
 from geofeat.ankc import writes_pos
-from geofeat.card import Card, load_media
+from geofeat.card import UNRENDERED_KINDS, Card, allow_unrendered, load_media
 from geofeat.model import DECK, ROOT_DECK, Feature, active, load_features
-from geofeat.order import Siblings, dependencies, inverted, load_siblings, study_order
-from geofeat.sources import all_cards
+from geofeat.order import OrderError, Siblings, dependencies, report, study_order
+from geofeat.order.inputs import ideal_order, ordering  # noqa: F401  ideal_order re-exported for check.py
 
 DECK_FILE = DECK / "geographic-features.md"
 
@@ -22,17 +23,20 @@ def card(c: Card, image: str, pos: int | None = None) -> str:
 
 
 def ordered(features: list[Feature], siblings: Siblings) -> list[Feature]:
+    """ADR 0004's feature order; check-data still runs it as the feature dependency-cycle gate."""
     return study_order(features, dependencies(features, siblings), {frozenset(pair) for pair in siblings.close})
 
 
-def ideal_order(siblings: Siblings | None = None) -> list[Card]:
-    """Every active card in the ideal study order. Only feature cards can be ordered until the P3 order engine."""
-    cards = all_cards()
-    if others := sorted(c.key for c in cards if c.kind != "feature"):
-        raise SystemExit(f"no study order for cards other than features yet (P3): {others}")
-    by_id = {c.id: c for c in cards}
-    features = active(load_features())
-    return [by_id[f.id] for f in ordered(features, siblings or load_siblings())]
+def skip_unrendered(cards: list[Card], media: dict[str, str]) -> list[Card]:
+    """`cards` less those without a map: allowed, with a warning, for UNRENDERED_KINDS under ALLOW_UNRENDERED=1."""
+    missing = [c for c in cards if c.key not in media]
+    if bad := [c.key for c in missing if c.kind not in UNRENDERED_KINDS or not allow_unrendered()]:
+        raise SystemExit(f"cards not rendered (run `make render`; ALLOW_UNRENDERED=1 skips only "
+                         f"{', '.join(sorted(UNRENDERED_KINDS))} cards until P4): {bad}")
+    if missing:
+        print(f"WARNING: ALLOW_UNRENDERED=1: {len(missing)} unrendered cards left out of the deck "
+              f"({', '.join(sorted({c.kind for c in missing}))}); not a releasable build", file=sys.stderr)
+    return [c for c in cards if c.key in media]
 
 
 def main() -> None:
@@ -40,22 +44,24 @@ def main() -> None:
     if missing := [f.id for f in features if f.uid is None]:
         raise SystemExit(f"features without a uid (run `make ids`): {missing}")
     media = load_media()
-    siblings = load_siblings()
-    for parent, child in inverted(features, dependencies(features, siblings)):
-        print(f"order: {child} comes before its parent {parent}, which is in a later tier")
-    cards = ideal_order(siblings)
+    try:
+        result = ordering()
+    except OrderError as exc:
+        raise SystemExit(f"study order: {exc}")
+    print(report(result))
     lock = positions.read()
-    positions.require(lock, [c.uid for c in cards])
+    positions.require(lock, [c.uid for c in result.cards])
     if not lock.draft and not writes_pos():
         raise SystemExit(f"{positions.LOCK_FILE.name} is frozen (draft: false), so ankc 0.6+ must write it")
     pos = lock.positions if writes_pos() else {}
+    cards = skip_unrendered(result.cards, media)
 
     DECK.mkdir(exist_ok=True)
     for old in DECK.glob("*.md"):
         old.unlink()
     header = f"---\ndeck: \"{ROOT_DECK}\"\n---\n"
     DECK_FILE.write_text(header + "\n".join(card(c, media[c.key], pos.get(c.uid)) for c in cards))
-    print(f"wrote {len(cards)} cards to {DECK_FILE.name}" + (" with [^pos]" if pos else ""))
+    print(f"wrote {len(cards)} of {len(result.cards)} cards to {DECK_FILE.name}" + (" with [^pos]" if pos else ""))
 
 
 if __name__ == "__main__":

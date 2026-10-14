@@ -1,4 +1,6 @@
-"""Study order: the sequence in which new cards come up. See docs/adr/0004-flat-deck-and-study-order.md.
+"""ADR 0004's feature-only study order, and the pair check's sibling data it and the curriculum order read.
+
+See docs/adr/0004-flat-deck-and-study-order.md. The curriculum order (ADR 0009) is geofeat.order.engine.
 
 Tier 1 first, then 2, then 3. Within a tier a parent comes before its children, categories are interleaved, and
 siblings near each other on the map are kept at least NEAR_GAP cards apart where the other rules allow.

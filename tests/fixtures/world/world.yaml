@@ -1,0 +1,95 @@
+# A small world for the curriculum order's golden tests (tests/test_order_engine.py): 12 countries in 3 regions,
+# with a microstate pocket, a territory, a dispute, physical features, cities and look-alikes. Region 1's countries
+# are listed out of walk order on purpose, so the generated walk differs from the list.
+curriculum:
+  passes:
+    - {id: orientation, name: Orientation, ring: false, kinds: [feature, continent], global_features: true}
+    - {id: pass-1, name: Pass 1, ring: true, kinds: [country, capital, territory, dispute, feature, city],
+       feature_tiers: [1, 2], city_tiers: [core]}
+    - {id: pass-2, name: Pass 2, ring: true, kinds: [feature, city], feature_tiers: [3], city_tiers: [secondary]}
+  start: west
+  regions:
+    - number: 1
+      slug: west
+      name: West
+      entry: alba
+      exit: echo
+      countries: [alba, cerul, bravo, andor, delta, echo]
+      pockets: {andor: bravo}
+      territories: {isle: delta}
+    - number: 2
+      slug: north
+      name: North
+      entry: fox
+      exit: hotel
+      countries: [fox, golf, india, hotel]
+      disputes: {fjord: golf}
+    - number: 3
+      slug: east
+      name: East
+      entry: juliet
+      exit: kilo
+      countries: [juliet, kilo]
+  confusables:
+    - [bravo, delta]
+    - [alba, juliet]
+
+# Borders, by land or short sea. India is an island no one in its region borders.
+adjacency:
+  alba: [bravo, cerul]
+  bravo: [cerul, andor, delta]
+  cerul: [delta]
+  delta: [echo]
+  echo: [fox]
+  fox: [golf, hotel]
+  golf: [hotel]
+  hotel: [juliet]
+  juliet: [kilo]
+
+# capital: false means no capital card (the same-name rule).
+countries:
+  - {id: alba, region: 1}
+  - {id: bravo, region: 1}
+  - {id: cerul, region: 1}
+  - {id: andor, region: 1, host: bravo, capital: false, tier: 3}
+  - {id: delta, region: 1}
+  - {id: echo, region: 1}
+  - {id: fox, region: 2}
+  - {id: golf, region: 2}
+  - {id: hotel, region: 2}
+  - {id: india, region: 2}
+  - {id: juliet, region: 3}
+  - {id: kilo, region: 3}
+
+territories:
+  - {id: isle, kind: territory, host: delta, region: 1}
+  - {id: fjord, kind: dispute, host: golf, region: 2}
+
+# region and countries make the Frame; no region means orientation.
+features:
+  - {id: europe, prompt: Continent}
+  - {id: atlantic-ocean, prompt: Ocean}
+  - {id: pacific-ocean, prompt: Ocean}
+  - {id: trade-winds, prompt: Wind system}
+  - {id: westerlies, prompt: Wind system}
+  - {id: west-peninsula, prompt: Peninsula, region: 1, countries: [alba, bravo], opens: true}
+  - {id: west-range, prompt: Mountain range, region: 1, countries: [cerul, bravo, andor]}
+  - {id: cerul, prompt: Island, region: 1, countries: [cerul]}
+  - {id: long-river, prompt: River, region: 1, countries: [echo, delta]}
+  - {id: long-river-delta, prompt: Delta, region: 1, countries: [delta], parents: [long-river]}
+  - {id: inner-gulf, prompt: Gulf, region: 1, countries: [], parents: [ocean-sea]}
+  - {id: north-sea, prompt: Sea, region: 2, countries: [fox, golf]}
+  - {id: golf-strait, prompt: Strait, region: 2, countries: [golf, hotel], tier: 3}
+  - {id: ocean-sea, prompt: Sea, region: 3, countries: [juliet]}
+  - {id: kilo-lake, prompt: Lake, region: 3, countries: [kilo]}
+
+cities:
+  - {id: bravoburg, country: bravo, tier: 2}
+  - {id: rivermouth, country: delta, tier: 2, anchor: long-river-delta}
+  - {id: foxton, country: fox, tier: 3}
+  - {id: hotelport, country: hotel, tier: 3, anchor: golf-strait}
+
+# Pairs the pair check would call close.
+close:
+  - [west-range, long-river]
+  - [north-sea, kilo-lake]

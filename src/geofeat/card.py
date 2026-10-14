@@ -2,6 +2,7 @@
 read. See docs/adr/0005-card-sources-and-card-dto.md."""
 
 import json
+import os
 import re
 from collections.abc import Callable
 from typing import Annotated, Literal
@@ -118,3 +119,13 @@ def migrate_media(media: dict[str, str]) -> dict[str, str]:
 def load_media() -> dict[str, str]:
     """build/media.json: card key -> rendered PNG name, written by `make render`."""
     return migrate_media(json.loads(MEDIA_INDEX.read_text())) if MEDIA_INDEX.exists() else {}
+
+
+# Kinds with no renders until P4. ALLOW_UNRENDERED=1 lets `make render` and `make deck` leave them out of the deck,
+# loudly; their positions are still computed and locked, and `make check` still fails on them. Feature cards always
+# need their maps. Remove at the end of P4.
+UNRENDERED_KINDS: frozenset[Kind] = frozenset({"country", "capital", "city", "territory", "dispute", "continent"})
+
+
+def allow_unrendered() -> bool:
+    return os.environ.get("ALLOW_UNRENDERED") == "1"

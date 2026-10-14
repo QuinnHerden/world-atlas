@@ -113,13 +113,18 @@ def update(lock: Lock, ideal: list[str]) -> Lock:
 
 
 def main() -> None:
-    from geofeat.deckgen import ideal_order  # deckgen reads this module
+    from geofeat.order import OrderError
+    from geofeat.order.inputs import ordering  # imports the card sources; keep this module light for check.py
 
     try:
-        ideal = [c.uid for c in ideal_order()]
-    except ValueError as exc:
-        raise SystemExit(str(exc))
+        result = ordering()
+    except OrderError as exc:
+        raise SystemExit(f"study order: {exc}")
+    ideal = [c.uid for c in result.cards]
     old = read() if LOCK_FILE.exists() else Lock(True, {})
+    if not old.draft and (generated := sorted({r.region.slug for r in result.reports if not r.walk.frozen})):
+        raise SystemExit(f"{LOCK_FILE.name} is frozen (draft: false), but these regions' walks are generated, not "
+                         f"frozen in curriculum.yaml (ADR 0009): {generated}")
     new = update(old, ideal)
     tmp = LOCK_FILE.with_suffix(".tmp")
     tmp.write_text(dump(new))

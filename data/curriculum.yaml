@@ -8,8 +8,8 @@
 #   dr-congo (COD), congo (COG), laos, eswatini, cabo-verde, gambia, micronesia, russia, vatican.
 # - Everything else is spelled out in full: united-kingdom, united-states, united-arab-emirates,
 #   saint-vincent-and-the-grenadines, central-african-republic, bosnia-and-herzegovina.
-# - Each state id maps to its Natural Earth rows (the research note's table (a), keyed by ne_id) in
-#   src/geofeat/adjacency.py SOURCES, until P2.2's countries.yaml takes over.
+# - Each state id maps to its Natural Earth rows in the `geometry` of its entry in data/countries.yaml (territories and
+#   disputes: data/territories.yaml), the one place they are recorded.
 # - Ids are unique within countries, territories and disputes. Some equal a feature id in features.yaml (malta, cyprus,
 #   taiwan, singapore, sri-lanka, cuba, niger, congo, jordan, crimea, greenland, spratly-islands, falkland-islands);
 #   card tags are kind-prefixed (id_country_niger), so that is allowed.
