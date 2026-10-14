@@ -4,7 +4,8 @@
 # - country: a countries.yaml id. ne_id: the 10m_populated_places row; expect: a box round its point.
 # - anchor: an active feature the city comes right after in the walk (only where the city follows from it).
 # - note: the P2.7e blurbs (docs/research/blurbs/e-cities.md), copied as written, apart from PM edits: dates added for
-#   Alexandria (332 BCE), Medina (622), Kolkata (1911) and Ho Chi Minh City (30 April 1975); Dubai says "Persian Gulf".
+#   Alexandria (332 BCE), Medina (622), Kolkata (move to Delhi announced in 1911) and Ho Chi Minh City (30 April 1975);
+#   Dubai says "Persian Gulf".
 
 - id: barcelona
   uid: GqKWmK12fX
@@ -266,7 +267,7 @@
   anchor: ganges-brahmaputra-delta
   note: >-
     On the east bank of the Hooghly, once the main channel of the Ganges, inland from the Bay of Bengal. It grew from an
-    East India Company trading post into the capital of British India, until the capital moved to Delhi in 1911.
+    East India Company trading post into the capital of British India, until the move to Delhi was announced in 1911.
 
 - id: samarkand
   uid: eJkUnuSzRI
