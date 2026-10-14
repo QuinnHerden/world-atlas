@@ -1,20 +1,26 @@
 # Architecture
 
-How the Geographic Features deck is built. This describes the system as it is now; the reasons for the larger choices are in the [ADRs](adr/), and the planned extension to countries is in the [World Atlas plan](world-atlas-plan.md).
+How the Geographic Features deck is built. This describes the system as it is now; the reasons for the larger choices are in the [ADRs](adr/), and the extension to countries, World Atlas, is in the [World Atlas plan](world-atlas-plan.md).
 
-The deck has 166 entries in `data/features.yaml`: 132 active cards (126 places and 6 climate systems) and 34 retired ones (7 passes, 3 corridors, 15 islands and 9 climate systems). One command turns the data into an `.apkg`, with no manual step per build.
+The released deck is the 166 entries in `data/features.yaml`: 132 active cards (126 places and 6 climate systems) and 34 retired ones (7 passes, 3 corridors, 15 islands and 9 climate systems). One command turns the data into an `.apkg`, with no manual step per build.
+
+The World Atlas sources are on `main` too, and they already produce cards: 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`. Continent cards are in progress. Only feature cards have a study order until the P3 order engine, so **`make deck` and `make positions` stop with an error while the political sources exist**, and `make all` doesn't complete on `main`.
 
 ## Pipeline
 
 ```
-data/features.yaml ─> sources/ ─> Card ─┐
-geometry/*.geojson ─┐                   │
-vendor/ (NE, pinned)┴─> resolve ────────┴─> render ─> deck/<sha256[:12]>.png + build/media.json ─┐
+data/features.yaml ─────┐
+data/countries.yaml ────┤
+data/territories.yaml ──┼─> sources/ ─> Card ─┐
+data/cities.yaml ───────┤                     │
+data/curriculum.yaml ───┘                     │
+geometry/*.geojson ─┐                         │
+vendor/ (NE, pinned)┴─> resolve ──────────────┴─> render ─> deck/<sha256[:12]>.png + build/media.json ─┐
                         check data ─> build/siblings.json ───────────────────────────────────────┼─> deckgen ─> deck/geographic-features.md ─> ankc check ─> ankc build ─> dist/*.apkg
                         data/positions.lock (written by `make positions`) ───────────────────────┘
 ```
 
-The diagram is simplified: deckgen also reads the Cards and the study order, and `make positions` reads the study order too.
+The diagram is simplified: deckgen also reads the Cards and the study order, and `make positions` reads the study order too. `curriculum.yaml` places each country, territory and dispute in a region; `make adjacency` and the region derivation read it beside the outlines.
 
 `make all` runs `test → fetch → check-data → render → deck → check → build`. Each step is a module in `src/geofeat/`:
 
@@ -24,24 +30,32 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make fetch` | `fetch.py` | Downloads the pinned Natural Earth files through `gh api` and verifies their checksums against `data/sources.lock`. `--relock` re-pins. |
 | `make check-data` | `check.py data` | Schema, geometry, provenance and sibling-pair checks. Caches the pair results in `build/siblings.json`. |
 | `make positions` | `positions.py` | Places new uids in `data/positions.lock` (below). The lock's only writer; commit the result. Not part of `make all`. |
+| `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
 | `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). |
-| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. |
+| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Stops while any non-feature card exists, until P3. |
 | `make check` | `check.py deck` | Every card rendered and in the lock; ankc `>=0.5,<0.7`; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/geographic-features.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
 
 `deck/`, `build/`, `dist/` and `vendor/` are gitignored. `deck/` is pure output: nothing reads it back.
 
-**ankc.** `ankc.py` runs the compiler named by `$ANKC`. The Makefile sets it (default `ankc`); it may be a full command line such as `uv run --with ../ankcompiler ankc`. `ids.py`, the checks and `make build` all go through it. `ankc.py` also reads `ankc --version`; `writes_pos()` is true from 0.6, the first version that reads `[^pos]`.
+`uv run python -m geofeat.regions` prints every active feature's region, the rule that decided it and the runner-up. It has no make target.
+
+**ankc.** `ankc.py` runs the compiler named by `$ANKC`. The Makefile sets it (default `ankc`); it may be a full command line such as `uv run --with ../ankcompiler ankc`. `ids.py`, the checks and `make build` all go through it. `ankc.py` also reads `ankc --version`; `writes_pos()` is true from 0.6, the first version that reads `[^pos]`. ankc 0.6.0 is on PyPI. The build accepts `>=0.5,<0.7`; a frozen lock requires 0.6.
 
 ## Repo layout
 
 ```
-data/features.yaml     the feature list; the only hand-edited data besides geometry/
+data/features.yaml     the physical features
+data/countries.yaml    the 197 states, each with its capital nested
+data/territories.yaml  the 23 territories and 15 disputed areas
+data/cities.yaml       the 42 core cities
+data/curriculum.yaml   passes, the ring of 21 regions, walk lists, pockets and placements, confusables
+data/adjacency.yaml    hand edits to the computed adjacency graph, each with a reason
 data/positions.lock    each card's new-card position, keyed by uid; written only by `make positions`
 data/sources.lock      Natural Earth repo, commit, path, sha256 and git blob sha per file
-geometry/*.geojson     53 hand-authored or derived shapes, each with provenance
-src/geofeat/           the pipeline (model, card, sources/, fetch, ne, resolve, frame, spec, render, jobs, style, pairs, order, positions, deckgen, ankc, check, guide, sheet, cvd, ids)
+geometry/*.geojson     hand-authored or derived shapes, each with provenance
+src/geofeat/           the pipeline (modules below)
 tests/                 unit tests (`make test`)
 tools/                 scripts that made the derived geometry; not part of the build (tools/README.md)
 docs/                  this file, the ADRs, the World Atlas plan, historical research
@@ -49,9 +63,33 @@ docs/                  this file, the ADRs, the World Atlas plan, historical res
 
 Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-stable.
 
+## Modules
+
+| Module | Does |
+|---|---|
+| `model.py` | The `Feature` schema, type words, families, categories and shared paths. |
+| `card.py` | The `Card` DTO and `RenderRef`, the study-pass rule (`study_pass`), and the `pass::` and `id_` tag formats. |
+| `sources/` | One adapter per data file: `features.py`, `political.py` (countries, capitals, territories, disputes) and `cities.py`. `all_cards()` collects them. |
+| `polities.py` | The political entities: `Country` (with `Capital`), `Territory` and `Dispute`. Loads `countries.yaml` and `territories.yaml`, places each entry from `curriculum.yaml`, and composes outlines from their `geometry` parts, cropped to `mainland` for the card. |
+| `countries_ne.py` | Each state's, territory's and dispute's full outline, never cropped, read from the yaml `geometry`. What the adjacency graph and the region outlines use. |
+| `curriculum.py` | The `curriculum.yaml` schema and its checks: every state in exactly one region, regions numbered in ring order, entry, exit and hosts being walk nodes, ambiguous placements at their default, confusables naming known cards. |
+| `adjacency.py` | The country adjacency graph: land edges (1 km buffer), sea edges (200 km), the `adjacency.yaml` edits, the cache and the report. |
+| `regions.py` | Each feature's ring region by the plan's rules, the `region` override check, and continent geometry from country outlines. |
+| `resolve.py` | Resolves a feature's geometry parts: Natural Earth rows, `geometry/` files, other features. |
+| `ne.py` | Natural Earth layer loading (only layers pinned in `sources.lock`) and flow-line helpers. The renderer reads it, so it is in the render cache key. |
+| `spec.py` | `RenderSpec`, the visual treatment of a card, and `BASEMAP_LAYERS`. |
+| `jobs.py` | Turns cards into render jobs, keys them, and renders what the cache lacks. Not in the cache key. |
+| `render.py`, `frame.py`, `style.py` | Drawing, framing and the style constants. |
+| `positions.py` | Reads, places and writes `positions.lock`. |
+| `order.py` | The current study order, features only (ADR 0004). Replaced by the P3 `order/` package. |
+| `deckgen.py` | The deck markdown. |
+| `ankc.py` | Runs the configured ankc and reads its version. |
+| `check.py` | `check data`, `check deck`, `check package`. |
+| `pairs.py`, `fetch.py`, `ids.py`, `guide.py`, `sheet.py`, `cvd.py` | Pair check, Natural Earth download, uid minting, PDF guide, review sheets, colour-blindness simulation. |
+
 ## Data model
 
-`src/geofeat/model.py` defines the schema (pydantic, unknown keys rejected).
+`src/geofeat/model.py` defines the feature schema (pydantic, unknown keys rejected).
 
 ```yaml
 - id: nile                    # slug; free to change
@@ -73,6 +111,8 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
   allow_nested: []            # [{id, reason}]
   trim_to_largest: false
   retired: false
+  region: null                # optional ring-region override; needs region_reason
+  anchor: null                # optional curriculum anchor override; needs anchor_reason
 ```
 
 **Geometry parts.** Each part has exactly one source:
@@ -91,16 +131,55 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 
 **Identity.** The uid is the note's identity, so `id`, `name`, tier and category can change without losing review history.
 
+### Political data
+
+`polities.py` defines and loads the political entities; `sources/cities.py` the cities. All reject unknown keys.
+
+- **`countries.yaml`:** `id`, `name`, `alt_names`, `uids: {country, capital}`, `tier` (1, or 3 for microstates and small island states), `note`, `geometry`, `mainland`, `expect`, and a nested `capital` (`name`, `alt_names`, one of `ne_id` or `file`, `expect`, `note`). `capital: null` (Monaco, Luxembourg, San Marino, Vatican, Palestine, Singapore) means no capital card and no capital uid.
+- **`territories.yaml`:** entries with `kind: territory` (`sovereign`, `status_line`) or `kind: dispute` (`parties`: country ids, or `{label: ...}` for a party that isn't a state). Both have `uid`, `name`, `alt_names`, `geometry`, `expect` and `note`.
+- **`cities.yaml`:** `id`, `name`, `alt_names`, `uid`, `country`, `tier` (`core` or `secondary`; all 42 are core), `ne_id` (populated places), `expect`, an optional `anchor` feature and `note`.
+
+**Geometry** uses the feature grammar: Natural Earth rows, a `geometry/` file or a feature's shape, with `subtract` parts cut out. The first part is the base; `make check-data` fails unless every added part lies outside the base and every subtracted part inside it, so no sliver hides in the result. That is how recognised borders are composed (Crimea added to Ukraine, Western Sahara cut from Morocco).
+
+**`mainland`** is a display crop for the card only. It keeps the outline's parts wholly inside the box and drops remote islands (the Kermadecs, Chathams, NZ sub-Antarctic islands, Trindade, Minami-Torishima, Okinotorishima, the Prince Edward Islands, Macquarie). `countries_ne.py` gives the adjacency graph and the region derivation the full, uncropped outline.
+
+**Region and host** are not in these files. `curriculum.yaml` is the one source of both for countries, territories and disputes: the loaders place each entry from it and fail on an entry it doesn't place, or places as another kind. A host is a placement anchor only, never a statement of sovereignty. Cities take their country's region.
+
 ### Cards
 
-Rendering, deckgen's output and the deck and package checks read `Card` (`card.py`), not `Feature` ([ADR 0005](adr/0005-card-sources-and-card-dto.md)). The study order, the PDF guide and `make pairs` still read `Feature` until P3. Each module in `src/geofeat/sources/` adapts one data file to Cards; today there is one, `sources/features.py`, giving one card per active feature. `sources.all_cards()` collects them and fails on a key or uid that repeats.
+Rendering, deckgen's output and the deck and package checks read `Card` (`card.py`), not `Feature` ([ADR 0005](adr/0005-card-sources-and-card-dto.md)). The study order, the PDF guide and `make pairs` still read `Feature` until P3. Each module in `src/geofeat/sources/` adapts one data file to Cards: `features.py` (one card per active feature), `political.py` (a country card, a capital card unless `capital: null`, and the territory and dispute cards) and `cities.py`. `sources.all_cards()` collects them and fails on a key or uid that repeats.
 
 A `Card` is a frozen pydantic model:
 
-- `uid`, `kind` (`feature` today; `country`, `capital`, `city`, `territory`, `dispute` and `continent` are reserved) and `id`, which is unique within its kind.
+- `uid`, `kind` and `id`, which is unique within its kind. Kinds: `feature`, `country`, `capital`, `city`, `territory`, `dispute`, and `continent` (in progress).
 - `prompt`, the type word on the front, and `answer_lines`, which deckgen escapes and joins with `<br>`. Both reject markdown and HTML syntax, since ankc renders card text unsanitised.
-- `tags`, `tier`, `region`, `anchor`, `parents` and `note`.
-- `render`: a `RenderSpec` and a function that resolves the geometry only when called, so building cards doesn't load Natural Earth.
+- `tags`, `tier`, `region` (`"NN"` for political and city cards; unset on features) and `note`.
+- Curriculum links for P3: `host`, the country key a pocket sits after; `anchor`, the key of the card this one comes right after (a city's feature); `parents`, keys that must come first (a capital's country, a city's country and capital); `orientation`, true for the orientation block.
+- `render`: a `RenderRef` holding the `RenderSpec`, a `geometry` provider and, for capitals and cities, a `dot` provider. Both resolve only when called, so building cards doesn't load Natural Earth.
+
+| Kind | Front | Back | Drawn as |
+|---|---|---|---|
+| feature | its type word | name | the feature's style |
+| country | Country | name | the country outlined as subject |
+| capital | City | name; "Capital of &lt;country&gt;" | a dot over its country |
+| city | City | name; its country | a dot over its country |
+| territory | Territory | name; its `status_line` | its outline (dashed from P4) |
+| dispute | Disputed territory | name; "Disputed: &lt;parties&gt;", alphabetical | its outline (dashed from P4) |
+
+Alternate names follow the name in brackets.
+
+**Study pass.** `card.study_pass` derives a card's pass from its kind, tier and orientation flag; it isn't stored. Continents and orientation features (the 4 oceans, the 2 planetary wind bands) are `orientation`. Countries, capitals, territories and disputes are always pass 1, tier-3 microstates included. Any other card is pass 1 at tier 1–2 and pass 2 at tier 3. Cities map `core` to tier 2 and `secondary` to tier 3; territories and disputes are tier 2. Today: 6 orientation, 584 pass 1 and 10 pass 2 cards.
+
+### Tags
+
+| Tag | On | Value |
+|---|---|---|
+| `kind::<kind>` | every card | the card's kind |
+| `pass::<p>` | every card | `orientation`, `1` or `2`; validated against `card.study_pass` |
+| `tier::<n>` | every card | the tier |
+| `category::<slug>` | every card | a feature's category; `countries`, `cities` (capitals and cities) or `territories` (territories and disputes) |
+| `region::NN` | political and city cards | the ring region, zero-padded; features don't carry it yet |
+| `id_<id>` / `id_<kind>_<id>` | every card | `id_nile` for features (kept for cards imported under ankc before 0.5); kind-prefixed for the rest, since kinds share ids (`id_country_niger`) |
 
 **`card.key` is `kind:id`,** for example `feature:nile`. Two kinds may share an id, so `build/media.json`, the render bookkeeping, the sheets and the guide key on `card.key`, not the id. A `media.json` written before cards had kinds, keyed by bare feature id, is read as `feature:<id>`.
 
@@ -139,12 +218,12 @@ A `Card` is a frozen pydantic model:
 
 ## Geometry and provenance
 
-**Natural Earth v5.1.2,** public domain, pinned to commit `f1890d9f152c896d250a77557a5751a93d494776` of `nvkelso/natural-earth-vector`. Layers: 10m geography regions (polys, points, elevation points), marine polys, rivers, lakes, land, ocean, minor islands, admin_0 countries and land boundaries; 50m land, ocean, lakes, rivers, land boundaries and admin_1 lines. The shaded relief raster `GRAY_50M_SR` comes from `nvkelso/natural-earth-raster`, pinned in the same lock. `fetch.py` checks each file's sha256 and git blob sha and moves it into place atomically. Downloads go through `gh api` because the usual CDNs are blocked on some machines.
+**Natural Earth v5.1.2,** public domain, pinned to commit `f1890d9f152c896d250a77557a5751a93d494776` of `nvkelso/natural-earth-vector`. Layers: 10m geography regions (polys, points, elevation points), marine polys, rivers, lakes, land, ocean, minor islands, admin_0 countries and land boundaries; 50m land, ocean, lakes, rivers, land boundaries and admin_1 lines. For the political cards: 10m populated places, admin_0 map units, admin_0 disputed areas and disputed boundary lines. The shaded relief raster `GRAY_50M_SR` comes from `nvkelso/natural-earth-raster`, pinned in the same lock. `fetch.py` checks each file's sha256 and git blob sha and moves it into place atomically. Downloads go through `gh api` because the usual CDNs are blocked on some machines.
 
-**Hand-authored geometry.** `geometry/` holds 53 files for shapes NE can't select. Every GeoJSON feature carries a provenance record ([ADR 0002](adr/0002-provenance-classes.md)):
+**Hand-authored geometry.** `geometry/` holds 54 files for shapes NE can't select, including the hand-placed Yaren point. Every GeoJSON feature carries a provenance record ([ADR 0002](adr/0002-provenance-classes.md)):
 
 - `source`: what was done, honest about approximation.
-- `method`: `ne-derived` (5 features), `pd-dataset` (43), `reference-coords` (13) or `hand-drawn` (38). A feature takes the weakest class that honestly fits.
+- `method`: `ne-derived` (5 features), `pd-dataset` (43), `reference-coords` (14) or `hand-drawn` (38). A feature takes the weakest class that honestly fits.
 - `refs`: a non-empty list, including `tools/README.md` where a script was used.
 
 The scripts behind the `pd-dataset` and derived shapes are in `tools/`; dataset versions, DOIs and access dates are in [tools/README.md](../tools/README.md).
@@ -195,6 +274,8 @@ The scripts behind the `pd-dataset` and derived shapes are in `tools/`; dataset 
 
 A strait or line shorter than 123 px also gets a ring. Seasonal climate systems are drawn for one season, named by the qualifier ("Wind system, July").
 
+**Political overlays** (`RenderSpec.country`, `dot`). A country, territory or dispute card draws its outline as the subject: a red outline with a white casing over a faint fill, ringed when small. A capital or city card draws its country as context (washed lighter, edged in a dark neutral, nothing red) with a 36 px red dot on top and no ring. `RenderSpec.outline` reserves the dashed territory and dispute outline for P4; until then it draws solid.
+
 **Locator inset.** On regional frames under 8,000 km wide. The same 320 × 160 px plate carrée world map on every card, centred on 0° and never re-centred. It marks the frame as a `#333` box, or a 12 px dot when the box would be under 32 px or would cross 180°. Nothing in it is red. It sits bottom-left unless that covers the highlight, then moves to another corner.
 
 **Render cache.** `build/render-cache.json` maps a cache key to a PNG. `jobs.py` turns each active card's `card.render` into a `RenderJob`: a `RenderSpec` (`spec.py`: style, frame options, fill opacity, close-up borders, and the country/dot/outline overlays), the geometry, the `frame.context` shapes and the `frame.former` outline. `render()` draws a job and reads nothing but the basemap. The key hashes:
@@ -223,6 +304,14 @@ Renaming, re-tiering or retyping a card, editing `model.py`, `resolve.py`, `jobs
 - a sibling pair that clashes (below);
 - a cycle in the study-order dependencies.
 
+It also fails on political and city data:
+
+- an entry `curriculum.yaml` doesn't place, a state in no region or two, a host that isn't a walk node of its region, or a placement the territory file has no entry for;
+- an outline that doesn't compose exactly, falls outside its `expect`, or isn't a polygon; a capital or city point outside its country;
+- a territory's `sovereign` or a dispute's party that isn't a country, or party names that repeat;
+- a city whose country is unknown, which is its country's capital, or whose `anchor` isn't an active feature, is in orientation or a later pass, or **derives to a different region from the city's country** (the anchor-region check: a city comes right after its anchor, so both must be in one region);
+- a feature `region` override outside 1–21, or a `region` or `anchor` override without its reason (schema). `regions.py` also checks overrides against the ring whenever it derives a region.
+
 It prints every trim, every `allow_nested` override, references to retired features, and each flagged or nested pair.
 
 **Sibling pairs** (`pairs.py`). Features within 300 km of each other, or overlapping, are compared by their highlights as drawn on one map framing both. World-map features are compared only with each other.
@@ -237,11 +326,11 @@ It prints every trim, every `allow_nested` override, references to retired featu
 
 ## Deck and study order
 
-**Card.** Front: the type word in bold above the map. Back: the name, with alternate names in brackets. The uid comes from `features.yaml`.
+**Card.** Front: the type word in bold above the map. Back: the answer lines (see [Cards](#cards)). The uid comes from the card's source YAML.
 
-**One deck,** `Geographic Features`, with no subdecks ([ADR 0004](adr/0004-flat-deck-and-study-order.md)). Each card carries the tags `tier::<n>`, `category::<slug>`, `id_<feature-id>` and `kind::feature`. All cards go, in study order, into one file, `deck/geographic-features.md`.
+**One deck,** `Geographic Features`, with no subdecks ([ADR 0004](adr/0004-flat-deck-and-study-order.md)). Each card carries the [tags](#tags) above. All cards go, in study order, into one file, `deck/geographic-features.md`.
 
-**Study order** (`order.py`):
+**Study order** (`order.py`, features only; the P3 order engine replaces it, per [ADR 0009](adr/0009-curriculum-order.md)):
 
 1. Tier 1, then 2, then 3. A parent in a later tier isn't promoted; `make deck` lists those cases.
 2. Within a tier, a parent comes before its children. Edges come from the data: a `subtract` or `frame.context` reference makes the referenced feature the parent; an added `feature` part or an `allow_nested` makes the larger feature the parent; a nested pair from the pair check puts the outer first, unless that contradicts an edge above or only one of the two is a climate system.
@@ -254,7 +343,7 @@ The order uses the pair results that `check data` caches in `build/siblings.json
 
 ## PDF guide
 
-`make guide` writes `build/guide.pdf` (A4, reportlab, in the optional `guide` dependency group). It holds every active card's map, name, type, tier and note, grouped by category, then tier, then name, with a linked table of contents and PDF bookmarks. It fails if a card is unrendered or has no note. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12), without the figures its verify flags mark as unchecked.
+`make guide` writes `build/guide.pdf` (A4, reportlab, in the optional `guide` dependency group). It holds every active feature card's map, name, type, tier and note, grouped by category, then tier, then name, with a linked table of contents and PDF bookmarks. It fails if a card is unrendered or has no note. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12), without the figures its verify flags mark as unchecked.
 
 ## Review tools
 

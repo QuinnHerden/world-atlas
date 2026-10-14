@@ -1,6 +1,6 @@
 # World Atlas plan
 
-Status: plan, 2026-10-14. Nothing here is built yet. It extends the current deck (described in [architecture.md](architecture.md)) with countries, capitals, cities and territories. This file merges three earlier planning documents (the curriculum proposal, the program architecture and the territories list); where they disagreed, the [Decisions so far](#decisions-so-far) table is the source of truth.
+Status: in progress, 2026-10-14. P1 is done and the P2 data is in, apart from the continents; P3 is next (see [Build phases](#build-phases)). What is built is described in [architecture.md](architecture.md). This plan extends the current deck (described in [architecture.md](architecture.md)) with countries, capitals, cities and territories. This file merges three earlier planning documents (the curriculum proposal, the program architecture and the territories list); where they disagreed, the [Decisions so far](#decisions-so-far) table is the source of truth.
 
 The design of the country cards comes from the 9-card proof of concept on branch `poc/countries` (`f4a3503`, documented in `docs/poc-countries.md` on that branch). **The PoC's de facto border view is superseded** by internationally recognised borders ([ADR 0008](adr/0008-state-list-borders-adjacency.md)); the rest of its card design stands.
 
@@ -8,9 +8,9 @@ The design of the country cards comes from the 9-card proof of concept on branch
 
 One deck, **World Atlas**, that teaches a total beginner the political and physical map of the world together.
 
-**Curriculum.** The program is an **atlas ring**. It opens with a 1–2 day **orientation** (the oceans, the planetary wind belts and the seven continents). Then it makes **one complete pass round 21 regions** in a closed loop, and each region crossing goes over a border or a short stretch of sea. Inside a region, countries come **neighbour to neighbour**: each new country borders one already introduced, preferring the most recent. Each capital comes 2–3 cards after its country. A physical feature comes right after the countries that frame it, and a core city comes after its capital or its river. Pass 1 holds every country and capital and the tier 1–2 features. A short **depth pass** then goes round the same ring again with the tier 3 features and the secondary cities. Look-alikes sit **near but not adjacent**, 3 to 10 cards apart. Suggested rate: **15 new cards a day**, about 7 weeks of new cards.
+**Curriculum.** The program is an **atlas ring**. It opens with a 1–2 day **orientation** (the oceans, the planetary wind belts and the seven continents). Then it makes **one complete pass round 21 regions** in a closed loop, and each region crossing goes over a border or a short stretch of sea. Inside a region, countries come **neighbour to neighbour**: each new country borders one already introduced, preferring the most recent. Each capital comes 2–3 cards after its country. A physical feature comes right after the countries that frame it, and a core city comes after its capital or its river. Pass 1 holds every country and capital, the territories and disputed areas, the tier 1–2 features and the core cities. A short **depth pass** then goes round the same ring again with the tier 3 features (and the secondary cities, all deferred for now). Look-alikes sit **near but not adjacent**, 3 to 10 cards apart. Suggested rate: **15 new cards a day**, about 6 weeks of new cards.
 
-**System.** Keep one repo and one renderer. Add **card sources**: `features.yaml` (unchanged), `countries.yaml` and `cities.yaml`. Each source has its own pydantic model and turns its entries into a plain `Card` DTO. Everything downstream works on `Card`: the order engine, deckgen, the package check and the guide. Each country/capital pair is **two notes** with two uids. Countries get an explicit `region`; physical features get theirs from geometry. Adjacency is computed from NE admin_0 at build time and cached. `order.py` becomes a pipeline of pure functions: passes, then regions, then a neighbour walk, then anchored interleaving, then local repair rules. The structural change is that **positions become persisted data**: an append-only `data/positions.lock` maps uid to a sparse integer, and ankc writes it as the card's `due`. Adding a card never moves an existing card, and fresh and existing collections see the same order.
+**System.** Keep one repo and one renderer. Add **card sources**: `features.yaml` (unchanged), `countries.yaml`, `territories.yaml` and `cities.yaml`. Each source has its own pydantic model and turns its entries into a plain `Card` DTO. Everything downstream works on `Card`: the order engine, deckgen, the package check and the guide. Each country/capital pair is **two notes** with two uids. `curriculum.yaml` places every country, territory and disputed area in a region; physical features get theirs from geometry. Adjacency is computed from the recognised-border outlines at build time and cached. `order.py` becomes a pipeline of pure functions: passes, then regions, then a neighbour walk, then anchored interleaving, then local repair rules. The structural change is that **positions become persisted data**: an append-only `data/positions.lock` maps uid to a sparse integer, and ankc writes it as the card's `due`. Adding a card never moves an existing card, and fresh and existing collections see the same order.
 
 ## Decisions so far
 
@@ -23,15 +23,23 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Global features | Go in the **orientation block** at the start. |
 | Continents | **7 continent cards** in the orientation block. The seventh is named **"Oceania"**. They get a new `Continent` type word and family. Each continent is **composed from country outlines**; transcontinental states are split along NE's continent line. Oceania is complete (every Oceanian state and carded territory). |
 | State list | **197 country cards:** the 193 UN members plus Vatican, Palestine, Kosovo and Taiwan. Northern Cyprus, Somaliland and Western Sahara get **dispute cards only**. |
-| Borders | Internationally recognised borders. UN-assigned areas sit inside their sovereign: Crimea in Ukraine, Abkhazia and South Ossetia in Georgia, Transnistria in Moldova, Northern Cyprus in Cyprus, the Golan in Syria, Somaliland in Somalia. **Western Sahara is cut out of Morocco.** The Kashmir parts, Aksai Chin, Arunachal Pradesh and the Kurils follow the **administering power**. Disputed lines are drawn **dashed**. Disputed areas also get their own cards. **Israel/Golan area:** Shebaa Farms goes to Syria; East Jerusalem and the no-man's-land strips go to Palestine. **Leases:** Baikonur goes to Kazakhstan, Guantánamo to Cuba. |
-| Capitals | **2–3 cards after their country.** A state with several capitals gets **one card, for the official/constitutional capital**: Porto-Novo, Dodoma, Sri Jayawardenepura Kotte, Sucre, Pretoria, Yamoussoukro, Naypyidaw. The seat of government is named in the blurb. Stale NE names are fixed (Astana, not Nur-Sultan). **No capital card** where the capital shares the country's name and dot: Monaco, Vatican, Singapore, San Marino, Luxembourg. **No capital card** for Palestine, territories or disputed areas. |
-| Nauru capital | **Yaren, hand-placed** from reference coordinates. NE has no populated_places row for Nauru. |
-| Cities | The [city selection](research/cities.md), with **Abidjan and Aden re-added** as city cards. **Cape Town stays a city card.** |
+| Borders | Internationally recognised borders. UN-assigned areas sit inside their sovereign: Crimea in Ukraine, Abkhazia and South Ossetia in Georgia, Transnistria in Moldova, Northern Cyprus in Cyprus, the Golan in Syria, Somaliland in Somalia. **Western Sahara is cut out of Morocco.** The Kashmir parts, Aksai Chin, Arunachal Pradesh and the Kurils follow the **administering power**. Disputed lines are drawn **dashed**. Disputed areas also get their own cards. **Israel/Golan area:** Shebaa Farms goes to Syria; East Jerusalem and the no-man's-land strips go to Palestine, and Mount Scopus goes with East Jerusalem. **Leases:** Baikonur goes to Kazakhstan, Guantánamo to Cuba. |
+| Capitals | **2–3 cards after their country.** A state with several capitals gets **one card, for the official/constitutional capital**: Porto-Novo, Dodoma, Sri Jayewardenepura Kotte (that spelling), Sucre, Pretoria, Yamoussoukro, Naypyidaw. The seat of government is named in the blurb. Stale NE names are fixed (Astana, not Nur-Sultan). **No capital card** where the capital shares the country's name and dot: Monaco, Vatican, Singapore, San Marino, Luxembourg. **No capital card** for Palestine, territories or disputed areas. |
+| Capital picks | **Burundi: Gitega.** **Equatorial Guinea: Malabo**; the blurb notes the announced move to Ciudad de la Paz. **Eswatini: Mbabane.** **Palau: Ngerulmud.** |
+| Nauru | Capital **Yaren, hand-placed** from reference coordinates; NE has no populated_places row for Nauru. Alt name **Naoero**. |
+| Names | **English exonyms** on every card. The **Gulf of Mexico** keeps that name. |
+| Country tiers | **Tier 3 is microstates and small island states only.** Kosovo, Palestine and Cyprus are tier 1. Tier sets the `tier::` tag only: every country is in pass 1. |
+| Cities | **42 core cities**, every one in pass 1. **No per-region minimum**: regions 2, 4, 12 and 21 have no city card. Every secondary city, Abidjan and Aden included, is deferred to the [revisit list](research/cities.md#deferred-cities-revisit-list) (user decision, 2026-10-14). **Cape Town stays a city card.** |
 | Capital and city cards | Front type word: **"City"**, for capitals and other cities alike. Back: the city name, then on a second line "Capital of &lt;Country&gt;" for a capital or "&lt;Country&gt;" for any other city. Marker: a **36 px dot with no ring**. |
 | Look-alikes | The **3–10 card window** plus a curated **confusable-country list**. |
 | Microstates | Sit **with their neighbours** in the order, as pockets. Their capital cards follow the Capitals rule. |
-| Country cards | Show the **mainland only**. Overseas territories are their own cards, per [Territories](#territories). |
-| Climate | **9 climate cards retired** (commit `41fdf95`): the pressure belts, the East Asian and West African monsoons, the Canary, Benguela, Humboldt and Kuroshio currents, and the Bay of Bengal cyclones. |
+| Country cards | Show the **mainland only**. Overseas territories are their own cards, per [Territories](#territories). Remote islands are cropped from the card by its `mainland` box: the Kermadecs, the Chathams and the NZ sub-Antarctic islands, Trindade, Minami-Torishima, Okinotorishima, the Prince Edward Islands and Macquarie. The crop is for the card only; adjacency and feature regions use the full outline. |
+| Region and host | **`curriculum.yaml` is the one source** of region and pocket host for countries, territories and disputed areas. The entries in `countries.yaml` and `territories.yaml` carry no region. Cities take their country's region. |
+| Territory placement | Geographic pockets (decision 5). **Greenland and Bermuda in region 19, the Kurils in 16, Aruba and Curaçao in 20.** `curriculum.yaml` records the alternatives under `ambiguous`. |
+| Dispute parties | **Claimants or administrators only.** A party that isn't one of the 197 states gets a **short label** (Transnistria, Northern Cyprus, Sahrawi Republic (Polisario Front)). |
+| Feature regions | Derived by the [rules below](#assigning-physical-features-to-regions), with **overrides in `features.yaml`** (`region` plus `region_reason`): Nile 10, Karakoram 14, Danish Straits 2, Caucasus 6, Tian Shan 15, Amur 16, GIUK gap 2, Typhoon alley 17, and the Gulf Stream and Atlantic hurricane belt 21. |
+| Climate | **6 active climate cards, 9 retired** (commit `41fdf95`): the pressure belts, the East Asian and West African monsoons, the Canary, Benguela, Humboldt and Kuroshio currents, and the Bay of Bengal cyclones. |
+| Verify markers | Move out of the blurbs into a **structured verify field**. Release is gated on them (in progress). |
 | Companion PDF guide | Follows the **new-card study order**, sectioned by **pass, then region**. Every card has a 1–3 sentence blurb, stored as `note` in the data. |
 | Country design | **Split cards** (separate country outline and capital dot notes), as in the PoC on branch `poc/countries` (`f4a3503`). |
 | Dependencies | The 23 **include** territories in [List 1](#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards. The 29 **exclude** territories stay on the [revisit list](#intentionally-excluded-revisit-list). |
@@ -68,13 +76,13 @@ Three structures were compared; (c) was chosen.
 
 | | (a) Region-complete | (b) Tier spiral | **(c) Atlas ring + depth pass (chosen)** |
 |---|---|---|---|
-| Shape | One pass. Each region complete at every tier, cities included. | Orientation, then tier 1 world-wide by region, then later passes for tiers 2 and 3 | Orientation, then one pass with every country and capital plus tier 1–2 features, then a short depth pass with tier 3 and secondary cities |
+| Shape | One pass. Each region complete at every tier, cities included. | Orientation, then tier 1 world-wide by region, then later passes for tiers 2 and 3 | Orientation, then one pass with every country and capital plus tier 1–2 features, then a short depth pass with tier 3 (and secondary cities, if any are carded) |
 | Neighbour chunks | Strong | **Broken:** countries have no tiers, so a tier-1 pass either includes every country or leaves holes in the jigsaw | Strong. Each region's political map is complete in one go. |
 | Learner who stops early | Lopsided: knows Europe in depth and has never seen Asia | Best | Good. The world map is complete at the end of pass 1, and only the most expendable cards are deferred. |
 | Contiguity of features and borders | Strong | Weak: the Pyrenees (tier 2) arrive weeks after France and Spain | Strong. The tier-2 features include most of the border-defining ones (Pyrenees, Carpathians, Urals, Zagros, Rio Grande, Amur), so they stay in pass 1. |
 | Cost | Simplest | Needs country tiers | One extra pass tag |
 
-(c) keeps complete neighbour chunks and holds back only the long tail (the 10 tier-3 features and roughly half the cities). Pass 2 is short, about 10% of the cards, and its job is mainly to protect the early stopper. Going round the ring a second time also brings back each region's layout at a long interval.
+(c) keeps complete neighbour chunks and holds back only the long tail. With every secondary city deferred, pass 2 is just the 10 tier-3 features, under 2% of the cards; its job is mainly to protect the early stopper. Going round the ring a second time also brings back each region's layout at a long interval.
 
 ### The ring (default start: Western Europe)
 
@@ -104,7 +112,7 @@ Regions are listed in study order, with countries in walk order. Counts follow t
 | 20 | South America | Colombia, Ecuador, Peru, Chile, Bolivia, Argentina, Uruguay, Paraguay, Brazil, Suriname, Guyana, Venezuela | 12 | Panama → Colombia |
 | 21 | Caribbean | Trinidad and Tobago, Grenada, St Vincent, Barbados, St Lucia, Dominica, Antigua and Barbuda, St Kitts and Nevis, Dominican Rep., Haiti, Jamaica, Cuba, Bahamas | 13 | Venezuela → Trinidad. Exit: Bahamas → Atlantic → Iberia, closing the ring (the 1492 route in reverse). |
 
-That is 21 regions, one over the range originally asked for. Merging any two would break a seam or bury the Levant. Apart from those three dispute pockets, the table lists sovereign and partially recognised states only. Abkhazia, South Ossetia and Transnistria now get dispute cards ([Territories](#territories)), so they become pockets of Georgia and Moldova. The Cook Islands and Niue are on the revisit list; if added, they become pockets of New Zealand. Territory cards are not yet placed in the ring; the default is geographic pockets (decision 5 under [Open decisions](#open-decisions)).
+That is 21 regions, one over the range originally asked for. Merging any two would break a seam or bury the Levant. Apart from those three dispute pockets, the table lists sovereign and partially recognised states only. Abkhazia, South Ossetia and Transnistria now get dispute cards ([Territories](#territories)), so they become pockets of Georgia and Moldova. The Cook Islands and Niue are on the revisit list; if added, they become pockets of New Zealand. Territory and dispute cards are placed as geographic pockets in `data/curriculum.yaml` (decision 5, now decided; see [Decisions so far](#decisions-so-far)).
 
 **Why a ring.** Every crossing is a land border or a short sea, except the Pacific crossing into region 19. Because the loop is closed, a learner can start at **any region** and keep continuity everywhere except at the one cut. "Home region first" is therefore just a rotation, not a second design.
 
@@ -126,7 +134,7 @@ Apply these rules in order. The first rule that matches decides.
 4. **Everything else goes to the region with the largest share of its extent** (area, length or shoreline), derived from geometry. Examples: Danube → Balkans, Rhine → Central Europe, Himalayas → South Asia, Sahara → North Africa, Andes → South America, Great Rift Valley → Horn & East Africa.
 5. **Parent before child overrides all of these** (ADR 0004 rule 2). A parent moves forward to just before its earliest child. For example, the Mediterranean must precede the Aegean in region 4.
 
-A `region:` override with a `reason` handles the rest. The Persian Gulf is the likely first case, pinned to 8 rather than 15.
+An override in `features.yaml` (`region` plus `region_reason`) handles the rest; the ten in use are listed under [Decisions so far](#decisions-so-far). The Persian Gulf needed none: its shoreline already derives to 8 (56%, against 41% for 15). `uv run python -m geofeat.regions` prints every feature's assignment.
 
 ### Walking the countries
 
@@ -145,7 +153,7 @@ A `region:` override with a `reason` handles the rest. The Persian Gulf is the l
 | **Capital** | **2–3 cards after its country**, after the next country, never in a later cluster | Some lag (spacing) while staying contiguous. Country and capital are separate notes, so Anki won't bury one as the other's sibling. The order does the spacing. |
 | Physical feature | **Right after the country that completes its frame**, the last of its in-region countries to be introduced: Pyrenees after France, Danube after Romania, English Channel after the UK, Nile after Egypt | Contiguity: the border or valley is already on the map. |
 | Core city (pass 1) | At least 2 cards after its country's capital. If it is tied to a feature, right after that feature: Alexandria after the Nile Delta, Istanbul after the Bosporus, New Orleans after the Mississippi, Shanghai after the Yangtze. | It's a dot in a known outline, so it shouldn't be read as "the other dot". |
-| Secondary city, tier-3 feature | Pass 2, same ring, same within-region rules | Long tail |
+| Tier-3 feature (and a secondary city, if one is carded later) | Pass 2, same ring, same within-region rules | Long tail |
 | Pockets | After the host's capital | See the walk rules above |
 
 A worked example, the start of region 1:
@@ -165,16 +173,24 @@ ADR 0004 spreads nearby features at least 3 cards apart, while contiguity packs 
 
 ### Pacing
 
-About 720 cards: 13 orientation (4 oceans, 2 bands, 7 continents), 388 countries and capitals (197 countries, 191 capitals), 122 tier 1–2 features, 55 core cities, 38 territory and dispute cards, then about 65 in pass 2 (10 tier-3 features and the secondary cities). Territories and disputed areas get no capital cards.
+About 607 cards:
 
-| New cards a day | New cards finish | Pass 1 complete | Notes |
-|---|---|---|---|
-| 10 | ~10 weeks | ~9 weeks | About one cluster a day. Gentlest in the dense regions. |
-| **15 (suggested)** | **~7 weeks** | ~6½ weeks | A cluster and a half a day. A typical region takes 2–3 days. |
-| 20 (Anki default) | ~5 weeks | ~4½ weeks | Fine for regions 1–10. Watch the load at West Africa and the Caribbean. |
-| 30 | ~3½ weeks | ~3 weeks | Dense regions put about 30 look-alike outlines into learning at once. Only for someone with prior map knowledge. |
+| Block | Cards |
+|---|---|
+| Orientation | 13: 4 oceans, 2 planetary wind bands, 7 continents (in progress) |
+| Pass 1 | 584: 197 countries, 191 capitals, 23 territories, 15 disputed areas, 116 tier 1–2 features, 42 core cities |
+| Pass 2 | 10 tier-3 features |
 
-The week figures were computed for about 700 cards; the extra territory cards add a few days at each rate. Review load grows with the rate and keeps running after the last new card, so the program doesn't end when the new cards do. The README should say: *raise the rate while your daily reviews fit your time; lower it before West Africa (11) and the Caribbean (21).*
+Territories and disputed areas get no capital cards. The 132 active features split 6 orientation, 116 pass 1 and 10 pass 2.
+
+| New cards a day | New cards finish | Notes |
+|---|---|---|
+| 10 | ~8½ weeks | About one cluster a day. Gentlest in the dense regions. |
+| **15 (suggested)** | **~6 weeks** | A cluster and a half a day. A typical region takes 2–3 days. |
+| 20 (Anki default) | ~4½ weeks | Fine for regions 1–10. Watch the load at West Africa and the Caribbean. |
+| 30 | ~3 weeks | Dense regions put about 30 look-alike outlines into learning at once. Only for someone with prior map knowledge. |
+
+Pass 2 is 10 cards, so pass 1 ends within a day of the last new card at every rate. Review load grows with the rate and keeps running after the last new card, so the program doesn't end when the new cards do. The README should say: *raise the rate while your daily reviews fit your time; lower it before West Africa (11) and the Caribbean (21).*
 
 **Chunks don't need to align with daily batches.** Rates vary and skipped days shift every boundary, so alignment can't be held. Clusters are at most about 10 cards, so any rate of 10 or more covers whole clusters most days. Every crossing between regions is continuous, so a day that ends mid-region still ends on known ground. A capital that rolls into the next day is just a little more spacing.
 
@@ -182,18 +198,20 @@ The week figures were computed for about 700 cards; the extra territory cards ad
 
 **Tags,** added to the existing `tier::`, `category::` and `id_` tags:
 
-- `kind::<k>` (feature, country, capital, city);
-- `region::NN-<slug>`, zero-padded in ring order, so the tag sidebar lists regions in study order;
-- `pass::1` or `pass::2`.
+- `kind::<k>` (feature, country, capital, city, territory, dispute, continent);
+- `region::NN`, the region number zero-padded, so the tag sidebar lists regions in ring order. Country, capital, territory, dispute and city cards carry it; feature cards don't yet;
+- `pass::orientation`, `pass::1` or `pass::2`.
+
+[architecture.md](architecture.md#tags) lists every tag as built.
 
 **What the learner does:**
 
 | Goal | How |
 |---|---|
 | Follow the program | Study the deck. In deck options, keep the new-card **sort order on "order gathered"** (the default) and never use random. A random order deletes the curriculum. |
-| Learn one region now | Make a filtered deck: `deck:"World Atlas" tag:region::14-* is:new`, order **"Order due"** (for new cards, due is the position; *verify on AnkiDroid and AnkiMobile*). Cards studied there go back to the main deck as reviews. Unstudied cards go back to their old positions. |
+| Learn one region now | Make a filtered deck: `deck:"World Atlas" tag:region::14 is:new`, order **"Order due"** (for new cards, due is the position; *verify on AnkiDroid and AnkiMobile*). Cards studied there go back to the main deck as reviews. Unstudied cards go back to their old positions. |
 | Home region first | The same filtered deck, for your home region, on day 1. Then continue the main deck. That costs one break in continuity and needs no special build. It also stays compatible with `positions.lock`, which a rotated build would not be. |
-| Revise a region | `deck:"World Atlas" tag:region::04-* -is:new`, ordered by due or at random. |
+| Revise a region | `deck:"World Atlas" tag:region::04 -is:new`, ordered by due or at random. |
 | See the map | The PDF guide, in new-card study order, sectioned by pass and then by region in ring order. It's an atlas to keep beside the deck. |
 
 **Finishing a region** is the natural progress milestone. A count such as "region 7 of 21" in the README's study notes costs nothing.
@@ -209,14 +227,14 @@ The week figures were computed for about 700 cards; the extra territory cards ad
 
 | Question | Plan | Why |
 |---|---|---|
-| Same file or separate | **Separate**: `countries.yaml` (one entry per state, with nested capital) and `cities.yaml` (city plus `country:` ref). This keeps the PoC's shape. | `Feature` carries physical-only policy: `FeatureType`/`FAMILY`, land clipping, `expect` size ranges, `allow_nested`, the pair check. Stretching it to countries would drag them into rules that don't apply to them. |
-| Shared model | **No shared entity, but a shared DTO.** A `Card` with `uid`, `kind` (feature/country/capital/city), `key`, `prompt`, `answer`, `tags`, `render: RenderSpec`, `region`, `tier`, `anchor`, `parents`. Each source exposes `cards() -> list[Card]`. | The order engine and deckgen depend on `Card`, not on three models. Adding a fourth kind (rivers-by-country, flags) is an extension, not an edit. |
+| Same file or separate | **Separate**: `countries.yaml` (one entry per state, with nested capital), `territories.yaml` (territory and dispute entries, told apart by `kind`) and `cities.yaml` (city plus `country:` ref). This keeps the PoC's shape. | `Feature` carries physical-only policy: `FeatureType`/`FAMILY`, land clipping, `expect` size ranges, `allow_nested`, the pair check. Stretching it to countries would drag them into rules that don't apply to them. |
+| Shared model | **No shared entity, but a shared DTO.** A `Card` ([ADR 0005](adr/0005-card-sources-and-card-dto.md)) with `uid`, `kind`, `id`, `prompt`, `answer_lines`, `tags`, `region`, `tier`, `anchor`, `parents`, `note`, `host`, `orientation` and `render` (a `RenderSpec` plus lazy geometry). Each source exposes `cards() -> list[Card]`. | The order engine and deckgen depend on `Card`, not on three models. Adding a fourth kind (rivers-by-country, flags) is an extension, not an edit. |
 | Renderer input | **Extract `RenderSpec`** (style, geometry parts, frame options, context overlays) from `Feature`. The PoC already reaches into `Feature` with its `outline`/`context` styles. | The old render cache hashed the *source* of `model.py`, so adding a `region` field would have re-rendered every map (~2 h at 700). Done in P1 (WS2): the key hashes the resolved geometry, the dumped `RenderSpec` and the render-code files, not the schema module. |
 | One note or two | **Two notes**, `uids: {country, capital}`, as the PoC has (decided: split cards). | ankc "reversed" swaps one front/back pair. Country (outline → name) and capital (dot → capital) differ on both sides, so reversed can't express them. Cloze can't hide one image per card. Two notes also give independent tags, tiers, positions and retirement (for example, dropping the capital card for city-states). The cost is that Anki won't bury them as siblings, so the order engine has to space them. |
-| Id namespace | **Kind-prefixed id tags for new kinds**: `id_country_niger`, `id_capital_niger`, `id_city_lagos`. Existing feature tags stay `id_<id>`. | Real collisions exist: Niger, Congo, Jordan, Georgia. A check enforces global uniqueness across sources. |
-| New tags | `kind::<k>`, `region::<slug>`. Keep `tier::` and `category::`; countries get `category::countries` and cities `category::cities`. | Filtered decks keep working. |
-| Region membership | **Countries: an explicit `region:` field**, validated against `data/curriculum.yaml`. Cities inherit their country's region. **Features: derived** from the region with the largest overlap (a region's polygon is the union of its countries' polygons). An optional `region:` override covers ambiguous cases, and `global` covers the orientation features. | Region membership is curricular, not geometric (Egypt, Turkey, Russia, Kazakhstan). For 132 features, derivation is cheap and the override handles the exceptions. |
-| Adjacency | **Computed at build time** from the same NE 10m admin_0 layer the country cards use. Touching is `intersects` after a ~1 km buffer, to absorb 10m slivers. Sea edges link countries within ~200 km, so island states aren't isolated (UK–France, Japan–Korea, Sri Lanka–India). Hand edits go in `data/adjacency.yaml` (`add`/`remove`, each with a `reason`). Results are cached in `build/adjacency.json`, keyed by an inputs hash, as `siblings.json` is. | Deterministic and reviewable. ~250 polygons with an STRtree index takes seconds. |
+| Id namespace | **Kind-prefixed id tags for new kinds**: `id_country_niger`, `id_capital_niger`, `id_city_istanbul`. Existing feature tags stay `id_<id>`. | Real collisions exist: the rivers Niger, Congo and Jordan, and retired island ids such as cyprus and taiwan. A check enforces global uniqueness across sources. |
+| New tags | `kind::<k>`, `region::NN`, `pass::<p>`. Keep `tier::` and `category::`; countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. | Filtered decks keep working. |
+| Region membership | **Countries, territories and disputed areas: placed by `data/curriculum.yaml`**, the one source of region and pocket host; their own yaml entries carry neither. Cities inherit their country's region. **Features: derived** by `regions.py` from the region with the largest share (a region's outline is the union of its members' full outlines, before any `mainland` crop). A `region` override with a `region_reason` in `features.yaml` covers the exceptions, and the orientation features go to the orientation block. | Region membership is curricular, not geometric (Egypt, Turkey, Russia, Kazakhstan). For 132 features, derivation is cheap and the override handles the exceptions. |
+| Adjacency | **Computed at build time** (`make adjacency`) from the recognised-border outlines composed from the `geometry` in `countries.yaml`, uncropped. Touching is `intersects` after a 1 km buffer, to absorb 10m slivers. Sea edges link countries within 200 km, so island states aren't isolated (UK–France, Japan–Korea, Sri Lanka–India). Hand edits go in `data/adjacency.yaml` (`add`/`remove`, each with a `reason`). Results are cached in `build/adjacency.json`, keyed by an inputs hash, as `siblings.json` is. | Deterministic and reviewable. ~200 outlines with an STRtree index takes seconds. |
 
 ### Ordering engine
 
@@ -236,11 +254,11 @@ cards ─▶ passes (from curriculum.yaml)
 - **Determinism:** no set iteration order and no floats in tie-breaks. Every comparator ends in an id. Golden-file tests use a small fixture world (about 12 countries, 2 regions, 4 features).
 - **Stability: the main change.** The ideal order is used **only to place new uids**. Positions are kept in `data/positions.lock` (uid → int). It is committed, append-only, and a retired uid keeps its slot.
   - A new uid gets the midpoint between the locked positions of its neighbours in the ideal order.
-  - The initial assignment uses a stride of 500: 700 cards end near 350,000, leaving room for about 1,900 cards and about 8 midpoint inserts at any one spot.
-  - Stay below 1,000,000. Anki's Check Database renumbers new cards whose due is ≥ 1,000,000 (*verify*).
+  - The initial assignment uses a stride of 500: about 600 cards end near 300,000, leaving room for about 1,400 more at the end and about 8 midpoint inserts at any one spot.
+  - Stay below 1,000,000. Anki 26.09.3 desktop's Check Database rewrites new-card dues of 2,000,000 or more (P1 spike, [ADR 0006](adr/0006-positions-lock-and-pos-footnote.md)); 1,000,000 leaves a margin.
   - Exhausting a gap fails the build. A deliberate `reflow` can renumber, but only cards no user has imported yet; in practice, only before release.
   - The lock is the log, and the order a user sees is that log. Today's behaviour (positions shift on every addition, plus README instructions to Reposition by hand) puts the burden on the user; the lock removes the drift at its source.
-- **Mechanism:** ankc numbers cards 0..N by source order and can't set `due` directly. Add a per-card `[^pos]: <int>` footnote to ankc 0.6, beside `[^uid]`/`[^type]`. The fallback is to rewrite `cards.due` in the `.apkg` after the build; `check_package` already opens the sqlite, but that puts a packaging concern in this repo. `check_package` then asserts `due == positions.lock[uid]` instead of sequential order.
+- **Mechanism (built in P1):** ankc 0.5 numbers cards 0..N by source order and can't set `due` directly. ankc 0.6, released on PyPI, reads a per-card `[^pos]: <int>` footnote beside `[^uid]`/`[^type]`. `check package` asserts `due == positions.lock[uid]` with 0.6 or a frozen lock. The rejected fallback was rewriting `cards.due` in the `.apkg` after the build.
 
 ### Migration and identity
 
@@ -266,13 +284,13 @@ cards ─▶ passes (from curriculum.yaml)
 
 ### Risks
 
-1. **No stable positions without an ankc change.** Without `[^pos]` or an apkg rewrite, every country added reshuffles positions for fresh imports and ties with existing ones. Do the lock before the countries ship, not after.
-2. **Political edge cases in the data:** disputed states (Kosovo, Taiwan, Western Sahara, Palestine, Somaliland), dependencies, and whether the target is ~200 or ~215 states. These decide card count, adjacency and regions. Recognised borders mean NE's de facto admin_0 shapes need disputed-area parts added back (see [Territories](#territories)).
+1. **No stable positions without an ankc change.** *Resolved in P1:* `positions.lock` and ankc 0.6's `[^pos]`. The lock stays a draft until P7, so freeze it before the countries ship, not after.
+2. **Political edge cases in the data:** disputed states (Kosovo, Taiwan, Western Sahara, Palestine, Somaliland), dependencies, and whether the target is ~200 or ~215 states. *Decided* ([ADR 0008](adr/0008-state-list-borders-adjacency.md)) and in the P2 data; the time-sensitive items are under [Territories](#territories).
 3. **Microstates at the 2,600 km minimum frame** ([ADR 0003](adr/0003-projection-and-framing.md)): an outline card for Vatican City, Monaco or Nauru is just a ring, so "outline → name" teaches the frame, not the shape. 38 of the PoC's 200 states get a ring. The decision keeps their country cards; a smaller minimum frame for small outline cards is still an option.
-4. **Wide or split countries:** Russia, Fiji and Kiribati cross the antimeridian, and France and the USA have overseas parts. The PoC's `mainland` box handles this, but its boxes don't wrap across 180°, and every case needs `expect` coverage.
+4. **Wide or split countries:** Russia, Fiji and Kiribati cross the antimeridian, and France and the USA have overseas parts. The `mainland` box handles this; a box with `lon_min > lon_max` crosses 180°, and every outline has an `expect` bbox.
 5. **Walk quality on archipelago regions** (Caribbean, Oceania, Southeast Asia): jumps are unavoidable there. Report them rather than hiding them.
-6. **The render invalidation footgun** in `_code_hash` (see Build cost). Fix it before adding cards.
-7. **Anki behaviour assumptions:** new-card `due` preserved on import, and the 1,000,000 cap. Both were read from desktop sources only. Test on AnkiDroid and AnkiMobile before relying on the lock.
+6. **The render invalidation footgun** in `_code_hash`. *Resolved in P1 (WS2):* the cache key hashes resolved geometry and the `RenderSpec`, not `model.py`.
+7. **Anki behaviour assumptions:** new-card `due` preserved on import, and Check Database leaving dues under 2,000,000 alone. Both were measured on Anki 26.09.3 desktop only. Test on AnkiDroid and AnkiMobile (P6) before relying on the lock.
 
 ## Territories
 
@@ -283,7 +301,7 @@ Country cards use internationally recognised borders and show the mainland only.
 1. **Counts:** List 1 has 52 inhabited dependent or autonomous territories: **23 include**, 29 exclude. 13 of the 52 are integral parts of their state. A further 9 uninhabited entries (US Minor Outlying Islands counted as one) are listed in one line. List 2 has 31 disputed or occupied areas: **15 card**, 16 no card.
 2. **Include (23):** Greenland, Faroe Islands, Svalbard, Hong Kong, Macau, Puerto Rico, Guam, Gibraltar, Falkland Islands, Bermuda, Cayman Islands, British Indian Ocean Territory, Isle of Man, Jersey, Guernsey, New Caledonia, French Polynesia, French Guiana, Réunion, Guadeloupe, Martinique, Aruba, Curaçao.
 3. **Card (15):** Crimea, Kashmir (Indian-administered), Kashmir (Pakistani-administered), Aksai Chin (Chinese-administered, with Shaksgam), Arunachal Pradesh, Western Sahara, Golan Heights, Abkhazia, South Ossetia, Transnistria, Northern Cyprus, Somaliland, Kuril Islands (southern four), Spratly Islands, Essequibo.
-4. **NE polygon gaps:** The French overseas departments, Caribbean Netherlands, Svalbard, Åland, Tokelau, Christmas Island and Cocos have no row of their own in the vendored `admin_0_countries`; they need `ne_10m_admin_0_map_units` (not vendored). The Canary Islands have no polygon in either layer. Every List 2 card except Northern Cyprus, Somaliland and Spratly needs `ne_10m_admin_0_disputed_areas` (not vendored). NE has no polygon at all for the post-2022 occupation of Ukraine. Its Donetsk and Luhansk shapes are the 2014–22 lines, its Artsakh shape is stale since 2023, and its Hans Island note has been stale since 2022.
+4. **NE polygon gaps:** The French overseas departments, Caribbean Netherlands, Svalbard, Åland, Tokelau, Christmas Island and Cocos have no row of their own in `admin_0_countries`; they need `ne_10m_admin_0_map_units` (vendored in P1, WS4). The Canary Islands have no polygon in either layer. Every List 2 card except Northern Cyprus, Somaliland and Spratly needs `ne_10m_admin_0_disputed_areas` (vendored in P1, WS4). NE has no polygon at all for the post-2022 occupation of Ukraine. Its Donetsk and Luhansk shapes are the 2014–22 lines, its Artsakh shape is stale since 2023, and its Hans Island note has been stale since 2022.
 5. **Verify (time-sensitive):** the Chagos handover (the treaty was not ratified and shelved as of May 2026), New Caledonia's Bougival status, US–Greenland talks, Somaliland recognition (only Israel so far), the Ukraine front and any deal, the ICJ Essequibo judgment (expected Nov 2026 to Jan 2027), Western Sahara after UNSC resolution 2797 (Oct 2025), and Israel's post-2024 zone beyond the Golan.
 
 ### Integral parts, and whether they still get a card
@@ -305,7 +323,7 @@ Taiwan, Kosovo and Palestine (including Gaza, the West Bank and East Jerusalem) 
 
 ### Data gaps for the 15 dispute cards
 
-- **Not vendored:** 12 cards need `ne_10m_admin_0_disputed_areas.geojson` (701 KB at commit `f1890d9f`). Northern Cyprus, Somaliland and Spratly need it too only if you use the disputed-areas shapes rather than their admin_0 rows.
+- **Disputed-areas layer:** 12 cards need `ne_10m_admin_0_disputed_areas.geojson` (701 KB at commit `f1890d9f`), vendored in P1 (WS4). Northern Cyprus, Somaliland and Spratly need it too only if you use the disputed-areas shapes rather than their admin_0 rows.
 - **Somaliland:** NE's polygon includes the Las Anod / SSC-Khatumo area that Somaliland lost in 2023. Flag this on the back or trim the shape.
 - **Western Sahara:** the admin_0 row alone is the east-of-berm strip. Union both DA parts.
 - **Recognised-border country outlines:** to show Ukraine with Crimea, Georgia with Abkhazia and South Ossetia, and so on, you have to add DA parts back. Otherwise the de facto admin_0 shapes contradict the "recognised borders" rule.
@@ -373,20 +391,19 @@ Excluded by decision on 2026-10-14 and kept on file to revisit: 29 dependencies 
 
 ## Open decisions
 
-These defaults are waiting for the user's confirmation. Numbers follow the build plan; decisions 1–3 (borders, state list, capitals) and 7 (continents) are decided and recorded above. Work proceeds on the default until the user overrides it.
+These defaults are waiting for the user's confirmation. Numbers follow the build plan; decisions 1–3 (borders, state list, capitals), 5 (territory placement) and 7 (continents) are decided and recorded above. Work proceeds on the default until the user overrides it.
 
 | # | Decision | Default | Blocks |
 |---|---|---|---|
-| 4 | Territory and dispute cards | Front word `Territory` or `Disputed territory`. Back line 2 gives the status, or `Disputed: <parties>`. Dashed red outline. | P4 rendering |
-| 5 | Territory placement in the ring | **Geographic pockets**, with a manual look at Greenland, the Kurils and Bermuda. | P3 order engine |
+| 4 | Territory and dispute cards | Front word `Territory` or `Disputed territory`. Back line 2 gives the status, or `Disputed: <parties>` (the parties rule itself is decided). Dashed red outline. The P2 sources already write the front words and back lines; the outline is drawn solid until P4. | P4 rendering |
 | 6 | Close dots (Tel Aviv/Jerusalem, Dubai/Abu Dhabi) | A **tighter frame, at least 1,000 km wide,** when another dot is within 150 km. Amends [ADR 0003](adr/0003-projection-and-framing.md)'s 2,600 km minimum. | P4 rendering |
-| 8 | Curriculum defaults | **21 regions** (check Turkey with the Caucasus, Sudan in East Africa, Mexico with Central America, Iran with Central Asia). **Pass 1** = tiers 1–2 plus the core cities (about 55); pass 2 = tier 3 plus the secondary cities. **Drop deck-wide category alternation.** **15 new cards a day**, stated in the README with a warning before regions 11 and 21. **No repositioning tool** for existing users. | P3 order engine |
+| 8 | Curriculum defaults | **21 regions** (check Turkey with the Caucasus, Sudan in East Africa, Mexico with Central America, Iran with Central Asia). **Pass 1** = tiers 1–2 plus the 42 core cities; pass 2 = tier 3 (the secondary cities are deferred). **Drop deck-wide category alternation.** **15 new cards a day**, stated in the README with a warning before regions 11 and 21. **No repositioning tool** for existing users. | P3 order engine |
 | 9 | Scattered states (Kiribati, Micronesia, Tuvalu) | **The whole spread, plus a ring.** | P4 rendering |
 | 10 | Somaliland's outline | **NE's outline as is,** with the Las Anod area mentioned in the blurb. | P2 blurbs, P4 rendering |
 | 11 | Repo name | **Rename to `world-atlas`;** keep the `geofeat` package. | P5 rename |
 | 12 | Distribution | **GitHub release only:** the `.apkg` (about 100 MB) and the guide PDF. | P7 release |
 
-**Where the earlier open items went.** The curriculum items (region list, pass 1 features, city tiers, category alternation, rate, existing users) are all in decision 8; orientation contents is decided (Continents). Architecture defaults D2–D5 and D9 are now the build plan and are proposed in ADRs [0005](adr/0005-card-sources-and-card-dto.md), [0006](adr/0006-positions-lock-and-pos-footnote.md) and [0009](adr/0009-curriculum-order.md). D7 is decision 11, and D8 is decided. Of the territory items, Western Sahara, territory capitals, multiple capitals and Palestine's capital are decided; placement is decision 5, scattered states 9 and Somaliland 10. The NE layers are vendored in P1 (WS4).
+**Where the earlier open items went.** The curriculum items (region list, pass 1 features, city tiers, category alternation, rate, existing users) are all in decision 8; orientation contents is decided (Continents). Architecture defaults D2–D5 and D9 are now the build plan and are proposed in ADRs [0005](adr/0005-card-sources-and-card-dto.md), [0006](adr/0006-positions-lock-and-pos-footnote.md) and [0009](adr/0009-curriculum-order.md). D7 is decision 11, and D8 is decided. Of the territory items, Western Sahara, territory capitals, multiple capitals and Palestine's capital are decided; placement (decision 5) is now decided too; scattered states are decision 9 and Somaliland 10. The NE layers are vendored in P1 (WS4).
 
 ## ADRs
 
@@ -404,20 +421,20 @@ Specialist reviews to run: `data-engineer` on the adjacency and region-derivatio
 
 Summary of the 2026-10-14 build plan. Each workstream runs in its own git worktree off `main`, and only one render runs on the machine at a time.
 
-| Phase | Work | Exit or user gate |
-|---|---|---|
-| P0 | Decisions and ADRs 0005–0009 (WS6), alongside P1. | ADRs drafted. |
-| P1 | Foundations, in parallel. WS1: ankc 0.6 `[^pos]`. WS2: render core and `RenderSpec`. WS3: `Card` DTO and `positions.lock`. WS4: NE political layers. WS5: cities and continents research. WS6: docs. WS2 merges before WS4; WS3 merges after the ankc 0.6 release. | `make all` passes with ankc 0.6. `media.json` has the same 132 PNG names. `check package` asserts due == `positions.lock`. `make fetch` verifies the new layers. The cities and NE political layers research notes are done. **User gate:** merge the ankc 0.6 release. |
-| P2 | Data and content, in parallel: the political model (`src/geofeat/sources/`), `countries.yaml` (197), `territories.yaml` (23 + 15), `cities.yaml`, `curriculum.yaml` and `adjacency.py`, `regions.py` and the continents. About 530 blurbs, written in 4 regional research streams and fact-checked by a second researcher. | Data validates. |
-| P3 | Order engine (`order/` package): passes, regions, frozen walks, anchoring, repair rules, golden tests. Walk maps for review, political checks, notes merged into the data. | **User gate:** sign off the walk maps. |
-| P4 | Rendering treatments: dashed dispute and territory outlines, the recognised-border basemap, close-dot frames, scattered states, a shared basemap if it is over half the render time. Review tooling by region. Cold render of about 560 maps (35–95 min). | **User gate:** sign off the region sheets. |
-| P5 | The guide in study order (pass, then region, then position; under 80 MB), in parallel with the rename to World Atlas ([ADR 0007](adr/0007-rename-and-migration.md)). | Uid freeze test passes. |
-| P6 | QA: phone sheets, pair check (features and continents only), CVD on the new treatments. | **User gate:** device tests (fresh import order, a filtered "Order due" deck, due ≥ 1,000,000, the v1 to World Atlas upgrade). |
-| P7 | Multi-lens review and three-agent review. Freeze `positions.lock`. Clean-clone build, tag v2.0.0, GitHub release. Archive `poc/countries` as a tag. | Released. |
+| Phase | Work | Exit or user gate | Status |
+|---|---|---|---|
+| P0 | Decisions and ADRs 0005–0009 (WS6), alongside P1. | ADRs drafted. | Done |
+| P1 | Foundations, in parallel. WS1: ankc 0.6 `[^pos]`. WS2: render core and `RenderSpec`. WS3: `Card` DTO and `positions.lock`. WS4: NE political layers. WS5: cities and continents research. WS6: docs. WS2 merges before WS4; WS3 merges after the ankc 0.6 release. | `make all` passes with ankc 0.6. `media.json` has the same 132 PNG names. `check package` asserts due == `positions.lock`. `make fetch` verifies the new layers. The cities and NE political layers research notes are done. **User gate:** merge the ankc 0.6 release. | Done. ankc 0.6.0 is on PyPI. |
+| P2 | Data and content, in parallel: the political model (`src/geofeat/sources/`), `countries.yaml` (197), `territories.yaml` (23 + 15), `cities.yaml`, `curriculum.yaml` and `adjacency.py`, `regions.py` and the continents. About 530 blurbs, written in 4 regional research streams and fact-checked by a second researcher. | Data validates. | Data done except the continents (in progress) and the verify field (in progress). |
+| P3 | Order engine (`order/` package): passes, regions, frozen walks, anchoring, repair rules, golden tests. Walk maps for review, political checks, notes merged into the data. | **User gate:** sign off the walk maps. | Next |
+| P4 | Rendering treatments: dashed dispute and territory outlines, the recognised-border basemap, close-dot frames, scattered states, a shared basemap if it is over half the render time. Review tooling by region. Cold render of about 560 maps (35–95 min). | **User gate:** sign off the region sheets. | |
+| P5 | The guide in study order (pass, then region, then position; under 80 MB), in parallel with the rename to World Atlas ([ADR 0007](adr/0007-rename-and-migration.md)). | Uid freeze test passes. | |
+| P6 | QA: phone sheets, pair check (features and continents only), CVD on the new treatments. | **User gate:** device tests (fresh import order, a filtered "Order due" deck, Check Database with high dues, the v1 to World Atlas upgrade). | |
+| P7 | Multi-lens review and three-agent review. Freeze `positions.lock`. Clean-clone build, tag v2.0.0, GitHub release. Archive `poc/countries` as a tag. Release is gated on the verify markers. | Released. | |
 
 ## Appendix A: territories sources and method
 
-- **Natural Earth v5.1.2**, commit `f1890d9f` (as pinned in `data/sources.lock`). `vendor/ne_10m_admin_0_countries.geojson` was read field by field (`TYPE`, `SOVEREIGNT`, `ADMIN`, `NOTE_ADM0`, `NOTE_BRK`). For checking only, `ne_10m_admin_0_disputed_areas` and `ne_10m_admin_0_map_units` were fetched at the same commit into a scratch directory; they are **not vendored**. Location tests used point-in-polygon checks. The areas quoted from NE were measured on NE's generalised polygons (LAEA), so treat them as approximate.
+- **Natural Earth v5.1.2**, commit `f1890d9f` (as pinned in `data/sources.lock`). `vendor/ne_10m_admin_0_countries.geojson` was read field by field (`TYPE`, `SOVEREIGNT`, `ADMIN`, `NOTE_ADM0`, `NOTE_BRK`). For checking only, `ne_10m_admin_0_disputed_areas` and `ne_10m_admin_0_map_units` were fetched at the same commit into a scratch directory; they were not vendored then; WS4 has since pinned both. Location tests used point-in-polygon checks. The areas quoted from NE were measured on NE's generalised polygons (LAEA), so treat them as approximate.
 - **CIA World Factbook.** The CIA discontinued it on 2026-02-04, and cia.gov no longer serves the Dependencies page. I used the community mirror `factbook/factbook.json`, commit `144d6977`, whose last data update is 2026-01-22 (pre-retirement). Area, population and capital for every Factbook entity come from there. It is a scraped copy, not the CIA's own release: **verify** any figure you publish against an archived cia.gov copy.
 - **UN M49** (unstats.un.org/unsd/methodology/m49). This was used to confirm which non-sovereign areas carry their own M49 code: Greenland, Hong Kong, Réunion, French Guiana, Guadeloupe, Martinique, Mayotte, Svalbard and Jan Mayen, Bonaire/Sint Eustatius/Saba, Tokelau, Åland, Western Sahara and others. Canary Islands, Azores, Madeira, Ceuta and Melilla have none.
 - **Britannica:** not consulted row by row. This is a gap. Spot-check the List 2 dispute summaries there before you write card backs.
