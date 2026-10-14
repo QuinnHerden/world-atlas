@@ -121,7 +121,7 @@ def curriculum_order(cards: Iterable[Card], curriculum: Curriculum, adjacency: A
         if c.study_pass == "orientation":
             orientation.append(c)
             continue
-        region = _region(c, frame_of)
+        region = region_of(c, frame_of)
         if region not in by_number:
             problems.append(f"{c.key}: region {region} is not in the curriculum")
             continue
@@ -164,7 +164,8 @@ def curriculum_order(cards: Iterable[Card], curriculum: Curriculum, adjacency: A
     return Ordering(ordered, reports, waivers)
 
 
-def _region(card: Card, frame_of: Callable[[Card], Frame | None]) -> int:
+def region_of(card: Card, frame_of: Callable[[Card], Frame | None]) -> int:
+    """The ring region a card is ordered in: a feature's frame region, otherwise the card's own."""
     if card.kind == "feature":
         frame = frame_of(card)
         if frame is None:
@@ -257,7 +258,7 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
                 problems.append(f"{c.key}: its country {country} is not in region {region.number}")
         elif c.kind == "feature":
             frame = frame_of(c)
-            assert frame is not None  # _region checked
+            assert frame is not None  # region_of checked
             framing = sorted((n for n in frame.countries if n in rank), key=lambda n: (rank[n], n))
             if frame.opens:
                 before.setdefault(f"country:{framing[0] if framing else walk.nodes[0]}", []).append(c.key)

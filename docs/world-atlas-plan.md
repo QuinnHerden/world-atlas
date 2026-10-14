@@ -1,6 +1,6 @@
 # World Atlas plan
 
-Status: in progress, 2026-10-14. P1 is done and the P2 data is in, apart from the continents; P3 is next (see [Build phases](#build-phases)). What is built is described in [architecture.md](architecture.md). This plan extends the current deck (described in [architecture.md](architecture.md)) with countries, capitals, cities and territories. This file merges three earlier planning documents (the curriculum proposal, the program architecture and the territories list); where they disagreed, the [Decisions so far](#decisions-so-far) table is the source of truth.
+Status: in progress, 2026-10-14. P0–P5 are done; P6 (QA) is next (see [Build phases](#build-phases)). What is built is described in [architecture.md](architecture.md). This plan extends the current deck (described in [architecture.md](architecture.md)) with countries, capitals, cities and territories. This file merges three earlier planning documents (the curriculum proposal, the program architecture and the territories list); where they disagreed, the [Decisions so far](#decisions-so-far) table is the source of truth.
 
 The design of the country cards comes from the 9-card proof of concept on branch `poc/countries` (`f4a3503`, documented in `docs/poc-countries.md` on that branch). **The PoC's de facto border view is superseded** by internationally recognised borders ([ADR 0008](adr/0008-state-list-borders-adjacency.md)); the rest of its card design stands.
 
@@ -39,8 +39,9 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Dispute parties | **Claimants or administrators only.** A party that isn't one of the 197 states gets a **short label** (Transnistria, Northern Cyprus, Sahrawi Republic (Polisario Front)). |
 | Feature regions | Derived by the [rules below](#assigning-physical-features-to-regions), with **overrides in `features.yaml`** (`region` plus `region_reason`): Nile 10, Karakoram 14, Danish Straits 2, Caucasus 6, Tian Shan 15, Amur 16, GIUK gap 2, Typhoon alley 17, and the Gulf Stream and Atlantic hurricane belt 21. |
 | Climate | **6 active climate cards, 9 retired** (commit `41fdf95`): the pressure belts, the East Asian and West African monsoons, the Canary, Benguela, Humboldt and Kuroshio currents, and the Bay of Bengal cyclones. |
-| Verify markers | Move out of the blurbs into a **structured verify field**. Release is gated on them (in progress). |
+| Verify markers | Move out of the blurbs into a **structured verify field** (done in P2). Release is gated on them. |
 | Companion PDF guide | Follows the **new-card study order**, sectioned by **pass, then region**. Every card has a 1–3 sentence blurb, stored as `note` in the data. |
+| Repo name | **Renamed to `world-atlas`** ([QuinnHerden/world-atlas](https://github.com/QuinnHerden/world-atlas)); the package stays `geofeat` (decision 11). |
 | Country design | **Split cards** (separate country outline and capital dot notes), as in the PoC on branch `poc/countries` (`f4a3503`). |
 | Dependencies | The 23 **include** territories in [List 1](#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards. The 29 **exclude** territories stay on the [revisit list](#intentionally-excluded-revisit-list). |
 | Disputed territories | The 15 **card** entries in [List 2](#appendix-c-list-2-disputed-and-occupied-territories) get cards. The 16 **no card** entries stay on the [revisit list](#intentionally-excluded-revisit-list). |
@@ -177,7 +178,7 @@ About 607 cards:
 
 | Block | Cards |
 |---|---|
-| Orientation | 13: 4 oceans, 2 planetary wind bands, 7 continents (in progress) |
+| Orientation | 13: 4 oceans, 2 planetary wind bands, 7 continents |
 | Pass 1 | 584: 197 countries, 191 capitals, 23 territories, 15 disputed areas, 116 tier 1–2 features, 42 core cities |
 | Pass 2 | 10 tier-3 features |
 
@@ -275,12 +276,12 @@ cards ─▶ passes (from curriculum.yaml)
 | Render cache | Keyed by the resolved geometry, the dumped `RenderSpec`, the source of render/frame/ne/style/spec, `uv.lock` and the basemap layers' pinned sha256s ([architecture](architecture.md)). Edits to `model.py`, `resolve.py` or selectors don't re-render unless the geometry changes. Lives in gitignored `build/`. | Any edit to the renderer modules (including a country style in `style.py`) invalidates everything. | Split the code hash so changing a country style doesn't re-render features. Optional: restore the cache in CI with `actions/cache`. |
 | Pair check | ~40 s; bbox prefilter, then a full comparison on near pairs | Don't add countries or cities to it. Country outlines don't overlap and capitals are distinct points. | Keep the pair check to features. Add two cheap checks: **country × land-family features** with an STRtree, report-only, because "Country: Italy" against "Peninsula: Italian" differ only in the prompt word; and **dot spacing**, which fails when two city/capital rings in the same frame overlap. |
 | `.apkg` | about 150 KB a card | ~100 MB | Acceptable for import. Verify AnkiWeb's sync and shared-deck limits if the deck will be distributed. Levers: 1200 px renders, or WebP (check AnkiMobile and AnkiDroid support first). |
-| Guide PDF | 12 MB | ~60 MB | Downsample the embedded images (62% of the page width doesn't need 1600 px) and section it by pass and region. Optionally `make guide REGION=…`. |
+| Guide PDF | 12 MB | ~60 MB | Downsample the embedded images (62% of the page width doesn't need 1600 px) and section it by pass and region. Optionally `make guide REGION=…`. Done in P5. |
 
 ### Repo and naming
 
 - **One repo.** One order needs every card in one process, and the renderer, NE vendoring, framing and checks are shared. Splitting would turn an in-process function call into a cross-repo contract. Draw the boundaries inside the repo instead: `sources/` (features, countries, cities) → `Card` → `order/` → `deckgen`/`guide`/`check`.
-- **Rename the deck** to World Atlas once (see Migration). Rename `deck/geographic-features.md`, `dist/*.apkg` and the Makefile `DECK` with it. **Keep the package name `geofeat`**: it's internal, and renaming it is churn no user sees. Renaming the repo to `world-atlas` is the default awaiting confirmation (decision 11).
+- **Rename the deck** to World Atlas once (see Migration). Rename `deck/geographic-features.md`, `dist/*.apkg` and the Makefile `DECK` with it (done in P5: `deck/world-atlas.md`, `dist/world-atlas.apkg`). **Keep the package name `geofeat`**: it's internal, and renaming it is churn no user sees. The repo is renamed to `world-atlas` (decision 11, done in P5).
 
 ### Risks
 
@@ -391,7 +392,7 @@ Excluded by decision on 2026-10-14 and kept on file to revisit: 29 dependencies 
 
 ## Open decisions
 
-These defaults are waiting for the user's confirmation. Numbers follow the build plan; decisions 1–3 (borders, state list, capitals), 5 (territory placement) and 7 (continents) are decided and recorded above. Work proceeds on the default until the user overrides it.
+These defaults are waiting for the user's confirmation. Numbers follow the build plan; decisions 1–3 (borders, state list, capitals), 5 (territory placement), 7 (continents) and 11 (repo name) are decided and recorded above. Work proceeds on the default until the user overrides it.
 
 | # | Decision | Default | Blocks |
 |---|---|---|---|
@@ -400,10 +401,9 @@ These defaults are waiting for the user's confirmation. Numbers follow the build
 | 8 | Curriculum defaults | **21 regions** (check Turkey with the Caucasus, Sudan in East Africa, Mexico with Central America, Iran with Central Asia). **Pass 1** = tiers 1–2 plus the 42 core cities; pass 2 = tier 3 (the secondary cities are deferred). **Drop deck-wide category alternation.** **15 new cards a day**, stated in the README with a warning before regions 11 and 21. **No repositioning tool** for existing users. | P3 order engine |
 | 9 | Scattered states (Kiribati, Micronesia, Tuvalu) | **The whole spread, plus a ring.** | P4 rendering |
 | 10 | Somaliland's outline | **NE's outline as is,** with the Las Anod area mentioned in the blurb. | P2 blurbs, P4 rendering |
-| 11 | Repo name | **Rename to `world-atlas`;** keep the `geofeat` package. | P5 rename |
 | 12 | Distribution | **GitHub release only:** the `.apkg` (about 100 MB) and the guide PDF. | P7 release |
 
-**Where the earlier open items went.** The curriculum items (region list, pass 1 features, city tiers, category alternation, rate, existing users) are all in decision 8; orientation contents is decided (Continents). Architecture defaults D2–D5 and D9 are now the build plan and are proposed in ADRs [0005](adr/0005-card-sources-and-card-dto.md), [0006](adr/0006-positions-lock-and-pos-footnote.md) and [0009](adr/0009-curriculum-order.md). D7 is decision 11, and D8 is decided. Of the territory items, Western Sahara, territory capitals, multiple capitals and Palestine's capital are decided; placement (decision 5) is now decided too; scattered states are decision 9 and Somaliland 10. The NE layers are vendored in P1 (WS4).
+**Where the earlier open items went.** The curriculum items (region list, pass 1 features, city tiers, category alternation, rate, existing users) are all in decision 8; orientation contents is decided (Continents). Architecture defaults D2–D5 and D9 are now the build plan and are proposed in ADRs [0005](adr/0005-card-sources-and-card-dto.md), [0006](adr/0006-positions-lock-and-pos-footnote.md) and [0009](adr/0009-curriculum-order.md). D7 is decision 11, now decided, and D8 is decided. Of the territory items, Western Sahara, territory capitals, multiple capitals and Palestine's capital are decided; placement (decision 5) is now decided too; scattered states are decision 9 and Somaliland 10. The NE layers are vendored in P1 (WS4).
 
 ## ADRs
 
@@ -411,7 +411,7 @@ These defaults are waiting for the user's confirmation. Numbers follow the build
 |---|---|---|
 | [0005](adr/0005-card-sources-and-card-dto.md) | Card sources and the `Card` DTO | Proposed |
 | [0006](adr/0006-positions-lock-and-pos-footnote.md) | `positions.lock` and the ankc `[^pos]` footnote; supersedes the drift consequence in ADR 0004 | Proposed |
-| [0007](adr/0007-rename-and-migration.md) | Rename to World Atlas, and migration | Proposed |
+| [0007](adr/0007-rename-and-migration.md) | Rename to World Atlas, and migration | Accepted; deck and repo renamed |
 | [0008](adr/0008-state-list-borders-adjacency.md) | State list, borders worldview and adjacency | Accepted |
 | [0009](adr/0009-curriculum-order.md) | Curriculum order; supersedes ADR 0004's tier-first rule and ≥ 3 gap | Proposed |
 
@@ -425,11 +425,11 @@ Summary of the 2026-10-14 build plan. Each workstream runs in its own git worktr
 |---|---|---|---|
 | P0 | Decisions and ADRs 0005–0009 (WS6), alongside P1. | ADRs drafted. | Done |
 | P1 | Foundations, in parallel. WS1: ankc 0.6 `[^pos]`. WS2: render core and `RenderSpec`. WS3: `Card` DTO and `positions.lock`. WS4: NE political layers. WS5: cities and continents research. WS6: docs. WS2 merges before WS4; WS3 merges after the ankc 0.6 release. | `make all` passes with ankc 0.6. `media.json` has the same 132 PNG names. `check package` asserts due == `positions.lock`. `make fetch` verifies the new layers. The cities and NE political layers research notes are done. **User gate:** merge the ankc 0.6 release. | Done. ankc 0.6.0 is on PyPI. |
-| P2 | Data and content, in parallel: the political model (`src/geofeat/sources/`), `countries.yaml` (197), `territories.yaml` (23 + 15), `cities.yaml`, `curriculum.yaml` and `adjacency.py`, `regions.py` and the continents. About 530 blurbs, written in 4 regional research streams and fact-checked by a second researcher. | Data validates. | Data done except the continents (in progress) and the verify field (in progress). |
-| P3 | Order engine (`order/` package): passes, regions, frozen walks, anchoring, repair rules, golden tests. Walk maps for review, political checks, notes merged into the data. | **User gate:** sign off the walk maps. | Next |
-| P4 | Rendering treatments: dashed dispute and territory outlines, the recognised-border basemap, close-dot frames, scattered states, a shared basemap if it is over half the render time. Review tooling by region. Cold render of about 560 maps (35–95 min). | **User gate:** sign off the region sheets. | |
-| P5 | The guide in study order (pass, then region, then position; under 80 MB), in parallel with the rename to World Atlas ([ADR 0007](adr/0007-rename-and-migration.md)). | Uid freeze test passes. | |
-| P6 | QA: phone sheets, pair check (features and continents only), CVD on the new treatments. | **User gate:** device tests (fresh import order, a filtered "Order due" deck, Check Database with high dues, the v1 to World Atlas upgrade). | |
+| P2 | Data and content, in parallel: the political model (`src/geofeat/sources/`), `countries.yaml` (197), `territories.yaml` (23 + 15), `cities.yaml`, `curriculum.yaml` and `adjacency.py`, `regions.py` and the continents. About 530 blurbs, written in 4 regional research streams and fact-checked by a second researcher. | Data validates. | Done, including the 7 continent cards and the structured verify field. |
+| P3 | Order engine (`order/` package): passes, regions, frozen walks, anchoring, repair rules, golden tests. Walk maps for review, political checks, notes merged into the data. | **User gate:** sign off the walk maps. | Done: order engine and walk maps merged. |
+| P4 | Rendering treatments: dashed dispute and territory outlines, the recognised-border basemap, close-dot frames, scattered states, a shared basemap if it is over half the render time. Review tooling by region. Cold render of about 560 maps (35–95 min). | **User gate:** sign off the region sheets. | Done: every card kind renders; region sheets signed off. |
+| P5 | The guide in study order (pass, then region, then position; under 80 MB), in parallel with the rename to World Atlas ([ADR 0007](adr/0007-rename-and-migration.md)). | Uid freeze test passes. | Done. Rename: deck `World Atlas`, `dist/world-atlas.apkg`, the README migration section, the uid and note-type identity tests, and the repo, now `world-atlas`. Guide: every card in study order, `make guide REGION=NN` for one region. |
+| P6 | QA: phone sheets, pair check (features and continents only), CVD on the new treatments. | **User gate:** device tests (fresh import order, a filtered "Order due" deck, Check Database with high dues, the v1 to World Atlas upgrade). | Next |
 | P7 | Multi-lens review and three-agent review. Freeze `positions.lock`. Clean-clone build, tag v2.0.0, GitHub release. Archive `poc/countries` as a tag. Release is gated on the verify markers. | Released. | |
 
 ## Appendix A: territories sources and method

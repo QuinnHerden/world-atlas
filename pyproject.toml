@@ -1,7 +1,7 @@
 [project]
 name = "geofeat"
 version = "0.1.0"
-description = "Build pipeline for the Geographic Features Anki deck"
+description = "Build pipeline for the World Atlas Anki deck"
 authors = [
     { name = "Quinn Herden", email = "55929299+QuinnHerden@users.noreply.github.com" }
 ]

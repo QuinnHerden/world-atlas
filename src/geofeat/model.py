@@ -13,7 +13,7 @@ VENDOR = ROOT / "vendor"
 DECK = ROOT / "deck"
 BUILD = ROOT / "build"
 MEDIA_INDEX = BUILD / "media.json"  # card key (kind:id, e.g. feature:nile) -> rendered PNG name
-ROOT_DECK = "Geographic Features"
+ROOT_DECK = "World Atlas"
 
 Category = Literal[
     "Continents",
@@ -94,6 +94,11 @@ def _note(value: str) -> str:
 
 
 Note = Annotated[str, AfterValidator(_note)]
+
+# Research markers a note must not carry into the guide; the claim goes in the entry's `verify` list instead.
+# "as of" alone is ordinary prose ("as of 2014 it hosted..."); an "(as of" or an "as of" a 2020s-or-later year is a
+# marker. Trade-offs: genuine 2020s prose ("as of 2021 the city had") must be reworded, and "as of October 2026" passes.
+NOTE_MARKER = re.compile(r"\(as of|as of 20[2-9]\d|verify|\[v\]|\[s\]|tbd", re.IGNORECASE)
 
 
 class Strict(BaseModel):

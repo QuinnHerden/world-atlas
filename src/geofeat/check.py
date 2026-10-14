@@ -2,7 +2,6 @@
 
 import json
 import math
-import re
 import sqlite3
 import subprocess
 import sys
@@ -25,7 +24,7 @@ from geofeat.card import card_key, load_media
 from geofeat.frame import laea, project
 from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids
-from geofeat.model import DECK, GEOMETRY, ROOT, ROOT_DECK, Feature, Verify, active, load_features
+from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, Verify, active, load_features
 from geofeat.polities import read_countries, read_territory_file
 from geofeat.order import Siblings, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, UNCOMPARED_FAMILIES, find_pairs
@@ -127,12 +126,6 @@ def _check_feature(feature: Feature, geometry: BaseGeometry) -> list[str]:
 
 def missing_notes(features: list[Feature]) -> list[str]:
     return [f"{f.id}: no note (1-3 sentences on why it matters)" for f in active(features) if not f.note]
-
-
-# Research markers a note must not carry into the guide; the claim goes in the entry's `verify` list instead.
-# "as of" alone is ordinary prose ("as of 2014 it hosted..."); an "(as of" or an "as of" a 2020s-or-later year is a
-# marker. Trade-offs: genuine 2020s prose ("as of 2021 the city had") must be reworded, and "as of October 2026" passes.
-NOTE_MARKER = re.compile(r"\(as of|as of 20[2-9]\d|verify|\[v\]|\[s\]|tbd", re.IGNORECASE)
 
 
 class Noted(NamedTuple):

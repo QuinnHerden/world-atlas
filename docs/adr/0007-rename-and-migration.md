@@ -1,6 +1,6 @@
 # 7. Rename to World Atlas, and migration
 
-Status: proposed, 2026-10-14. The deck name is decided; the repo rename (decision 11) and GitHub-only distribution (decision 12) are defaults waiting for the user's confirmation ([open decisions](../world-atlas-plan.md#open-decisions)). Built in P5; tested in P6.
+Status: accepted for the deck rename, built in P5 (2026-10-14); device-tested in P6. The repo was renamed to `world-atlas` after the P5 merge (decision 11). GitHub-only distribution (decision 12) is a default waiting for the user's confirmation ([open decisions](../world-atlas-plan.md#open-decisions)).
 
 ## Context
 
@@ -14,22 +14,20 @@ The deck is called **Geographic Features**, and it becomes **World Atlas** (deci
 
 **Rename once, at the first World Atlas release (v2.0.0).** Every card added after the rename would also need moving, so the first release is the cheapest point.
 
-- **Deck:** `World Atlas`. The Makefile `DECK`, the deck source file and the `.apkg` name change with it.
-- **Repo:** rename to `world-atlas` (default, decision 11). GitHub redirects the old URL. Update the remote and the README links.
+- **Deck:** `World Atlas` (`ROOT_DECK` in `model.py`). The Makefile `DECK`, the deck source file (`deck/world-atlas.md`) and the package (`dist/world-atlas.apkg`, named by ankc from the deck name) change with it.
+- **Repo:** renamed to `world-atlas` (decision 11). GitHub redirects the old URL. Update the remote and the README links.
 - **Package:** keep `geofeat`. It's internal, and renaming it is churn no user sees.
 
 **Identity doesn't change.**
 
-- The 166 feature uids stay as they are, retired ones included. A uid freeze test fails the build if any of them changes or disappears.
-- The ankc note type (model id and fields) for basic cards doesn't change.
+- The 166 feature uids stay as they are, retired ones included. A uid freeze test (`tests/fixtures/feature-uids-v1.txt`) fails the build if any of them changes or disappears.
+- The ankc QA note type every card uses doesn't change: model id `1764365620`, its fields and its template, as ankc 0.4–0.6 package it and v1 shipped it. A test builds a one-card package with the configured ankc and compares it with `tests/fixtures/ankc-qa-model-v1.json`.
+- The deck id does change: ankc derives it from the name (`Geographic Features` 201983241, `World Atlas` 168430863). Anki matches notes by GUID and note type, not by deck, so this costs only the manual deck move below.
 
-**Migration is README guidance, not a tool.** The README gets a migration section for v1 users:
+**Migration is README guidance, not a tool.** The README's migration section gives v1 users two paths:
 
-1. Import the new package.
-2. Move the old cards with **Browse > Change Deck** from `Geographic Features` to `World Atlas`, as in the flat-deck migration.
-3. Choose a path:
-   - **Studied little or nothing:** delete the deck and import fresh, to get the full program order.
-   - **Mid-way:** keep going. The ring starts once the earlier features are done, or run region filtered decks in parallel.
+- **Fresh start** (recommended for anyone who hasn't studied much): delete the `Geographic Features` deck, then import `world-atlas.apkg`, to get the full program order.
+- **Keep review history:** import `world-atlas.apkg`. The existing feature notes update in place and keep their scheduling, but stay in the old deck; move them with **Browse > Change Deck** to `World Atlas`, then delete the empty old deck. Existing cards keep their old queue positions; only new cards follow the new order. Region filtered decks (`tag:region::NN`) let these users study the ring in parallel.
 
 No repositioning tool is built (default, decision 8). These users aren't total beginners.
 
