@@ -28,7 +28,8 @@ Category = Literal[
     "Climate Systems",
 ]
 # The type word shown on the card. Each covers 3+ active cards, except Isthmus, Valley, Cape and Climate belt (2 each)
-# and Sea route and Ocean current (1 each); Pass, Corridor and Island are kept only for retired entries. See
+# and Sea route and Ocean current (1 each); Pass, Corridor and Island are kept only for retired entries; Continent is
+# reserved for the orientation block's continent cards (P2.6), which no entry uses yet. See
 # docs/adr/0001-type-vocabulary.md for the reason behind each.
 FeatureType = Literal[
     "Ocean", "Sea", "Lake",
@@ -39,11 +40,13 @@ FeatureType = Literal[
     "Region",
     "Peninsula", "Isthmus", "Island", "Cape",
     "Ocean current", "Wind system", "Climate belt",
+    "Continent",
 ]
 # A coarse grouping of type words. The pair check treats one highlight covering another as a clash when both share
 # a family, whatever their words; area features of a land family are clipped to land.
 Family = Literal[
     "water body", "river", "sea passage", "land passage", "relief", "lowland", "region", "landmass", "island", "climate",
+    "continent",
 ]
 FAMILY: dict[str, Family] = {
     "Ocean": "water body", "Sea": "water body", "Lake": "water body",
@@ -56,6 +59,7 @@ FAMILY: dict[str, Family] = {
     "Peninsula": "landmass", "Isthmus": "landmass", "Cape": "landmass",
     "Island": "island",  # own family: NE draws some island groups (Spratlys) as a sea-area envelope, so never land-clipped
     "Ocean current": "climate", "Wind system": "climate", "Climate belt": "climate",
+    "Continent": "continent",  # own family: a continent covers its peninsulas, and that is not a clash
 }
 LAND_FAMILIES: frozenset[Family] = frozenset({"land passage", "relief", "lowland", "region", "landmass"})
 # How a hand-authored GeoJSON feature was made; every feature in geometry/ carries one, plus `refs`.
@@ -140,6 +144,11 @@ class AllowNested(Strict):
     reason: Annotated[str, Field(min_length=10)]
 
 
+# The card a feature is placed after in the curriculum: a card key, kind:id (P3; see card.Card.anchor).
+AnchorKey = Annotated[str, Field(pattern=r"^(feature|country|capital|city|territory|dispute|continent):[a-z0-9][a-z0-9-]*$")]
+Reason = Annotated[str, Field(min_length=10), AfterValidator(_card_text)]
+
+
 class Feature(Strict):
     id: Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*$")]
     uid: Annotated[str, Field(pattern=r"^[A-Za-z0-9]{10}$")] | None = None
@@ -157,6 +166,18 @@ class Feature(Strict):
     allow_nested: list[AllowNested] = []
     trim_to_largest: bool = False  # after subtracting, keep only the largest polygon (drops cut-off scraps)
     retired: bool = False
+    # Curriculum overrides, for where regions.py's derivation or P3's default anchor gets it wrong; each needs a reason.
+    region: Annotated[int, Field(ge=1, le=21)] | None = None  # ring region, see docs/world-atlas-plan.md
+    region_reason: Reason | None = None
+    anchor: AnchorKey | None = None
+    anchor_reason: Reason | None = None
+
+    @model_validator(mode="after")
+    def _overrides_have_reasons(self) -> "Feature":
+        for field in ("region", "anchor"):
+            if (getattr(self, field) is None) != (getattr(self, f"{field}_reason") is None):
+                raise ValueError(f"`{field}` and `{field}_reason` go together")
+        return self
 
     @property
     def family(self) -> Family:
@@ -174,6 +195,10 @@ def load_features() -> list[Feature]:
         duplicates = {v for v in values if values.count(v) > 1}
         if duplicates:
             raise ValueError(f"duplicate {key}: {sorted(duplicates)}")
+    ids = {f.id for f in active(features)}
+    for f in features:
+        if f.anchor and f.anchor.startswith("feature:") and f.anchor.removeprefix("feature:") not in ids - {f.id}:
+            raise ValueError(f"{f.id}: anchor {f.anchor!r} names no other active feature")
     return features
 
 
