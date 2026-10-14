@@ -1,6 +1,6 @@
 # 5. Card sources and the Card DTO
 
-Status: proposed, 2026-10-14. Implements the [World Atlas plan](../world-atlas-plan.md#data-model)'s data model. Built in P1 (WS2 `RenderSpec`, WS3 `Card`) and P2 (the new sources).
+Status: proposed, 2026-10-14. Implements the [World Atlas plan](../world-atlas-plan.md#data-model)'s data model. Built in P1 (WS2 `RenderSpec`, WS3 `Card`) and P2 (the new sources); continents are in progress.
 
 ## Context
 
@@ -16,24 +16,30 @@ Before WS2, the render cache hashed the source of `model.py`, so adding a field 
 
 | Source | Model | Cards |
 |---|---|---|
-| `data/features.yaml` | `Feature` (unchanged); continents are added here with a new `Continent` type word and family | feature |
-| `data/countries.yaml` | one entry per state, with its capital nested | country, capital |
-| `data/cities.yaml` | one entry per city, with a `country:` reference | city |
-| `data/territories.yaml` | the 23 dependent territories and 15 disputed areas | territory and dispute cards |
+| `data/features.yaml` | `Feature` (`model.py`), unchanged apart from optional `region`/`anchor` overrides, each with a reason | feature |
+| `data/countries.yaml` | `Country`, with its `Capital` nested (`polities.py`) | country, capital |
+| `data/territories.yaml` | `Territory` and `Dispute`, told apart by `kind` (`polities.py`): the 23 dependent territories and 15 disputed areas | territory, dispute |
+| `data/cities.yaml` | `City`, with a `country:` reference (`sources/cities.py`) | city |
+| continents (in progress) | composed from country outlines (`regions.py`) | continent |
 
-Source modules live in `src/geofeat/sources/`. Each exposes `cards() -> list[Card]`.
+The political entities, their outlines and their placement in the ring load in `polities.py`. Region and pocket host for countries, territories and disputes come from `data/curriculum.yaml`, not from the entries ([ADR 0009](0009-curriculum-order.md)).
 
-**`Card`** (`card.py`) is a plain DTO with these fields: `uid`, `kind`, `key`, `prompt`, `answer`, `tags`, `render: RenderSpec`, `region`, `tier`, `anchor`, `parents`. The order engine, deckgen, `check package` and the guide read only `Card`.
+Source modules live in `src/geofeat/sources/`: `features.py`, `political.py` (countries, capitals, territories, disputes) and `cities.py`. Each exposes `cards() -> list[Card]`, and `sources.all_cards()` fails on a key or uid that repeats across them.
 
-- **`kind`** is `feature`, `country`, `capital` or `city`. Territory and dispute cards get a kind when `territories.yaml` lands; their front words are open decision 4.
-- **`answer`** is a list of lines. deckgen joins them with `<br>`, so a capital's back reads "Paris", then "Capital of France".
-- **Tags:** every card gets `kind::<kind>`, existing feature cards included (`kind::feature`). Countries get `category::countries`, cities `category::cities`. `tier::` and `category::` stay.
+**`Card`** (`card.py`) is a frozen pydantic DTO with these fields: `uid`, `kind`, `id`, `prompt`, `answer_lines`, `tags`, `region`, `tier`, `anchor`, `parents`, `note`, `host`, `orientation` and `render`. The order engine, deckgen, `check package` and the guide read only `Card`.
+
+- **`kind`** is `feature`, `country`, `capital`, `city`, `territory`, `dispute` or `continent`. `id` is unique within a kind; **`key`** is `kind:id` and unique across sources.
+- **`prompt`** is the front's type word: the feature's type, "Country", "City" for capitals and cities alike, and "Territory" or "Disputed territory" (the decision 4 default).
+- **`answer_lines`** is a tuple of plain-text lines. deckgen escapes each one and joins them with `<br>`, so a capital's back reads "Paris", then "Capital of France". A city's second line is its country; a territory's is its status; a dispute's is `Disputed: <parties>`.
+- **`host`** is the key of the country whose run a pocket sits in, after its capital. **`anchor`** is the key of the card a card comes right after: a city's feature (Alexandria after the Nile Delta), or a feature's `anchor` override. **`parents`** must come first: a capital's country, a city's country and capital.
+- **`render`** is a `RenderRef`: the `RenderSpec`, plus a `geometry` provider (and a `dot` provider for capitals and cities) that resolves only when called, so building cards doesn't load Natural Earth.
+- **Tags:** every card gets `kind::<kind>` and a `pass::` tag, which must match `card.study_pass` (derived from kind, tier and the orientation flag). Political and city cards also get `region::NN`. Countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. `tier::` and `category::` stay.
 
 **Two notes per state.** A country and its capital are separate notes with separate uids (`uids: {country, capital}`). The PoC's split cards showed why: the two cards differ on both sides, so ankc's reversed cards can't express them, and cloze can't hide one image per card. Two notes also give each card its own tags, position and retirement. That is how a same-name microstate drops its capital card.
 
-**Ids.** New kinds use kind-prefixed id tags: `id_country_niger`, `id_capital_niger`, `id_city_lagos`. Feature tags stay `id_<id>`. `ids.py` mints uids for every source, and a check fails on a uid or id tag that repeats across sources. Niger, Congo, Jordan and Georgia are real collisions.
+**Ids.** New kinds use kind-prefixed id tags: `id_country_niger`, `id_capital_niger`, `id_city_istanbul`, `id_territory_gibraltar`, `id_dispute_crimea`. Feature tags stay `id_<id>`. `ids.py` mints uids for every source, and a check fails on a uid or id tag that repeats across sources. Real collisions exist: the rivers Niger, Congo and Jordan, and retired island ids such as cyprus and taiwan.
 
-**`RenderSpec`** (`spec.py`) is extracted from `Feature`. It holds the style, frame options, fill opacity, close-up borders and the country/dot/outline overlays: the visual treatment and nothing else. `jobs.py` resolves the geometry, context shapes and former outline and passes them to `render()` alongside the spec. The render cache key hashes the resolved geometry (rounded and normalised), the dumped spec, the renderer code (not `model.py`), `uv.lock`, and the pinned sha256s of the basemap layers and relief raster. See [architecture](../architecture.md) for the full key.
+**`RenderSpec`** (`spec.py`) is extracted from `Feature`. It holds the style, frame options, fill opacity, close-up borders and the country/dot/outline overlays: the visual treatment and nothing else. `jobs.py` calls `card.render.resolve()` for the spec (with its dot filled in), the geometry, the context shapes and the former outline, and passes them to `render()`. The render cache key hashes the resolved geometry (rounded and normalised), the dumped spec, the renderer code (not `model.py`), `uv.lock`, and the pinned sha256s of the basemap layers and relief raster. See [architecture](../architecture.md) for the full key.
 
 ## Consequences
 

@@ -2,23 +2,26 @@
 
 An Anki deck of 132 physical features that shaped settlement, trade and war: oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems. Each card front shows an unlabelled map with one feature highlighted in red and its type ("Strait", "River") above it. The back gives its name.
 
-Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.5.x.
+Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.5 or 0.6.
 
 - How the build works: [docs/architecture.md](docs/architecture.md)
 - Why it works that way: [docs/adr/](docs/adr/)
-- The planned extension to countries, capitals and territories: [docs/world-atlas-plan.md](docs/world-atlas-plan.md)
+- The extension to countries, capitals, cities and territories, World Atlas: [docs/world-atlas-plan.md](docs/world-atlas-plan.md)
 
 ## Build
 
-Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x or 0.6.x and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
+Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x or 0.6.x (0.6.0 is on PyPI as `ankcompiler`) and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
+
+**World Atlas in progress.** `main` also holds the country, territory and city data. Until the P3 order engine can order those cards, `make deck` and `make positions` stop with an error, so `make all` doesn't complete on `main`.
 
 ```sh
 make ids        # mint uids for new entries, then commit features.yaml
 make positions  # give new uids a place in data/positions.lock, then commit it
 make all        # test → fetch → check-data → render → deck → check → build
+make adjacency  # the country adjacency graph and its report (World Atlas)
 ```
 
-`ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. With ankc 0.6 every card gets its position from `data/positions.lock` as a `[^pos]` footnote; with 0.5 positions follow the study order.
+`ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. With ankc 0.6 every card gets its position from `data/positions.lock` as a `[^pos]` footnote; with 0.5 positions follow the study order. Once the lock is frozen, the build requires 0.6.
 
 Output: `dist/geographic-features.apkg`. Import it in Anki with **File → Import**.
 
@@ -28,9 +31,11 @@ Rendering takes about 10 s per map and is cached, so only changed maps re-render
 
 ## Study
 
-Every card is in one deck, `Geographic Features`, with no subdecks. Each card has three tags:
+Every card is in one deck, `Geographic Features`, with no subdecks. Each card has these tags:
 
 - `tier::1`, `tier::2` or `tier::3` (49, 73 and 10 cards)
+- `kind::feature`
+- `pass::orientation`, `pass::1` or `pass::2`: the World Atlas pass the card belongs to (6, 116 and 10 cards)
 - `category::<slug>`: `water-bodies`, `straits-chokepoints`, `mountain-ranges`, `rivers-deltas`, `deserts-plateaus-plains`, `peninsulas-isthmuses`, `regions-rifts` or `climate-systems`
 - `id_<feature-id>`, e.g. `id_nile`
 
@@ -61,6 +66,7 @@ Builds before the flat deck put cards in `Geographic Features::<Category>::Tier 
 - **`data/features.yaml`** is the feature list. Each entry has a name, a type word, a category, a tier, a `note`, geometry selectors and `expect` bounds that catch accidental changes to the shape. The note is one to three plain sentences on why the feature matters; it appears only in the PDF guide, and `make check-data` fails if an active card lacks one.
 - **`geometry/*.geojson`** holds shapes Natural Earth lacks. Every feature in a file needs `source`, `method` and `refs`. The scripts that made the derived shapes are in `tools/` ([tools/README.md](tools/README.md)).
 - **Type words:** `type` must be one of the 23 words in `src/geofeat/model.py`.
+- **World Atlas data:** `data/countries.yaml`, `data/territories.yaml` and `data/cities.yaml` hold the political cards; `data/curriculum.yaml` places each country, territory and disputed area in a region. See [Political data](docs/architecture.md#political-data).
 
 [docs/architecture.md](docs/architecture.md) covers the selectors, frame options, nesting overrides and every check.
 

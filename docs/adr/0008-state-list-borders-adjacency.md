@@ -21,18 +21,18 @@ Which states get cards, and whose borders they show, fixes the card count, the o
 | Kashmir parts, Aksai Chin, Arunachal Pradesh, the Kurils | With the administering power. |
 | Disputed boundary lines | Dashed, from NE's `boundary_lines_disputed_areas`. |
 
-Disputed areas also get their own cards: the 15 "card" entries in the plan's [List 2](../world-atlas-plan.md#appendix-c-list-2-disputed-and-occupied-territories). The 23 "include" dependent territories in [List 1](../world-atlas-plan.md#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards too. Everything else stays on the [revisit list](../world-atlas-plan.md#intentionally-excluded-revisit-list).
+Disputed areas also get their own cards: the 15 "card" entries in the plan's [List 2](../world-atlas-plan.md#appendix-c-list-2-disputed-and-occupied-territories). The 23 "include" dependent territories in [List 1](../world-atlas-plan.md#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards too. Everything else stays on the [revisit list](../world-atlas-plan.md#intentionally-excluded-revisit-list). A dispute card's parties are the claimants or administrators only; a party that isn't one of the 197 states gets a short label (Transnistria, Northern Cyprus).
 
 **Capital cards.**
 
-- A state with several capitals gets one card, for the official/constitutional capital (Porto-Novo, Dodoma, Sri Jayawardenepura Kotte, Sucre, Pretoria, Yamoussoukro, Naypyidaw), not necessarily NE's `Admin-0 capital` row. The blurb names the seat of government. Stale NE names are fixed (Astana).
+- A state with several capitals gets one card, for the official/constitutional capital (Porto-Novo, Dodoma, Sri Jayewardenepura Kotte, Sucre, Pretoria, Yamoussoukro, Naypyidaw), not necessarily NE's `Admin-0 capital` row. The blurb names the seat of government. Stale NE names are fixed (Astana).
 - Nauru's capital, Yaren, is hand-placed from reference coordinates; NE has no row for it.
 - No capital card where the capital shares the country's name and dot: Monaco, Vatican, Singapore, San Marino, Luxembourg.
 - No capital card for Palestine, the territories or the disputed areas.
 
 That gives 191 capital cards.
 
-**Layers.** WS4 pins `populated_places`, `admin_0_map_units`, `admin_0_disputed_areas` and `boundary_lines_disputed_areas`, and records how each outline is composed in `docs/research/ne-political-layers.md`.
+**Layers.** WS4 pins `populated_places`, `admin_0_map_units`, `admin_0_disputed_areas` and `boundary_lines_disputed_areas`. `docs/research/ne-political-layers.md` worked out how each outline is composed; the composition now lives in the `geometry` of each entry in `countries.yaml` and `territories.yaml`, and `make check-data` checks that it is exact.
 
 **Adjacency** is computed at build time from the same recognised-border outlines the country cards draw, before the card's `mainland` display crop: the graph and the region outlines use every part of a state, including the remote islands a card leaves out (`countries_ne.py`). The crop changes no edge and no feature region today.
 
@@ -45,6 +45,6 @@ That gives 191 capital cards.
 
 - The basemap changes to recognised borders, so all 132 feature maps re-render once (P4).
 - Outlines for Ukraine, Georgia, Moldova, Cyprus, Syria and Somalia need disputed-area parts added back, and Morocco's needs Western Sahara removed. Each composition is a reviewable table row in the research note.
-- Cutting Western Sahara out of Morocco removes the Morocco–Mauritania land border. The region 10 to 11 crossing then rests on a distance edge or an `adjacency.yaml` entry. The P3 walk review should confirm it.
+- Cutting Western Sahara out of Morocco removes the Morocco–Mauritania land border. The outlines are still 42 km apart across it, so the computed sea edge carries the region 10 to 11 crossing with no `adjacency.yaml` entry. The P3 walk review should confirm it.
 - Several dispute cards are time-sensitive: Somaliland recognition, the Chagos handover, Essequibo after the ICJ judgment, Western Sahara after UNSC resolution 2797, and the Golan beyond the 1974 line. The [Territories](../world-atlas-plan.md#territories) section lists what to verify before each release.
 - The Russian-occupied areas of Ukraine since 2022 get no card, because NE has no line for them.
