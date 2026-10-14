@@ -1,0 +1,533 @@
+# World Atlas city cards (ADR 0005, docs/research/cities.md): one card per city, a dot inside its country.
+# Core cities only (pass 1); the deferred secondary tier is listed in docs/research/cities.md. Entries follow the ring.
+#
+# - country: a countries.yaml id. ne_id: the 10m_populated_places row; expect: a box round its point.
+# - anchor: an active feature the city comes right after in the walk (only where the city follows from it).
+# - note: the P2.7e blurbs (docs/research/blurbs/e-cities.md), copied as written, apart from PM edits: dates added for
+#   Alexandria (332 BCE), Medina (622), Kolkata (move to Delhi announced in 1911) and Ho Chi Minh City (30 April 1975);
+#   Dubai says "Persian Gulf".
+
+- id: barcelona
+  uid: GqKWmK12fX
+  name: Barcelona
+  country: spain
+  tier: core
+  ne_id: 1159151261
+  expect: [2.13, 41.34, 2.23, 41.44]
+  note: >-
+    A seaport in northeastern Spain on the Mediterranean, capital of Catalonia and Spain's major Mediterranean port.
+    Founded as Roman Bàrcino, in the Middle Ages it became the seat of Old Catalonia's main political institutions,
+    which favoured the trade behind its growth.
+
+- id: rotterdam
+  uid: wNf4h5RpW3
+  name: Rotterdam
+  country: netherlands
+  tier: core
+  ne_id: 1159146435
+  expect: [4.43, 51.87, 4.53, 51.97]
+  note: >-
+    On both banks of the New Meuse (Nieuwe Maas), a distributary of the Rhine, linked to the North Sea by the New
+    Waterway. Its port authority calls it the largest port in Europe. The city was devastated by bombing in the Second
+    World War and rebuilt.
+
+- id: seville
+  uid: Npl2307CcB
+  name: Seville
+  country: spain
+  tier: core
+  ne_id: 1159150601
+  expect: [-6.03, 37.36, -5.93, 37.45]
+  note: >-
+    On the Guadalquivir River in southwestern Spain, inland from the Atlantic; it was once a capital of Muslim Spain.
+    From 1503 its Casa de Contratación (House of Trade) regulated commerce with the New World, and for two centuries the
+    city dominated Spain's American trade. Its Archivo de Indias holds the archives of Spain's American colonies.
+
+- id: hamburg
+  uid: 5MoxVKUHcQ
+  name: Hamburg
+  country: germany
+  tier: core
+  ne_id: 1159151353
+  expect: [9.95, 53.5, 10.05, 53.6]
+  note: >-
+    On the Elbe River in northern Germany, a city that is also a federal state, officially the Free and Hanseatic City
+    of Hamburg. Britannica calls it Germany's largest port. Its Speicherstadt, a port warehouse district on islands in
+    the Elbe, is a World Heritage site.
+
+- id: frankfurt
+  uid: kWz6WIXYtX
+  name: Frankfurt
+  country: germany
+  tier: core
+  ne_id: 1159151351
+  expect: [8.62, 50.05, 8.73, 50.15]
+  note: >-
+    On the Main River in western Germany, upstream of its confluence with the Rhine at Mainz. The Golden Bull of 1356
+    made it the permanent site for electing German kings, and it has held trade fairs since the Middle Ages. Today it is
+    a leading financial centre, with a stock exchange and the seat of the European Central Bank.
+
+- id: venice
+  uid: 7XudX5lIT6
+  name: Venice
+  country: italy
+  tier: core
+  ne_id: 1159150277
+  expect: [12.29, 45.39, 12.39, 45.49]
+  note: >-
+    An island city in a lagoon on the northern Adriatic, in northeastern Italy. Founded in the 5th century AD, it became
+    a major maritime power in the 10th century, and as a republic it defended its trading markets against the Arabs, the
+    Genoese and the Ottoman Turks until the republic fell in 1797.
+
+- id: florence
+  uid: JXIO45YeVJ
+  name: Florence
+  country: italy
+  tier: core
+  ne_id: 1159149751
+  expect: [11.2, 43.73, 11.3, 43.83]
+  note: >-
+    A Tuscan city on the Arno River, built on an Etruscan settlement and the Roman colony of Florentia. Under the early
+    Medici, in the 15th and 16th centuries, it became a symbol of the Renaissance, with an overwhelming influence on
+    architecture and the fine arts in Italy and then Europe.
+
+- id: saint-petersburg
+  uid: WV3H5k8Uwu
+  name: Saint Petersburg
+  country: russia
+  tier: core
+  ne_id: 1159151291
+  expect: [30.26, 59.89, 30.36, 59.99]
+  note: >-
+    On the Neva River near the Baltic coast, built by Peter the Great from 1703 as Russia's "window on Europe". It was
+    the capital of the Russian Empire from 1712 to 1918, saw both revolutions of 1917, and was besieged in the Second
+    World War.
+
+- id: volgograd
+  uid: 5pBQq7j1c2
+  name: Volgograd
+  alt_names: [Stalingrad]
+  country: russia
+  tier: core
+  ne_id: 1159150697
+  expect: [44.45, 48.66, 44.55, 48.76]
+  anchor: volga
+  note: >-
+    On the Volga River in southwestern Russia, founded as the fortress of Tsaritsyn and named Stalingrad from 1925 to
+    1961. The Battle of Stalingrad in 1942–43 stopped the German advance into the Soviet Union and turned the tide of
+    the war in the Allies' favour.
+
+- id: istanbul
+  uid: S01bRvmA5o
+  name: Istanbul
+  country: turkey
+  tier: core
+  ne_id: 1159151579
+  expect: [28.92, 40.97, 29.02, 41.07]
+  anchor: bosporus
+  note: >-
+    Straddles the Bosporus, part of the Turkish Straits between the Black Sea and the Aegean; the Factbook calls it the
+    only metropolis in the world on two continents. Formerly Byzantium and then Constantinople, it was successively the
+    capital of the Eastern Roman and Ottoman Empires. Its historic peninsula between the Golden Horn and the Sea of
+    Marmara holds masterpieces such as Hagia Sophia and the Süleymaniye Mosque.
+
+- id: aleppo
+  uid: wuLYNY8lju
+  name: Aleppo
+  country: syria
+  tier: core
+  ne_id: 1159151267
+  expect: [37.12, 36.18, 37.22, 36.28]
+  note: >-
+    A major Syrian city at the crossroads of several trade routes since the 2nd millennium BC; Hittites, Assyrians,
+    Greeks, Romans, Umayyads, Ayyubids, Mamluks and Ottomans ruled it in turn. Its walled Old City, built round a
+    citadel, has been on UNESCO's List of World Heritage in Danger since 2013 *(as of 2026-10; verify)*.
+
+- id: mecca
+  uid: tUu2L7hnrA
+  name: Mecca
+  alt_names: [Makkah]
+  country: saudi-arabia
+  tier: core
+  ne_id: 1159151279
+  expect: [39.77, 21.38, 39.87, 21.48]
+  note: >-
+    In western Saudi Arabia, inland from the Red Sea coast. Birthplace of the Prophet Muhammad, it holds one of Islam's
+    two holiest shrines and is the destination of the Hajj pilgrimage.
+
+- id: dubai
+  uid: PLLW1aEvyx
+  name: Dubai
+  country: united-arab-emirates
+  tier: core
+  ne_id: 1159151497
+  expect: [55.24, 25.16, 55.34, 25.26]
+  anchor: persian-gulf
+  note: >-
+    On the southwest corner of the Persian Gulf, divided by Dubai Creek, a natural harbour that made it a centre of
+    fishing, pearling and sea trade. It was a successful port city by the early 20th century; its economy now rests
+    heavily on trade, services and finance.
+
+- id: medina
+  uid: CnB1ttBYj5
+  name: Medina
+  country: saudi-arabia
+  tier: core
+  ne_id: 1159149443
+  expect: [39.53, 24.45, 39.63, 24.55]
+  note: >-
+    In western Saudi Arabia near the Red Sea, the city to which Muhammad migrated from Mecca in the Hijrah of 622, the
+    event that begins the Muslim calendar. The Prophet's Mosque houses his tomb, and with Mecca the city holds Islam's
+    two holiest shrines.
+
+- id: zanzibar
+  uid: sLtR1rUDSI
+  name: Zanzibar
+  country: tanzania
+  tier: core
+  ne_id: 1159150789
+  expect: [39.15, -6.21, 39.25, -6.11]
+  note: >-
+    Stone Town, on the western side of Unguja island off the Tanzanian coast, is a Swahili trading town shaped by
+    African, Arab, Indian and European influences. Zanzibar was a hub of Indian Ocean trade that fed the slave trade,
+    and briefly the capital of the Sultanate of Oman before a separate Zanzibar Sultanate split off in 1856. Christ
+    Church Cathedral stands on the site of its last slave market.
+
+- id: alexandria
+  uid: fcEZ5jjkPN
+  name: Alexandria
+  country: egypt
+  tier: core
+  ne_id: 1159151349
+  expect: [29.9, 31.15, 30.0, 31.25]
+  anchor: nile-delta
+  note: >-
+    On the Mediterranean at the western edge of the Nile delta, founded by Alexander the Great in 332 BCE. Under the
+    Ptolemies it held the Library of Alexandria, the most famous library of classical antiquity. It is still one of
+    Egypt's key ports.
+
+- id: timbuktu
+  uid: GEPjlLkedW
+  name: Timbuktu
+  country: mali
+  tier: core
+  ne_id: 1159150921
+  expect: [-3.07, 16.72, -2.97, 16.82]
+  anchor: niger
+  note: >-
+    At the gateway to the Sahara, near the river, it was a crossroads market where salt from the north met gold, cattle
+    and grain from the south. Under Songhai rule in the 15th and 16th centuries it became a large commercial centre
+    known for Islamic scholarship, and its great earthen mosques survive.
+
+- id: johannesburg
+  uid: 3cGDMrft6v
+  name: Johannesburg
+  country: south-africa
+  tier: core
+  ne_id: 1159151515
+  expect: [27.98, -26.22, 28.08, -26.12]
+  note: >-
+    Built on the gold of the Witwatersrand: the city says gold put it on the map after digging there was declared legal
+    in 1886. It grew into South Africa's chief industrial and financial metropolis.
+
+- id: cape-town
+  uid: PKVsi0Kl6W
+  name: Cape Town
+  country: south-africa
+  tier: core
+  ne_id: 1159151583
+  expect: [18.38, -33.97, 18.48, -33.87]
+  anchor: cape-of-good-hope
+  note: >-
+    Named for its site by the Cape of Good Hope, it was founded by Dutch traders in 1652 as a stopover on the spice
+    route between the Netherlands and the Far East. It is South Africa's legislative capital *(as of 2026-10; verify)*;
+    Pretoria is the administrative capital.
+
+- id: mumbai
+  uid: SCyHCXE86E
+  name: Mumbai
+  alt_names: [Bombay]
+  country: india
+  tier: core
+  ne_id: 1159151611
+  expect: [72.83, 19.02, 72.93, 19.12]
+  note: >-
+    Partly on Mumbai Island, between Mumbai Harbour and the Arabian Sea. It grew from a fortified trading outpost into
+    the first city of India in the 19th and 20th centuries, and the Factbook calls it India's financial capital. It is
+    also the headquarters of India's film industry.
+
+- id: kolkata
+  uid: CaGdOS6BAt
+  name: Kolkata
+  alt_names: [Calcutta]
+  country: india
+  tier: core
+  ne_id: 1159151617
+  expect: [88.32, 22.52, 88.42, 22.62]
+  anchor: ganges-brahmaputra-delta
+  note: >-
+    On the east bank of the Hooghly, once the main channel of the Ganges, inland from the Bay of Bengal. It grew from an
+    East India Company trading post into the capital of British India, until the move to Delhi was announced in 1911.
+
+- id: samarkand
+  uid: eJkUnuSzRI
+  name: Samarkand
+  country: uzbekistan
+  tier: core
+  ne_id: 1159150569
+  expect: [66.89, 39.62, 66.99, 39.72]
+  note: >-
+    In a large oasis in the Zerafshan River valley, Samarkand is described by UNESCO as a crossroads of world cultures.
+    Its ancient city was destroyed by Genghis Khan in the 13th century, and it reached its height as capital of the
+    Timurid realm in the 14th and 15th centuries.
+
+- id: isfahan
+  uid: sWNjLomgK3
+  name: Isfahan
+  alt_names: [Esfahan]
+  country: iran
+  tier: core
+  ne_id: 1159150971
+  expect: [51.65, 32.65, 51.75, 32.75]
+  note: >-
+    Capital of Safavid Iran, whose ruler Shah Abbas I laid out its great square, Meidan Emam. The square and the city's
+    Friday Mosque (Masjed-e Jāmé) are World Heritage sites.
+
+- id: shanghai
+  uid: 0MXfiOff90
+  name: Shanghai
+  country: china
+  tier: core
+  ne_id: 1159151605
+  expect: [121.38, 31.17, 121.48, 31.27]
+  anchor: yangtze
+  note: >-
+    Near the mouth of the Yangtze on China's east coast. The 1842 Treaty of Nanking opened it to British merchants as
+    one of five treaty ports, and it grew into a major industrial and commercial centre. Today it is one of China's four
+    municipalities and a key port.
+
+- id: guangzhou
+  uid: gOf9e6JRym
+  name: Guangzhou
+  alt_names: [Canton]
+  country: china
+  tier: core
+  ne_id: 1159151331
+  expect: [113.21, 23.07, 113.31, 23.17]
+  anchor: pearl-river-delta
+  note: >-
+    Historic Canton, near the head of the Pearl River Delta in southern China. Before 1842 British merchants trading at
+    Canton had to deal only through Hong merchants licensed by the Chinese government; the Treaty of Nanking abolished
+    that practice and opened Canton with four other ports. It remains one of China's key ports.
+
+- id: xian
+  uid: ymWqEmN2Qp
+  name: Xi'an
+  country: china
+  tier: core
+  ne_id: 1159151363
+  expect: [108.84, 34.23, 108.94, 34.33]
+  note: >-
+    Capital of Shaanxi province, at the southern edge of the Loess Plateau. Chang'an, on and beside its site, was
+    China's central capital under the Han and Tang dynasties and the start of the Silk Roads' Chang'an–Tianshan corridor
+    to Central Asia.
+
+- id: kyoto
+  uid: Pu1FMMpRM1
+  name: Kyoto
+  country: japan
+  tier: core
+  ne_id: 1159149967
+  expect: [135.7, 34.98, 135.8, 35.08]
+  note: >-
+    Set in a basin ringed by mountains on three sides. It was founded in 794 as the imperial capital Heian-kyō, on a
+    grid modelled on the Tang capital Chang'an, and stayed Japan's imperial capital until the mid-19th century, when the
+    capital moved to Tokyo, the "eastern capital". Its historic monuments are a World Heritage site.
+
+- id: osaka
+  uid: C5kDU0iNEl
+  name: Osaka
+  country: japan
+  tier: core
+  ne_id: 1159151537
+  expect: [135.45, 34.64, 135.55, 34.74]
+  note: >-
+    A port city on Osaka Bay in south-central Honshu, close to Kyoto. Its tourism bureau describes "a long history of
+    prosperity as an economic and cultural center", with the Yodoyabashi, Kitahama and Semba area long the heart of its
+    commerce. Osaka Castle, built by Toyotomi Hideyoshi, stands on the site of the Ishiyama Honganji temple.
+
+- id: hiroshima
+  uid: Msc25n8qOC
+  name: Hiroshima
+  country: japan
+  tier: core
+  ne_id: 1159151389
+  expect: [132.39, 34.34, 132.49, 34.44]
+  note: >-
+    Built on the broad delta where the Ota River splits into branches before reaching the Seto Inland Sea. On 6 August
+    1945 the first atomic bomb used in war exploded over the city. The Hiroshima Peace Memorial (Genbaku Dome), the only
+    structure left standing near the hypocentre, is a World Heritage site.
+
+- id: ho-chi-minh-city
+  uid: UrHt93NDqp
+  name: Ho Chi Minh City
+  alt_names: [Saigon]
+  country: vietnam
+  tier: core
+  ne_id: 1159151253
+  expect: [106.65, 10.71, 106.75, 10.81]
+  note: >-
+    Formerly Saigon, in southern Vietnam on the Saigon River near the Mekong Delta. It was the capital of South Vietnam,
+    which the 1954 Geneva Accords split from the communist North; after the war ended with the North's victory and the
+    fall of Saigon on 30 April 1975, it was renamed for Ho Chi Minh.
+
+- id: malacca
+  uid: PzvECO25ua
+  name: Malacca
+  alt_names: [Melaka]
+  country: malaysia
+  tier: core
+  ne_id: 1159148319
+  expect: [102.2, 2.16, 102.3, 2.26]
+  anchor: strait-of-malacca
+  note: >-
+    A port on the Strait of Malacca, the sea lane that separates the Malay Peninsula from the archipelago. At its height
+    in the 15th century, as a Malay sultanate, it had a navy and hosted thousands of Chinese, Arab, Persian and Indian
+    merchants. Portuguese and then Dutch rule followed from the early 16th century, and with George Town it is a World
+    Heritage site.
+
+- id: sydney
+  uid: GRGgvagUJY
+  name: Sydney
+  country: australia
+  tier: core
+  ne_id: 1159151623
+  expect: [151.16, -33.92, 151.26, -33.82]
+  note: >-
+    On Port Jackson (Sydney Harbour) on Australia's southeast coast. The settlement was founded in 1788, when Arthur
+    Phillip led the First Fleet into Port Jackson, and the town that grew up around Sydney Cove was a convict colony.
+    The Sydney Opera House is a World Heritage site.
+
+- id: new-york
+  uid: YELDi45seb
+  name: New York
+  country: united-states
+  tier: core
+  ne_id: 1159151575
+  expect: [-74.05, 40.67, -73.95, 40.77]
+  note: >-
+    A port on New York Harbor. The English took the Dutch colony of New Netherland in 1664 and renamed it New York.
+    Millions of immigrants were inspected at Ellis Island in the harbor, and the city is home to the United Nations
+    Headquarters.
+
+- id: los-angeles
+  uid: hSpt3W2rhr
+  name: Los Angeles
+  country: united-states
+  tier: core
+  ne_id: 1159151569
+  expect: [-118.28, 34.0, -118.18, 34.1]
+  note: >-
+    Its port lies in San Pedro Bay, south of downtown, and describes itself as the busiest seaport in the Western
+    Hemisphere. The motion picture industry, which arrived at the turn of the 20th century, helped transform Hollywood
+    from a sleepy agricultural suburb into a vibrant commercial centre.
+
+- id: chicago
+  uid: ayUnvU3TOU
+  name: Chicago
+  country: united-states
+  tier: core
+  ne_id: 1159151491
+  expect: [-87.69, 41.8, -87.59, 41.9]
+  anchor: great-lakes
+  note: >-
+    Grew beside the Chicago Portage, a low divide between the Great Lakes and Mississippi River systems, long used by
+    Native Americans and crossed by Marquette and Joliet in 1673. With the Illinois and Michigan Canal, opened in 1848,
+    the portage became the transport link that spurred the city's growth. By the 1880s Chicagoans could claim their city
+    was America's railroad hub.
+
+- id: new-orleans
+  uid: FgxiyqXNVR
+  name: New Orleans
+  country: united-states
+  tier: core
+  ne_id: 1159151233
+  expect: [-90.14, 29.92, -90.04, 30.02]
+  anchor: mississippi-missouri-ohio
+  note: >-
+    On the lower Mississippi, founded as La Nouvelle-Orléans by Jean-Baptiste Le Moyne de Bienville in 1718. In 1803 US
+    negotiators sent to buy only the port of New Orleans and the Floridas instead agreed to buy the whole Louisiana
+    territory from France.
+
+- id: san-francisco
+  uid: c8yZnVf3Wx
+  name: San Francisco
+  country: united-states
+  tier: core
+  ne_id: 1159151479
+  expect: [-122.45, 37.73, -122.35, 37.83]
+  note: >-
+    A sleepy port town until gold was found in the Sierra Nevada foothills in January 1848. The gold rush turned it
+    almost overnight into a booming city.
+
+- id: montreal
+  uid: xXnbXabL9G
+  name: Montreal
+  country: canada
+  tier: core
+  ne_id: 1159151457
+  expect: [-73.64, 45.45, -73.54, 45.55]
+  anchor: st-lawrence
+  note: >-
+    On the St. Lawrence River, where the Sieur de Maisonneuve founded the French settlement of Ville-Marie in May 1642.
+    The colony sat in a key region for farming and the fur trade, and grew into Montreal, one of Canada's great
+    metropolitan centres.
+
+- id: sao-paulo
+  uid: adAnl75ZlL
+  name: São Paulo
+  country: brazil
+  tier: core
+  ne_id: 1159151621
+  expect: [-46.68, -23.61, -46.58, -23.51]
+  note: >-
+    On the plateau above the Serra do Mar in southeastern Brazil, it grew from a college that Jesuits founded in 1554,
+    the origin of the village of São Paulo de Piratininga. The state government credits coffee, and later industry, with
+    São Paulo's growth into the country's largest industrial centre. It is Brazil's largest urban area *(as of 2026-10;
+    verify)*.
+
+- id: rio-de-janeiro
+  uid: vR6h37Mc18
+  name: Rio de Janeiro
+  country: brazil
+  tier: core
+  ne_id: 1159151619
+  expect: [-43.26, -22.96, -43.16, -22.86]
+  note: >-
+    Brazil's capital from 1763 to 1960, after Salvador and before Brasília. The national flag shows the sky over Rio on
+    the morning of 15 November 1889, the day the republic was declared. Its Carioca landscapes between the mountain and
+    the sea are a World Heritage site.
+
+- id: potosi
+  uid: YFanVLe5BY
+  name: Potosí
+  country: bolivia
+  tier: core
+  ne_id: 1159144841
+  expect: [-65.8, -19.62, -65.7, -19.52]
+  note: >-
+    High in the Bolivian Andes below the Cerro Rico, whose silver made it the major colonial-era supplier of silver for
+    Spain. It is reputed to have been the world's largest industrial complex in the 16th century, and Indigenous
+    labourers were forced to work its mines under the mita.
+
+- id: cusco
+  uid: gt9WGgNTNx
+  name: Cusco
+  alt_names: [Cuzco]
+  country: peru
+  tier: core
+  ne_id: 1159150611
+  expect: [-72.02, -13.58, -71.92, -13.47]
+  note: >-
+    In the Peruvian Andes. Under Pachacuteq in the 15th century it became the capital of the Inca Empire; the Spanish
+    who conquered it in the 16th century kept its plan but built Baroque churches and palaces over the Inca city.
