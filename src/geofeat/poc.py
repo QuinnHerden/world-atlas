@@ -1,7 +1,8 @@
 """Countries PoC: a separate 9-card deck testing country and capital cards, built from data/poc-countries.yaml.
 
 Each capital entry gives two cards: the country outlined (back: its name) and its capital as a dot with the country
-as context (back: the capital). A city entry gives the dot card only. Writes the deck to build/poc/, and contact
+as context (back: the capital, then "Capital of <country>"). A city entry gives the dot card only (back: the city, then
+the country). Both dot cards are prompted "City", so the front doesn't give away that the dot is a capital. Writes the deck to build/poc/, and contact
 sheets of every front to build/poc-sheet.png and, 390 px wide, build/poc-phone.png.
 """
 
@@ -73,24 +74,25 @@ def _feature(entry: Entry) -> Feature:
     )
 
 
-def cards(entry: Entry) -> list[tuple[str, str, str, bytes]]:
-    """(uid, prompt, answer, png) for each of the entry's cards."""
+def cards(entry: Entry) -> list[tuple[str, str, str, list[str], bytes]]:
+    """(uid, kind, prompt, answer lines, png) for each of the entry's cards."""
     shape = _select("10m_admin_0_countries", entry.country)
     city = _select("10m_populated_places", entry.city)
     out = []
     if entry.kind == "capital":
         png = render(_feature(entry), shape, country="subject")
-        out.append((entry.uids["country"], "Country", entry.country.name, png))
-    prompt = "Capital" if entry.kind == "capital" else "City"
+        out.append((entry.uids["country"], "country", "Country", [entry.country.name], png))
+    second = f"Capital of {entry.country.name}" if entry.kind == "capital" else entry.country.name
     png = render(_feature(entry), shape, country="context", dot=(city.x, city.y))
-    out.append((entry.uids["city"], prompt, f"{entry.city.name} ({entry.country.name})", png))
+    out.append((entry.uids["city"], entry.kind, "City", [entry.city.name, second], png))
     return out
 
 
-def _note(uid: str, prompt: str, answer: str, image: str, entry: Entry) -> str:
-    tags = [f"kind::{prompt.lower()}", f"id_{entry.id}"]
+def _note(uid: str, kind: str, prompt: str, answer: list[str], image: str, entry: Entry) -> str:
+    tags = [f"kind::{kind}", f"id_{entry.id}"]
     footnotes = "".join(f"[^tag]: {tag}\n" for tag in tags)
-    return f"---\n\n**{prompt}**<br>![]({image}) ::: {html.escape(answer)}\n\n---\n[^uid]: {uid}\n{footnotes}"
+    back = "<br>".join(html.escape(line) for line in answer)
+    return f"---\n\n**{html.escape(prompt)}**<br>![]({image}) ::: {back}\n\n---\n[^uid]: {uid}\n{footnotes}"
 
 
 def _cell(png_path, label: str, width: int) -> tuple[str, Image.Image]:
@@ -110,12 +112,12 @@ def main() -> None:
         old.unlink()
     notes, shown = [], []
     for entry in entries:
-        for uid, prompt, answer, png in cards(entry):
+        for uid, kind, prompt, answer, png in cards(entry):
             image = f"{hashlib.sha256(png).hexdigest()[:12]}.png"
             (OUT / image).write_bytes(png)
-            notes.append(_note(uid, prompt, answer, image, entry))
-            shown.append((OUT / image, f"{prompt} -> {answer}"))
-            print(f"rendered {entry.id} {prompt.lower()} -> {image}")
+            notes.append(_note(uid, kind, prompt, answer, image, entry))
+            shown.append((OUT / image, f"{prompt} -> {' / '.join(answer)}"))
+            print(f"rendered {entry.id} {kind} -> {image}")
     (OUT / "poc-countries.md").write_text(f"---\ndeck: \"{deck_name}\"\n---\n" + "\n".join(notes))
     contact_sheet([_cell(p, label, THUMB_W * 2) for p, label in shown], 2, BUILD / "poc-sheet.png")
     contact_sheet([_cell(p, label, PHONE_W) for p, label in shown], 2, BUILD / "poc-phone.png")

@@ -29,7 +29,7 @@ from geofeat.resolve import GEOD, custom, features_by_id, flow_lines, geometry_p
 from geofeat.style import (
     AREA_ALPHA, BORDER, BORDER_PX, CASING, CASING_PX, CLOSE_UP_BORDER_PX, COAST, COAST_PX, CONTEXT_EDGE,
     CONTEXT_EDGE_PX, CONTEXT_RIVER, CONTEXT_RIVER_PX, CONTEXT_TINT_ALPHA, CURRENT_HEAD_EVERY_PX, CURRENT_HEAD_PX,
-    DOT_PX, DOT_RING_PX, FORMER_SHORE, FORMER_SHORE_PX, HIGHLIGHT, INSET_DOT_PX, INSET_FRAME, INSET_FRAME_MIN_PX,
+    DOT_PX, FORMER_SHORE, FORMER_SHORE_PX, HIGHLIGHT, INSET_DOT_PX, INSET_FRAME, INSET_FRAME_MIN_PX,
     INSET_FRAME_PX, INSET_LAND, INSET_OCEAN, LAND, OCEAN, OUTLINE_ALPHA, OUTLINE_PX, PARENT_RIVER_PX, RING_PX,
     STRAIT_OUTLINE_PX, STROKE_PX, WATER_AREA_ALPHA, WIND_CASING_PX, WIND_CHEVRON_ARM_PX, WIND_CHEVRON_PX, WIND_DASH_PX,
     WIND_GLYPH_PX,
@@ -261,10 +261,9 @@ def _country(ax, geometry: BaseGeometry, frame_: Frame, subject: bool) -> None:
 
 
 def _dot(ax, lon: float, lat: float) -> None:
-    """A city: a red disc in a white casing edged in a dark hairline, so it reads on any fill, inside a ring."""
+    """A city: a red disc in a white casing edged in a dark hairline, so it reads on any fill. No ring."""
     for size, colour in ((DOT_PX + 2 * CASING_PX + 1, CONTEXT_EDGE), (DOT_PX + 2 * CASING_PX, CASING), (DOT_PX, HIGHLIGHT)):
         ax.plot(lon, lat, transform=PLATE, marker="o", ms=pt(size), mfc=colour, mec="none", zorder=6)
-    _ring(ax, lon, lat, PLATE, size=pt(DOT_RING_PX), core=pt(3))
 
 
 def _highlight(ax, feature: Feature, geometry: BaseGeometry, frame_: Frame) -> None:

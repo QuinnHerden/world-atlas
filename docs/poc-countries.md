@@ -9,12 +9,18 @@ Two cards per country, and one card for a major city:
 | Card | Front (prompt + map) | Back |
 |---|---|---|
 | Country | **Country**: the country in a crisp 6 px `#B2182B` outline with a white casing, over a faint 12% red fill. Neighbours stay neutral. | `France` |
-| Capital | **Capital**: the capital as a 20 px `#B2182B` dot in a white casing with a dark hairline, inside a 72 px ring. The country is context only: washed lighter, edged in dark grey, no red. | `Paris (France)` |
-| City | **City**: as the capital card. | `Lagos (Nigeria)` |
+| Capital | **City**: the capital as a 36 px `#B2182B` dot (about 9 px on a phone) in a 3 px white casing with a dark hairline outside it, and no ring. The country is context only: washed lighter, edged in dark grey, no red. | `Paris`<br>`Capital of France` |
+| City | **City**: as the capital card. | `Lagos`<br>`Nigeria` |
 
-Sizes are for a map 1,600 px wide.
+Sizes are for a map 1,600 px wide. The dot has no locating ring, so it is drawn larger to compensate. The casing and hairline keep it legible on land, water and the washed country alike.
 
-The deck **Geography PoC — Countries** has 9 notes: France/Paris, Brazil/Brasília, Japan/Tokyo and Switzerland/Bern (two cards each), plus Lagos (one card). Each note is tagged `kind::country`, `kind::capital` or `kind::city`, plus `id_<entry-id>`.
+### Labelling
+
+Capital and major-city cards both say **City** on the front. The type word must not give the answer away: a front saying "Capital" tells you the answer is the country's capital before you've placed the dot, which turns a recall card into a recognition one. The back says whether it is a capital: the city, then `Capital of <Country>` on a second line. A major city's back is the city, then the country. Country cards are unchanged.
+
+Names on the back are HTML-escaped, as in `deckgen.py`. The `<br>` between the two lines is the only literal markup.
+
+The deck **Geography PoC — Countries** has 9 notes: France/Paris, Brazil/Brasília, Japan/Tokyo and Switzerland/Bern (two cards each), plus Lagos (one card). Each note is tagged `kind::country`, `kind::capital` or `kind::city`, plus `id_<entry-id>`. The tag keeps capitals and cities apart, though their fronts don't.
 
 The maps use the main renderer unchanged except for the highlight. Framing (north-up equirectangular, 2,600 km minimum), basemap, relief, inset and small-area ring are all the same. `render()` gained two optional arguments: `country` (`subject` for the outline, `context` for the wash behind a dot) and `dot`.
 
