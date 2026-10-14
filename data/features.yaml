@@ -104,6 +104,9 @@
   type: River
   category: Rivers & Deltas
   tier: 1
+  region: 10
+  region_reason: >-
+    The plan places the Nile after Egypt and walks region 10 down the Nile from Sudan; by length most of it is in region 9.
   note: >-
     It created Pharaonic Egypt, and most Egyptians still live along the river or its delta. Ethiopia's GERD dam on
     the Blue Nile, inaugurated in September 2025, is the core of an Egypt–Ethiopia dispute.
@@ -145,6 +148,9 @@
   type: Ocean current
   category: Climate Systems
   tier: 2
+  region: 21
+  region_reason: >-
+    The plan puts it last in the ring, so the ring's last cards carry the learner across the Atlantic to Europe.
   note: >-
     This warm current mattered to Atlantic sailing. The popular claim that it keeps Europe mild is contested: Seager
     et al. (2002) credit mostly the westerlies.
@@ -688,6 +694,9 @@
   type: Strait
   category: Straits & Chokepoints
   tier: 2
+  region: 2
+  region_reason: >-
+    Both shores are Danish and Swedish; Germany's coast at the southern entrance is not a shore of the straits.
   note: >-
     Denmark levied the Sound Dues on Baltic shipping for centuries. They are the Baltic's only exit and carry
     Russian Baltic oil exports (4.9 mb/d in 1H25).
@@ -748,6 +757,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 1
+  region: 6
+  region_reason: >-
+    The range frames region 6, Caucasus & Anatolia, from Georgia to Azerbaijan; by area most of it is Russia's northern slope.
   note: >-
     It is the isthmus between the Black Sea and the Caspian and the barrier between Russia and Persia/Turkey. It was
     the scene of the Chechen wars, the 2008 Russia–Georgia war and the Armenia–Azerbaijan wars (2020, 2023).
@@ -2447,6 +2459,9 @@
   type: Climate belt
   category: Climate Systems
   tier: 2
+  region: 21
+  region_reason: >-
+    The plan puts it in the Caribbean, so the ring's last cards carry the learner across the Atlantic.
   note: >-
     It wrecked Spanish treasure fleets and still threatens the US Gulf Coast's ports and energy infrastructure.
   style: band
@@ -2461,6 +2476,9 @@
   type: Climate belt
   category: Climate Systems
   tier: 2
+  region: 17
+  region_reason: >-
+    The plan puts it with the Philippines, the land it shapes most; by land under the band China and Japan lead.
   note: >-
     Typhoons in 1274 and 1281 (the *kamikaze*, "divine wind") wrecked Kublai Khan's invasion fleets at Hakata Bay.
     It is the most active cyclone basin on Earth, hitting the Philippines, Taiwan, South China and Japan.
