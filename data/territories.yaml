@@ -1,7 +1,8 @@
 # Territory and dispute cards (docs/world-atlas-plan.md#territories, ADR 0008). Outlines from
 # docs/research/ne-political-layers.md (b); notes verbatim from docs/research/blurbs/d-americas-continents-territories-disputes.md (ws/blurbs-d).
 # region and host MIRROR data/curriculum.yaml (territories/disputes maps); edit them there and here together until P2.2
-# derives them. host is a placement anchor, not a claim of sovereignty. parties follow world-atlas-plan.md Appendix C.
+# derives them. host is a placement anchor, not a claim of sovereignty. parties: states or authorities that claim or
+# administer the area, not backers or recognisers; a self-declared entity is labelled by its short common name.
 
 - kind: territory
   id: gibraltar
@@ -124,6 +125,7 @@
   id: macau
   uid: JkVUrK1klg
   name: Macau
+  alt_names: [Macao]
   sovereign: china
   status_line: Special administrative region of China
   host: china
@@ -202,6 +204,7 @@
   id: falkland-islands
   uid: t2hN6mRzGI
   name: Falkland Islands
+  alt_names: [Islas Malvinas]
   sovereign: united-kingdom
   status_line: British Overseas Territory
   host: argentina
@@ -318,7 +321,7 @@
   id: transnistria
   uid: 5ONrZqA7G7
   name: Transnistria
-  parties: [moldova, {label: Transnistrian de facto authorities}]
+  parties: [moldova, {label: Transnistria}]
   host: moldova
   region: 5
   geometry:
@@ -330,7 +333,7 @@
   id: abkhazia
   uid: 54JjfJDESg
   name: Abkhazia
-  parties: [georgia, {label: Abkhaz de facto authorities}, russia]
+  parties: [georgia, {label: Abkhazia}]
   host: georgia
   region: 6
   geometry:
@@ -342,7 +345,7 @@
   id: south-ossetia
   uid: DPzzQrRxKV
   name: South Ossetia
-  parties: [georgia, {label: South Ossetian de facto authorities}, russia]
+  parties: [georgia, {label: South Ossetia}]
   host: georgia
   region: 6
   geometry:
@@ -354,7 +357,7 @@
   id: northern-cyprus
   uid: e52TxnvBxI
   name: Northern Cyprus
-  parties: [cyprus, {label: Turkish Republic of Northern Cyprus}, turkey]
+  parties: [cyprus, {label: Northern Cyprus}]
   host: cyprus
   region: 6
   geometry:
@@ -390,7 +393,7 @@
   id: western-sahara
   uid: wndxpq7GzF
   name: Western Sahara
-  parties: [morocco, {label: Polisario Front / Sahrawi Arab Democratic Republic}]
+  parties: [morocco, {label: Sahrawi Republic (Polisario Front)}]
   host: morocco
   region: 10
   geometry:
@@ -430,6 +433,7 @@
   id: arunachal-pradesh
   uid: ui8TE2cLP7
   name: Arunachal Pradesh
+  alt_names: [Zangnan]
   parties: [india, china]
   host: india
   region: 14
@@ -455,6 +459,7 @@
   id: kuril-islands
   uid: USOI1bRyvb
   name: Southern Kuril Islands
+  alt_names: [Northern Territories]
   parties: [russia, japan]
   host: japan
   region: 16
@@ -479,6 +484,7 @@
   id: essequibo
   uid: xTEP7LSmy5
   name: Essequibo
+  alt_names: [Guayana Esequiba]
   parties: [guyana, venezuela]
   host: guyana
   region: 20
