@@ -8,13 +8,16 @@
 #   dr-congo (COD), congo (COG), laos, eswatini, cabo-verde, gambia, micronesia, russia, vatican.
 # - Everything else is spelled out in full: united-kingdom, united-states, united-arab-emirates,
 #   saint-vincent-and-the-grenadines, central-african-republic, bosnia-and-herzegovina.
-# - Each state id maps to its Natural Earth rows (the research note's table (a), keyed by ne_id) in
-#   src/geofeat/adjacency.py SOURCES, until P2.2's countries.yaml takes over.
+# - Each state id maps to its Natural Earth rows in the `geometry` of its entry in data/countries.yaml (territories and
+#   disputes: data/territories.yaml), the one place they are recorded.
 # - Ids are unique within countries, territories and disputes. Some equal a feature id in features.yaml (malta, cyprus,
 #   taiwan, singapore, sri-lanka, cuba, niger, congo, jordan, crimea, greenland, spratly-islands, falkland-islands);
 #   card tags are kind-prefixed (id_country_niger), so that is allowed.
 #
 # Region fields:
+# - opener: optional; the region frame feature (an active feature id) that opens the region, or the cluster of the
+#   first country it mostly covers (docs/world-atlas-plan.md, "Placing each card type").
+# - walk: optional; the frozen neighbour walk over the walk nodes, from entry. Absent: the order engine generates one.
 # - entry, exit: where the plan's "Way in" column crosses between regions. Across open water the exit is the member
 #   nearest the next entry (united-kingdom → iceland, seychelles → maldives, kiribati → united-states), except
 #   bahamas, which the plan names. `python -m geofeat.adjacency` reports each seam's edge or its absence.
@@ -54,6 +57,7 @@ regions:
     name: Western Europe
     entry: portugal
     exit: united-kingdom
+    opener: iberian-peninsula
     way_in: Atlantic, from region 21 (Bahamas)
     countries: [portugal, spain, andorra, france, monaco, belgium, luxembourg, netherlands, united-kingdom, ireland]
     pockets: {andorra: spain, monaco: france}
@@ -73,6 +77,7 @@ regions:
     name: Central Europe & Italy
     entry: poland
     exit: hungary
+    opener: italian-peninsula
     way_in: Lithuania → Poland
     countries: [poland, germany, czechia, austria, switzerland, liechtenstein, italy, san-marino, vatican, malta,
                 slovenia, hungary, slovakia]
@@ -83,6 +88,7 @@ regions:
     name: Balkans
     entry: croatia
     exit: romania
+    opener: balkan-peninsula
     way_in: Hungary → Croatia
     countries: [croatia, bosnia-and-herzegovina, serbia, kosovo, montenegro, albania, north-macedonia, greece,
                 bulgaria, romania]
@@ -102,6 +108,7 @@ regions:
     name: Caucasus & Anatolia
     entry: georgia
     exit: turkey
+    opener: anatolia
     way_in: Russia → Georgia
     countries: [georgia, azerbaijan, armenia, turkey, cyprus]
     disputes: {abkhazia: georgia, south-ossetia: georgia, northern-cyprus: cyprus}
@@ -111,6 +118,7 @@ regions:
     name: Levant & Mesopotamia
     entry: syria
     exit: iraq
+    opener: levant
     way_in: Turkey → Syria
     countries: [syria, lebanon, israel, palestine, jordan, iraq]
     pockets: {palestine: israel}
@@ -121,6 +129,7 @@ regions:
     name: Arabian Peninsula
     entry: kuwait
     exit: yemen
+    opener: arabian-peninsula
     way_in: Iraq → Kuwait
     countries: [kuwait, saudi-arabia, bahrain, qatar, united-arab-emirates, oman, yemen]
 
@@ -194,6 +203,7 @@ regions:
     name: East Asia
     entry: china
     exit: taiwan
+    opener: korean-peninsula
     way_in: Kazakhstan → China
     countries: [china, mongolia, north-korea, south-korea, japan, taiwan]
     territories: {hong-kong: china, macau: china}
@@ -204,6 +214,7 @@ regions:
     name: Southeast Asia
     entry: philippines
     exit: timor-leste
+    opener: malay-peninsula
     way_in: Taiwan → Philippines (Luzon Strait)
     countries: [philippines, malaysia, brunei, singapore, thailand, myanmar, laos, vietnam, cambodia, indonesia,
                 timor-leste]

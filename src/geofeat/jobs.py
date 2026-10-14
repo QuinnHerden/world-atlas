@@ -5,6 +5,7 @@ import gc
 import hashlib
 import json
 import os
+import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from functools import cache
@@ -15,7 +16,7 @@ import shapely
 from shapely.geometry.base import BaseGeometry
 
 import geofeat.ne as ne
-from geofeat.card import Card
+from geofeat.card import UNRENDERED_KINDS, Card, allow_unrendered
 from geofeat.model import BUILD, DECK, LOCK, MEDIA_INDEX, ROOT, VENDOR
 from geofeat.render import render
 from geofeat.resolve import features_by_id
@@ -168,7 +169,13 @@ def render_cards(cards: list[Card]) -> dict[str, str]:
 
 def main() -> None:
     _check_vendor()
-    render_cards(all_cards())
+    cards = all_cards()
+    if allow_unrendered():
+        skipped = [c for c in cards if c.kind in UNRENDERED_KINDS]
+        cards = [c for c in cards if c.kind not in UNRENDERED_KINDS]
+        print(f"WARNING: ALLOW_UNRENDERED=1: not rendering {len(skipped)} "
+              f"{', '.join(sorted({c.kind for c in skipped}))} cards (P4)", file=sys.stderr)
+    render_cards(cards)
 
 
 if __name__ == "__main__":

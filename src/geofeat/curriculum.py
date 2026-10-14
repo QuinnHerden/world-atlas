@@ -50,6 +50,8 @@ class Region(BaseModel):
     pockets: dict[str, str] = {}
     territories: dict[str, str] = {}
     disputes: dict[str, str] = {}
+    walk: list[str] = []  # the frozen neighbour walk over the walk nodes (P3); empty: the order engine generates one
+    opener: str | None = None  # a region frame feature opening the region; geofeat.order.inputs checks it
 
     def placed(self) -> dict[str, str]:
         return self.territories | self.disputes
@@ -85,6 +87,8 @@ class Curriculum(BaseModel):
             errors.append(f"territory or dispute placed twice or clashing with a state: {', '.join(dupes)}")
         for r in self.regions:
             walk = set(r.countries) - set(r.pockets)
+            if r.walk and (sorted(r.walk) != sorted(walk) or r.walk[0] != r.entry):
+                errors.append(f"{r.slug}: walk must start at {r.entry} and list each walk node once")
             for role, c in (("entry", r.entry), ("exit", r.exit)):
                 if c not in walk:
                     errors.append(f"{r.slug}: {role} {c} is not a walk node (a member and not a pocket)")
