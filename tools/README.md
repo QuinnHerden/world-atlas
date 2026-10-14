@@ -131,3 +131,9 @@ python tools/climate/write_geo.py currents
 ## Other derived geometry
 
 - `siliguri_corridor.py` writes the polygon in `geometry/siliguri-corridor.geojson`: NE India within 40 km of both Nepal and Bangladesh.
+
+## Surveys
+
+Read-only scripts that inspect the pinned `vendor/` layers and write nothing.
+
+- `ne_survey.py` prints the tables in [docs/research/ne-political-layers.md](../docs/research/ne-political-layers.md): state rows and capitals, territory and dispute outlines, the recognised-border composition, the point-of-view check, stale shapes and continents. Run `uv run python tools/ne_survey.py` after a re-pin and diff its tables against the doc's. Once P2 lands, its data files are the source of truth and this script is a cross-check.
