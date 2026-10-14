@@ -1,8 +1,8 @@
-"""Adapt data/features.yaml's Feature entries to Cards."""
+"""Adapt data/features.yaml's Feature entries to Cards. A Continent entry makes a `continent` card (ADR 0005)."""
 
 import re
 
-from geofeat.card import Card, Geometry, RenderRef, id_tag, pass_tag, study_pass
+from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, pass_tag, study_pass
 from geofeat.model import FEATURES, Feature, active, load_features, orientation
 from geofeat.resolve import custom, features_by_id, resolve
 from geofeat.spec import RenderSpec
@@ -14,9 +14,18 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
+def kind(feature: Feature) -> Kind:
+    return "continent" if feature.type == "Continent" else "feature"
+
+
+def key(feature: Feature) -> str:
+    return card_key(kind(feature), feature.id)
+
+
 def tags(feature: Feature) -> tuple[str, ...]:
-    return (f"tier::{feature.tier}", f"category::{_slug(feature.category)}", id_tag("feature", feature.id), "kind::feature",
-            pass_tag(study_pass("feature", feature.tier, orientation(feature))))
+    k = kind(feature)
+    return (f"tier::{feature.tier}", f"category::{_slug(feature.category)}", id_tag(k, feature.id), f"kind::{k}",
+            pass_tag(study_pass(k, feature.tier, orientation(feature))))
 
 
 def answer(feature: Feature) -> str:
@@ -38,7 +47,7 @@ def card(feature: Feature) -> Card:
         raise ValueError(f"{feature.id}: no uid (run `make ids` and commit)")
     return Card(
         uid=feature.uid,
-        kind="feature",
+        kind=kind(feature),
         id=feature.id,
         prompt=feature.type_text,
         answer_lines=(answer(feature),),

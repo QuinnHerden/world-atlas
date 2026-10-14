@@ -1,6 +1,6 @@
 # 5. Card sources and the Card DTO
 
-Status: proposed, 2026-10-14. Implements the [World Atlas plan](../world-atlas-plan.md#data-model)'s data model. Built in P1 (WS2 `RenderSpec`, WS3 `Card`) and P2 (the new sources); continents are in progress.
+Status: proposed, 2026-10-14. Implements the [World Atlas plan](../world-atlas-plan.md#data-model)'s data model. Built in P1 (WS2 `RenderSpec`, WS3 `Card`) and P2 (the new sources and the continents).
 
 ## Context
 
@@ -20,7 +20,7 @@ Before WS2, the render cache hashed the source of `model.py`, so adding a field 
 | `data/countries.yaml` | `Country`, with its `Capital` nested (`polities.py`) | country, capital |
 | `data/territories.yaml` | `Territory` and `Dispute`, told apart by `kind` (`polities.py`): the 23 dependent territories and 15 disputed areas | territory, dispute |
 | `data/cities.yaml` | `City`, with a `country:` reference (`sources/cities.py`) | city |
-| continents (in progress) | composed from country outlines (`regions.py`) | continent |
+| continents | `data/features.yaml` entries of type `Continent`, emitted by `sources/features.py`; geometry composed from country outlines (`continents.py`, through the `continent` part) | continent |
 
 The political entities, their outlines and their placement in the ring load in `polities.py`. Region and pocket host for countries, territories and disputes come from `data/curriculum.yaml`, not from the entries ([ADR 0009](0009-curriculum-order.md)).
 

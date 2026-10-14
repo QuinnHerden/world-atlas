@@ -390,10 +390,11 @@
   uid: XM7tYaI6Yg
   name: Africa
   type: Continent
-  category: Regions & Rifts
+  category: Continents
   tier: 1
   note: >-
-    Africa is the second most populous continent, after Asia. It meets Asia only at the Isthmus of Suez.
+    Africa is the second most populous continent, after Asia. It is joined to Asia across the Sinai Peninsula, with
+    the Suez Canal as the conventional divide.
   style: area
   geometry:
   - {layer: continent, select: {id: africa}}
@@ -403,7 +404,7 @@
   uid: 5Ad1iuLyxv
   name: Antarctica
   type: Continent
-  category: Regions & Rifts
+  category: Continents
   tier: 1
   note: >-
     Antarctica surrounds the South Pole and is the only continent with no permanent population; people live there
@@ -418,7 +419,7 @@
   uid: fhfdR5asO6
   name: Asia
   type: Continent
-  category: Regions & Rifts
+  category: Continents
   tier: 1
   note: >-
     Asia is the most populous continent. Its boundary with Europe is a convention, not a coastline: this deck
@@ -433,7 +434,7 @@
   uid: b8dfk0W5fY
   name: Europe
   type: Continent
-  category: Regions & Rifts
+  category: Continents
   tier: 1
   note: >-
     Europe is the western end of the Eurasian landmass, so its eastern boundary with Asia is a convention rather
@@ -448,7 +449,7 @@
   uid: zcPC5VJkNH
   name: North America
   type: Continent
-  category: Regions & Rifts
+  category: Continents
   tier: 1
   note: >-
     North America runs from the Arctic to the Isthmus of Panama, where it joins South America. On this deck's map it
@@ -462,12 +463,12 @@
   uid: Ki7AgVZfiE
   name: Oceania
   type: Continent
-  category: Regions & Rifts
+  category: Continents
   tier: 1
   note: >-
-    In this deck, Oceania means Australia, New Zealand, New Guinea and the Pacific islands of Melanesia, Micronesia
-    and Polynesia. Some atlases call the seventh continent "Australia" and treat Oceania as a wider region around
-    it. It is the least populous of the six inhabited continents.
+    In this deck, Oceania means Australia, New Zealand, Papua New Guinea and the Pacific islands of Melanesia,
+    Micronesia and Polynesia. Some atlases call the seventh continent "Australia" and treat Oceania as a wider region
+    around it. It is the least populous of the six inhabited continents.
   style: area
   geometry:
   - {layer: continent, select: {id: oceania}}
@@ -477,7 +478,7 @@
   uid: 4ngjhORp67
   name: South America
   type: Continent
-  category: Regions & Rifts
+  category: Continents
   tier: 1
   note: >-
     South America is joined to North America by the Isthmus of Panama, with the seam at the Panama–Colombia border.

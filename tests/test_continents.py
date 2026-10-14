@@ -9,12 +9,14 @@ from geofeat.continents import (COMPOSED, MEMBERSHIP, REGION_CONTINENT, TRANSCON
                                 members)
 from geofeat.countries_ne import state_ids
 from geofeat.model import Expect, Feature, Part, active, load_features, orientation
+from geofeat.order.engine import CONTINENTS
 from geofeat.regions import ring
 from geofeat.resolve import resolve
+from geofeat.sources import features as features_source
 
 
-def continent(id: str, part: Part) -> Feature:
-    return Feature(id=id, name=id, type="Continent", category="Regions & Rifts", tier=1, style="area",
+def continent(slug: str, part: Part) -> Feature:
+    return Feature(id=slug, name=slug, type="Continent", category="Continents", tier=1, style="area",
                    geometry=[part], expect=Expect(bbox=(-180, -90, 180, 90)))
 
 
@@ -62,11 +64,11 @@ class MembershipTest(unittest.TestCase):
         self.assertLessEqual(set(TRANSCONTINENTAL), set(state_ids()))
 
     def test_exceptions_differ_from_the_ring(self) -> None:
-        region = {i: REGION_CONTINENT[r.slug] for r in ring().values() for i in (*r.countries, *r.territories)}
-        for id, continent in MEMBERSHIP.items():
-            self.assertNotEqual(region[id], continent, id)
-        for id, spans in TRANSCONTINENTAL.items():
-            self.assertIn(region[id], spans, id)
+        region = {i: REGION_CONTINENT[r.slug] for r in ring().values() for i in (*r.countries, *r.territories, *r.disputes)}
+        for entry, continent in MEMBERSHIP.items():
+            self.assertNotEqual(region[entry], continent, entry)
+        for entry, spans in TRANSCONTINENTAL.items():
+            self.assertIn(region[entry], spans, entry)
 
     def test_un_geoscheme_edges(self) -> None:
         m = members()
@@ -81,7 +83,7 @@ class MembershipTest(unittest.TestCase):
 
 class PartTest(unittest.TestCase):
     def test_a_continent_part_resolves_to_its_composition(self) -> None:
-        with mock.patch.object(continents, "geometry", lambda id: {"europe": box(0, 0, 1, 1)}[id]):
+        with mock.patch.object(continents, "geometry", {"europe": box(0, 0, 1, 1)}.__getitem__):
             shape = resolve(continent("europe", Part(layer="continent", select={"id": "europe"})))
         self.assertTrue(shape.equals(box(0, 0, 1, 1)))
 
@@ -103,6 +105,14 @@ class CardsTest(unittest.TestCase):
         self.assertEqual(sorted(f.id for f in found), sorted([*COMPOSED, "antarctica"]))
         self.assertTrue(all(orientation(f) and f.tier == 1 for f in found))
         self.assertIn("Oceania", {f.name for f in found})
+        self.assertEqual(set(CONTINENTS), {f.id for f in found})
+
+    def test_continent_cards_are_their_own_kind(self) -> None:
+        cards = [c for c in features_source.cards() if c.kind == "continent"]
+        self.assertEqual({c.id for c in cards}, set(CONTINENTS))
+        for c in cards:
+            self.assertEqual((c.key, c.study_pass), (f"continent:{c.id}", "orientation"))
+            self.assertLessEqual({f"id_continent_{c.id}", "kind::continent", "category::continents"}, set(c.tags))
 
 
 if __name__ == "__main__":

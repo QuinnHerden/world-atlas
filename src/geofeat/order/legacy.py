@@ -114,12 +114,9 @@ def _tier_order(members: list[Feature], edges: set[Edge], near: set[frozenset[st
 
 def inputs_hash() -> str:
     """Hash of everything the pair check reads or runs, so deckgen can tell a stale siblings file."""
-    code = [ROOT / "src/geofeat" / name for name in ("pairs.py", "frame.py", "resolve.py", "style.py", "model.py",
-                                                     "continents.py", "regions.py", "countries_ne.py", "polities.py")]
-    # The continents are composed from the political outlines and their ring placement.
-    political = [ROOT / "data" / name for name in ("countries.yaml", "territories.yaml", "curriculum.yaml")]
+    code = [ROOT / "src/geofeat" / name for name in ("pairs.py", "frame.py", "resolve.py", "style.py", "model.py")]
     h = hashlib.sha256()
-    for path in (FEATURES, LOCK, *code, *political, *sorted(GEOMETRY.glob("*.geojson"))):
+    for path in (FEATURES, LOCK, *code, *sorted(GEOMETRY.glob("*.geojson"))):
         data = path.read_bytes()
         h.update(f"{path.name}\0{len(data)}\0".encode() + data)
     return h.hexdigest()

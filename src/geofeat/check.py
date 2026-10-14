@@ -28,9 +28,10 @@ from geofeat.ids import duplicate_uids
 from geofeat.model import DECK, GEOMETRY, ROOT, ROOT_DECK, Feature, Verify, active, load_features
 from geofeat.polities import read_countries, read_territory_file
 from geofeat.order import Siblings, load_siblings, save_siblings
-from geofeat.pairs import NEAR_M, find_pairs
+from geofeat.pairs import NEAR_M, UNCOMPARED_FAMILIES, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
 from geofeat.sources import PATHS, all_cards, cities, political
+from geofeat.sources import features as features_source
 
 RIVER_GAP_M = 20_000
 MOUTH_M = 5_000
@@ -143,7 +144,7 @@ class Noted(NamedTuple):
 def noted() -> list[Noted]:
     """Every card that can carry a note, in file order: active features, countries and their capitals, territories
     and disputes, cities."""
-    rows = [Noted(card_key("feature", f.id), f.note, f.verify) for f in active(load_features())]
+    rows = [Noted(features_source.key(f), f.note, f.verify) for f in active(load_features())]
     for c in read_countries():
         rows.append(Noted(card_key("country", c.id), c.note, c.verify))
         if c.capital:
@@ -242,7 +243,8 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
     errors += [f"{p.a} ~ {p.b}: highlights too alike (IoU {p.iou:.2f}, cover {p.cover:.2f})" for p in pairs if p.flagged]
     if not errors:
         siblings = Siblings(
-            area_km2={i: area_km2(g) for i, (_, g) in clean.items()},
+            # continents are never paired, so their area would only make siblings depend on the political data
+            area_km2={i: area_km2(g) for i, (f, g) in clean.items() if f.family not in UNCOMPARED_FAMILIES},
             close=[(p.a, p.b) for p in all_pairs],
             nested=[(p.b if p.inner == p.a else p.a, p.inner) for p in pairs if p.nested],
         )

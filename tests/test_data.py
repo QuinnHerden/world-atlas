@@ -8,7 +8,7 @@ from shapely.geometry import Point, box
 import geofeat.resolve as resolve
 from geofeat.check import missing_notes, provenance_errors, retired_references
 from geofeat.model import FAMILY, AllowNested, Expect, Feature, FeatureType, FrameOptions, Part
-from geofeat.pairs import Pair, compare
+from geofeat.pairs import Pair, compare, find_pairs
 from geofeat.resolve import area_km2, _drop_slivers, clip_to_land
 
 
@@ -46,6 +46,10 @@ class PairTest(unittest.TestCase):
 
     def test_near_identical_is_flagged_even_when_allowed(self) -> None:
         self.assertTrue(Pair("a", "b", same_family=False, distance_km=0, iou=0.85, cover=0.9, allowed="reason").flagged)
+
+    def test_continents_are_never_compared(self) -> None:
+        continent = feature("c", "Continent")
+        self.assertEqual(find_pairs({"c": (continent, self.outer), "b": (feature("b", "Peninsula"), self.inner)}), [])
 
     def test_far_apart_is_no_pair(self) -> None:
         self.assertIsNone(compare(feature("a", "Plain"), box(0, 0, 1, 1), feature("b", "Plain"), box(20, 0, 21, 1)))

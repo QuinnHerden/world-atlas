@@ -11,6 +11,7 @@ A transcontinental state (TRANSCONTINENTAL) is split along Natural Earth's conti
 `10m_geography_regions_polys` rows of one REGION with FEATURECLA in LANDMASS_CLASSES, per docs/research/continents.md.
 
 A feature draws a continent with the part `{layer: continent, select: {id: <continent id>}}`; resolve.py hands it here.
+The layer name lives in resolve.py, which imports this module lazily: this module imports resolve.py, via polities.
 """
 
 from collections.abc import Mapping
@@ -57,16 +58,13 @@ TRANSCONTINENTAL: dict[str, tuple[str, ...]] = {
 NE_REGION = {"africa": "Africa", "asia": "Asia", "europe": "Europe"}
 LANDMASS_CLASSES = frozenset({"Continent", "Island", "Island group", "Isthmus"})
 LANDMASS_LAYER = "10m_geography_regions_polys"
-# About 1 km: under a pixel on any continent's frame, and it cuts the 10m outlines' vertices by two thirds, which the
-# pair check (it projects each continent against every feature near it) otherwise spends minutes on. Each continent
-# is simplified on its own, so neighbours' shared edges drift by up to this much: Europe and Asia overlap by about
-# 12 km² along the line, North and South America by about 1 km².
-SIMPLIFY_DEG = 0.01
 
 
 def members() -> dict[str, str | tuple[str, ...]]:
     """Every state, territory and dispute the ring places: its continent, or every continent a transcontinental
     state spans."""
+    if unknown := sorted({r.slug for r in ring().values()} - set(REGION_CONTINENT)):
+        raise ValueError(f"no continent for ring region(s) {', '.join(unknown)}; add them to REGION_CONTINENT")
     placed = {i: REGION_CONTINENT[r.slug] for r in ring().values() for i in (*r.countries, *r.territories, *r.disputes)}
     return placed | MEMBERSHIP | TRANSCONTINENTAL
 
@@ -90,17 +88,17 @@ def landmasses() -> dict[str, BaseGeometry]:
     return disjoint({c: unary_union(rows[rows["region"] == NE_REGION[c]].geometry.values) for c in NE_REGION})
 
 
-def continent_geometry(continent: str, members: Mapping[str, str | tuple[str, ...]],
+def continent_geometry(continent: str, membership: Mapping[str, str | tuple[str, ...]],
                        countries: Mapping[str, BaseGeometry], lands: Mapping[str, BaseGeometry]) -> BaseGeometry:
-    """The union of `continent`'s member outlines. `members` maps an entry to its continent, or to every continent
+    """The union of `continent`'s member outlines. `membership` maps an entry to its continent, or to every continent
     it spans. A spanning entry gives each continent the part of it on that continent's landmass (`lands`, disjoint),
     plus any part off every landmass (an island NE leaves out, a coast NE draws further in) nearest that landmass."""
     pieces = []
-    for id, continents in members.items():
+    for entry, continents in membership.items():
         spans = (continents,) if isinstance(continents, str) else continents
         if continent not in spans:
             continue
-        shape = countries[id]
+        shape = countries[entry]
         if len(spans) == 1:
             pieces.append(shape)
             continue
@@ -124,11 +122,12 @@ def geometry(continent: str) -> BaseGeometry:
         raise ValueError(f"no composed continent {continent!r}; one of {', '.join(COMPOSED)}")
     everyone, outlines = members(), _outlines()
     disputes = {d for r in ring().values() for d in r.disputes}
+    if split := sorted(d for d in disputes if not isinstance(everyone[d], str)):
+        raise ValueError(f"disputes can't span continents: {', '.join(split)}")
     entries = {i: c for i, c in everyone.items() if i not in disputes}
     countries = continent_geometry(continent, entries, outlines, landmasses())
     mine = [outlines[d] for d in disputes if everyone[d] == continent]
-    composed = region_outline([countries], mine, held_land())
-    return shapely.make_valid(shapely.simplify(composed, SIMPLIFY_DEG, preserve_topology=True))
+    return shapely.make_valid(region_outline([countries], mine, held_land()))
 
 
 def part_geometry(owner: str, part: Part) -> BaseGeometry:
