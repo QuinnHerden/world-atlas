@@ -2,6 +2,8 @@
 
 Status: accepted, 2026-10-13. Amended on 2026-10-13 (`cf89ef5`) to note the retired passes, islands and Cumberland Gap. Still the current rule; the summary is in [architecture.md](../architecture.md#rendering). The inset's 160 × 80 px is at an 800 px-wide card (320 × 160 at 1600 px); the other sizes are at 1600 px as stated.
 
+To be amended by decision 6 of the [World Atlas plan](../world-atlas-plan.md#open-decisions), if confirmed: the **Minimum frame** rule. A capital or city card would get a tighter frame (at least 1,000 km wide) when another dot is within 150 km, below the 2,600 km minimum.
+
 ## Context
 
 Phone QA at 390 px wide found three problems:

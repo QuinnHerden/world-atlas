@@ -2,6 +2,8 @@
 
 Status: accepted, 2026-10-13. Still the rule for the current deck. The [World Atlas plan](../world-atlas-plan.md) has decided to replace the tier-first order with the atlas ring and the ≥ 3 card gap with a 3–10 card window; when that ships, a new curriculum ADR supersedes rules 1 and 3 here, and a stable-positions ADR supersedes the drift consequence below.
 
+To be superseded by [ADR 0009](0009-curriculum-order.md): rule 1 (tier first) and rule 3's ≥ 3 card gap.
+
 ## Context
 
 The deck had 23 subdecks, `Geographic Features::<Category>::Tier <n>`. By default Anki gathers new cards subdeck by subdeck, in alphabetical order. A learner studying the parent deck met every climate system, tier 3 included, before any tier 1 river or strait. Within a subdeck, order was arbitrary. ankc 0.4 gave every new card position 0 and read source files in directory-listing order.
