@@ -2,38 +2,87 @@ import random
 import string
 import unittest
 
-from geofeat.positions import LIMIT, STRIDE, GapExhausted, Lock, dump, parse, place, regenerate, stale_draft, update
+from geofeat.positions import (
+    LIMIT, STRIDE, Entry, GapExhausted, Lock, dump, frozen_errors, moved, parse, place, regenerate, stale_draft, update,
+)
 
 
 def uid(n: int) -> str:
     return f"U{n:09d}"
 
 
+def at(*uids: str) -> list[tuple[str, object, int]]:
+    """Placements in pass 1, region 1, in this order."""
+    return [(u, 1, 1) for u in uids]
+
+
+A, B = "aaaaaaaaaa", "bbbbbbbbbb"
+
+
 class FormatTest(unittest.TestCase):
     def test_round_trip_sorted_by_uid(self) -> None:
-        lock = Lock(True, {"bbbbbbbbbb": 1000, "aaaaaaaaaa": 500})
+        lock = Lock(True, {B: Entry(1000, 2, 21), A: Entry(500, "orientation", None)})
         text = dump(lock)
-        self.assertEqual(text, "draft: true\naaaaaaaaaa: 500\nbbbbbbbbbb: 1000\n")
+        self.assertEqual(text, f"draft: true\n{A}: 500 pass=orientation region=-\n{B}: 1000 pass=2 region=21\n")
         self.assertEqual(parse(text), lock)
+        self.assertEqual(lock.positions, {A: 500, B: 1000})
 
     def test_rejects_bad_input(self) -> None:
-        for text in ("aaaaaaaaaa: 500\n", "draft: true\naaaaaaaaaa: x\n", "draft: true\naaaaaaaaaa: 1\naaaaaaaaaa: 2\n",
-                     "draft: true\naaaaaaaaaa: 1\nbbbbbbbbbb: 1\n", f"draft: false\naaaaaaaaaa: {LIMIT}\n"):
+        for text in (f"{A}: 500 pass=1 region=01\n", f"draft: true\n{A}: 500\n", f"draft: true\n{A}: x pass=1 region=01\n",
+                     f"draft: true\n{A}: 1 pass=1 region=01\n{A}: 2 pass=1 region=01\n",
+                     f"draft: true\n{A}: 1 pass=1 region=01\n{B}: 1 pass=1 region=01\n",
+                     f"draft: false\n{A}: {LIMIT} pass=1 region=01\n",
+                     f"draft: true\n{A}: 1 pass=orientation region=01\n", f"draft: true\n{A}: 1 pass=1 region=-\n",
+                     f"draft: true\n{A}: 1 pass=1 region=00\n", f"draft: true\n{A}: 1 pass=3 region=01\n",
+                     f"draft: true\n{A}: 1 pass=1 region=1\n"):
             with self.subTest(text), self.assertRaises(ValueError):
                 parse(text)
 
 
 class PlaceTest(unittest.TestCase):
     def test_draft_regenerates_at_the_stride(self) -> None:
-        lock = update(Lock(True, {"a": 7, "gone": 9}), ["b", "a"])
-        self.assertEqual(lock, Lock(True, {"b": 500, "a": 1000}))
+        lock = update(Lock(True, {"a": Entry(7, 1, 3), "gone": Entry(9, 1, 1)}), [("b", "orientation", None), ("a", 2, 4)])
+        self.assertEqual(lock, Lock(True, {"b": Entry(500, "orientation", None), "a": Entry(1000, 2, 4)}))
         self.assertEqual(regenerate([]), {})
 
+    def test_frozen_update_adds_only_and_keeps_every_entry(self) -> None:
+        old = Lock(False, {"a": Entry(500, 1, 1), "gone": Entry(700, 1, 1), "b": Entry(1000, 1, 2)})
+        new = update(old, [("a", 1, 3), ("x", 1, 2), ("b", 1, 2)])  # a's region changed: its entry still doesn't
+        self.assertEqual(new, Lock(False, old.entries | {"x": Entry(600, 1, 2)}))  # between a and the retired uid
+
     def test_stale_draft_is_one_the_current_order_would_rewrite(self) -> None:
-        self.assertFalse(stale_draft(Lock(True, {"a": 500, "b": 1000}), ["a", "b"]))
-        self.assertTrue(stale_draft(Lock(True, {"a": 500, "b": 1000}), ["b", "a"]))
-        self.assertTrue(stale_draft(Lock(True, {"a": 500}), ["a", "b"]))
-        self.assertFalse(stale_draft(Lock(False, {"a": 500, "b": 1000}), ["b", "a"]))  # frozen: old slots by design
+        lock = Lock(True, {"a": Entry(500, 1, 1), "b": Entry(1000, 1, 1)})
+        self.assertFalse(stale_draft(lock, at("a", "b")))
+        self.assertTrue(stale_draft(lock, at("b", "a")))
+        self.assertTrue(stale_draft(Lock(True, {"a": Entry(500, 1, 1)}), at("a", "b")))
+        self.assertTrue(stale_draft(lock, [("a", 1, 1), ("b", 1, 2)]))  # same order, b's region changed
+        self.assertFalse(stale_draft(Lock(False, lock.entries), at("b", "a")))  # frozen: old slots by design
+
+    def test_moved_names_frozen_cards_whose_pass_or_region_changed(self) -> None:
+        lock = Lock(False, {"a": Entry(500, 1, 1), "b": Entry(1000, 1, 1), "c": Entry(1500, "orientation", None)})
+        self.assertEqual(moved(lock, [("a", 1, 1), ("c", "orientation", None), ("new", 2, 5)]), [])
+        self.assertEqual(len(moved(lock, [("a", 2, 1), ("b", 1, 7)])), 2)
+
+
+class FreezeGuardTest(unittest.TestCase):
+    BASE = Lock(False, {A: Entry(500, 1, 1), B: Entry(1000, 1, 2)})
+
+    def test_draft_or_missing_base_passes(self) -> None:
+        self.assertEqual(frozen_errors(Lock(True, {}), None), [])
+        self.assertEqual(frozen_errors(Lock(False, {}), f"draft: true\n{A}: 500\n"), [])  # the old format, unparsed
+
+    def test_adding_uids_passes(self) -> None:
+        self.assertEqual(frozen_errors(Lock(False, self.BASE.entries | {"x" * 10: Entry(750, 1, 1)}), dump(self.BASE)), [])
+
+    def test_any_change_to_a_frozen_entry_fails(self) -> None:
+        for entries in ({A: Entry(500, 1, 1)}, {A: Entry(501, 1, 1), B: Entry(1000, 1, 2)},
+                        {A: Entry(500, 1, 1), B: Entry(1000, 1, 3)}, {A: Entry(500, 2, 1), B: Entry(1000, 1, 2)}):
+            with self.subTest(entries):
+                self.assertTrue(frozen_errors(Lock(False, entries), dump(self.BASE)))
+
+    def test_unfreezing_fails(self) -> None:
+        self.assertTrue(frozen_errors(Lock(True, self.BASE.entries), dump(self.BASE)))
+
 
     def test_after_pred_spread_evenly(self) -> None:
         self.assertEqual(place({"a": 500, "b": 1000}, ["a", "x", "y", "b"]), {"a": 500, "b": 1000, "x": 667, "y": 833})

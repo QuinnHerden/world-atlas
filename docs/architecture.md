@@ -31,7 +31,7 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
 | `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). `IDS="country:france city:*"` renders only the matching cards and deletes nothing, for a pilot. |
 | `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/world-atlas.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map. |
-| `make check` | `check.py deck` | Every card rendered and in the lock; a draft lock matches the current order; ankc `>=0.5,<0.7`; `ankc check` passes. |
+| `make check` | `check.py deck` | Every card rendered and in the lock; a draft lock matches the current order, and a frozen lock's pass and region match each card's; ankc `>=0.5,<0.7`; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/world-atlas.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
 | `make import-test` | `tools/import_test.py` | Imports the package into fresh collections with the official `anki` library and checks the study order, a region filtered deck, Check Database and the upgrade from v1 (below). Not part of `make all`. |
@@ -51,7 +51,7 @@ data/territories.yaml  the 23 territories and 15 disputed areas
 data/cities.yaml       the 42 core cities
 data/curriculum.yaml   passes, the ring of 21 regions, walk lists, pockets and placements, confusables
 data/adjacency.yaml    hand edits to the computed adjacency graph, each with a reason
-data/positions.lock    each card's new-card position, keyed by uid; written only by `make positions`
+data/positions.lock    each card's new-card position, pass and region, keyed by uid; written only by `make positions`
 data/sources.lock      Natural Earth repo, commit, path, sha256 and git blob sha per file
 geometry/*.geojson     hand-authored or derived shapes, each with provenance
 src/geofeat/           the pipeline (modules below)
@@ -80,7 +80,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 | `spec.py` | `RenderSpec`, the visual treatment of a card, and `BASEMAP_LAYERS`. |
 | `jobs.py` | Turns cards into render jobs, keys them, and renders what the cache lacks. Not in the cache key. |
 | `render.py`, `frame.py`, `style.py` | Drawing, framing and the style constants. |
-| `positions.py` | Reads, places and writes `positions.lock`. |
+| `positions.py` | Reads, places and writes `positions.lock`; the freeze guard against `origin/main`. |
 | `order/` | The curriculum order (ADR 0009): `engine.py` (pure: passes, regions, walks, anchoring, repair, report), `walk.py`, `frames.py` (geometry facts cached in `build/frames.json`), `inputs.py` (real-data wiring and policy), `legacy.py` (ADR 0004's feature order and the sibling cache). |
 | `deckgen.py` | The deck markdown. |
 | `ankc.py` | Runs the configured ankc and reads its version. |
@@ -185,9 +185,11 @@ Alternate names follow the name in brackets.
 
 ### Positions
 
-`data/positions.lock` gives every card its new-card position ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md)). The first line is `draft: true` or `draft: false`; each other line is `<uid>: <position>`, sorted by uid. Positions are unique and below 1,000,000.
+`data/positions.lock` gives every card its new-card position ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md)). The first line is `draft: true` or `draft: false`; each other line is `<uid>: <position> pass=<orientation|1|2> region=<NN|->`, sorted by uid. Positions are unique and below 1,000,000. The pass and region are where the order engine placed the card when it was locked (a feature's region is its frame region; orientation has none). The guide sections by them, and `check package` holds each note's `pass::` and `region::` tags to them, so a filtered deck and a region's guide hold the cards their slots say.
 
 `make positions` is the only writer. While the lock is a draft it is regenerated from the study order at a stride of 500, so retired uids drop out. Once it is frozen, locked entries never move. A new uid goes after `pred`, the nearest earlier card in the study order that is in the lock. It takes a slot between `lock[pred]` and the next locked value above it. New uids that share a gap are spread evenly (after the last locked value, at successive strides of 500), and the command fails when a gap is exhausted. A retired uid keeps its entry, so no position is reused.
+
+The lock was frozen (`draft: false`) for v2.0.0. The freeze guard in `check data` and `make positions` reads the lock committed on `origin/main` (`POSITIONS_BASE` overrides the ref). Once that lock is frozen, the working lock must stay frozen and keep every one of its entries unchanged; it may only add uids. Without a readable base (a source archive) `check data` warns and skips the guard, and with `RELEASE=1` it fails. A frozen card whose pass or region changes fails `check deck`: retire the uid and add a new one.
 
 ### Type words and families
 
@@ -333,9 +335,9 @@ It prints every trim, every `allow_nested` override, references to retired featu
 - **Nested** pairs from different families (a delta in its river's frame, a strait inside a cyclone belt) are allowed and reported.
 - **Override policy.** Fix a same-family nesting in the data first: subtract the inner card when the outer shape shouldn't include it. Use `allow_nested: [{id, reason}]` only when the inner feature is a named part of the outer one and cutting it out would misdraw the outer shape. The reason must say why the cards still differ. Current overrides: Aegean/Mediterranean, Barents/Arctic Ocean, Levant/Fertile Crescent, Pontic–Caspian Steppe/Eurasian Steppe, Zagros/Iranian Plateau, and Arabian Desert/Arabian Peninsula (cross-family, so not required, but recorded because its IoU sits just under 0.8).
 
-**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, a draft lock still matches the current study order (`make positions` would leave it unchanged), ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "World Atlas"` passes.
+**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, a draft lock still matches the current study order (`make positions` would leave it unchanged), a frozen lock records each card's current pass and region, ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "World Atlas"` passes.
 
-**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `World Atlas` deck, every note carrying all its tags, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
+**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `World Atlas` deck, every note carrying all its tags, `pass::` and `region::` tags equal to the note's lock entry, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
 
 ## Deck and study order
 
@@ -358,11 +360,11 @@ The order uses the pair results that `check data` caches in `build/siblings.json
 
 `make guide` writes `build/world-atlas-guide.pdf` (A4, reportlab, in the optional `guide` dependency group). The name comes from the deck name. It holds every active card, of every kind, in the new-card study order from `data/positions.lock`, so entry N is the Nth new card Anki shows. Each entry gives the card number, the prompt, the answer lines, the map and the note.
 
-Sections: Orientation, then Pass 1 and Pass 2, each by ring region in ring order. A section's region uses `geofeat.order.region_of`, the order engine's own rule. A card can sit outside its own region: the engine moves a parent to just before its child, and a card whose region or pass changes after the lock is frozen keeps its old slot. The guide shows such a card where Anki shows it, and prints a line for each. To do that, it takes the heaviest chain of (pass, region) runs that never goes back in ring order as the sections; every other run joins the section after it. A linked contents page and PDF bookmarks cover each pass, each region and each card.
+Sections: Orientation, then Pass 1 and Pass 2, each by ring region in ring order. A section's pass and region are the ones `positions.lock` records for its cards (the order engine's `region_of` at the time each was locked). A card can sit outside its own region's run: the engine moves a parent to just before its child. The guide shows such a card where Anki shows it, and prints a line for each. To do that, it takes the heaviest chain of (pass, region) runs that never goes back in ring order as the sections; every other run joins the section after it. A linked contents page and PDF bookmarks cover each pass, each region and each card.
 
 `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with only that region's pass 1 and pass 2 sections. These hold the region's political cards, the same ones a `tag:region::NN` filtered deck holds, plus the features the study order places in the region's run; features carry no region tag, so the filtered deck has none.
 
-The build fails if a card is unrendered, has no note, or has a note carrying a research marker (`NOTE_MARKER` in `model.py`). It also fails if the lock is a draft that `make positions` would rewrite, which means the study order changed since the lock was written. A frozen lock isn't compared, because it keeps each card's old slot by design. It warns if the PDF is over the 80 MB budget. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12).
+The build fails if a card is unrendered, has no note, or has a note carrying a research marker (`NOTE_MARKER` in `model.py`). It also fails if the lock doesn't fit the current study order: a draft that `make positions` would rewrite, or a frozen lock in which a card's pass or region changed. Sections come from the pass and region the lock records. It warns if the PDF is over the 80 MB budget. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12).
 
 ## Review tools
 
