@@ -31,7 +31,6 @@ TERRITORY_TIER = 2  # territory and dispute entries carry no tier of their own; 
 
 Id = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*$")]
 Uid = Annotated[str, Field(pattern=r"^[A-Za-z0-9]{10}$")]
-Region = Annotated[int, Field(ge=1, le=21)]  # ring order, as numbered in data/curriculum.yaml
 GeojsonFile = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*\.geojson$")]
 Lon = Annotated[float, Field(ge=-180, le=180, allow_inf_nan=False)]
 Lat = Annotated[float, Field(ge=-90, le=90, allow_inf_nan=False)]
@@ -165,25 +164,37 @@ class Capital(Strict):
         return self
 
 
-class Country(Strict):
+class Placed(Strict):
+    """An entry whose region and host come from data/curriculum.yaml, the one place placement is decided; the loaders
+    set them. host: the walk node it sits beside as a pocket (P3), never a statement of sovereignty."""
+
     id: Id
+    _placement: tuple[int, str | None] | None = PrivateAttr(default=None)
+
+    @property
+    def region(self) -> int:
+        return self._placed()[0]
+
+    @property
+    def host(self) -> str | None:
+        return self._placed()[1]
+
+    def _placed(self) -> tuple[int, str | None]:
+        if self._placement is None:
+            raise ValueError(f"{self.id}: not placed (region and host come from {CURRICULUM.name}, set by the loaders)")
+        return self._placement
+
+
+class Country(Placed):
     name: Text
     alt_names: list[Text] = []
     uids: dict[Literal["country", "capital"], Uid | None]
     tier: Literal[1, 2, 3]  # microstates and small island states are 3; every country is in pass 1 all the same
-    host: Id | None = None  # the country a microstate sits inside or beside, as a pocket in its run (P3)
     note: Note | None = None
     geometry: Annotated[list[Part], Field(min_length=1)]
     mainland: BBox | None = None  # keep only the outline's parts inside this box (drops overseas parts)
     expect: BBox
     capital: Capital | None  # null: no capital card (same-name microstates, Palestine)
-    _region: int | None = PrivateAttr(default=None)  # from data/curriculum.yaml, set by load_countries()
-
-    @property
-    def region(self) -> int:
-        if self._region is None:
-            raise ValueError(f"{self.id}: no region (countries get theirs from {CURRICULUM.name} in load_countries)")
-        return self._region
 
     @model_validator(mode="after")
     def _uid_slots(self) -> "Country":
@@ -222,16 +233,13 @@ class Country(Strict):
         return out
 
 
-class Territory(Strict):
+class Territory(Placed):
     kind: Literal["territory"]
-    id: Id
     name: Text
     alt_names: list[Text] = []
     uid: Uid | None = None
     sovereign: Id  # a country id
     status_line: Text  # back line 2, e.g. "Overseas department of France"
-    host: Id | None = None  # the country whose run it sits in as a pocket (P3), when not placed on its own
-    region: Region
     geometry: Annotated[list[Part], Field(min_length=1)]
     expect: BBox
     note: Note | None = None
@@ -262,15 +270,12 @@ class PartyLabel(Strict):
 Party = Id | PartyLabel  # a country id, or an explicit label
 
 
-class Dispute(Strict):
+class Dispute(Placed):
     kind: Literal["dispute"]
-    id: Id
     name: Text
     alt_names: list[Text] = []
     uid: Uid | None = None
     parties: Annotated[list[Party], Field(min_length=2)]
-    host: Id | None = None  # the country whose run it sits in as a pocket (P3), e.g. Somalia for Somaliland
-    region: Region
     geometry: Annotated[list[Part], Field(min_length=1)]  # disputed-areas rows
     expect: BBox
     note: Note | None = None
@@ -322,27 +327,33 @@ def unique(models: list, label: str) -> None:
         raise ValueError(f"duplicate {label} id: {duplicates}")
 
 
-def curriculum_regions(states: list[str]) -> dict[str, int]:
-    """The ring region number of every state, territory and dispute data/curriculum.yaml places, the one place region
-    membership is decided. The curriculum is checked against `states` first (each in exactly one region)."""
-    return {c: r.number for r in load_curriculum(states).regions for c in [*r.countries, *r.placed()]}
+def curriculum_placements(states: list[str]) -> dict[str, tuple[int, str | None]]:
+    """The ring region number and host of every state, territory and dispute data/curriculum.yaml places. A state's
+    host is its pocket host, if it is a pocket. The curriculum is checked against `states` first (each state in exactly
+    one region, every host a walk node of its region), so a host is a country, one level deep, in the same region."""
+    placements = {}
+    for r in load_curriculum(states).regions:
+        placements |= {c: (r.number, r.pockets.get(c)) for c in r.countries}
+        placements |= {c: (r.number, host) for c, host in r.placed().items()}
+    return placements
 
 
-def load_countries() -> list[Country]:
-    """The countries, each with its region from data/curriculum.yaml; a country in no region there is an error."""
+def placed[P: Placed](entries: list[P], path: Path, placements: dict[str, tuple[int, str | None]]) -> list[P]:
+    """Set each entry's region and host; an entry the curriculum doesn't place is an error."""
+    if missing := [e.id for e in entries if e.id not in placements]:
+        raise ValueError(f"{path.name}: not placed in any region of {CURRICULUM.name}: {', '.join(missing)}")
+    for entry in entries:
+        entry._placement = placements[entry.id]
+    return entries
+
+
+def _read_countries() -> list[Country]:
     countries = [Country.model_validate(e) for e in read_entries(COUNTRIES)]
     unique(countries, "country")
-    if not countries:
-        return countries
-    regions = curriculum_regions([c.id for c in countries])
-    if missing := [c.id for c in countries if c.id not in regions]:
-        raise ValueError(f"{COUNTRIES.name}: not in any region of {CURRICULUM.name}: {', '.join(missing)}")
-    for country in countries:
-        country._region = regions[country.id]
     return countries
 
 
-def _load_territory_file() -> list[Territory | Dispute]:
+def _read_territory_file() -> list[Territory | Dispute]:
     models = {"territory": Territory, "dispute": Dispute}
     entries = read_entries(TERRITORIES)
     for i, entry in enumerate(entries):
@@ -353,39 +364,42 @@ def _load_territory_file() -> list[Territory | Dispute]:
     return loaded
 
 
+def load_countries() -> list[Country]:
+    """The countries, each placed by data/curriculum.yaml."""
+    countries = _read_countries()
+    return placed(countries, COUNTRIES, curriculum_placements([c.id for c in countries])) if countries else countries
+
+
+def load_political() -> tuple[list[Country], list[Territory | Dispute]]:
+    """The countries, and the territories and disputes in file order, each placed by data/curriculum.yaml."""
+    countries, others = _read_countries(), _read_territory_file()
+    if not countries and not others:
+        return [], []
+    placements = curriculum_placements([c.id for c in countries])
+    return placed(countries, COUNTRIES, placements), placed(others, TERRITORIES, placements)
+
+
 def load_territories() -> list[Territory]:
-    return [t for t in _load_territory_file() if isinstance(t, Territory)]
+    return [t for t in load_political()[1] if isinstance(t, Territory)]
 
 
 def load_disputes() -> list[Dispute]:
-    return [d for d in _load_territory_file() if isinstance(d, Dispute)]
+    return [d for d in load_political()[1] if isinstance(d, Dispute)]
 
 
 def cards() -> list[Card]:
     """Each country's card and its capital's, then the territories and disputes, in file order."""
-    countries = load_countries()
+    countries, others = load_political()
     names = {c.id: c.name for c in countries}
-    others = _load_territory_file()
     return [card for source in countries for card in source.cards()] + [
         card for other in others for card in (other.cards(names) if isinstance(other, Dispute) else other.cards())]
 
 
 def reference_errors(countries: list[Country], others: list[Territory | Dispute]) -> list[str]:
-    """Every country id a source names must exist: hosts, sovereigns and parties. A host is one level deep (it has
-    no host of its own, so there are no chains or cycles) and in the pocket's region, since the pocket sits in its run."""
-    by_id = {c.id: c for c in countries}
+    """Every country id a source names must exist: sovereigns and parties. Hosts come from the curriculum, which checks
+    its own (curriculum_placements)."""
     names = {c.id: c.name for c in countries}
     errors = []
-    for entry in (*countries, *others):
-        if not entry.host:
-            continue
-        host = by_id.get(entry.host)
-        if host is None or host.id == entry.id:
-            errors.append(f"{entry.id}: host {entry.host!r} is {'itself' if entry.host == entry.id else 'not a country'}")
-        elif host.host:
-            errors.append(f"{entry.id}: host {host.id!r} is itself hosted by {host.host!r}; hosts are one level deep")
-        elif host.region != entry.region:
-            errors.append(f"{entry.id}: region {entry.region} differs from its host {host.id}'s region {host.region}")
     for other in others:
         if isinstance(other, Territory) and other.sovereign not in names:
             errors.append(f"{other.id}: sovereign {other.sovereign!r} is not a country")
@@ -401,7 +415,7 @@ def check() -> tuple[list[str], dict[str, BaseGeometry]]:
     """Errors from resolving every outline and point, and the country outlines that resolved, for the city check.
     Each capital must lie inside its country, and every host, sovereign and party must be a country."""
     try:
-        countries, others = load_countries(), _load_territory_file()
+        countries, others = load_political()
     except ValueError as exc:
         return [str(exc)], {}
     errors, outlines = [], {}
@@ -418,10 +432,6 @@ def check() -> tuple[list[str], dict[str, BaseGeometry]]:
             except (ValueError, OSError, GEOSException) as exc:
                 errors.append(str(exc))
     errors += reference_errors(countries, others)
-    if countries and others:
-        regions = curriculum_regions([c.id for c in countries])
-        errors += [f"{o.id}: region {o.region} differs from its region in {CURRICULUM.name} ({regions.get(o.id, 'none')})"
-                   for o in others if regions.get(o.id) != o.region]
     for other in others:
         try:
             errors += composition_errors(other.id, other.geometry)

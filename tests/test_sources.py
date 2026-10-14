@@ -20,7 +20,7 @@ import geofeat.sources.features as features_source
 from geofeat.card import PASS_ORDER, Card, pass_tag, study_pass
 from geofeat.model import Feature, load_features
 from geofeat.model import Part
-from geofeat.sources.political import Country, Dispute, in_bbox, outline
+from geofeat.sources.political import Country, Dispute, Territory, in_bbox, outline
 
 A0, DA = "10m_admin_0_countries", "10m_admin_0_disputed_areas"
 LAYERS = {
@@ -36,7 +36,7 @@ def a0(ne_id: int, **kw) -> dict:
     return {"layer": A0, "select": {"ne_id": ne_id}, **kw}
 
 
-REGIONS = {"alpha": 1, "beta": 2, "gamma": 3, "delta": 1}  # what data/curriculum.yaml would give
+PLACEMENTS = {"alpha": (1, None), "beta": (2, None), "gamma": (3, None), "delta": (1, "alpha")}  # what data/curriculum.yaml would give
 
 
 def countries() -> list[dict]:
@@ -52,10 +52,9 @@ def countries() -> list[dict]:
 def territories() -> list[dict]:
     return [
         {"kind": "territory", "id": "gamma", "name": "Gamma Isle", "uid": "TerritoryG", "sovereign": "alpha",
-         "status_line": "Overseas department of Alpha", "region": 3, "geometry": [a0(3)], "expect": [20, 20, 21, 21]},
+         "status_line": "Overseas department of Alpha", "geometry": [a0(3)], "expect": [20, 20, 21, 21]},
         {"kind": "dispute", "id": "delta", "name": "Delta", "uid": "DisputeDDD", "parties": ["beta", {"label": "Éire Front"}, "alpha"],
-         "host": "alpha",
-         "region": 1, "geometry": [{"layer": DA, "select": {"ne_id": 4}}], "expect": [0, 0, 2, 2]},
+         "geometry": [{"layer": DA, "select": {"ne_id": 4}}], "expect": [0, 0, 2, 2]},
     ]
 
 
@@ -79,7 +78,7 @@ def data(countries=None, territories=None, cities_=None):
             if entries is not None:
                 YAML().dump(entries, paths[name])
         with mock.patch.multiple(political, COUNTRIES=paths["countries"], TERRITORIES=paths["territories"],
-                                 layer=LAYERS.__getitem__, curriculum_regions=lambda states: REGIONS), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
+                                 layer=LAYERS.__getitem__, curriculum_placements=lambda states: PLACEMENTS), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
                 mock.patch.object(cities, "PATH", paths["cities"]):
             yield paths
 
@@ -156,17 +155,22 @@ class CardTextTest(unittest.TestCase):
             with self.subTest(name=name), self.assertRaises(ValidationError):
                 Country.model_validate(countries()[0] | {"name": name})
 
-    def test_region_comes_from_the_curriculum(self) -> None:
-        self.assertEqual([c.region for c in self.countries], [1, 2])
-        with self.assertRaises(ValidationError):
-            Country.model_validate(countries()[0] | {"region": 1})
-        with data(countries()), mock.patch.dict(REGIONS, clear=True), \
-                self.assertRaisesRegex(ValueError, "not in any region of curriculum.yaml: alpha, beta"):
+    def test_placement_comes_from_the_curriculum(self) -> None:
+        self.assertEqual([(c.region, c.host) for c in self.countries], [(1, None), (2, None)])
+        for model, entry in ((Country, countries()[0]), (Territory, territories()[0]), (Dispute, territories()[1])):
+            for field in ("region", "host"):
+                with self.subTest(model=model.__name__, field=field), self.assertRaises(ValidationError):
+                    model.model_validate(entry | {field: 1 if field == "region" else "alpha"})
+        with data(countries()), mock.patch.dict(PLACEMENTS, clear=True), \
+                self.assertRaisesRegex(ValueError, "countries.yaml: not placed in any region of curriculum.yaml: alpha, beta"):
             political.load_countries()
-        with self.assertRaisesRegex(ValueError, "no region"):
+        with self.assertRaisesRegex(ValueError, "not placed"):
             Country.model_validate(countries()[0]).region
-        with data(countries(), territories()), mock.patch.dict(REGIONS, {"gamma": 2}):
-            self.assertEqual(political.check()[0], ["gamma: region 3 differs from its region in curriculum.yaml (2)"])
+        with data(countries(), territories()), mock.patch.dict(PLACEMENTS):
+            del PLACEMENTS["gamma"]
+            self.assertEqual(political.check()[0], ["territories.yaml: not placed in any region of curriculum.yaml: gamma"])
+            with self.assertRaisesRegex(ValueError, "territories.yaml: not placed"):
+                political.cards()
 
     def test_bbox_must_be_finite_and_in_range(self) -> None:
         for expect in ([float("-inf"), 0, 10, 10], [0, 0, 190, 10], [0, -91, 10, 10]):
@@ -293,31 +297,13 @@ class CheckTest(unittest.TestCase):
 
     def test_unknown_references(self) -> None:
         bad = territories()
-        bad[0] |= {"sovereign": "omega", "host": "omega"}
+        bad[0] |= {"sovereign": "omega"}
         bad[1]["parties"] = ["alpha", "omega"]
-        microstate = countries()
-        microstate[1]["host"] = "beta"
-        with data(microstate, bad):
+        with data(countries(), bad):
             self.assertEqual(political.check()[0], [
-                "beta: host 'beta' is itself",
-                "gamma: host 'omega' is not a country",
                 "gamma: sovereign 'omega' is not a country",
                 "delta: parties ['omega'] are not countries (use `{label: ...}` for a non-state party)",
             ])
-
-    def test_hosts_are_one_level_deep_and_in_region(self) -> None:
-        nested = countries()
-        nested[0]["host"] = "beta"
-        nested[1] |= {"host": "alpha"}
-        with data(nested), mock.patch.dict(REGIONS, {"beta": 1}):
-            self.assertEqual(political.check()[0], [
-                "alpha: host 'beta' is itself hosted by 'alpha'; hosts are one level deep",
-                "beta: host 'alpha' is itself hosted by 'beta'; hosts are one level deep",
-            ])
-        elsewhere = territories()
-        elsewhere[0]["host"] = "alpha"
-        with data(countries(), elsewhere):
-            self.assertEqual(political.check()[0], ["gamma: region 3 differs from its host alpha's region 1"])
 
     def test_city_anchor_pass(self) -> None:
         cases = {("atlantic-ocean", "core"): "pass orientation", ("lake-baikal", "secondary"): None}

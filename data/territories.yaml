@@ -1,8 +1,9 @@
 # Territory and dispute cards (docs/world-atlas-plan.md#territories, ADR 0008). Outlines from
 # docs/research/ne-political-layers.md (b); notes verbatim from docs/research/blurbs/d-americas-continents-territories-disputes.md (ws/blurbs-d).
-# region and host MIRROR data/curriculum.yaml (territories/disputes maps); edit them there and here together until P2.2
-# derives them. host is a placement anchor, not a claim of sovereignty. parties: states or authorities that claim or
-# administer the area, not backers or recognisers; a self-declared entity is labelled by its short common name.
+# Region and host are not stored here: they come from data/curriculum.yaml's territories and disputes maps, and every id
+# must be placed there. The adjacency graph and the region outlines read `geometry` too (countries_ne.py). parties:
+# states or authorities that claim or administer the area, not backers or recognisers; a self-declared entity is
+# labelled by its short common name.
 
 - kind: territory
   id: gibraltar
@@ -10,8 +11,6 @@
   name: Gibraltar
   sovereign: united-kingdom
   status_line: British Overseas Territory
-  host: united-kingdom
-  region: 1
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320719}}
   expect: [-5.4, 36, -5.3, 36.2]
@@ -23,8 +22,6 @@
   name: Isle of Man
   sovereign: united-kingdom
   status_line: British Crown Dependency
-  host: united-kingdom
-  region: 1
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320721}}
   expect: [-4.9, 54, -4.2, 54.5]
@@ -36,8 +33,6 @@
   name: Jersey
   sovereign: united-kingdom
   status_line: British Crown Dependency
-  host: united-kingdom
-  region: 1
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320725}}
   expect: [-2.3, 49.1, -1.9, 49.3]
@@ -49,8 +44,6 @@
   name: Guernsey
   sovereign: united-kingdom
   status_line: British Crown Dependency
-  host: united-kingdom
-  region: 1
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320715}}
   expect: [-2.7, 49.3, -2.1, 49.8]
@@ -62,8 +55,6 @@
   name: Faroe Islands
   sovereign: denmark
   status_line: Autonomous territory of the Kingdom of Denmark
-  host: denmark
-  region: 2
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320549}}
   expect: [-7.7, 61.3, -6.2, 62.5]
@@ -75,8 +66,6 @@
   name: Svalbard
   sovereign: norway
   status_line: Part of the Kingdom of Norway, under the Svalbard Treaty
-  host: norway
-  region: 2
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321119}}
   expect: [10.4, 74.3, 33.7, 80.8]
@@ -88,8 +77,6 @@
   name: Réunion
   sovereign: france
   status_line: Overseas department of France (part of France)
-  host: mauritius
-  region: 13
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320661}}
   expect: [55.2, -21.4, 55.9, -20.8]
@@ -101,8 +88,6 @@
   name: British Indian Ocean Territory
   sovereign: united-kingdom
   status_line: British Overseas Territory
-  host: maldives
-  region: 14
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320723}}
   expect: [71.2, -7.5, 72.6, -5.2]
@@ -114,8 +99,6 @@
   name: Hong Kong
   sovereign: china
   status_line: Special administrative region of China
-  host: china
-  region: 16
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320473}}
   expect: [113.8, 22.1, 114.5, 22.6]
@@ -128,8 +111,6 @@
   alt_names: [Macao]
   sovereign: china
   status_line: Special administrative region of China
-  host: china
-  region: 16
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320475}}
   expect: [113.4, 22, 113.7, 22.3]
@@ -141,8 +122,6 @@
   name: Guam
   sovereign: united-states
   status_line: Unincorporated territory of the United States
-  host: micronesia
-  region: 18
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321359}}
   expect: [144.6, 13.2, 145, 13.7]
@@ -154,8 +133,6 @@
   name: New Caledonia
   sovereign: france
   status_line: Sui generis collectivity of France
-  host: vanuatu
-  region: 18
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320641}}
   expect: [163.5, -22.7, 171.4, -19.6]
@@ -167,8 +144,6 @@
   name: French Polynesia
   sovereign: france
   status_line: Overseas collectivity of France
-  host: kiribati
-  region: 18
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320643}}
   expect: [-154.6, -27.7, -134.9, -7.9]
@@ -180,8 +155,6 @@
   name: Greenland
   sovereign: denmark
   status_line: Autonomous territory of the Kingdom of Denmark
-  host: canada
-  region: 19
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320551}}
   expect: [-73.1, 59.7, -11.3, 83.7]
@@ -193,8 +166,6 @@
   name: Bermuda
   sovereign: united-kingdom
   status_line: British Overseas Territory
-  host: united-states
-  region: 19
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320705}}
   expect: [-65, 32.2, -64.6, 32.5]
@@ -207,8 +178,6 @@
   alt_names: [Islas Malvinas]
   sovereign: united-kingdom
   status_line: British Overseas Territory
-  host: argentina
-  region: 20
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320711}}
   expect: [-61.4, -52.5, -57.7, -51]
@@ -220,8 +189,6 @@
   name: French Guiana
   sovereign: france
   status_line: Overseas department of France (part of France)
-  host: brazil
-  region: 20
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320655}}
   expect: [-54.7, 2, -51.6, 5.8]
@@ -233,8 +200,6 @@
   name: Aruba
   sovereign: netherlands
   status_line: Constituent country of the Kingdom of the Netherlands
-  host: venezuela
-  region: 20
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321097}}
   expect: [-70.1, 12.3, -69.8, 12.7]
@@ -246,8 +211,6 @@
   name: Curaçao
   sovereign: netherlands
   status_line: Constituent country of the Kingdom of the Netherlands
-  host: venezuela
-  region: 20
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321099}}
   expect: [-69.2, 12, -68.7, 12.5]
@@ -259,8 +222,6 @@
   name: Puerto Rico
   sovereign: united-states
   status_line: Unincorporated territory of the United States
-  host: dominican-republic
-  region: 21
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321363}}
   expect: [-68, 17.9, -65.2, 18.6]
@@ -272,8 +233,6 @@
   name: Cayman Islands
   sovereign: united-kingdom
   status_line: British Overseas Territory
-  host: cuba
-  region: 21
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320707}}
   expect: [-81.5, 19.2, -79.7, 19.8]
@@ -285,8 +244,6 @@
   name: Guadeloupe
   sovereign: france
   status_line: Overseas department of France (part of France)
-  host: dominica
-  region: 21
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320653}}
   expect: [-61.9, 15.8, -60.9, 16.6]
@@ -298,8 +255,6 @@
   name: Martinique
   sovereign: france
   status_line: Overseas department of France (part of France)
-  host: saint-lucia
-  region: 21
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320657}}
   expect: [-61.3, 14.3, -60.7, 14.9]
@@ -310,8 +265,6 @@
   uid: WA5m7QzQAO
   name: Crimea
   parties: [ukraine, russia]
-  host: ukraine
-  region: 5
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}}
   expect: [32.4, 44.3, 36.7, 46.3]
@@ -322,8 +275,6 @@
   uid: 5ONrZqA7G7
   name: Transnistria
   parties: [moldova, {label: Transnistria}]
-  host: moldova
-  region: 5
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321047}}
   expect: [28.4, 46.5, 30, 48.2]
@@ -334,8 +285,6 @@
   uid: 54JjfJDESg
   name: Abkhazia
   parties: [georgia, {label: Abkhazia}]
-  host: georgia
-  region: 6
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320785}}
   expect: [39.9, 42.3, 42.2, 43.6]
@@ -346,8 +295,6 @@
   uid: DPzzQrRxKV
   name: South Ossetia
   parties: [georgia, {label: South Ossetia}]
-  host: georgia
-  region: 6
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320787}}
   expect: [43.5, 41.9, 44.7, 42.8]
@@ -358,8 +305,6 @@
   uid: e52TxnvBxI
   name: Northern Cyprus
   parties: [cyprus, {label: Northern Cyprus}]
-  host: cyprus
-  region: 6
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320531}}
   expect: [32.5, 34.9, 34.7, 35.8]
@@ -370,8 +315,6 @@
   uid: oYzEn5WYqO
   name: Golan Heights
   parties: [syria, israel]
-  host: syria
-  region: 7
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}}
   expect: [35.5, 32.6, 36, 33.5]
@@ -382,8 +325,6 @@
   uid: JkIA5JQBbY
   name: Somaliland
   parties: [somalia, {label: Somaliland}]
-  host: somalia
-  region: 9
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321259}}
   expect: [42.6, 7.9, 49, 11.6]
@@ -394,8 +335,6 @@
   uid: wndxpq7GzF
   name: Western Sahara
   parties: [morocco, {label: Sahrawi Republic (Polisario Front)}]
-  host: morocco
-  region: 10
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321037}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321223}}
@@ -407,8 +346,6 @@
   uid: qYWz011b5J
   name: Kashmir (Indian-administered)
   parties: [india, pakistan, china]
-  host: india
-  region: 14
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320869}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320865}}
@@ -421,8 +358,6 @@
   uid: uCmlTrHFie
   name: Kashmir (Pakistani-administered)
   parties: [pakistan, india]
-  host: pakistan
-  region: 14
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321157}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321155}}
@@ -435,8 +370,6 @@
   name: Arunachal Pradesh
   alt_names: [Zangnan]
   parties: [india, china]
-  host: india
-  region: 14
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320857}}
   expect: [91.5, 26.8, 97.4, 29.4]
@@ -447,8 +380,6 @@
   uid: Gu38h3G7An
   name: Aksai Chin
   parties: [china, india]
-  host: china
-  region: 16
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320487}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320485}}
@@ -461,8 +392,6 @@
   name: Southern Kuril Islands
   alt_names: [Northern Territories]
   parties: [russia, japan]
-  host: japan
-  region: 16
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321213}}
   expect: [145.3, 43.3, 148.9, 45.6]
@@ -473,8 +402,6 @@
   uid: V6Ch6dDZjH
   name: Spratly Islands
   parties: [china, taiwan, vietnam, philippines, malaysia, brunei]
-  host: philippines
-  region: 17
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321165}}
   expect: [114, 9.6, 115.9, 11.2]
@@ -486,8 +413,6 @@
   name: Essequibo
   alt_names: [Guayana Esequiba]
   parties: [guyana, venezuela]
-  host: guyana
-  region: 20
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320821}}
   expect: [-61.5, 1.1, -58.1, 8.6]

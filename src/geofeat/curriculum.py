@@ -108,7 +108,7 @@ class Curriculum(BaseModel):
 
 
 def load_curriculum(states: Iterable[str], path: Path = CURRICULUM) -> Curriculum:
-    """The curriculum, checked against the known state ids (countries_ne.state_ids() until P2.2's countries.yaml)."""
+    """The curriculum, checked against the known state ids (data/countries.yaml's)."""
     curriculum = Curriculum.model_validate(YAML(typ="safe").load(path))
     if errors := curriculum.check(states):
         raise ValueError(f"{path.name}: " + "; ".join(errors))

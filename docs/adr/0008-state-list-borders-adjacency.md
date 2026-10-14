@@ -34,7 +34,7 @@ That gives 191 capital cards.
 
 **Layers.** WS4 pins `populated_places`, `admin_0_map_units`, `admin_0_disputed_areas` and `boundary_lines_disputed_areas`, and records how each outline is composed in `docs/research/ne-political-layers.md`.
 
-**Adjacency** is computed at build time from the same recognised-border outlines the country cards draw.
+**Adjacency** is computed at build time from the same recognised-border outlines the country cards draw, before the card's `mainland` display crop: the graph and the region outlines use every part of a state, including the remote islands a card leaves out (`countries_ne.py`). The crop changes no edge and no feature region today.
 
 - Two countries touch when their outlines intersect after a 1 km buffer, which absorbs 10m slivers.
 - Countries within 200 km across water are linked by a sea edge, so island states aren't isolated (UK–France, Japan–Korea, Sri Lanka–India).

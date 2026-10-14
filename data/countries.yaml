@@ -1,14 +1,13 @@
 # World Atlas country cards (ADR 0005, 0008): a country card and, unless `capital: null`, a capital card per state.
-# Seeded by tools/seed_countries.py; edit here from now on. Region membership is not stored here: it comes from
-# data/curriculum.yaml, and every id must be in one of its regions. Entries were seeded in ring and walk order, but
-# their order here means nothing: the curriculum holds the order.
+# Seeded once by tools/seed_countries.py (since removed); edit here. Region membership, pocket hosts and order are not
+# stored here: they come from data/curriculum.yaml, and every id must be in one of its regions.
 #
 # - geometry: Natural Earth rows; the first is the base, `subtract` parts are cut out (recognised borders, ADR 0008).
-#   Mirrors countries_ne.SOURCES; tests/test_countries.py checks they agree.
+#   The adjacency graph and the region outlines read it too (countries_ne.py).
 # - mainland: keep only the outline's parts wholly inside this box (drops remote outliers that get no card). A display
-#   crop for the card only: adjacency and region derivation use the full outline (countries_ne).
-# - expect: the outline's bbox (lon_min > lon_max crosses 180°); a capital's is a box around its point.
-# - tier 3: microstates and small island states (the PoC's ring rule); host: a pocket's host in curriculum.yaml.
+#   crop for the card only: adjacency and region derivation use the full outline (countries_ne.py).
+# - expect: the card outline's bbox (lon_min > lon_max crosses 180°); a capital's is a box around its point.
+# - tier 3: microstates and small island states only.
 # - note: the P2.7 blurbs, copied as written.
 
 - id: portugal
@@ -52,7 +51,6 @@
   name: Andorra
   uids: {country: Heh7XKRrTp, capital: 6kUNz2kobp}
   tier: 3
-  host: spain
   note: >-
     A tiny landlocked principality high in the Pyrenees between France and Spain. Its heads of state are two
     co-princes, the French head of state and the Bishop of Urgell, an arrangement dating back to 1278.
@@ -90,7 +88,6 @@
   name: Monaco
   uids: {country: TwE16wD8r7}
   tier: 3
-  host: france
   note: >-
     A principality on the Mediterranean, surrounded on land by France near the Italian border. It is the world's
     second-smallest state, after the Vatican, and the smallest with a coastline. The Grimaldi family has ruled it
@@ -429,7 +426,6 @@
   name: Liechtenstein
   uids: {country: 1qlvu8UyVc, capital: BOfJDSGp93}
   tier: 3
-  host: switzerland
   note: >-
     An Alpine principality between Switzerland and Austria. It is one of only two doubly landlocked countries, with
     Uzbekistan, and has a customs and monetary union with Switzerland.
@@ -467,7 +463,6 @@
   name: San Marino
   uids: {country: YYBSkeOiBs}
   tier: 3
-  host: italy
   note: >-
     A small enclave in central Italy, in the Apennines. It claims to be the world's oldest republic, founded by
     tradition in 301. The capital shares the country's name and has no card of its own.
@@ -480,7 +475,6 @@
   name: Vatican
   uids: {country: Q4Q14tcpJQ}
   tier: 3
-  host: italy
   note: >-
     The world's smallest state, an enclave in Rome. Popes ruled much of the Italian peninsula until Italy took the
     Papal States and then Rome (1870); the 1929 Lateran Treaties created the independent Vatican City. The capital
@@ -494,7 +488,6 @@
   name: Malta
   uids: {country: siBs8ZR7WE, capital: L6EQdJkyum}
   tier: 3
-  host: italy
   note: >-
     An archipelago in the central Mediterranean, south of Sicily. Its megalithic sites are among the oldest in the
     world. It was a British colony until independence in 1964.
@@ -620,7 +613,6 @@
   name: Kosovo
   uids: {country: DmgSAskvqt, capital: Uw1yRDLwe7}
   tier: 1
-  host: serbia
   note: >-
     Landlocked between Serbia, Montenegro, Albania and North Macedonia. It declared independence from Serbia in
     2008. Serbia does not recognise it, and it is not a UN member *(as of 2026-10; verify)*. In 2010 the
@@ -987,7 +979,6 @@
   name: Palestine
   uids: {country: bJM8iWYKUz}
   tier: 1
-  host: israel
   note: >-
     Two separate areas: the West Bank, including East Jerusalem, between Israel and Jordan; and the Gaza Strip on
     the Mediterranean, between Israel and Egypt. The UN General Assembly granted Palestine non-member observer State
@@ -2060,7 +2051,6 @@
   name: Lesotho
   uids: {country: 9CR0k0WMHb, capital: bDR8QUTGCj}
   tier: 1
-  host: south-africa
   note: >-
     Lesotho is a small, mountainous country completely surrounded by South Africa, and most of it is high mountain
     country. Paramount chief Moshoeshoe I founded the state that became British Basutoland, and it became
@@ -2080,7 +2070,6 @@
   name: Eswatini
   uids: {country: g35JR9qURg, capital: PBrbgFgi3L}
   tier: 1
-  host: south-africa
   note: >-
     Eswatini is a small landlocked kingdom between South Africa and Mozambique, and it is still considered an
     absolute monarchy. King Mswati III renamed it from Swaziland in 2018.

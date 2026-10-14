@@ -24,7 +24,7 @@ from shapely.ops import nearest_points
 from shapely.strtree import STRtree
 
 from geofeat import countries_ne, ne
-from geofeat.countries_ne import SOURCES, outlines, state_ids
+from geofeat.countries_ne import outlines, parts, state_ids
 from geofeat.curriculum import Region, load_curriculum
 from geofeat.model import BUILD, LOCK, ROOT
 
@@ -210,14 +210,14 @@ def country_ids() -> list[str]:
     return state_ids()
 
 
-def outline_specs() -> dict[str, str]:
-    """Each state's outline recipe. P2.2's countries.yaml replaces this and `country_ids`; the cache key hashes the
-    recipes themselves, so it stays honest once they move out of this file."""
-    return dict(SOURCES)
+def outline_specs() -> dict[str, list[dict]]:
+    """Each state's geometry parts from data/countries.yaml. The cache key hashes these, not the whole file, so editing
+    a note or a capital doesn't recompute the graph."""
+    return {i: [p.model_dump(exclude_defaults=True) for p in parts(i)] for i in state_ids()}
 
 
 def geometry_key() -> str:
-    """Hash of everything the computed edges depend on: the outline recipes, this module's code and thresholds, the NE
+    """Hash of everything the computed edges depend on: the states' geometry parts, this module's code and thresholds, the NE
     reader, the pinned layers' lock (which pins each file's sha256; `make fetch` verifies it), and the geometry
     libraries' versions."""
     versions = f"shapely {shapely.__version__} geos {shapely.geos_version_string} pyproj {pyproj.__version__} " \

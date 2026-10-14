@@ -1,40 +1,29 @@
 import unittest
 
-from ruamel.yaml import YAML
-
-from geofeat.countries_ne import LAYERS, SOURCES
-from geofeat.curriculum import load_curriculum
-from geofeat.sources.political import COUNTRIES
-
-TAGS = {name: tag for tag, name in LAYERS.items()}
-
-
-def recipe(geometry: list[dict]) -> str:
-    """A countries.yaml geometry list written as a countries_ne recipe: `A0 <id> + DA <id> - DA <id>`."""
-    terms = [f"{'-' if p.get('subtract') else '+'} {TAGS[p['layer']]} {p['select']['ne_id']}" for p in geometry]
-    return " ".join(terms)[2:]
+from geofeat import countries_ne
+from geofeat.sources.political import load_political
 
 
 class CountriesDataTest(unittest.TestCase):
-    """data/countries.yaml mirrors countries_ne.SOURCES, which adjacency and regions still read."""
+    """data/countries.yaml and data/territories.yaml against data/curriculum.yaml, and as countries_ne reads them."""
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.entries = YAML(typ="safe").load(COUNTRIES)
+        cls.countries, cls.others = load_political()
 
-    def test_same_states(self) -> None:
-        self.assertEqual(sorted(e["id"] for e in self.entries), sorted(SOURCES))
+    def test_every_entry_is_placed(self) -> None:
+        self.assertEqual(len(self.countries), 197)
+        self.assertEqual({o.id: (o.region, o.host) for o in self.others if o.id == "somaliland"},
+                         {"somaliland": (9, "somalia")})
+        self.assertEqual([(c.region, c.host) for c in self.countries if c.id == "andorra"], [(1, "spain")])
 
-    def test_geometry_matches_recipes(self) -> None:
-        for e in self.entries:
-            with self.subTest(country=e["id"]):
-                self.assertTrue(all(set(p) <= {"layer", "select", "subtract"} and set(p["select"]) == {"ne_id"}
-                                    for p in e["geometry"]))
-                self.assertFalse(e["geometry"][0].get("subtract"))
-                self.assertEqual(recipe(e["geometry"]), SOURCES[e["id"]])
-
-    def test_every_state_in_the_curriculum(self) -> None:
-        load_curriculum([e["id"] for e in self.entries])
+    def test_countries_ne_reads_the_yaml(self) -> None:
+        self.assertEqual(countries_ne.state_ids(), sorted(c.id for c in self.countries))
+        for entry in (*self.countries, *self.others):
+            with self.subTest(id=entry.id):
+                self.assertEqual(countries_ne.parts(entry.id), tuple(entry.geometry))
+                self.assertTrue(all(p.layer and set(p.select or {}) == {"ne_id"} and p.rows == 1 for p in entry.geometry))
+                self.assertFalse(entry.geometry[0].subtract)
 
 
 if __name__ == "__main__":
