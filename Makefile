@@ -1,11 +1,14 @@
 PY := uv run python -m geofeat
 DECK := Geographic Features
 IDS ?=
+# RELEASE=1: check-data (and everything after it) also fails while any note has an open verify item.
+RELEASE ?=
+$(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 # The ankc to build with; a command line works, e.g. ANKC="uv run --with ../ankcompiler ankc". 0.6+ gets [^pos].
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions adjacency render deck check build sheet phone pairs cvd guide clean
+.PHONY: all test fetch ids check-data positions adjacency render deck check build sheet phone pairs cvd guide verify-report clean
 
 all: build
 
@@ -19,7 +22,11 @@ test:
 	uv run python -m unittest discover -s tests
 
 check-data: test fetch
-	$(PY).check data
+	$(PY).check data $(if $(filter 1,$(RELEASE)),--release)
+
+# Every open verify item (a note's claim to recheck before release), by card.
+verify-report:
+	$(PY).check verify-report
 
 # The only writer of data/positions.lock; commit the result. Not part of `make all`.
 positions: check-data

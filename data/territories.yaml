@@ -14,7 +14,10 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320719}}
   expect: [-5.4, 36, -5.3, 36.2]
-  note: Gibraltar is a British Overseas Territory on a narrow peninsula on Spain's southern coast, overlooking the Strait of Gibraltar. Spain ceded it to Britain in the 1713 Treaty of Utrecht but still claims it, and Gibraltarians voted against shared sovereignty in 2002. As of 2026-10, a UK–EU treaty on Gibraltar's relations with the EU, signed on 14 July 2026 and provisionally applied, leaves British sovereignty unchanged (verify).
+  note: Gibraltar is a British Overseas Territory on a narrow peninsula on Spain's southern coast, overlooking the Strait of Gibraltar. Spain ceded it to Britain in the 1713 Treaty of Utrecht but still claims it, and Gibraltarians voted against shared sovereignty in 2002. A UK–EU treaty on Gibraltar's relations with the EU, signed in July 2026, leaves British sovereignty unchanged.
+  verify:
+  - claim: A UK–EU treaty on Gibraltar's relations with the EU, signed on 14 July 2026 and provisionally applied, leaves British sovereignty unchanged.
+    as_of: '2026-10'
 
 - kind: territory
   id: isle-of-man
@@ -69,7 +72,12 @@
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321119}}
   expect: [10.4, 74.3, 33.7, 80.8]
-  note: Svalbard is an Arctic archipelago north of mainland Norway and part of the Kingdom of Norway, run by a governor in Longyearbyen. A 1920 treaty recognised Norway's sovereignty; coal mining built its settlements, but Norwegian mining has ended and as of 2026-10 a Russian company still mines there (verify).
+  note: Svalbard is an Arctic archipelago north of mainland Norway and part of the Kingdom of Norway, run by a governor in Longyearbyen. A 1920 treaty recognised Norway's sovereignty; coal mining built its settlements, but Norwegian mining ended in 2025, while a Russian company kept mining there.
+  verify:
+  - claim: Norwegian mining on Svalbard has ended, and a Russian company still mines there.
+    as_of: '2026-10'
+  - claim: Norway's last coal mine on Svalbard (Store Norske's Mine 7) closed in 2025.
+    as_of: '2026-10'
 
 - kind: territory
   id: reunion
@@ -91,7 +99,10 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320723}}
   expect: [71.2, -7.5, 72.6, -5.2]
-  note: The British Indian Ocean Territory, a British Overseas Territory, is the Chagos Archipelago in the central Indian Ocean; its only inhabited island, Diego Garcia, hosts a joint UK–US military base, and the islanders were removed between 1967 and 1973. Mauritius claims it, and a treaty signed on 22 May 2025 would transfer sovereignty to Mauritius while the UK keeps rights over the Diego Garcia base for an initial 99 years. As of 2026-10 the treaty has not entered into force, and the UK's implementing bill failed to complete its passage before the parliamentary session ended in April 2026 (verify).
+  note: The British Indian Ocean Territory, a British Overseas Territory, is the Chagos Archipelago in the central Indian Ocean; its only inhabited island, Diego Garcia, hosts a joint UK–US military base, and the islanders were removed between 1967 and 1973. Mauritius long claimed it, and a treaty signed on 22 May 2025 provides for transferring sovereignty to Mauritius while the UK keeps rights over the Diego Garcia base for an initial 99 years.
+  verify:
+  - claim: The 2025 Chagos treaty has not entered into force, and the UK's implementing bill failed to complete its passage before the session ended in April 2026.
+    as_of: '2026-10'
 
 - kind: territory
   id: hong-kong
@@ -136,7 +147,10 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320641}}
   expect: [163.5, -22.7, 171.4, -19.6]
-  note: 'New Caledonia is a French "sui generis" collectivity, a status of its own between an overseas department and an independent country, on islands in the South Pacific east of Australia; nickel mining has shaped it since the 1860s. Under the 1998 Nouméa Accord it voted against independence in 2018, 2020 and 2021, the last vote boycotted by key Kanak groups. As of 2026-10 its future status is unsettled: in April 2026 the French National Assembly rejected the constitutional bill implementing the 2025 Bougival and 2026 Élysée-Oudinot accords, which would have created a "State of New Caledonia" within France, and long-delayed provincial elections were held in June 2026 (verify).'
+  note: 'New Caledonia is a French "sui generis" collectivity, a status of its own between an overseas department and an independent country, on islands in the South Pacific east of Australia; nickel mining has shaped it since the 1860s. Under the 1998 Nouméa Accord it voted against independence in 2018, 2020 and 2021, the last vote boycotted by key Kanak groups. In April 2026 the French National Assembly rejected the constitutional bill implementing the 2025 Bougival and 2026 Élysée-Oudinot accords, which would have created a "State of New Caledonia" within France, and long-delayed provincial elections were held in June 2026.'
+  verify:
+  - claim: "New Caledonia's future status is unsettled: in April 2026 the French National Assembly rejected the bill implementing the Bougival and Élysée-Oudinot accords, and provincial elections were held in June 2026."
+    as_of: '2026-10'
 
 - kind: territory
   id: french-polynesia
@@ -158,7 +172,10 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320551}}
   expect: [-73.1, 59.7, -11.3, 83.7]
-  note: "Greenland is a self-governing part of the Kingdom of Denmark: it gained home rule in 1979 and wider self-government in 2009, while Denmark keeps foreign affairs, security and financial policy. Geographically in North America, north-east of Canada, it is the world's largest island and mostly ice-capped. As of 2026-10, a US–Denmark–Greenland security agreement signed in September 2026 expands US military access but leaves Greenland's status unchanged (verify)."
+  note: "Greenland is a self-governing part of the Kingdom of Denmark: it gained home rule in 1979 and wider self-government in 2009, while Denmark keeps foreign affairs, security and financial policy. Geographically in North America, north-east of Canada, it is the world's largest island and mostly ice-capped. A US–Denmark–Greenland security agreement signed in September 2026 expands US military access but leaves Greenland's status unchanged."
+  verify:
+  - claim: A US–Denmark–Greenland security agreement signed in September 2026 expands US military access but leaves Greenland's status unchanged.
+    as_of: '2026-10'
 
 - kind: territory
   id: bermuda
@@ -181,7 +198,10 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320711}}
   expect: [-61.4, -52.5, -57.7, -51]
-  note: The Falkland Islands are a British Overseas Territory in the South Atlantic, east of southern Argentina. Argentina, which calls them the Islas Malvinas, claims them; it invaded in 1982 and British forces retook them that June, and in 2013 islanders voted to remain British. Status as of 2026-10 (verify).
+  note: The Falkland Islands are a British Overseas Territory in the South Atlantic, east of southern Argentina. Argentina, which calls them the Islas Malvinas, claims them; it invaded in 1982 and British forces retook them that June, and in 2013 islanders voted to remain British.
+  verify:
+  - claim: The Falklands remain a British Overseas Territory claimed by Argentina.
+    as_of: '2026-10'
 
 - kind: territory
   id: french-guiana
@@ -268,7 +288,10 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}}
   expect: [32.4, 44.3, 36.7, 46.3]
-  note: Crimea is a peninsula on the north coast of the Black Sea, internationally recognised as part of Ukraine. Russia seized it in 2014 and claims to have annexed it; a UN General Assembly resolution that March reaffirmed Ukraine's territorial integrity and said the March 2014 referendum there had no validity. As of 2026-10 Russia still controls it, and no ceasefire or peace deal has changed its status (verify).
+  note: Crimea is a peninsula on the north coast of the Black Sea, internationally recognised as part of Ukraine. Russia seized it in 2014 and claims to have annexed it; a UN General Assembly resolution that March reaffirmed Ukraine's territorial integrity and said the March 2014 referendum there had no validity.
+  verify:
+  - claim: Russia still controls Crimea, and no ceasefire or peace deal has changed its status.
+    as_of: '2026-10'
 
 - kind: dispute
   id: transnistria
@@ -278,7 +301,10 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321047}}
   expect: [28.4, 46.5, 30, 48.2]
-  note: Transnistria is a narrow strip of eastern Moldova, mostly on the left (east) bank of the Dniester (Nistru) River along the Ukrainian border, internationally recognised as part of Moldova. A Russian-backed separatist administration has run it since the early 1990s, after a brief war with Moldovan forces in 1992 ended in a ceasefire, and Russian forces have stayed there since Moldova became independent in 1991. As of 2026-10, Moldova seeks reintegration and the withdrawal of those troops (verify).
+  note: Transnistria is a narrow strip of eastern Moldova, mostly on the left (east) bank of the Dniester (Nistru) River along the Ukrainian border, internationally recognised as part of Moldova. A Russian-backed separatist administration has run it since the early 1990s, after a brief war with Moldovan forces in 1992 ended in a ceasefire, and Russian forces have stayed there since Moldova became independent in 1991. Moldova seeks reintegration and the withdrawal of those troops.
+  verify:
+  - claim: Moldova seeks the reintegration of Transnistria and the withdrawal of Russian troops.
+    as_of: '2026-10'
 
 - kind: dispute
   id: abkhazia
@@ -288,7 +314,10 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320785}}
   expect: [39.9, 42.3, 42.2, 43.6]
-  note: Abkhazia is a region on the Black Sea coast of north-western Georgia, internationally recognised as part of Georgia. Russian-backed de facto authorities have held most of it since the wars of 1991–93 and all of it since the 2008 Russia–Georgia war, after which Russia recognised its independence and kept troops there; only a handful of other states have followed. Status as of 2026-10 (verify).
+  note: Abkhazia is a region on the Black Sea coast of north-western Georgia, internationally recognised as part of Georgia. Russian-backed de facto authorities have held most of it since the wars of 1991–93 and all of it since the 2008 Russia–Georgia war, after which Russia recognised its independence and kept troops there; only a handful of other states have followed.
+  verify:
+  - claim: Russian-backed de facto authorities still hold Abkhazia, with Russian troops there; only a handful of states besides Russia recognise it.
+    as_of: '2026-10'
 
 - kind: dispute
   id: south-ossetia
@@ -298,7 +327,10 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320787}}
   expect: [43.5, 41.9, 44.7, 42.8]
-  note: South Ossetia is a region of north-central Georgia on the border with Russia, internationally recognised as part of Georgia, which calls it the Tskhinvali Region. Russian-backed de facto authorities have held most of it since the early-1990s conflict and all of it since fighting over it in August 2008 became the Russia–Georgia war, after which Russia recognised its independence and kept troops there. Status as of 2026-10 (verify).
+  note: South Ossetia is a region of north-central Georgia on the border with Russia, internationally recognised as part of Georgia, which calls it the Tskhinvali Region. Russian-backed de facto authorities have held most of it since the early-1990s conflict and all of it since fighting over it in August 2008 became the Russia–Georgia war, after which Russia recognised its independence and kept troops there.
+  verify:
+  - claim: Russian-backed de facto authorities still hold South Ossetia, with Russian troops there.
+    as_of: '2026-10'
 
 - kind: dispute
   id: northern-cyprus
@@ -308,7 +340,10 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320531}}
   expect: [32.5, 34.9, 34.7, 35.8]
-  note: Northern Cyprus is the northern part of the island of Cyprus, internationally recognised as part of the Republic of Cyprus. In 1974, after a coup backed by Greece's military government, Turkish forces landed and took control of the north, and in 1983 the Turkish Cypriot-held area declared the "Turkish Republic of Northern Cyprus", which only Turkey recognises; UN peacekeepers have been on the island since 1964. As of 2026-10, formal UN-led reunification negotiations, suspended in 2017, have not resumed, though the two leaders have met repeatedly, including under UN auspices, since late 2025 (verify).
+  note: Northern Cyprus is the northern part of the island of Cyprus, internationally recognised as part of the Republic of Cyprus. In 1974, after a coup backed by Greece's military government, Turkish forces landed and took control of the north, and in 1983 the Turkish Cypriot-held area declared the "Turkish Republic of Northern Cyprus", which only Turkey recognises; UN peacekeepers arrived on the island in 1964. Formal UN-led reunification negotiations broke down in 2017.
+  verify:
+  - claim: Formal UN-led reunification negotiations, suspended in 2017, have not resumed; the two leaders have met repeatedly since late 2025.
+    as_of: '2026-10'
 
 - kind: dispute
   id: golan-heights
@@ -318,7 +353,10 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}}
   expect: [35.5, 32.6, 36, 33.5]
-  note: The Golan Heights is a plateau on Syria's south-western border with Israel. Israel captured it from Syria in the 1967 war and in 1981 extended its law and administration there, a step the UN Security Council declared null and void; the United States recognised Israeli sovereignty in 2019, but the UN regards it as occupied Syrian territory. As of 2026-10, Israeli forces also hold positions in the UN-patrolled area of separation set in 1974, which they entered after Assad's government fell in December 2024, and US-brokered Israel–Syria security talks are under way (verify).
+  note: The Golan Heights is a plateau on Syria's south-western border with Israel. Israel captured it from Syria in the 1967 war and in 1981 extended its law and administration there, a step the UN Security Council declared null and void; the United States recognised Israeli sovereignty in 2019, but the UN regards it as occupied Syrian territory. After Assad's government fell in December 2024, Israeli forces also moved into the area of separation set in 1974.
+  verify:
+  - claim: Israeli forces hold positions in the 1974 area of separation, entered after December 2024, and US-brokered Israel–Syria security talks are under way.
+    as_of: '2026-10'
 
 - kind: dispute
   id: somaliland
@@ -328,7 +366,12 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321259}}
   expect: [42.6, 7.9, 49, 11.6]
-  note: Somaliland is north-western Somalia, roughly the former British Somaliland, which was independent for a few days in 1960 before uniting with Italian Somaliland. It declared independence in 1991 and has governed itself since, but Somalia and the African Union regard it as part of Somalia; on 26 December 2025 Israel became the first UN member to recognise it. As of 2026-10, the Las Anod area in its east, still inside this outline, has been held since 2023 by SSC-Khaatumo, which Somalia's federal government recognises (verify).
+  note: Somaliland is north-western Somalia, roughly the former British Somaliland, which was independent for a few days in 1960 before uniting with Italian Somaliland. It declared independence in 1991 and has governed itself since, but Somalia and the African Union regard it as part of Somalia; on 26 December 2025 Israel became the first UN member to recognise it. In 2023 forces of SSC-Khaatumo, later recognised by Somalia's federal government, took the Las Anod area in its east, which this outline includes.
+  verify:
+  - claim: The Las Anod area in eastern Somaliland has been held since 2023 by SSC-Khaatumo, which Somalia's federal government recognises.
+    as_of: '2026-10'
+  - claim: Somalia's federal government recognised SSC-Khaatumo in 2025 as the federal member state North Eastern State.
+    as_of: '2026-10'
 
 - kind: dispute
   id: western-sahara
@@ -339,7 +382,12 @@
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321037}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321223}}
   expect: [-17.2, 20.7, -8.6, 27.7]
-  note: Western Sahara, on Africa's Atlantic coast between Morocco and Mauritania, is a former Spanish territory that the UN lists as non-self-governing; Morocco claims it, and the Polisario Front seeks its independence. Since Spain withdrew in 1976, Morocco has controlled most of it, west of a sand berm, and the Polisario the strip to the east; a 1991 ceasefire monitored by the UN mission MINURSO broke down in late 2020, and low-level hostilities continue. As of 2026-10, Security Council resolution 2797 (October 2025) takes Morocco's autonomy proposal as the basis for talks, the Polisario insists on self-determination, and MINURSO's mandate expires on 31 October 2026 (verify).
+  note: Western Sahara, on Africa's Atlantic coast between Morocco and Mauritania, is a former Spanish territory that the UN lists as non-self-governing; Morocco claims it, and the Polisario Front seeks its independence. Since Spain withdrew in 1976, Morocco has controlled most of it, west of a sand berm, and the Polisario the strip to the east; a 1991 ceasefire monitored by the UN mission MINURSO broke down in late 2020, and low-level hostilities followed. In October 2025 Security Council resolution 2797 took Morocco's autonomy proposal as the basis for talks, while the Polisario held to self-determination. A UN mission, MINURSO, has been present since 1991; its mandate is renewed by the Security Council.
+  verify:
+  - claim: Resolution 2797 (October 2025) takes Morocco's autonomy proposal as the basis for talks, and MINURSO's mandate expires on 31 October 2026.
+    as_of: '2026-10'
+  - claim: MINURSO was established in 1991.
+    as_of: '2026-10'
 
 - kind: dispute
   id: kashmir-indian-administered
@@ -351,7 +399,10 @@
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320865}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320963}}
   expect: [73.7, 32.2, 79.7, 35.7]
-  note: India administers the southern and eastern part of the former princely state of Kashmir, east and south of the 1972 Line of Control, as the union territories of Jammu and Kashmir and of Ladakh; this card includes the Siachen Glacier area. Pakistan claims the territory, China claims parts of Ladakh, and India and Pakistan have fought over Kashmir since partition in 1947. Status as of 2026-10 (verify).
+  note: India administers the southern and eastern part of the former princely state of Kashmir, east and south of the 1972 Line of Control, as the union territories of Jammu and Kashmir and of Ladakh; this card includes the Siachen Glacier area. Pakistan claims the territory, China claims parts of Ladakh, and India and Pakistan have fought over Kashmir since partition in 1947.
+  verify:
+  - claim: India administers this part of Kashmir as Jammu and Kashmir and Ladakh; Pakistan claims it, and China claims parts of Ladakh.
+    as_of: '2026-10'
 
 - kind: dispute
   id: kashmir-pakistani-administered
@@ -362,7 +413,10 @@
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321157}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321155}}
   expect: [72.4, 32.8, 77.1, 37.1]
-  note: Pakistan administers the north-west of Kashmir as two territories outside its provinces, Azad Kashmir and Gilgit-Baltistan, divided from the Indian side by the 1972 Line of Control. India claims the whole area; the two countries fought over Kashmir in 1947–48, 1965 and 1999. Status as of 2026-10 (verify).
+  note: Pakistan administers the north-west of Kashmir as two territories outside its provinces, Azad Kashmir and Gilgit-Baltistan, divided from the Indian side by the 1972 Line of Control. India claims the whole area; the two countries fought over Kashmir in 1947–48, 1965 and 1999.
+  verify:
+  - claim: Pakistan administers Azad Kashmir and Gilgit-Baltistan, and India claims the whole area.
+    as_of: '2026-10'
 
 - kind: dispute
   id: arunachal-pradesh
@@ -373,7 +427,10 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320857}}
   expect: [91.5, 26.8, 97.4, 29.4]
-  note: Arunachal Pradesh is a Himalayan state in India's far north-east, administered by India. China claims all of it as "Zangnan" (South Tibet) because it rejects the 1914 McMahon Line agreed between Britain and Tibet; Chinese forces overran much of the area in the 1962 war, then withdrew. Status as of 2026-10 (verify).
+  note: Arunachal Pradesh is a Himalayan state in India's far north-east, administered by India. China claims all of it as "Zangnan" (South Tibet) because it rejects the 1914 McMahon Line agreed between Britain and Tibet; Chinese forces overran much of the area in the 1962 war, then withdrew.
+  verify:
+  - claim: India administers Arunachal Pradesh, and China claims all of it.
+    as_of: '2026-10'
 
 - kind: dispute
   id: aksai-chin
@@ -384,7 +441,10 @@
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320487}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320485}}
   expect: [75.8, 33.3, 80.4, 36.5]
-  note: Aksai Chin is the high eastern part of Kashmir that China administers and India claims as part of Ladakh, separated from Indian-held land by the Line of Actual Control; China has held it since the 1950s and kept it in the 1962 Sino-Indian War. This card also includes the Shaksgam tract north of the Karakoram, which Pakistan ceded to China in a 1963 boundary agreement that India does not recognise. Status as of 2026-10 (verify).
+  note: Aksai Chin is the high eastern part of Kashmir that China administers and India claims as part of Ladakh, separated from Indian-held land by the Line of Actual Control; China has held it since the 1950s and kept it in the 1962 Sino-Indian War. This card also includes the Shaksgam tract north of the Karakoram, which Pakistan ceded to China in a 1963 boundary agreement that India does not recognise.
+  verify:
+  - claim: China administers Aksai Chin and the Shaksgam tract, and India claims them.
+    as_of: '2026-10'
 
 - kind: dispute
   id: kuril-islands
@@ -395,7 +455,10 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321213}}
   expect: [145.3, 43.3, 148.9, 45.6]
-  note: The southern Kurils (Iturup, Kunashir, Shikotan and the Habomai islets) lie just off Japan's northern island of Hokkaido. The Soviet Union took them in August–September 1945 and Russia administers them; Japan claims them as its Northern Territories, and the dispute has kept the two countries from signing a Second World War peace treaty. As of 2026-10, peace-treaty talks have been suspended by Russia since March 2022 (verify).
+  note: The southern Kurils (Iturup, Kunashir, Shikotan and the Habomai islets) lie just off Japan's northern island of Hokkaido. The Soviet Union took them in August–September 1945 and Russia administers them; Japan claims them as its Northern Territories, and the dispute has kept the two countries from signing a Second World War peace treaty. Russia suspended peace-treaty talks in March 2022.
+  verify:
+  - claim: Russia has kept peace-treaty talks with Japan suspended since March 2022.
+    as_of: '2026-10'
 
 - kind: dispute
   id: spratly-islands
@@ -405,7 +468,10 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321165}}
   expect: [114, 9.6, 115.9, 11.2]
-  note: The Spratly Islands are a scatter of small islands, reefs and shoals in the southern South China Sea, amid rich fishing grounds and possible oil and gas. China, Taiwan and Vietnam claim them all, Malaysia and the Philippines claim parts, and all five occupy some features; Brunei claims an overlapping maritime zone. In 2016 an arbitral tribunal in a case brought by the Philippines found no legal basis for China's claimed historic rights inside its "nine-dash line"; China rejects the ruling, and as of 2026-10 control is still split among the claimants (verify).
+  note: The Spratly Islands are a scatter of small islands, reefs and shoals in the southern South China Sea, amid rich fishing grounds and possible oil and gas. China, Taiwan and Vietnam claim them all, Malaysia and the Philippines claim parts, and all five occupy some features; Brunei claims an overlapping maritime zone. In 2016 an arbitral tribunal in a case brought by the Philippines found no legal basis for China's claimed historic rights inside its "nine-dash line"; China rejects the ruling, and control is still split among the claimants.
+  verify:
+  - claim: Control of the Spratly Islands is still split among the claimants.
+    as_of: '2026-10'
 
 - kind: dispute
   id: essequibo
@@ -416,4 +482,9 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320821}}
   expect: [-61.5, 1.1, -58.1, 8.6]
-  note: Essequibo (Guayana Esequiba) is the land west of the Essequibo River, which Guyana administers and Venezuela claims. Guyana relies on the 1899 arbitral award that fixed the boundary; Venezuela rejects the award, and in 2023 held a referendum backing its claim. As of 2026-10 the International Court of Justice has heard the merits (4–11 May 2026) but has not yet ruled (verify).
+  note: Essequibo (Guayana Esequiba) is the land west of the Essequibo River, which Guyana administers and Venezuela claims. Guyana relies on the 1899 arbitral award that fixed the boundary; Venezuela rejects the award, and in 2023 held a referendum backing its claim. In 2018 Guyana took the dispute to the International Court of Justice, which heard the merits on 4–11 May 2026.
+  verify:
+  - claim: The International Court of Justice has heard the merits (4–11 May 2026) but has not yet ruled.
+    as_of: '2026-10'
+  - claim: Guyana filed the Essequibo case at the International Court of Justice in March 2018.
+    as_of: '2026-10'
