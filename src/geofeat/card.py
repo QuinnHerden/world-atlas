@@ -6,10 +6,10 @@ import re
 from collections.abc import Callable
 from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
 from shapely.geometry.base import BaseGeometry
 
-from geofeat.model import MEDIA_INDEX
+from geofeat.model import MEDIA_INDEX, NOT_ONE_LINE, Note  # noqa: F401  Note re-exported for the sources
 from geofeat.spec import RenderSpec
 
 Kind = Literal["feature", "country", "capital", "city", "territory", "dispute", "continent"]
@@ -18,7 +18,7 @@ Geometry = tuple[BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None]
 # Card text goes into markdown that ankc renders, unsanitised, to HTML in Anki. deckgen HTML-escapes it, which
 # leaves markdown: an image or link (`![](path)` would package a local file, or fetch a URL on every phone), emphasis,
 # code, or ankc's own `:::`, `[^` and `---` syntax. None has a place on a card, so reject them all.
-_UNSAFE = re.compile(r"[\n<>\[\]`\\*_#!]|:::|^-{3}")
+_UNSAFE = re.compile(NOT_ONE_LINE + r"|[<>\[\]`\\*_#!]|:::|^-{3}")
 
 
 def _plain(value: str) -> str:
@@ -41,6 +41,12 @@ class RenderRef(Frozen):
 
     spec: RenderSpec
     geometry: Callable[[], Geometry]
+    dot: Callable[[], tuple[float, float]] | None = None  # a city's point, resolved with the geometry into spec.dot
+
+    def resolve(self) -> tuple[RenderSpec, BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None]:
+        """What render() takes: the spec, with its dot filled in, and the geometry."""
+        spec = self.spec.model_copy(update={"dot": self.dot()}) if self.dot else self.spec
+        return spec, *self.geometry()
 
 
 class Card(Frozen):
@@ -54,13 +60,43 @@ class Card(Frozen):
     tier: int
     anchor: str | None = None  # key of the card this one is placed after in the curriculum (P3)
     parents: tuple[str, ...] = ()  # keys of cards that must come first (P3; order.py derives feature edges itself)
-    note: str | None = None  # why it matters; PDF guide only
+    note: Note | None = None  # why it matters; PDF guide only
+    host: str | None = None  # key of the country whose run this pocket sits in, after its capital (P3)
+    orientation: bool = False  # in the orientation block that opens the deck (oceans, planetary winds, continents)
     render: RenderRef
+
+    @model_validator(mode="after")
+    def _pass_tag(self) -> "Card":
+        if [t for t in self.tags if t.startswith("pass::")] != [pass_tag(self.study_pass)]:
+            raise ValueError(f"{self.kind}:{self.id}: needs exactly the tag {pass_tag(self.study_pass)}")
+        return self
+
+    @property
+    def study_pass(self) -> "Pass":
+        return study_pass(self.kind, self.tier, self.orientation)
 
     @property
     def key(self) -> str:
         """Unique across all sources: what media.json, the render bookkeeping, the sheets and the guide key on."""
         return card_key(self.kind, self.id)
+
+
+Pass = Literal["orientation", 1, 2]
+PASS_ORDER: dict[Pass, int] = {"orientation": 0, 1: 1, 2: 2}  # sort by this; the labels themselves don't sort
+ALWAYS_PASS_1: frozenset[Kind] = frozenset({"country", "capital", "territory", "dispute"})
+
+
+def study_pass(kind: Kind, tier: int, orientation: bool = False) -> Pass:
+    """Which pass round the ring a card is introduced in. Orientation opens the deck. Pass 1 holds every country,
+    capital, territory and dispute (tier-3 microstates included, beside their neighbours), the tier 1-2 features and
+    the core cities (tier 2); pass 2 the tier-3 features and the secondary cities (tier 3)."""
+    if orientation or kind == "continent":
+        return "orientation"
+    return 1 if kind in ALWAYS_PASS_1 or tier <= 2 else 2
+
+
+def pass_tag(study: Pass) -> str:
+    return f"pass::{study}"
 
 
 def card_key(kind: Kind, id: str) -> str:

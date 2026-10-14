@@ -1,0 +1,410 @@
+"""Political card sources: data/countries.yaml (a country card and, unless `capital: null`, a capital card per state)
+and data/territories.yaml (territory and dispute cards, told apart by `kind`). See docs/adr/0005 and 0008."""
+
+import unicodedata
+from pathlib import Path
+from typing import Annotated, Literal
+
+import shapely
+from pydantic import Field, model_validator
+from ruamel.yaml import YAML, YAMLError
+from shapely import unary_union
+from shapely.errors import GEOSException
+from shapely.geometry import Point
+from shapely.geometry.base import BaseGeometry
+
+from geofeat.card import Card, Geometry, Kind, Note, RenderRef, Text, card_key, id_tag, pass_tag, study_pass
+from geofeat.model import ROOT, Part, Strict
+from geofeat.resolve import area_km2, custom, features_by_id, layer, resolve, select_rows
+from geofeat.spec import RenderSpec
+
+COUNTRIES = ROOT / "data/countries.yaml"
+TERRITORIES = ROOT / "data/territories.yaml"
+PATHS = (COUNTRIES, TERRITORIES)
+PLACES = "10m_populated_places"
+# How exactly an outline must compose, as in docs/research/ne-political-layers.md (c): a subtracted row lies inside
+# the base, an added row lies outside it.
+INSIDE_SHARE = 0.999
+OUTSIDE_SHARE = 0.001
+TERRITORY_TIER = 2  # territory and dispute entries carry no tier of their own; their pass is 1 by kind
+
+Id = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*$")]
+Uid = Annotated[str, Field(pattern=r"^[A-Za-z0-9]{10}$")]
+Region = Annotated[int, Field(ge=1, le=21)]  # ring order; the slugs will come from data/curriculum.yaml (P3)
+GeojsonFile = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*\.geojson$")]
+Lon = Annotated[float, Field(ge=-180, le=180, allow_inf_nan=False)]
+Lat = Annotated[float, Field(ge=-90, le=90, allow_inf_nan=False)]
+# lon_min, lat_min, lon_max, lat_max; lon_min > lon_max means the box crosses 180°
+BBox = tuple[Lon, Lat, Lon, Lat]
+
+
+def in_bbox(geometry: BaseGeometry, bbox: BBox) -> bool:
+    lon_min, lat_min, lon_max, lat_max = bbox
+    coords = shapely.get_coordinates(geometry)
+    lons, lats = coords[:, 0], coords[:, 1]
+    in_lon = (lons >= lon_min) & (lons <= lon_max) if lon_min <= lon_max else (lons >= lon_min) | (lons <= lon_max)
+    return bool((in_lon & (lats >= lat_min) & (lats <= lat_max)).all())
+
+
+def answer(name: str, alt_names: list[str]) -> str:
+    return f"{name} ({', '.join(alt_names)})" if alt_names else name
+
+
+def part_geometry(owner: str, part: Part) -> BaseGeometry:
+    """One part, by the same grammar as features.yaml: Natural Earth rows, a geometry/ file, or a feature's shape."""
+    if part.file:
+        return custom(part.file)
+    if part.feature:
+        if part.feature not in features_by_id():
+            raise ValueError(f"{owner}: references unknown feature {part.feature!r}")
+        return resolve(features_by_id()[part.feature])
+    return select_rows(owner, part)
+
+
+def outline(owner: str, parts: list[Part], expect: BBox, mainland: BBox | None = None) -> BaseGeometry:
+    """The union of the added parts less the subtracted ones, cut to the `mainland` box when there is one."""
+    keep = unary_union([part_geometry(owner, p) for p in parts if not p.subtract])
+    if cut := [part_geometry(owner, p) for p in parts if p.subtract]:
+        keep = shapely.make_valid(keep.difference(unary_union(cut)))
+    if mainland:
+        kept = [p for p in shapely.get_parts(keep) if in_bbox(p, mainland)]
+        if not kept:
+            raise ValueError(f"{owner}: no part of the outline lies inside mainland {mainland}")
+        keep = unary_union(kept)
+    if keep.is_empty or keep.geom_type not in ("Polygon", "MultiPolygon"):
+        raise ValueError(f"{owner}: outline is {'empty' if keep.is_empty else keep.geom_type}, not a polygon")
+    if not in_bbox(keep, expect):
+        raise ValueError(f"{owner}: outline {tuple(round(b, 2) for b in keep.bounds)} falls outside expected bbox {expect}")
+    return keep
+
+
+def composition_errors(owner: str, parts: list[Part]) -> list[str]:
+    """A composed outline must be exact: every added part after the first lies outside the base (the first part),
+    every subtracted part inside it, so no sliver or overlap is hidden in the result."""
+    if parts[0].subtract:
+        return [f"{owner}: the first part is the base and can't be subtracted"]
+    base = part_geometry(owner, parts[0])
+    errors = []
+    for part in parts[1:]:
+        geometry = part_geometry(owner, part)
+        if (area := area_km2(geometry)) == 0:
+            errors.append(f"{owner}: part {part.select or part.file or part.feature} has no area")
+            continue
+        share = area_km2(geometry.intersection(base)) / area
+        if part.subtract and share < INSIDE_SHARE:
+            errors.append(f"{owner}: subtracted part {part.select or part.file or part.feature} is only {share:.2%} inside the base")
+        elif not part.subtract and share > OUTSIDE_SHARE:
+            errors.append(f"{owner}: added part {part.select or part.file or part.feature} overlaps the base by {share:.2%}")
+    return errors
+
+
+def place(owner: str, ne_id: int | None, file: str | None, expect: BBox) -> Point:
+    """A city's point: a populated_places row, or a hand-placed point in geometry/ (Yaren)."""
+    if file:
+        geometry = custom(file)
+    else:
+        rows = layer(PLACES)
+        matched = rows[rows["ne_id"] == ne_id]
+        if len(matched) != 1:
+            raise ValueError(f"{owner}: {PLACES} ne_id {ne_id} matched {len(matched)} rows, expected 1")
+        geometry = matched.geometry.iloc[0]
+    if geometry.geom_type != "Point":
+        raise ValueError(f"{owner}: {geometry.geom_type} is not a point")
+    if not in_bbox(geometry, expect):
+        raise ValueError(f"{owner}: point ({geometry.x:.3f}, {geometry.y:.3f}) falls outside expected bbox {expect}")
+    return geometry
+
+
+def country_spec() -> RenderSpec:
+    return RenderSpec(style="area", country="subject")
+
+
+def dot_spec() -> RenderSpec:
+    """A city's dot over its country; RenderRef.dot fills in the point when the card is rendered."""
+    return RenderSpec(style="area", country="context")
+
+
+def outline_spec() -> RenderSpec:
+    """Territories and disputes: the subject outline. `outline: dashed` is theirs once P4 draws it; solid until then."""
+    return RenderSpec(style="area", country="subject")
+
+
+def tags(kind: Kind, id: str, tier: int, category: str, region: int) -> tuple[str, ...]:
+    return (f"tier::{tier}", f"category::{category}", id_tag(kind, id), f"kind::{kind}", f"region::{region:02d}",
+            pass_tag(study_pass(kind, tier)))
+
+
+def coordinates(point: Point) -> tuple[float, float]:
+    return point.x, point.y
+
+
+def host_key(host: str | None) -> str | None:
+    """A pocket's host: its host country's card. P3 places the pocket in the host's run, after its capital."""
+    return card_key("country", host) if host else None
+
+
+def require_uid(owner: str, uid: str | None) -> str:
+    if uid is None:
+        raise ValueError(f"{owner}: no uid (run `make ids` and commit)")
+    return uid
+
+
+class Capital(Strict):
+    name: Text
+    alt_names: list[Text] = []
+    ne_id: int | None = None
+    file: GeojsonFile | None = None
+    expect: BBox
+    note: Note | None = None
+
+    @model_validator(mode="after")
+    def _one_source(self) -> "Capital":
+        if (self.ne_id is None) == (self.file is None):
+            raise ValueError("a capital needs exactly one of `ne_id` or `file`")
+        return self
+
+
+class Country(Strict):
+    id: Id
+    name: Text
+    alt_names: list[Text] = []
+    uids: dict[Literal["country", "capital"], Uid | None]
+    region: Region
+    tier: Literal[1, 2, 3]  # microstates and small island states are 3; every country is in pass 1 all the same
+    host: Id | None = None  # the country a microstate sits inside or beside, as a pocket in its run (P3)
+    note: Note | None = None
+    geometry: Annotated[list[Part], Field(min_length=1)]
+    mainland: BBox | None = None  # keep only the outline's parts inside this box (drops overseas parts)
+    expect: BBox
+    capital: Capital | None  # null: no capital card (same-name microstates, Palestine)
+
+    @model_validator(mode="after")
+    def _uid_slots(self) -> "Country":
+        needed = {"country", "capital"} if self.capital else {"country"}
+        if set(self.uids) != needed:
+            raise ValueError(f"{self.id}: needs uids for exactly {sorted(needed)}"
+                             + (" (capital is null)" if not self.capital else "; add `capital: null` under uids and run `make ids`"))
+        return self
+
+    def outline(self) -> BaseGeometry:
+        return outline(self.id, self.geometry, self.expect, self.mainland)
+
+    def capital_point(self) -> Point:
+        c = self.capital
+        return place(f"{self.id} capital", c.ne_id, c.file, c.expect)
+
+    def cards(self) -> list[Card]:
+        def geometry() -> Geometry:
+            return self.outline(), (), None
+
+        region = f"{self.region:02d}"
+        out = [Card(
+            uid=require_uid(self.id, self.uids["country"]), kind="country", id=self.id, prompt="Country",
+            answer_lines=(answer(self.name, self.alt_names),),
+            tags=tags("country", self.id, self.tier, "countries", self.region), region=region, tier=self.tier,
+            host=host_key(self.host), note=self.note, render=RenderRef(spec=country_spec(), geometry=geometry),
+        )]
+        if c := self.capital:
+            out.append(Card(
+                uid=require_uid(f"{self.id} capital", self.uids["capital"]), kind="capital", id=self.id, prompt="City",
+                answer_lines=(answer(c.name, c.alt_names), f"Capital of {self.name}"),
+                tags=tags("capital", self.id, self.tier, "cities", self.region), region=region, tier=self.tier,
+                parents=(out[0].key,), note=c.note,
+                render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(self.capital_point())),
+            ))
+        return out
+
+
+class Territory(Strict):
+    kind: Literal["territory"]
+    id: Id
+    name: Text
+    alt_names: list[Text] = []
+    uid: Uid | None = None
+    sovereign: Id  # a country id
+    status_line: Text  # back line 2, e.g. "Overseas department of France"
+    host: Id | None = None  # the country whose run it sits in as a pocket (P3), when not placed on its own
+    region: Region
+    geometry: Annotated[list[Part], Field(min_length=1)]
+    expect: BBox
+    note: Note | None = None
+
+    def outline(self) -> BaseGeometry:
+        return outline(self.id, self.geometry, self.expect)
+
+    def cards(self) -> list[Card]:
+        return [Card(
+            uid=require_uid(self.id, self.uid), kind="territory", id=self.id, prompt="Territory",
+            answer_lines=(answer(self.name, self.alt_names), self.status_line),
+            tags=tags("territory", self.id, TERRITORY_TIER, "territories", self.region), region=f"{self.region:02d}",
+            tier=TERRITORY_TIER, host=host_key(self.host), note=self.note,
+            render=RenderRef(spec=outline_spec(), geometry=lambda: (self.outline(), (), None)),
+        )]
+
+
+def _alphabetical(name: str) -> str:
+    return unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().casefold()
+
+
+class PartyLabel(Strict):
+    """A party that isn't one of the 197 states, e.g. Polisario Front / SADR."""
+
+    label: Text
+
+
+Party = Id | PartyLabel  # a country id, or an explicit label
+
+
+class Dispute(Strict):
+    kind: Literal["dispute"]
+    id: Id
+    name: Text
+    alt_names: list[Text] = []
+    uid: Uid | None = None
+    parties: Annotated[list[Party], Field(min_length=2)]
+    host: Id | None = None  # the country whose run it sits in as a pocket (P3), e.g. Somalia for Somaliland
+    region: Region
+    geometry: Annotated[list[Part], Field(min_length=1)]  # disputed-areas rows
+    expect: BBox
+    note: Note | None = None
+
+    @model_validator(mode="after")
+    def _distinct_parties(self) -> "Dispute":
+        if len(set(self.parties)) != len(self.parties):
+            raise ValueError(f"{self.id}: parties repeat")
+        return self
+
+    def party_names(self, countries: dict[str, str]) -> list[str]:
+        """Each party's display name: a country's name from countries.yaml, or the label as written."""
+        if unknown := [p for p in self.parties if isinstance(p, str) and p not in countries]:
+            raise ValueError(f"{self.id}: parties {unknown} are not countries (use `{{label: ...}}` for a non-state party)")
+        names = [countries[p] if isinstance(p, str) else p.label for p in self.parties]
+        if len({_alphabetical(n) for n in names}) != len(names):
+            raise ValueError(f"{self.id}: party names repeat: {names}")
+        return names
+
+    def parties_line(self, countries: dict[str, str]) -> str:
+        return f"Disputed: {', '.join(sorted(self.party_names(countries), key=_alphabetical))}"
+
+    def outline(self) -> BaseGeometry:
+        return outline(self.id, self.geometry, self.expect)
+
+    def cards(self, countries: dict[str, str]) -> list[Card]:
+        """`countries` maps each country id to its name, for the parties line."""
+        return [Card(
+            uid=require_uid(self.id, self.uid), kind="dispute", id=self.id, prompt="Disputed territory",
+            answer_lines=(answer(self.name, self.alt_names), self.parties_line(countries)),
+            tags=tags("dispute", self.id, TERRITORY_TIER, "territories", self.region), region=f"{self.region:02d}",
+            tier=TERRITORY_TIER, host=host_key(self.host), note=self.note,
+            render=RenderRef(spec=outline_spec(), geometry=lambda: (self.outline(), (), None)),
+        )]
+
+
+def read_entries(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    try:
+        return YAML(typ="safe").load(path) or []
+    except YAMLError as exc:
+        raise ValueError(f"{path.name}: {exc}") from exc
+
+
+def unique(models: list, label: str) -> None:
+    ids = [m.id for m in models]
+    if duplicates := sorted({i for i in ids if ids.count(i) > 1}):
+        raise ValueError(f"duplicate {label} id: {duplicates}")
+
+
+def load_countries() -> list[Country]:
+    countries = [Country.model_validate(e) for e in read_entries(COUNTRIES)]
+    unique(countries, "country")
+    return countries
+
+
+def _load_territory_file() -> list[Territory | Dispute]:
+    models = {"territory": Territory, "dispute": Dispute}
+    entries = read_entries(TERRITORIES)
+    for i, entry in enumerate(entries):
+        if not isinstance(entry, dict) or entry.get("kind") not in models:
+            raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be territory or dispute")
+    loaded = [models[e["kind"]].model_validate(e) for e in entries]
+    unique(loaded, "territory or dispute")
+    return loaded
+
+
+def load_territories() -> list[Territory]:
+    return [t for t in _load_territory_file() if isinstance(t, Territory)]
+
+
+def load_disputes() -> list[Dispute]:
+    return [d for d in _load_territory_file() if isinstance(d, Dispute)]
+
+
+def cards() -> list[Card]:
+    """Each country's card and its capital's, then the territories and disputes, in file order."""
+    countries = load_countries()
+    names = {c.id: c.name for c in countries}
+    others = _load_territory_file()
+    return [card for source in countries for card in source.cards()] + [
+        card for other in others for card in (other.cards(names) if isinstance(other, Dispute) else other.cards())]
+
+
+def reference_errors(countries: list[Country], others: list[Territory | Dispute]) -> list[str]:
+    """Every country id a source names must exist: hosts, sovereigns and parties. A host is one level deep (it has
+    no host of its own, so there are no chains or cycles) and in the pocket's region, since the pocket sits in its run."""
+    by_id = {c.id: c for c in countries}
+    names = {c.id: c.name for c in countries}
+    errors = []
+    for entry in (*countries, *others):
+        if not entry.host:
+            continue
+        host = by_id.get(entry.host)
+        if host is None or host.id == entry.id:
+            errors.append(f"{entry.id}: host {entry.host!r} is {'itself' if entry.host == entry.id else 'not a country'}")
+        elif host.host:
+            errors.append(f"{entry.id}: host {host.id!r} is itself hosted by {host.host!r}; hosts are one level deep")
+        elif host.region != entry.region:
+            errors.append(f"{entry.id}: region {entry.region} differs from its host {host.id}'s region {host.region}")
+    for other in others:
+        if isinstance(other, Territory) and other.sovereign not in names:
+            errors.append(f"{other.id}: sovereign {other.sovereign!r} is not a country")
+        if isinstance(other, Dispute):
+            try:
+                other.party_names(names)
+            except ValueError as exc:
+                errors.append(str(exc))
+    return errors
+
+
+def check() -> tuple[list[str], dict[str, BaseGeometry]]:
+    """Errors from resolving every outline and point, and the country outlines that resolved, for the city check.
+    Each capital must lie inside its country, and every host, sovereign and party must be a country."""
+    try:
+        countries, others = load_countries(), _load_territory_file()
+    except ValueError as exc:
+        return [str(exc)], {}
+    errors, outlines = [], {}
+    for country in countries:
+        try:
+            errors += composition_errors(country.id, country.geometry)
+            outlines[country.id] = country.outline()
+        except (ValueError, OSError, GEOSException) as exc:
+            errors.append(str(exc))
+            continue
+        if country.capital:
+            try:
+                errors += outside_country(f"{country.id} capital", country.capital_point(), country.id, outlines[country.id])
+            except (ValueError, OSError, GEOSException) as exc:
+                errors.append(str(exc))
+    errors += reference_errors(countries, others)
+    for other in others:
+        try:
+            errors += composition_errors(other.id, other.geometry)
+            other.outline()
+        except (ValueError, OSError, GEOSException) as exc:
+            errors.append(str(exc))
+    return errors, outlines
+
+
+def outside_country(owner: str, point: Point, country: str, shape: BaseGeometry) -> list[str]:
+    return [] if shape.covers(point) else [f"{owner}: point ({point.x:.3f}, {point.y:.3f}) is outside {country}'s outline"]

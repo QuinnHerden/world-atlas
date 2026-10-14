@@ -77,16 +77,23 @@ def _part(feature: Feature, part: Part, stack: tuple[str, ...]) -> BaseGeometry:
         if part.feature not in features_by_id():
             raise ValueError(f"{feature.id}: references unknown feature {part.feature!r}")
         return resolve_with_trim(features_by_id()[part.feature], stack)[0]
+    return select_rows(feature.id, part)
+
+
+def select_rows(owner: str, part: Part) -> BaseGeometry:
+    """The union of a `layer` + `select` part's rows; exactly `part.rows` must match. `owner` names the entry in errors."""
+    if not part.select:
+        raise ValueError(f"{owner}: {part.layer} has an empty select")
     gdf = layer(part.layer)
     unknown = {k.lower() for k in part.select} - set(gdf.columns)
     if unknown:
-        raise ValueError(f"{feature.id}: {part.layer} has no column(s) {sorted(unknown)}")
+        raise ValueError(f"{owner}: {part.layer} has no column(s) {sorted(unknown)}")
     mask = True
     for key, value in part.select.items():
         mask = mask & (gdf[key.lower()] == value)
     matched = gdf[mask]
     if len(matched) != part.rows:
-        raise ValueError(f"{feature.id}: {part.layer} {part.select} matched {len(matched)} rows, expected {part.rows}")
+        raise ValueError(f"{owner}: {part.layer} {part.select} matched {len(matched)} rows, expected {part.rows}")
     return unary_union(matched.geometry.values)
 
 

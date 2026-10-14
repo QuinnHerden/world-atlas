@@ -62,7 +62,14 @@ LAND_FAMILIES: frozenset[Family] = frozenset({"land passage", "relief", "lowland
 Method = Literal["ne-derived", "pd-dataset", "reference-coords", "hand-drawn"]
 Style = Literal["area", "line", "point", "strait", "flow-current", "flow-wind", "band"]
 
-_UNSAFE_TEXT = re.compile(r"[\n<>]|:::|\[\^|^-{3}")
+# Control characters (\r included) and Unicode line breaks, which ankc reads as new lines; zero-width and direction
+# characters, which make text display other than it reads; and `{{`, which ankc reads as cloze. Banned from all card
+# text, here and in card.py.
+NOT_ONE_LINE = r"[\x00-\x1f\x7f-\x9f\u200b-\u200f\u2028-\u202e\u2060-\u2069\ufeff]|\{\{"
+_UNSAFE_TEXT = re.compile(NOT_ONE_LINE + r"|[<>]|:::|\[\^|^-{3}")
+# A note goes only to the PDF guide for now, which escapes it, but keep it as inert as card text should it reach a card:
+# no HTML, links, images, code or ankc syntax. Emphasis is allowed.
+_UNSAFE_NOTE = re.compile(NOT_ONE_LINE + r"|[<>\[\]`\\]|:::|^-{3}|^#")
 
 
 def _card_text(value: str) -> str:
@@ -73,6 +80,15 @@ def _card_text(value: str) -> str:
 
 
 CardText = Annotated[str, AfterValidator(_card_text)]
+
+
+def _note(value: str) -> str:
+    if _UNSAFE_NOTE.search(value):
+        raise ValueError(f"{value!r} contains characters not allowed in a note")
+    return value
+
+
+Note = Annotated[str, AfterValidator(_note)]
 
 
 class Strict(BaseModel):
@@ -131,7 +147,7 @@ class Feature(Strict):
     alt_names: list[CardText] = []
     type: FeatureType
     qualifier: CardText | None = None  # the season a climate map shows, after the type word: "Wind system, July"
-    note: CardText | None = None  # why it matters, 1-3 sentences; shown in the PDF guide, required on active cards
+    note: Note | None = None  # why it matters, 1-3 sentences; shown in the PDF guide, required on active cards
     category: Category
     tier: Literal[1, 2, 3]
     style: Style

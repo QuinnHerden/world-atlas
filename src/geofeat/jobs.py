@@ -106,7 +106,7 @@ class RenderJob:
 
 
 def card_job(card: Card) -> RenderJob:
-    return RenderJob(card.render.spec, *card.render.geometry())
+    return RenderJob(*card.render.resolve())
 
 
 def _render_to_file(job: RenderJob) -> str:

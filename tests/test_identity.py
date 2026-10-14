@@ -20,7 +20,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def make_card(kind: str, id: str, uid: str, shape=box(0, 0, 1, 1)) -> Card:
-    return Card(uid=uid, kind=kind, id=id, prompt=kind.title(), answer_lines=(id,), tags=(id_tag(kind, id),), tier=1,
+    return Card(uid=uid, kind=kind, id=id, prompt=kind.title(), answer_lines=(id,), tags=(id_tag(kind, id), "pass::1"), tier=1,
                 render=RenderRef(spec=RenderSpec(style="area"), geometry=lambda: (shape, (), None)))
 
 

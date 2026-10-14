@@ -2,7 +2,7 @@
 
 import re
 
-from geofeat.card import Card, Geometry, RenderRef, id_tag
+from geofeat.card import Card, Geometry, RenderRef, id_tag, pass_tag, study_pass
 from geofeat.model import FEATURES, Feature, active, load_features
 from geofeat.resolve import custom, features_by_id, resolve
 from geofeat.spec import RenderSpec
@@ -14,8 +14,18 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
+ORIENTATION_TYPES = frozenset({"Ocean", "Continent"})
+PLANETARY_WINDS = frozenset({"trade-winds", "westerlies"})
+
+
+def orientation(feature: Feature) -> bool:
+    """The oceans, the planetary wind belts and the continents open the deck, before the ring."""
+    return feature.type in ORIENTATION_TYPES or feature.id in PLANETARY_WINDS
+
+
 def tags(feature: Feature) -> tuple[str, ...]:
-    return (f"tier::{feature.tier}", f"category::{_slug(feature.category)}", id_tag("feature", feature.id), "kind::feature")
+    return (f"tier::{feature.tier}", f"category::{_slug(feature.category)}", id_tag("feature", feature.id), "kind::feature",
+            pass_tag(study_pass("feature", feature.tier, orientation(feature))))
 
 
 def answer(feature: Feature) -> str:
@@ -44,6 +54,7 @@ def card(feature: Feature) -> Card:
         tags=tags(feature),
         tier=feature.tier,
         note=feature.note,
+        orientation=orientation(feature),
         render=RenderRef(spec=RenderSpec.from_feature(feature), geometry=lambda: geometry(feature)),
     )
 

@@ -26,7 +26,7 @@ from geofeat.model import DECK, GEOMETRY, ROOT, ROOT_DECK, Feature, active, load
 from geofeat.order import Siblings, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
-from geofeat.sources import PATHS, all_cards
+from geofeat.sources import PATHS, all_cards, cities, political
 
 RIVER_GAP_M = 20_000
 MOUTH_M = 5_000
@@ -152,7 +152,7 @@ def check_data() -> tuple[list[str], list[str]]:
     if not errors:
         try:
             all_cards()
-        except ValueError as exc:
+        except (ValueError, OSError) as exc:
             errors.append(str(exc))
     for path in sorted(GEOMETRY.glob("*.geojson")):
         errors += provenance_errors(path.name, json.loads(path.read_text()))
@@ -171,6 +171,8 @@ def check_data() -> tuple[list[str], list[str]]:
         if feature.trim_to_largest:
             notes.append(f"trim: {feature.id} keeps its largest piece, dropping {trimmed:,.0f} km²")
         notes += [f"override: {feature.id} ~ {o.id} may nest: {o.reason}" for o in feature.allow_nested]
+    political_errors, outlines = political.check()  # no-ops until the political data files exist
+    errors += political_errors + cities.check(outlines)
     retired_errors, retired_notes = retired_references(all_features)
     errors += retired_errors
     notes += retired_notes
