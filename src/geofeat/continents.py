@@ -24,7 +24,7 @@ from shapely.ops import unary_union
 from geofeat.countries_ne import outline
 from geofeat.model import Part
 from geofeat.ne import layer
-from geofeat.regions import held_land, land, region_outline, ring
+from geofeat.regions import held_land, land, region_outline, ring, sea_errors
 from geofeat.resolve import CONTINENT_LAYER
 
 COMPOSED = ("africa", "asia", "europe", "north-america", "oceania", "south-america")
@@ -115,9 +115,17 @@ def _outlines() -> dict[str, BaseGeometry]:
     return {i: outline(i) for i in members()}
 
 
-@cache
 def geometry(continent: str) -> BaseGeometry:
     """A composed continent from the real data: its states and territories, plus its disputes' land no state holds."""
+    shape, errors = _checked(continent)
+    if errors:
+        raise ValueError(errors[0])
+    return shape
+
+
+@cache
+def _checked(continent: str) -> tuple[BaseGeometry, list[str]]:
+    """The continent and its sea error, cached together so a failing guard doesn't recompose it on every call."""
     if continent not in COMPOSED:
         raise ValueError(f"no composed continent {continent!r}; one of {', '.join(COMPOSED)}")
     everyone, outlines = members(), _outlines()
@@ -127,7 +135,8 @@ def geometry(continent: str) -> BaseGeometry:
     entries = {i: c for i, c in everyone.items() if i not in disputes}
     countries = continent_geometry(continent, entries, outlines, landmasses())
     mine = [outlines[d] for d in disputes if everyone[d] == continent]
-    return shapely.make_valid(region_outline([countries], mine, held_land(), land()))
+    shape = shapely.make_valid(region_outline([countries], mine, held_land(), land()))
+    return shape, sea_errors({f"continent {continent}": shape}, land())
 
 
 def part_geometry(owner: str, part: Part) -> BaseGeometry:

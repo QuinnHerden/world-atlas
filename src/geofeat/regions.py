@@ -38,6 +38,7 @@ SHORE_MIN_SHARE = 0.15  # a region with less of the shore than this is a passing
 CLIMATE_BUFFER_DEG = 3.0  # how far either side of a flow line its climate reaches over land
 SHORELINE_EPS_DEG = 0.1  # how close to a region a water body's edge counts as its shore
 COVERED_SHARE = 0.5  # below this share of its area inside countries, a water body is measured by its shoreline
+SEA_SHARE_MAX = 0.005  # outlines are land: the real ones hold ~0% sea; the Spratly envelope made region 17 4.1%
 
 
 @cache
@@ -58,6 +59,18 @@ def land() -> BaseGeometry:
     return unary_union([*layer("10m_land").geometry, *layer("10m_minor_islands").geometry])
 
 
+def sea_errors(outlines: Mapping[str, BaseGeometry], land_mask: BaseGeometry) -> list[str]:
+    """An error for each outline more than SEA_SHARE_MAX sea: a dispute's sea got in (the Spratly envelope did once)."""
+    errors = []
+    for name, shape in outlines.items():
+        total = area_km2(shape)
+        sea = area_km2(shape.difference(shapely.clip_by_rect(land_mask, *shape.bounds))) if total else 0.0
+        if total and sea / total > SEA_SHARE_MAX:
+            errors.append(f"{name}: {sea / total:.1%} of its outline ({sea:,.0f} km²) is sea, over {SEA_SHARE_MAX:.1%}; "
+                          "a dispute's outline has leaked sea into it")
+    return errors
+
+
 @cache
 def held_land() -> BaseGeometry:
     """The land some state's outline holds."""
@@ -65,10 +78,19 @@ def held_land() -> BaseGeometry:
 
 
 @cache
+def _checked_outlines() -> tuple[dict[int, BaseGeometry], list[str]]:
+    """The outlines and their sea errors, cached together so a failing guard doesn't rebuild them on every call."""
+    outlines = {n: region_outline([outline(c) for c in (*r.countries, *r.territories)],
+                                  [outline(d) for d in r.disputes], held_land(), land())
+                for n, r in ring().items()}
+    return outlines, sea_errors({f"region {n:02d}": shape for n, shape in outlines.items()}, land())
+
+
 def region_outlines() -> dict[int, BaseGeometry]:
-    return {n: region_outline([outline(c) for c in (*r.countries, *r.territories)],
-                              [outline(d) for d in r.disputes], held_land(), land())
-            for n, r in ring().items()}
+    outlines, errors = _checked_outlines()
+    if errors:
+        raise ValueError("; ".join(errors))
+    return outlines
 
 
 Rule = Literal["orientation", "shore", "owner", "climate", "extent", "override"]

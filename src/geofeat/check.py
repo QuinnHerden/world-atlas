@@ -156,12 +156,18 @@ def open_verify(rows: list[Noted]) -> list[str]:
     return [f"{r.key}: {len(r.verify)} open verify item(s); see `make verify-report`" for r in rows if r.verify]
 
 
+def missing_card_notes(rows: list[Noted]) -> list[str]:
+    """Every card's back shows its note, so the political and city cards need one too (`missing_notes` does features)."""
+    return [f"{r.key}: no note (1-3 sentences on why it matters)" for r in rows
+            if not r.note and r.key.partition(":")[0] in ("country", "capital", "city", "territory", "dispute")]
+
+
 def verify_errors(release: bool) -> list[str]:
     try:
         rows = noted()
     except (ValueError, OSError) as exc:
         return [str(exc)]
-    return note_markers(rows) + (open_verify(rows) if release else [])
+    return missing_card_notes(rows) + note_markers(rows) + (open_verify(rows) if release else [])
 
 
 def verify_report(rows: list[Noted]) -> str:
@@ -272,6 +278,8 @@ def check_deck() -> list[str]:
         errors.append(f"uids not in {positions.LOCK_FILE.name} (run `make positions`): {missing}")
     if error := ankc_supported():
         return errors + [error]
+    if error := positions.stale_draft_error(lock):
+        errors.append(error)
     if not lock.draft and not writes_pos():
         errors.append(f"{positions.LOCK_FILE.name} is frozen (draft: false), so ankc 0.6+ is required to write it")
     command = [*ankc_command(), "check", "--deck", ROOT_DECK, "--path", str(DECK)]

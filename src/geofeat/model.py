@@ -72,9 +72,9 @@ Style = Literal["area", "line", "point", "strait", "flow-current", "flow-wind", 
 # text, here and in card.py.
 NOT_ONE_LINE = r"[\x00-\x1f\x7f-\x9f\u200b-\u200f\u2028-\u202e\u2060-\u2069\ufeff]|\{\{"
 _UNSAFE_TEXT = re.compile(NOT_ONE_LINE + r"|[<>]|:::|\[\^|^-{3}")
-# A note goes only to the PDF guide for now, which escapes it, but keep it as inert as card text should it reach a card:
-# no HTML, links, images, code or ankc syntax. Emphasis is allowed.
-_UNSAFE_NOTE = re.compile(NOT_ONE_LINE + r"|[<>\[\]`\\]|:::|^-{3}|^#")
+# A note goes to the PDF guide and, escaped, under the answer on the card back, so keep it as inert as card text:
+# no HTML, links, images, code, math (`$`) or ankc syntax. Emphasis is allowed.
+_UNSAFE_NOTE = re.compile(NOT_ONE_LINE + r"|[<>\[\]`\\$]|:::|^-{3}|^#")
 
 
 def _card_text(value: str) -> str:

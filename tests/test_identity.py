@@ -18,7 +18,8 @@ import geofeat.ids as ids
 import geofeat.jobs as jobs
 import geofeat.sources as sources
 from geofeat.ankc import ankc_command, writes_pos
-from geofeat.card import Card, RenderRef, id_tag, migrate_media
+import geofeat.card as card_module
+from geofeat.card import Card, RenderRef, id_tag, load_media, migrate_media
 from geofeat.check import ankc_supported
 from geofeat.deckgen import DECK_FILE, card
 from geofeat.model import ROOT_DECK, load_features
@@ -98,6 +99,17 @@ class KeysByKindTest(unittest.TestCase):
     def test_media_migration(self) -> None:
         self.assertEqual(migrate_media({"nile": "a.png", "country:niger": "b.png"}),
                          {"feature:nile": "a.png", "country:niger": "b.png"})
+
+    def test_media_names_stay_in_the_deck_folder(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            index = Path(tmp) / "media.json"
+            with mock.patch.object(card_module, "MEDIA_INDEX", index):
+                index.write_text(json.dumps({"nile": "0ad58a3fd194.png", "country:niger": "b_2-x.png"}))
+                self.assertEqual(load_media(), {"feature:nile": "0ad58a3fd194.png", "country:niger": "b_2-x.png"})
+                for name in ("../secret.png", "/etc/x.png", "sub/a.png", "a.svg", 7):
+                    index.write_text(json.dumps({"nile": name}))
+                    with self.subTest(name), self.assertRaises(ValueError):
+                        load_media()
 
     def test_two_kinds_share_an_id(self) -> None:
         feature = make_card("feature", "georgia", "AAAAAAAAAA", box(0, 0, 1, 1))

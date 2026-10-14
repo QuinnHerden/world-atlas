@@ -274,7 +274,8 @@ def build(parts: list[Section], names: dict[int, str], images: dict[str, Path], 
 
 def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     """The real cards, in lock order and sectioned, with region names and rendered maps. Fails on a card that is
-    unrendered, has no note, or whose note carries a research marker."""
+    unrendered, has no note, or whose note carries a research marker, and on a draft lock the current study order
+    would rewrite."""
     from geofeat.countries_ne import state_ids
     from geofeat.curriculum import load_curriculum
     from geofeat.order.inputs import card_region
@@ -288,9 +289,12 @@ def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
         raise SystemExit(f"no note for {missing}")
     if marked := sorted(c.key for c in cards if NOTE_MARKER.search(c.note or "")):
         raise SystemExit(f"notes with research markers: {marked}; run `make check-data`")
+    lock = positions.read()
+    if error := positions.stale_draft_error(lock):
+        raise SystemExit(error)
     curriculum = load_curriculum(state_ids())
     region = card_region(curriculum)  # the engine's own rule, so sections match how the cards were ordered
-    parts = sections(entries(cards, positions.read().positions), region)
+    parts = sections(entries(cards, lock.positions), region)
     owned = set()
     for section in parts:
         for e in section.entries:

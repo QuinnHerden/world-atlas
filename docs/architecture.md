@@ -31,9 +31,10 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
 | `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). `IDS="country:france city:*"` renders only the matching cards and deletes nothing, for a pilot. |
 | `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/world-atlas.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map. |
-| `make check` | `check.py deck` | Every card rendered and in the lock; ankc `>=0.5,<0.7`; `ankc check` passes. |
+| `make check` | `check.py deck` | Every card rendered and in the lock; a draft lock matches the current order; ankc `>=0.5,<0.7`; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/world-atlas.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
+| `make import-test` | `tools/import_test.py` | Imports the package into fresh collections with the official `anki` library and checks the study order, a region filtered deck, Check Database and the upgrade from v1 (below). Not part of `make all`. |
 
 `deck/`, `build/`, `dist/` and `vendor/` are gitignored. `deck/` is pure output: nothing reads it back.
 
@@ -152,7 +153,7 @@ A `Card` is a frozen pydantic model:
 
 - `uid`, `kind` and `id`, which is unique within its kind. Kinds: `feature`, `country`, `capital`, `city`, `territory`, `dispute`, and `continent`.
 - `prompt`, the type word on the front, and `answer_lines`, which deckgen escapes and joins with `<br>`. Both reject markdown and HTML syntax, since ankc renders card text unsanitised.
-- `tags`, `tier`, `region` (`"NN"` for political and city cards; unset on features) and `note`.
+- `tags`, `tier`, `region` (`"NN"` for political and city cards; unset on features) and `note`. The note is printed in the PDF guide and, on the card, under the answer: deckgen appends `<hr>` and the HTML-escaped note in a `<div>` styled smaller and muted by opacity (`NOTE_STYLE`), so it reads in light and night mode. It goes into the existing answer field, so the note type is unchanged; `answer_lines` stays the name alone. The note validator keeps it inert (no HTML, links, images, code, `$` math or ankc syntax), allowing only emphasis, which ankc renders as `<em>`.
 - Curriculum links for P3: `host`, the country key a pocket sits after; `anchor`, the key of the card this one comes right after (a city's feature); `parents`, keys that must come first (a capital's country, a city's country and capital); `orientation`, true for the orientation block.
 - `render`: a `RenderRef` holding the `RenderSpec`, a `geometry` provider and, for capitals and cities, a `dot` provider. Both resolve only when called, so building cards doesn't load Natural Earth.
 
@@ -303,7 +304,7 @@ Renaming, re-tiering or retyping a card, editing `model.py`, `resolve.py`, `jobs
 **`check data`** (before rendering) fails on:
 
 - a missing uid on an active card, or a duplicate id or uid;
-- an active card without a `note`;
+- an active card of any kind without a `note` (every card's back shows it);
 - a `geometry/` feature without a known `method`, with empty `refs`, or whose `source` contains "unverified" or "placeholder" (any case);
 - a selector that matches the wrong number of rows, or an `expect` bbox or size range that doesn't hold;
 - geometry types that don't fit the style;
@@ -322,6 +323,7 @@ It also fails on political and city data:
 - a territory's `sovereign` or a dispute's party that isn't a country, or party names that repeat;
 - a city whose country is unknown, which is its country's capital, or whose `anchor` isn't an active feature, is in orientation or a later pass, or **derives to a different region from the city's country** (the anchor-region check: a city comes right after its anchor, so both must be in one region);
 - a feature `region` override outside 1–21, or a `region` or `anchor` override without its reason (schema). `regions.py` also checks overrides against the ring whenever it derives a region.
+- a ring region's or a composed continent's outline that is more than 0.5% sea (`SEA_SHARE_MAX` in `regions.py`). The real outlines are all land; the check catches a dispute whose outline takes in sea leaking into them, as the Spratly envelope once made region 17 4.1% sea. It runs wherever the outlines are built (`regions.region_outlines`, `continents.geometry`).
 
 It prints every trim, every `allow_nested` override, references to retired features, and each flagged or nested pair.
 
@@ -331,7 +333,7 @@ It prints every trim, every `allow_nested` override, references to retired featu
 - **Nested** pairs from different families (a delta in its river's frame, a strait inside a cyclone belt) are allowed and reported.
 - **Override policy.** Fix a same-family nesting in the data first: subtract the inner card when the outer shape shouldn't include it. Use `allow_nested: [{id, reason}]` only when the inner feature is a named part of the outer one and cutting it out would misdraw the outer shape. The reason must say why the cards still differ. Current overrides: Aegean/Mediterranean, Barents/Arctic Ocean, Levant/Fertile Crescent, Pontic–Caspian Steppe/Eurasian Steppe, Zagros/Iranian Plateau, and Arabian Desert/Arabian Peninsula (cross-family, so not required, but recorded because its IoU sits just under 0.8).
 
-**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "World Atlas"` passes.
+**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, a draft lock still matches the current study order (`make positions` would leave it unchanged), ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "World Atlas"` passes.
 
 **`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `World Atlas` deck, every note carrying all its tags, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
 
@@ -358,9 +360,9 @@ The order uses the pair results that `check data` caches in `build/siblings.json
 
 Sections: Orientation, then Pass 1 and Pass 2, each by ring region in ring order. A section's region uses `geofeat.order.region_of`, the order engine's own rule. A card can sit outside its own region: the engine moves a parent to just before its child, and a card whose region or pass changes after the lock is frozen keeps its old slot. The guide shows such a card where Anki shows it, and prints a line for each. To do that, it takes the heaviest chain of (pass, region) runs that never goes back in ring order as the sections; every other run joins the section after it. A linked contents page and PDF bookmarks cover each pass, each region and each card.
 
-`make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with only that region's pass 1 and pass 2 sections.
+`make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with only that region's pass 1 and pass 2 sections. These hold the region's political cards, the same ones a `tag:region::NN` filtered deck holds, plus the features the study order places in the region's run; features carry no region tag, so the filtered deck has none.
 
-The build fails if a card is unrendered, has no note, or has a note carrying a research marker (`NOTE_MARKER` in `model.py`). It warns if the PDF is over the 80 MB budget. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12).
+The build fails if a card is unrendered, has no note, or has a note carrying a research marker (`NOTE_MARKER` in `model.py`). It also fails if the lock is a draft that `make positions` would rewrite, which means the study order changed since the lock was written. A frozen lock isn't compared, because it keeps each card's old slot by design. It warns if the PDF is over the 80 MB budget. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12).
 
 ## Review tools
 
@@ -373,3 +375,5 @@ The build fails if a card is unrendered, has no note, or has a note carrying a r
 | `make cvd [IDS=...] [OUT=x.png]` | `build/cvd.png`, each map beside deuteranopia and protanopia simulations, after the contrast of each mark |
 
 `IDS` takes card keys or globs over them (`country:france`, `city:*`, `*:georgia`); a bare id is a feature.
+
+**Import test.** `make import-test` builds the package, then runs `tools/import_test.py` with the official `anki` library, pinned to 26.09.3 (`uv run --with anki==26.09.3`) and the desktop import dialog's default options. A fresh import must give one note per lock entry, all in `World Atlas`, each back carrying its note (emphasis as `<em>`), with each due equal to its lock position and the first 40 new cards queued in lock order. A `tag:region::05 is:new` filtered deck ordered by due must give region 05's cards in lock order, and Check Database must change no card. The upgrade check imports the v1 Geographic Features package (built from commit `b63bf0e` by `git archive` with v1's locked environment, placeholder maps and the current ankc, backdated to the commit so that "Update notes: If newer" applies as it would for a real v1 user, checked against the shipped v1's guids and note type in `tests/fixtures/`, and cached in `build/import-test/` per ankc version; `--v1 PATH` uses a real v1 package instead) and studies three cards. Importing World Atlas must then update the feature notes in place (their backs gain the note), keep every v1 card's deck and scheduling, and let Change Deck move them with their scheduling intact. [device-test-checklist.md](device-test-checklist.md) is the same ground, checked by hand on Anki desktop, AnkiDroid and AnkiMobile.
