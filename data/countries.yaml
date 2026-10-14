@@ -1809,12 +1809,12 @@
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320801}}
   expect: [5.61, -1.48, 11.34, 3.78]
   capital:
-    name: Malabo
-    ne_id: 1159150867
-    expect: [8.73, 3.7, 8.83, 3.8]
+    name: Ciudad de la Paz
+    file: ciudad-de-la-paz.geojson
+    expect: [10.77, 1.54, 10.87, 1.64]
     note: >-
-      Malabo, on the island of Bioko in the Bight of Biafra, was Equatorial Guinea's capital until January 2026,
-      when a decree named Ciudad de la Paz on the mainland as capital.
+      Ciudad de la Paz, a new city in the mainland rainforest in Djibloho province, was declared the capital by a
+      decree of January 2026. Malabo, on the island of Bioko, was the capital until then.
 
 - id: sao-tome-and-principe
   name: São Tomé and Príncipe
