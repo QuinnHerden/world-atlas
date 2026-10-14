@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Annotated, Literal
 
 import shapely
-from pydantic import Field, model_validator
+from pydantic import Field, PrivateAttr, model_validator
 from ruamel.yaml import YAML, YAMLError
 from shapely import unary_union
 from shapely.errors import GEOSException
@@ -14,6 +14,7 @@ from shapely.geometry import Point
 from shapely.geometry.base import BaseGeometry
 
 from geofeat.card import Card, Geometry, Kind, Note, RenderRef, Text, card_key, id_tag, pass_tag, study_pass
+from geofeat.curriculum import CURRICULUM, load_curriculum
 from geofeat.model import ROOT, Part, Strict
 from geofeat.resolve import area_km2, custom, features_by_id, layer, resolve, select_rows
 from geofeat.spec import RenderSpec
@@ -30,7 +31,7 @@ TERRITORY_TIER = 2  # territory and dispute entries carry no tier of their own; 
 
 Id = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*$")]
 Uid = Annotated[str, Field(pattern=r"^[A-Za-z0-9]{10}$")]
-Region = Annotated[int, Field(ge=1, le=21)]  # ring order; the slugs will come from data/curriculum.yaml (P3)
+Region = Annotated[int, Field(ge=1, le=21)]  # ring order, as numbered in data/curriculum.yaml
 GeojsonFile = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*\.geojson$")]
 Lon = Annotated[float, Field(ge=-180, le=180, allow_inf_nan=False)]
 Lat = Annotated[float, Field(ge=-90, le=90, allow_inf_nan=False)]
@@ -169,7 +170,6 @@ class Country(Strict):
     name: Text
     alt_names: list[Text] = []
     uids: dict[Literal["country", "capital"], Uid | None]
-    region: Region
     tier: Literal[1, 2, 3]  # microstates and small island states are 3; every country is in pass 1 all the same
     host: Id | None = None  # the country a microstate sits inside or beside, as a pocket in its run (P3)
     note: Note | None = None
@@ -177,6 +177,13 @@ class Country(Strict):
     mainland: BBox | None = None  # keep only the outline's parts inside this box (drops overseas parts)
     expect: BBox
     capital: Capital | None  # null: no capital card (same-name microstates, Palestine)
+    _region: int | None = PrivateAttr(default=None)  # from data/curriculum.yaml, set by load_countries()
+
+    @property
+    def region(self) -> int:
+        if self._region is None:
+            raise ValueError(f"{self.id}: no region (countries get theirs from {CURRICULUM.name} in load_countries)")
+        return self._region
 
     @model_validator(mode="after")
     def _uid_slots(self) -> "Country":
@@ -315,9 +322,23 @@ def unique(models: list, label: str) -> None:
         raise ValueError(f"duplicate {label} id: {duplicates}")
 
 
+def curriculum_regions(states: list[str]) -> dict[str, int]:
+    """The ring region number of every state, territory and dispute data/curriculum.yaml places, the one place region
+    membership is decided. The curriculum is checked against `states` first (each in exactly one region)."""
+    return {c: r.number for r in load_curriculum(states).regions for c in [*r.countries, *r.placed()]}
+
+
 def load_countries() -> list[Country]:
+    """The countries, each with its region from data/curriculum.yaml; a country in no region there is an error."""
     countries = [Country.model_validate(e) for e in read_entries(COUNTRIES)]
     unique(countries, "country")
+    if not countries:
+        return countries
+    regions = curriculum_regions([c.id for c in countries])
+    if missing := [c.id for c in countries if c.id not in regions]:
+        raise ValueError(f"{COUNTRIES.name}: not in any region of {CURRICULUM.name}: {', '.join(missing)}")
+    for country in countries:
+        country._region = regions[country.id]
     return countries
 
 
@@ -397,6 +418,10 @@ def check() -> tuple[list[str], dict[str, BaseGeometry]]:
             except (ValueError, OSError, GEOSException) as exc:
                 errors.append(str(exc))
     errors += reference_errors(countries, others)
+    if countries and others:
+        regions = curriculum_regions([c.id for c in countries])
+        errors += [f"{o.id}: region {o.region} differs from its region in {CURRICULUM.name} ({regions.get(o.id, 'none')})"
+                   for o in others if regions.get(o.id) != o.region]
     for other in others:
         try:
             errors += composition_errors(other.id, other.geometry)

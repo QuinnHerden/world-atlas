@@ -1,0 +1,3696 @@
+# World Atlas country cards (ADR 0005, 0008): a country card and, unless `capital: null`, a capital card per state.
+# Seeded by tools/seed_countries.py; edit here from now on. Region membership is not stored here: it comes from
+# data/curriculum.yaml, and every id must be in one of its regions. Entries were seeded in ring and walk order, but
+# their order here means nothing: the curriculum holds the order.
+#
+# - geometry: Natural Earth rows; the first is the base, `subtract` parts are cut out (recognised borders, ADR 0008).
+#   Mirrors countries_ne.SOURCES; tests/test_countries.py checks they agree.
+# - mainland: keep only the outline's parts wholly inside this box (drops remote outliers that get no card). A display
+#   crop for the card only: adjacency and region derivation use the full outline (countries_ne).
+# - expect: the outline's bbox (lon_min > lon_max crosses 180°); a capital's is a box around its point.
+# - tier 3: microstates and small island states (the PoC's ring rule); host: a pocket's host in curriculum.yaml.
+# - note: the P2.7 blurbs, copied as written.
+
+- id: portugal
+  name: Portugal
+  uids: {country: J6dTD8BNLJ, capital: VwNbdkEAwJ}
+  tier: 1
+  note: >-
+    In southwestern Europe on the North Atlantic, west of Spain, its only land neighbour. A global maritime power in
+    the 15th and 16th centuries, it lost much of its wealth after the 1755 earthquake that destroyed Lisbon.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321187}}
+  expect: [-31.29, 30.02, -6.2, 42.16]
+  capital:
+    name: Lisbon
+    ne_id: 1159151273
+    expect: [-9.2, 38.67, -9.1, 38.77]
+    note: >-
+      Portugal's capital is a coastal city on the Atlantic side of the country. It was largely destroyed by the 1755
+      earthquake. Its Monastery of the Hieronymites and Tower of Belém are World Heritage sites.
+
+- id: spain
+  name: Spain
+  uids: {country: 0x3364qkTW, capital: Gfx6RU9cU4}
+  tier: 1
+  note: >-
+    In southwestern Europe between the Atlantic and the Mediterranean. It borders Portugal, and France and Andorra
+    across the Pyrenees; its North African enclaves of Ceuta and Melilla border Morocco. Its 16th–17th-century
+    empire was a world power; after the civil war of 1936–39, Franco's dictatorship lasted until his death in 1975.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320587}}
+  expect: [-18.17, 27.64, 4.34, 43.8]
+  capital:
+    name: Madrid
+    ne_id: 1159151503
+    expect: [-3.74, 40.35, -3.64, 40.45]
+    note: >-
+      Spain's capital lies in the interior, unlike most of Spain's largest cities, which are on the coasts. It grew
+      from a small Moorish fort first recorded as Majerit in 932.
+
+- id: andorra
+  name: Andorra
+  uids: {country: Heh7XKRrTp, capital: 6kUNz2kobp}
+  tier: 3
+  host: spain
+  note: >-
+    A tiny landlocked principality high in the Pyrenees between France and Spain. Its heads of state are two
+    co-princes, the French head of state and the Bishop of Urgell, an arrangement dating back to 1278.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320327}}
+  expect: [1.4, 42.42, 1.77, 42.65]
+  capital:
+    name: Andorra la Vella
+    ne_id: 1159149089
+    expect: [1.48, 42.46, 1.58, 42.56]
+    note: >-
+      Andorra's capital. The Catalan name means "Andorra the Old".
+
+- id: france
+  name: France
+  uids: {country: dTemAoPqGr, capital: DfFU7zPSWx}
+  tier: 1
+  note: >-
+    The largest country in Western Europe, with coasts on the Bay of Biscay, the English Channel and the
+    Mediterranean. It borders Belgium, Luxembourg, Germany, Switzerland, Italy, Monaco, Andorra and Spain. A
+    permanent member of the UN Security Council.
+  geometry:
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320651}}
+  mainland: [-5.5, 41.0, 10.0, 51.5]
+  expect: [-5.14, 41.36, 9.56, 51.09]
+  capital:
+    name: Paris
+    ne_id: 1159151613
+    expect: [2.3, 48.81, 2.4, 48.91]
+    note: >-
+      Named after the Parisii, a Celtic tribe; the Roman town on the site was Lutetia. The banks of the Seine
+      through the city are a World Heritage site.
+
+- id: monaco
+  name: Monaco
+  uids: {country: TwE16wD8r7}
+  tier: 3
+  host: france
+  note: >-
+    A principality on the Mediterranean, surrounded on land by France near the Italian border. It is the world's
+    second-smallest state, after the Vatican, and the smallest with a coastline. The Grimaldi family has ruled it
+    since the Middle Ages, and a 19th-century casino made it famous.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321043}}
+  expect: [7.36, 43.71, 7.44, 43.77]
+  capital:
+
+- id: belgium
+  name: Belgium
+  uids: {country: VaNf9e7pEI, capital: yfyIXiDbBl}
+  tier: 1
+  note: >-
+    On the North Sea between France and the Netherlands, also bordering Germany and Luxembourg. It became
+    independent from the Netherlands in 1830 and is divided between Dutch-speaking Flemings in the north and
+    French-speaking Walloons in the south.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320389}}
+  expect: [2.52, 49.49, 6.38, 51.5]
+  capital:
+    name: Brussels
+    ne_id: 1159151465
+    expect: [4.28, 50.79, 4.38, 50.89]
+    note: >-
+      Belgium's capital is the seat of both the EU and NATO. The Grand Place is a World Heritage site.
+
+- id: luxembourg
+  name: Luxembourg
+  uids: {country: 8JcRJCqps0}
+  tier: 3
+  note: >-
+    A landlocked grand duchy between Belgium, France and Germany. Its name probably means "little fortress", and it
+    was one of the six founders of the EEC, now the EU, in 1957. The capital shares the country's name and has no
+    card of its own.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321031}}
+  expect: [5.71, 49.44, 6.51, 50.18]
+  capital:
+
+- id: netherlands
+  name: Netherlands
+  uids: {country: ErwppdhGi7, capital: hoWzlok5ar}
+  tier: 1
+  note: >-
+    On the North Sea between Belgium and Germany, at the mouths of the Rhine, Meuse and Scheldt. The name means "the
+    lowlands", and much of the land lies below or barely above sea level. It was a leading seafaring and trading
+    power in the 17th century.
+  geometry:
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321105}}
+  mainland: [3.0, 50.5, 7.5, 54.0]
+  expect: [3.34, 50.74, 7.2, 53.56]
+  capital:
+    name: Amsterdam
+    ne_id: 1159151519
+    expect: [4.86, 52.3, 4.96, 52.4]
+    note: >-
+      The constitutional capital: Article 32 requires the monarch to be sworn in "in the capital city", Amsterdam.
+      Parliament and the government sit in The Hague. The name comes from a dam on the Amstel river, and its
+      17th-century canal ring is a World Heritage site.
+
+- id: united-kingdom
+  name: United Kingdom
+  uids: {country: CLfmE57Sbc, capital: RD23fod2PO}
+  tier: 1
+  note: >-
+    Islands off northwest Europe between the North Atlantic and the North Sea: Great Britain and the northeast of
+    the island of Ireland. Its only land border is with Ireland, and the Channel Tunnel links it to France. It left
+    the EU in 2020.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320713}}
+  expect: [-13.7, 49.9, 1.78, 60.85]
+  capital:
+    name: London
+    ne_id: 1159151577
+    expect: [-0.17, 51.45, -0.07, 51.55]
+    note: >-
+      Founded as the Roman settlement of Londinium around AD 43. The Tower of London and Maritime Greenwich are
+      World Heritage sites.
+
+- id: ireland
+  name: Ireland
+  uids: {country: ZAkpWGTZzP, capital: Iwr1hH4kuE}
+  tier: 1
+  note: >-
+    Occupies most of the island of Ireland, west of Great Britain; its only land border is with Northern Ireland
+    (UK). The 1921 Anglo-Irish Treaty brought independence from the UK but left six northern counties in the UK.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320877}}
+  expect: [-10.48, 51.44, -5.99, 55.39]
+  capital:
+    name: Dublin
+    ne_id: 1159151309
+    expect: [-6.31, 53.3, -6.21, 53.4]
+    note: >-
+      Ireland's capital and a major port. The name comes from Irish *dubh linn*, "black pool", after the dark water
+      of the River Liffey.
+
+- id: iceland
+  name: Iceland
+  uids: {country: PJEhGX8mTx, capital: OqIdq11Al3}
+  tier: 1
+  note: >-
+    An island in the North Atlantic between Greenland and Europe, northwest of the UK, and the westernmost European
+    country. Its parliament, the Althingi, dates from 930. Glaciers cover more of it than of all continental Europe.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320917}}
+  expect: [-24.54, 63.39, -13.5, 66.57]
+  capital:
+    name: Reykjavík
+    ne_id: 1159150587
+    expect: [-21.99, 64.09, -21.89, 64.19]
+    note: >-
+      The world's northernmost national capital. The name means "smoky bay", after the steam from nearby hot
+      springs.
+
+- id: norway
+  name: Norway
+  uids: {country: pIsothzLuh, capital: 4I2G85idmg}
+  tier: 1
+  note: >-
+    A long, mountainous country on the North Sea and the Atlantic, west of Sweden, with Finland and Russia on its
+    far northern border. It has one of the world's longest and most rugged coastlines. Independent from its union
+    with Sweden since 1905, it rejected EU membership in referendums in 1972 and 1994.
+  geometry:
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321117}}
+  mainland: [4.0, 57.5, 31.5, 71.5]
+  expect: [4.64, 57.99, 31.08, 71.17]
+  capital:
+    name: Oslo
+    ne_id: 1159151281
+    expect: [10.7, 59.87, 10.8, 59.97]
+    note: >-
+      Norway's capital, a port on a fjord. The name may come from Old Norwegian *os*, "estuary".
+
+- id: sweden
+  name: Sweden
+  uids: {country: uqYHho0FeY, capital: 00uPkn2nCo}
+  tier: 1
+  note: >-
+    Between Norway and Finland on the Baltic Sea and the Gulf of Bothnia. A military power in the 17th century, it
+    has fought no war in two centuries. It kept a policy of military non-alignment until it applied to join NATO in
+    2022, and it became a member in 2024.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321287}}
+  expect: [11.1, 55.34, 24.17, 69.04]
+  capital:
+    name: Stockholm
+    ne_id: 1159151507
+    expect: [18.02, 59.27, 18.12, 59.37]
+    note: >-
+      Sweden's capital, a port, built in the mid-13th century on the site of a fishing village. The name probably
+      joins *stock* ("stake" or "pole") or *stak* ("bay") with *holm* ("island").
+
+- id: denmark
+  name: Denmark
+  uids: {country: JDVnNSsOEG, capital: 12cNEI5lmL}
+  tier: 1
+  note: >-
+    The Jutland peninsula north of Germany, its only land neighbour, plus hundreds of islands. It controls the
+    straits between the North Sea and the Baltic. Once home to Viking raiders.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320547}}
+  expect: [8.09, 54.56, 15.16, 57.76]
+  capital:
+    name: Copenhagen
+    ne_id: 1159151437
+    expect: [12.51, 55.63, 12.61, 55.73]
+    note: >-
+      Denmark's capital. The name means "merchants' harbour", and the city holds a large share of the country's
+      people.
+
+- id: finland
+  name: Finland
+  uids: {country: TXGNnjHbsQ, capital: zBIMIjKNZx}
+  tier: 1
+  note: >-
+    Between Sweden and Russia on the Gulf of Bothnia and the Gulf of Finland, with a long border with Russia; it
+    also borders Norway. Ruled by Sweden and then Russia, it became independent in 1917 and joined NATO in 2023.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320623}}
+  expect: [20.62, 59.81, 31.57, 70.08]
+  capital:
+    name: Helsinki
+    ne_id: 1159151419
+    expect: [24.88, 60.11, 24.98, 60.21]
+    note: >-
+      The northernmost capital on the European continent. Swedish King Gustav Vasa founded it in 1550 as
+      Helsingfors.
+
+- id: estonia
+  name: Estonia
+  uids: {country: 8T26JnOLAg, capital: i2AHoYkspg}
+  tier: 1
+  note: >-
+    The northernmost Baltic state, on the Baltic Sea and the Gulf of Finland between Latvia and Russia, with many
+    offshore islands. The USSR annexed it in 1940. It regained independence in 1991 and joined NATO and the EU in
+    2004.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320615}}
+  expect: [21.83, 57.51, 28.19, 59.68]
+  capital:
+    name: Tallinn
+    ne_id: 1159150877
+    expect: [24.68, 59.38, 24.78, 59.48]
+    note: >-
+      The name derives from "Danish fort": Danish King Valdemar II founded the city in 1219. Its Old Town is a World
+      Heritage site.
+
+- id: latvia
+  name: Latvia
+  uids: {country: OcV8etsSj1, capital: 5Dq6MUs4YF}
+  tier: 1
+  note: >-
+    The middle Baltic state, between Estonia and Lithuania, with Russia and Belarus to the east. Mostly low, fertile
+    plains. Independent after World War I, annexed by the USSR in 1940, and independent again in 1991.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321033}}
+  expect: [20.96, 55.66, 28.22, 58.08]
+  capital:
+    name: Riga
+    ne_id: 1159150811
+    expect: [24.05, 56.9, 24.15, 57.0]
+    note: >-
+      Latvia's capital and a port, on the Western Dvina river. Its historic centre is a World Heritage site.
+
+- id: lithuania
+  name: Lithuania
+  uids: {country: j0HJzP7mvY, capital: PKXHRuuWCx}
+  tier: 1
+  note: >-
+    The southernmost Baltic state, bordering Latvia, Belarus, Poland and Russia's Kaliningrad exclave. By the end of
+    the 14th century it was the largest state in Europe, and in 1569 it united with Poland. In 1990 it was the first
+    Soviet republic to declare independence.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321029}}
+  expect: [20.92, 53.88, 26.81, 56.45]
+  capital:
+    name: Vilnius
+    ne_id: 1159150809
+    expect: [25.27, 54.63, 25.37, 54.73]
+    note: >-
+      Named after the Vilnia river. Its historic centre is a World Heritage site.
+
+- id: poland
+  name: Poland
+  uids: {country: Da7chQMJtG, capital: Aq8ZyotYEZ}
+  tier: 1
+  note: >-
+    On the flat North European Plain east of Germany, a corridor long fought over. The Vistula is its longest river.
+    Russia, Prussia and Austria partitioned it out of existence in 1772–95, and in 1989 the Solidarity movement
+    helped end communist rule.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321179}}
+  expect: [14.12, 48.99, 24.15, 54.84]
+  capital:
+    name: Warsaw
+    ne_id: 1159151299
+    expect: [20.96, 52.18, 21.06, 52.28]
+    note: >-
+      Poland's capital. Warszawa was the name of a fishing village, several legends link the founding to a man named
+      Wars or Warsz, and the historic centre is a World Heritage site.
+
+- id: germany
+  name: Germany
+  uids: {country: W16JwGzLk1, capital: ZtTBBcCcRN}
+  tier: 1
+  note: >-
+    In Central Europe between the Netherlands and Poland, south of Denmark, with coasts on the North Sea and the
+    Baltic. The Danube rises here. Divided into West and East Germany in 1949, it was reunified in 1990.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320539}}
+  expect: [5.85, 47.27, 15.03, 55.07]
+  capital:
+    name: Berlin
+    ne_id: 1159151529
+    expect: [13.35, 52.47, 13.45, 52.57]
+    note: >-
+      Germany's capital, on the Spree. The name may come from a Slavic word for "swamp". Museum Island is a World
+      Heritage site.
+
+- id: czechia
+  name: Czechia
+  uids: {country: GgI4GQlkTv, capital: dXBm1y0ePl}
+  tier: 1
+  note: >-
+    Landlocked between Germany, Poland, Slovakia and Austria; the Elbe rises here. Czechoslovakia split peacefully
+    into two states in 1993, the "velvet divorce". The short name Czechia was added in 2016.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320535}}
+  expect: [12.07, 48.55, 18.84, 51.05]
+  capital:
+    name: Prague
+    ne_id: 1159151359
+    expect: [14.37, 50.04, 14.47, 50.14]
+    note: >-
+      Czechia's capital. The name may come from Old Slavic *prah*, "threshold", and historic Prague is a World
+      Heritage site.
+
+- id: austria
+  name: Austria
+  uids: {country: NRdvDSnlOm, capital: yyOK3AJBRG}
+  tier: 1
+  note: >-
+    A landlocked Alpine country north of Italy and Slovenia; the Danube is its major river. It was the centre of the
+    Austro-Hungarian Empire, and it has been neutral by law since 1955.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320379}}
+  expect: [9.52, 46.37, 17.15, 49.01]
+  capital:
+    name: Vienna
+    ne_id: 1159151563
+    expect: [16.31, 48.15, 16.41, 48.25]
+    note: >-
+      Austria's capital. The name may come from the Roman Vindobona, and historic Vienna is a World Heritage site.
+
+- id: switzerland
+  name: Switzerland
+  uids: {country: JtJcyNJFqA, capital: avcsZ4basU}
+  tier: 1
+  note: >-
+    A landlocked Alpine country between France, Germany, Austria, Liechtenstein and Italy; the Rhine rises here. It
+    has long kept its neutrality, was not involved in either World War, and joined the UN only in 2002.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320491}}
+  expect: [5.95, 45.82, 10.47, 47.81]
+  capital:
+    name: Bern
+    ne_id: 1159149737
+    expect: [7.42, 46.87, 7.52, 46.97]
+    note: >-
+      Switzerland has no official capital. Bern holds the title "federal city" and is home to the government and
+      parliament. Its Old City is a World Heritage site.
+
+- id: liechtenstein
+  name: Liechtenstein
+  uids: {country: 1qlvu8UyVc, capital: BOfJDSGp93}
+  tier: 3
+  host: switzerland
+  note: >-
+    An Alpine principality between Switzerland and Austria. It is one of only two doubly landlocked countries, with
+    Uzbekistan, and has a customs and monetary union with Switzerland.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321021}}
+  expect: [9.47, 47.05, 9.62, 47.27]
+  capital:
+    name: Vaduz
+    ne_id: 1159146061
+    expect: [9.47, 47.08, 9.57, 47.18]
+    note: >-
+      Liechtenstein's capital. The name may come from Latin *vallis* and Old German, together meaning "German
+      valley".
+
+- id: italy
+  name: Italy
+  uids: {country: uLjAqDqCg2, capital: 5XHCCQ6zlY}
+  tier: 1
+  note: >-
+    A peninsula reaching into the central Mediterranean, with Sicily and Sardinia. It borders France, Switzerland,
+    Austria and Slovenia and surrounds San Marino and the Vatican. The peninsula's states were united into one
+    nation in 1861.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320919}}
+  expect: [6.6, 35.48, 18.52, 47.09]
+  capital:
+    name: Rome
+    ne_id: 1159151593
+    expect: [12.43, 41.85, 12.53, 41.95]
+    note: >-
+      By tradition named after Romulus, a legendary founder, though the name may come from an Etruscan name for the
+      Tiber. Its historic centre is a World Heritage site, and Vatican City is an enclave within it.
+
+- id: san-marino
+  name: San Marino
+  uids: {country: YYBSkeOiBs}
+  tier: 3
+  host: italy
+  note: >-
+    A small enclave in central Italy, in the Apennines. It claims to be the world's oldest republic, founded by
+    tradition in 301. The capital shares the country's name and has no card of its own.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321255}}
+  expect: [12.38, 43.89, 12.5, 43.99]
+  capital:
+
+- id: vatican
+  name: Vatican
+  uids: {country: Q4Q14tcpJQ}
+  tier: 3
+  host: italy
+  note: >-
+    The world's smallest state, an enclave in Rome. Popes ruled much of the Italian peninsula until Italy took the
+    Papal States and then Rome (1870); the 1929 Lateran Treaties created the independent Vatican City. The capital
+    shares the state's name and has no card of its own.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321407}}
+  expect: [12.45, 41.9, 12.46, 41.91]
+  capital:
+
+- id: malta
+  name: Malta
+  uids: {country: siBs8ZR7WE, capital: L6EQdJkyum}
+  tier: 3
+  host: italy
+  note: >-
+    An archipelago in the central Mediterranean, south of Sicily. Its megalithic sites are among the oldest in the
+    world. It was a British colony until independence in 1964.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321065}}
+  expect: [14.18, 35.8, 14.57, 36.08]
+  capital:
+    name: Valletta
+    ne_id: 1159151199
+    expect: [14.46, 35.85, 14.56, 35.95]
+    note: >-
+      Malta's capital, founded in 1566 by Jean de la Valette, Grand Master of the Order of Saint John. The whole
+      city is a World Heritage site.
+
+- id: slovenia
+  name: Slovenia
+  uids: {country: wLNcASZe18, capital: wgE8ASIFMH}
+  tier: 1
+  note: >-
+    In the Julian Alps between Austria and Croatia, also bordering Italy and Hungary. It left Yugoslavia in 1991
+    after a short war.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321285}}
+  expect: [13.36, 45.42, 16.52, 46.87]
+  capital:
+    name: Ljubljana
+    ne_id: 1159149461
+    expect: [14.46, 46.01, 14.56, 46.11]
+    note: >-
+      By tradition the name is linked to *ljubljena*, "beloved", but its origin is probably pre-Slavic. The city's
+      works by architect Jože Plečnik are a World Heritage site.
+
+- id: hungary
+  name: Hungary
+  uids: {country: j0kVA7jkEc, capital: p5lGJL0bbY}
+  tier: 1
+  note: >-
+    Landlocked in Central Europe, divided into three regions by the Danube and the Tisza. A Christian kingdom from
+    1000, it later became part of Austria-Hungary. A revolt in 1956 was crushed by Soviet forces.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320841}}
+  expect: [16.09, 45.74, 22.88, 48.57]
+  capital:
+    name: Budapest
+    ne_id: 1159151257
+    expect: [19.03, 47.45, 19.13, 47.55]
+    note: >-
+      Formed in 1873 when Buda, on the west bank of the Danube, merged with Pest on the east bank. The Danube banks
+      and the Buda Castle Quarter are a World Heritage site.
+
+- id: slovakia
+  name: Slovakia
+  uids: {country: pqQcMAVCv1, capital: JaiO4gy3l4}
+  tier: 1
+  note: >-
+    Landlocked and mountainous, south of Poland, with the Tatra Mountains in the north. It was part of the Hungarian
+    kingdom for centuries and then of Czechoslovakia, and it became independent in 1993.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321283}}
+  expect: [16.84, 47.75, 22.54, 49.61]
+  capital:
+    name: Bratislava
+    ne_id: 1159149463
+    expect: [17.07, 48.1, 17.17, 48.2]
+    note: >-
+      Slovakia's capital. The name was adopted in 1919, replacing the older Slovak name Prešporok.
+
+- id: croatia
+  name: Croatia
+  uids: {country: 7xw2NrAbyQ, capital: n1aww7nWsF}
+  tier: 1
+  note: >-
+    On the Adriatic between Slovenia and Bosnia and Herzegovina, also bordering Hungary, Serbia and Montenegro. Most
+    Adriatic islands lie off its coast. It declared independence from Yugoslavia in 1991 and joined the eurozone and
+    Schengen in 2023.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320833}}
+  expect: [13.5, 42.41, 19.41, 46.55]
+  capital:
+    name: Zagreb
+    ne_id: 1159150875
+    expect: [15.95, 45.75, 16.05, 45.85]
+    note: >-
+      The name means "beyond the bank (or ditch)", from the city's original site above the Sava river.
+
+- id: bosnia-and-herzegovina
+  name: Bosnia and Herzegovina
+  uids: {country: ms0CVp2PaR, capital: 55s4Vy9R7H}
+  tier: 1
+  note: >-
+    Bordered by Croatia, Serbia and Montenegro, touching the Adriatic Sea. The 1992–95 war ended with the Dayton
+    Accords, which split the country into two entities: the Federation and the Bosnian Serb-led Republika Srpska.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320417}}
+  expect: [15.71, 42.55, 19.62, 45.29]
+  capital:
+    name: Sarajevo
+    ne_id: 1159151177
+    expect: [18.33, 43.8, 18.43, 43.9]
+    note: >-
+      The name comes from Turkish *saray*, "palace".
+
+- id: serbia
+  name: Serbia
+  uids: {country: h4EajpRReY, capital: 0CIJcCjcgi}
+  tier: 1
+  note: >-
+    A landlocked country on the main land route from Western Europe to Turkey, with the Danube flowing through it.
+    When Yugoslavia broke up, Serbia and Montenegro stayed together until Montenegro left in 2006. Serbia rejects
+    Kosovo's 2008 declaration of independence *(as of 2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321267}}
+  expect: [18.84, 42.23, 22.99, 46.18]
+  capital:
+    name: Belgrade
+    ne_id: 1159151079
+    expect: [20.42, 44.77, 20.52, 44.87]
+    note: >-
+      Capital of Serbia and formerly of Yugoslavia. The name means "white city", probably after the white stone of
+      its fortress.
+
+- id: kosovo
+  name: Kosovo
+  uids: {country: DmgSAskvqt, capital: Uw1yRDLwe7}
+  tier: 3
+  host: serbia
+  note: >-
+    Landlocked between Serbia, Montenegro, Albania and North Macedonia. It declared independence from Serbia in
+    2008. Serbia does not recognise it, and it is not a UN member *(as of 2026-10; verify)*. In 2010 the
+    International Court of Justice found the declaration did not violate international law.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321007}}
+  expect: [20.02, 41.84, 21.78, 43.27]
+  capital:
+    name: Pristina
+    ne_id: 1159149757
+    expect: [21.12, 42.62, 21.22, 42.72]
+    note: >-
+      Kosovo's capital, also spelled Prishtina. The town takes its name from a river whose name may be pre-Slavic.
+
+- id: montenegro
+  name: Montenegro
+  uids: {country: YMwv3SRf6T, capital: 7FYlvOBque}
+  tier: 1
+  note: >-
+    On the Adriatic between Croatia and Albania, with Bosnia and Herzegovina, Serbia and Kosovo inland. Its name
+    means "Black Mountain". It voted to restore its independence in 2006 and joined NATO in 2017.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321069}}
+  expect: [18.43, 41.85, 20.36, 43.55]
+  capital:
+    name: Podgorica
+    ne_id: 1159149511
+    expect: [19.22, 42.42, 19.32, 42.52]
+    note: >-
+      The name means "under the mountain".
+
+- id: albania
+  name: Albania
+  uids: {country: WgtsxVmRcR, capital: pqPvxxBuoI}
+  tier: 1
+  note: >-
+    On the Adriatic and Ionian Seas at the Strait of Otranto, between Montenegro and Kosovo to the north and Greece
+    to the south, with North Macedonia to the east. Independent from the Ottoman Empire since 1912, it was ruled by
+    communists from 1944 until the early 1990s.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320325}}
+  expect: [19.27, 39.63, 21.04, 42.66]
+  capital:
+    name: Tirana
+    ne_id: 1159151117
+    expect: [19.77, 41.28, 19.87, 41.38]
+    note: >-
+      Albania's capital. The name first appears in a Venetian document of 1418, and its origin is unclear.
+
+- id: north-macedonia
+  name: North Macedonia
+  uids: {country: tpdiV6Z1NX, capital: 6ASFkLKLpd}
+  tier: 1
+  note: >-
+    Landlocked, north of Greece, also bordering Albania, Kosovo, Serbia and Bulgaria; it shares the Lake Ohrid
+    region with Albania. Independent from Yugoslavia in 1991, it took its current name under the 2018 Prespa
+    Agreement with Greece, in force since 2019.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321061}}
+  expect: [20.44, 40.84, 23.01, 42.38]
+  capital:
+    name: Skopje
+    ne_id: 1159150073
+    expect: [21.38, 41.95, 21.48, 42.05]
+    note: >-
+      North Macedonia's capital. In the Roman era it was Scupi.
+
+- id: greece
+  name: Greece
+  uids: {country: KEUAJhKg6c, capital: GOR62Kmu6m}
+  tier: 1
+  note: >-
+    A peninsular country with an archipelago of islands, on the Aegean, Ionian and Mediterranean Seas between
+    Albania and Turkey. It won independence from the Ottoman Empire in 1830.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320811}}
+  expect: [19.62, 34.81, 28.24, 41.76]
+  capital:
+    name: Athens
+    ne_id: 1159151545
+    expect: [23.68, 37.94, 23.78, 38.04]
+    note: >-
+      By tradition named after the goddess Athena, though the name is probably pre-Hellenic. The Acropolis is a
+      World Heritage site.
+
+- id: bulgaria
+  name: Bulgaria
+  uids: {country: WcHASA4qdH, capital: l96heyQ5gg}
+  tier: 1
+  note: >-
+    On the Black Sea between Romania and Turkey, also bordering Serbia, North Macedonia and Greece. The first
+    Bulgarian state formed in the late 7th century. After centuries of Ottoman rule, it became fully independent in
+    1908.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320409}}
+  expect: [22.34, 41.23, 28.61, 44.23]
+  capital:
+    name: Sofia
+    ne_id: 1159151147
+    expect: [23.26, 42.64, 23.36, 42.74]
+    note: >-
+      Named after the city's Church of Saint Sofia, parts of which may date to the 4th century.
+
+- id: romania
+  name: Romania
+  uids: {country: F8AK7aNnyO, capital: 0fk4ah2jmm}
+  tier: 1
+  note: >-
+    On the Black Sea between Bulgaria and Ukraine, with the Carpathians in its centre. The Danube forms much of its
+    southern border and ends in the Danube Delta. The country was formed by uniting Wallachia and Moldavia in
+    1859–62.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321199}}
+  expect: [20.24, 43.65, 29.7, 48.28]
+  capital:
+    name: Bucharest
+    ne_id: 1159151263
+    expect: [26.05, 44.39, 26.15, 44.49]
+    note: >-
+      Romania's capital. Its name is said to come from a shepherd, Bucur, reputed to have founded the town, though a
+      settlement probably existed earlier.
+
+- id: moldova
+  name: Moldova
+  uids: {country: u2RdQ1hPOX, capital: komVNfWj1o}
+  tier: 1
+  note: >-
+    Landlocked between Romania and Ukraine. Russian forces remain in the breakaway region of Transnistria, east of
+    the Nistru (Dniester); the card shows Moldova's internationally recognised borders, which include it *(as of
+    2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321045}}
+  expect: [26.61, 45.46, 30.14, 48.49]
+  capital:
+    name: Chișinău
+    ne_id: 1159150677
+    expect: [28.81, 46.96, 28.91, 47.06]
+    note: >-
+      Moldova's capital. The name may come from an Old Moldovan word for "spring" or "well".
+
+- id: ukraine
+  name: Ukraine
+  uids: {country: jXDgL1EvrG, capital: iX1M0zAj2z}
+  tier: 1
+  note: >-
+    On the Black Sea, the second-largest country in Europe after Russia. It borders Russia, Belarus, Poland,
+    Slovakia, Hungary, Romania and Moldova. Russia seized Crimea in 2014 and launched a full-scale invasion in 2022.
+    The card shows Ukraine's internationally recognised borders *(as of 2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321345}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}}
+  expect: [22.13, 44.38, 40.16, 52.37]
+  capital:
+    name: Kyiv
+    ne_id: 1159151495
+    expect: [30.46, 50.39, 30.56, 50.49]
+    note: >-
+      Centre of Kyivan Rus, the first eastern Slavic state. By tradition it was founded by Prince Kiy. Saint Sophia
+      Cathedral and the Kyiv Pechersk Lavra are World Heritage sites.
+
+- id: belarus
+  name: Belarus
+  uids: {country: bqHa1F3CiN, capital: TDV0KUHFkQ}
+  tier: 1
+  note: >-
+    Landlocked and flat, with many glacial lakes, between Poland, Lithuania, Latvia, Russia and Ukraine. Of the
+    former Soviet republics, it has kept the closest ties to Russia, and Russia's 2022 invasion of Ukraine was
+    launched partly from its territory *(as of 2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320427}}
+  expect: [23.16, 51.23, 32.72, 56.16]
+  capital:
+    name: Minsk
+    ne_id: 1159151149
+    expect: [27.51, 53.85, 27.61, 53.95]
+    note: >-
+      Belarus's capital. The name may come from the Menka river. Its liberation from German troops on 3 July 1944 is
+      marked by the national holiday.
+
+- id: russia
+  name: Russia
+  uids: {country: y3cJ37N7ct, capital: iJ6ugTPAnT}
+  tier: 1
+  note: >-
+    The world's largest country, stretching from Eastern Europe across northern Asia to the Pacific, with the
+    exclave of Kaliningrad. Mount Elbrus is Europe's highest peak, and Lake Baikal is the world's deepest lake.
+    Crimea is shown in Ukraine, per the recognised-borders rule.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321201}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}, subtract: true}
+  expect: [19.6, 41.19, -168.99, 81.86]
+  capital:
+    name: Moscow
+    ne_id: 1159151585
+    expect: [37.56, 55.7, 37.66, 55.8]
+    note: >-
+      Named after the Moskva river. The Kremlin and Red Square are a World Heritage site.
+
+- id: georgia
+  name: Georgia
+  uids: {country: C2DnEHjW8C, capital: 24NViuSbJf}
+  tier: 1
+  note: >-
+    On the Black Sea between Russia and Turkey, also bordering Armenia and Azerbaijan, and controlling routes
+    through the Caucasus. It made Christianity its state religion in the 330s. After the 2008 war, Russia recognised
+    the breakaway regions of Abkhazia and South Ossetia and keeps forces there. The card shows Georgia's recognised
+    borders, which include both *(as of 2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320779}}
+  expect: [39.98, 41.04, 46.7, 43.58]
+  capital:
+    name: Tbilisi
+    ne_id: 1159150961
+    expect: [44.74, 41.68, 44.84, 41.78]
+    note: >-
+      The name comes from Georgian *tbili*, "warm", after the area's hot sulphur springs.
+
+- id: azerbaijan
+  name: Azerbaijan
+  uids: {country: A1GbALq04X, capital: HMHbbmS4V5}
+  tier: 1
+  note: >-
+    On the Caspian Sea between Russia and Iran, also bordering Georgia and Armenia, with the exclave of Naxçıvan
+    touching Turkey. It fought Armenia over Nagorno-Karabakh from 1988 and retook the whole region in 2023.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320381}}
+  expect: [44.77, 38.39, 50.63, 41.9]
+  capital:
+    name: Baku
+    ne_id: 1159151123
+    expect: [49.81, 40.35, 49.91, 40.45]
+    note: >-
+      On the Apsheron Peninsula, which juts into the Caspian Sea. Below sea level, it is the lowest capital city in
+      the world. Its walled city is a World Heritage site.
+
+- id: armenia
+  name: Armenia
+  uids: {country: lw2RkB2Ym5, capital: pxZ8B5SY6o}
+  tier: 1
+  note: >-
+    Landlocked in the Lesser Caucasus, home to Lake Sevan, between Georgia, Azerbaijan, Iran and Turkey. It regards
+    itself as the first state to formally adopt Christianity, in the early 4th century. Turkey has kept their border
+    closed since 1993 *(as of 2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320333}}
+  expect: [43.43, 38.86, 46.61, 41.3]
+  capital:
+    name: Yerevan
+    ne_id: 1159151119
+    expect: [44.46, 40.13, 44.56, 40.23]
+    note: >-
+      The name may derive from the fortress of Erebuni, built on the site in 782 BC.
+
+- id: turkey
+  name: Turkey
+  uids: {country: 4KlkNoWMcF, capital: 6NqzLMaJIz}
+  tier: 1
+  note: >-
+    Mostly Anatolia in Asia, with a small European part, Eastern Thrace, across the Bosporus, the Sea of Marmara and
+    the Dardanelles. It has coasts on the Black, Aegean and Mediterranean Seas, and the Tigris and Euphrates rise
+    here. It was founded in 1923 from the remnants of the Ottoman Empire by Mustafa Kemal Atatürk. Türkiye is an
+    approved English short-form name.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321331}}
+  expect: [25.66, 35.81, 44.81, 42.1]
+  capital:
+    name: Ankara
+    ne_id: 1159151255
+    expect: [32.81, 39.88, 32.91, 39.98]
+    note: >-
+      Long known as Angora, the city was officially renamed Ankara in 1923, when the Republic of Turkey was founded.
+      The name probably refers to a bend, after its original site in a winding gorge.
+
+- id: cyprus
+  name: Cyprus
+  uids: {country: k1hnoO3vu4, capital: kMb5Fz8xPf}
+  tier: 3
+  note: >-
+    The third-largest island in the Mediterranean, south of Turkey; it also contains two British sovereign base
+    areas, Akrotiri and Dhekelia. Since 1974 a UN buffer zone has divided the island. The Turkish
+    Cypriot-administered north declared itself the "Turkish Republic of Northern Cyprus", which only Turkey
+    recognises. The card shows the whole island as Cyprus *(as of 2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320533}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320531}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320511}}
+  expect: [32.27, 34.62, 34.6, 35.7]
+  capital:
+    name: Nicosia
+    ne_id: 1159151209
+    expect: [33.32, 35.12, 33.42, 35.22]
+    note: >-
+      A city divided by the UN buffer zone, which in parts of old Nicosia is only a few metres wide; crossing points
+      opened from 2003 *(as of 2026-10; verify)*. Its Greek name Lefkosia and Turkish name Lefkoşa both mean "white
+      city".
+
+- id: syria
+  name: Syria
+  uids: {country: JGN5CqquFS, capital: 1i6ug5DZf1}
+  tier: 1
+  note: >-
+    On the Mediterranean between Lebanon and Turkey, also bordering Iraq, Jordan and Israel; the Euphrates crosses
+    it on its way from Turkey to Iraq, and it shares the Tigris. A French mandate until independence in 1946, it
+    fell into civil war from 2011. Israel has controlled the Golan Heights since 1967, and the card shows them in
+    Syria, per the recognised borders *(as of 2026-10; verify)*.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321295}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320907}}
+  expect: [35.58, 32.31, 42.38, 37.33]
+  capital:
+    name: Damascus
+    ne_id: 1159151269
+    expect: [36.25, 33.45, 36.35, 33.55]
+    note: >-
+      Built at an oasis fed by the Barada River, it is thought to be one of the world's oldest continuously
+      inhabited cities. The Ancient City is a World Heritage site.
+
+- id: lebanon
+  name: Lebanon
+  uids: {country: 6PQUUnn8Yw, capital: ggA0bk5Dy9}
+  tier: 1
+  note: >-
+    On the Mediterranean between Israel and Syria, the smallest country in continental Asia. France drew its borders
+    in 1920 out of the former Ottoman province of Syria. It became independent in 1943, and a civil war lasted from
+    1975 to 1990.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321013}}
+  expect: [35.09, 33.05, 36.61, 34.69]
+  capital:
+    name: Beirut
+    ne_id: 1159150957
+    expect: [35.46, 33.82, 35.56, 33.92]
+    note: >-
+      Lebanon's capital. The name comes from a Phoenician or Hebrew word for "the wells".
+
+- id: israel
+  name: Israel
+  uids: {country: xePaivlOPD, capital: ZEWiAo0DJ1}
+  tier: 1
+  note: >-
+    On the Mediterranean between Egypt and Lebanon, also bordering Syria, Jordan, the West Bank and the Gaza Strip;
+    the Dead Sea lies on its eastern edge. The State of Israel was established in 1948. The card shows its
+    internationally recognised borders, without the Golan Heights or East Jerusalem.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320895}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}, subtract: true}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320907}, subtract: true}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1746265961}, subtract: true}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320911}, subtract: true}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320909}, subtract: true}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1746265963}, subtract: true}
+  expect: [34.24, 29.48, 35.68, 33.29]
+  capital:
+    name: Jerusalem
+    ne_id: 1159151203
+    expect: [35.16, 31.73, 35.26, 31.83]
+    note: >-
+      Israel designates Jerusalem as its capital, but this status is disputed internationally *(as of 2026-10;
+      verify)*. Israel took the city's eastern part in 1967 and has administered it since. The ancient name appears
+      in Egyptian texts of the 14th century BC.
+
+- id: palestine
+  name: Palestine
+  uids: {country: bJM8iWYKUz}
+  tier: 3
+  host: israel
+  note: >-
+    Two separate areas: the West Bank, including East Jerusalem, between Israel and Jordan; and the Gaza Strip on
+    the Mediterranean, between Israel and Egypt. The UN General Assembly granted Palestine non-member observer State
+    status in 2012 *(as of 2026-10; verify)*. Under the deck's rules Palestine has no capital card.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320899}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1746265961}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320911}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320909}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1746265963}}
+  expect: [34.2, 31.21, 35.58, 32.55]
+  capital:
+
+- id: jordan
+  name: Jordan
+  uids: {country: cFpN3I9ILO, capital: IRkorECIHW}
+  tier: 1
+  note: >-
+    Nearly landlocked: its only port, Aqaba, sits at the head of the Gulf of Aqaba. The Dead Sea, the lowest point
+    in Asia, lies on its western border with Israel and the West Bank. Syria, Iraq and Saudi Arabia surround the
+    rest. A Hashemite kingdom, independent since 1946; Petra is a World Heritage site.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320935}}
+  expect: [34.94, 29.18, 39.3, 33.38]
+  capital:
+    name: Amman
+    ne_id: 1159150807
+    expect: [35.88, 31.9, 35.98, 32.0]
+    note: >-
+      Jordan's capital. The Ammonites called the city Rabbath Ammon, "capital of the Ammonites", in the 13th century
+      BC; the name was later shortened to Amman.
+
+- id: iraq
+  name: Iraq
+  uids: {country: b26ActofVa, capital: UxUhoUzW34}
+  tier: 1
+  note: >-
+    At the head of the Persian Gulf between Iran and Kuwait, also bordering Turkey, Syria, Jordan and Saudi Arabia.
+    The Tigris and Euphrates flow through it and join as the Shatt al Arab. Ancient Babylon is a World Heritage
+    site.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320887}}
+  expect: [38.77, 29.06, 48.56, 37.38]
+  capital:
+    name: Baghdad
+    ne_id: 1159151547
+    expect: [44.34, 33.29, 44.44, 33.39]
+    note: >-
+      Iraq's capital. The name's origin is unclear; it may mean "gift of God".
+
+- id: kuwait
+  name: Kuwait
+  uids: {country: sJfBbIYrf3, capital: 4d0l1JxhP8}
+  tier: 1
+  note: >-
+    Kuwait sits at the head of the Persian Gulf, wedged between Iraq and Saudi Arabia. It became independent from
+    the UK in 1961, and Iraq invaded and overran it in 1990.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321009}}
+  expect: [46.53, 28.53, 48.44, 30.1]
+  capital:
+    name: Kuwait City
+    ne_id: 1159151361
+    expect: [47.93, 29.32, 48.03, 29.42]
+    note: >-
+      Kuwait City is the country's port capital on the Persian Gulf coast. The name Kuwait is a diminutive of *kut*,
+      a fortress-like house.
+
+- id: saudi-arabia
+  name: Saudi Arabia
+  uids: {country: UV9J8uHQL7, capital: 9RXnw5ZQET}
+  tier: 1
+  note: >-
+    Saudi Arabia fills the heart of the Arabian Peninsula, with coasts on both the Red Sea and the Persian Gulf. Ibn
+    Saud unified most of the peninsula into the kingdom in 1932. It is the birthplace of Islam and holds its two
+    holiest cities, Mecca and Medina.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321225}}
+  expect: [34.57, 16.37, 55.64, 32.13]
+  capital:
+    name: Riyadh
+    ne_id: 1159151581
+    expect: [46.67, 24.58, 46.77, 24.68]
+    note: >-
+      Riyadh lies deep in the desert interior of the peninsula, far from either coast. The city grew up around a
+      small oasis.
+
+- id: bahrain
+  name: Bahrain
+  uids: {country: LJZlDxihb7, capital: a6NIWaSoXy}
+  tier: 3
+  note: >-
+    Bahrain is an archipelago in the Persian Gulf just east of Saudi Arabia, with no land border. Independent from
+    the UK since 1971, it hosts the headquarters of the US Navy's forces in the region.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320413}}
+  expect: [50.38, 25.57, 50.82, 26.29]
+  capital:
+    name: Manama
+    ne_id: 1159150451
+    expect: [50.53, 26.19, 50.63, 26.29]
+    note: >-
+      Manama is Bahrain's port capital, on the coast. Its Arabic name means "place of rest" or "place of dreams".
+
+- id: qatar
+  name: Qatar
+  uids: {country: Kxj5IroeRT, capital: 3CsDa5bCHw}
+  tier: 1
+  note: >-
+    Qatar is a small peninsula jutting north into the Persian Gulf, with Saudi Arabia as its only land neighbour.
+    The Al Thani family has ruled it since the mid-1800s. From 2017 to 2021, Saudi Arabia, the UAE, Bahrain and
+    Egypt cut their ties with it.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321197}}
+  expect: [50.75, 24.55, 51.62, 26.17]
+  capital:
+    name: Doha
+    ne_id: 1159149469
+    expect: [51.48, 25.24, 51.58, 25.34]
+    note: >-
+      Doha is a port on Qatar's east coast. Its name comes from the Arabic *ad-dawha*, "the big tree".
+
+- id: united-arab-emirates
+  name: United Arab Emirates
+  uids: {country: V48eTQOCVt, capital: NoYnmm5ROl}
+  tier: 1
+  note: >-
+    The UAE lies on the southern shore of the Persian Gulf, between Saudi Arabia and Oman, on the approaches to the
+    Strait of Hormuz. It is a federation of seven emirates: six formed it in 1971 from the British-protected Trucial
+    States, and Ras al-Khaimah joined in 1972.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320329}}
+  expect: [51.56, 22.62, 56.39, 26.08]
+  capital:
+    name: Abu Dhabi
+    ne_id: 1159150565
+    expect: [54.32, 24.42, 54.42, 24.52]
+    note: >-
+      Abu Dhabi, on the Persian Gulf coast, is the capital of both the federation and the emirate of the same name.
+      Dubai, the country's other famous city, is a separate emirate.
+
+- id: oman
+  name: Oman
+  uids: {country: JIbuqCiIT4, capital: WJiZX3aLG3}
+  tier: 1
+  note: >-
+    Oman occupies the south-east corner of the Arabian Peninsula, on the Arabian Sea and the Gulf of Oman, and
+    borders the UAE, Saudi Arabia and Yemen. Its Musandam exclave, separate from the rest of the country, overlooks
+    the Strait of Hormuz.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321151}}
+  expect: [51.97, 16.64, 59.85, 26.39]
+  capital:
+    name: Muscat
+    ne_id: 1159150717
+    expect: [58.33, 23.54, 58.43, 23.64]
+    note: >-
+      Muscat is a port on the Gulf of Oman coast. Its name, *Masqat*, is said to mean "hidden".
+
+- id: yemen
+  name: Yemen
+  uids: {country: pyYNl5OqJK, capital: Givi1ZkRab}
+  tier: 1
+  note: >-
+    Yemen occupies the south-west corner of the Arabian Peninsula, south of Saudi Arabia and west of Oman, on the
+    Bab el-Mandeb strait into the Red Sea. North and South Yemen merged in 1990. Houthi forces overran the capital
+    in 2014, and the civil war that followed still divides the country (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321425}}
+  expect: [42.54, 12.11, 54.55, 19.0]
+  capital:
+    name: Sanaa
+    ne_id: 1159151259
+    expect: [44.15, 15.31, 44.25, 15.41]
+    note: >-
+      Sanaa lies inland in western Yemen, and its name is reputed to mean "fortified place". The Houthi movement has
+      held it since 2014 (as of 2026-10, verify).
+
+- id: djibouti
+  name: Djibouti
+  uids: {country: j9YnlYiBa2, capital: sD6S68Addc}
+  tier: 1
+  note: >-
+    Djibouti sits at the mouth of the Red Sea on the Gulf of Aden, between Eritrea, Ethiopia and Somalia.
+    Independent from France since 1977, its ports handle most of landlocked Ethiopia's trade.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320541}}
+  expect: [41.74, 10.92, 43.42, 12.71]
+  capital:
+    name: Djibouti
+    ne_id: 1159149869
+    expect: [43.1, 11.55, 43.2, 11.65]
+    note: >-
+      Djibouti city is the port capital that shares the country's name. Its harbour is Ethiopia's main gateway to
+      the sea.
+
+- id: eritrea
+  name: Eritrea
+  uids: {country: OZZ4K85CEg, capital: WzBH6xnmpW}
+  tier: 1
+  note: >-
+    Eritrea runs along the Red Sea coast between Sudan and Djibouti, with Ethiopia inland. It voted for independence
+    from Ethiopia in 1993, after a 30-year armed struggle.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320581}}
+  expect: [36.42, 12.36, 43.13, 18.01]
+  capital:
+    name: Asmara
+    ne_id: 1159150873
+    expect: [38.88, 15.28, 38.98, 15.38]
+    note: >-
+      Asmara lies inland, a short distance from the Red Sea coast, and has been the capital since independence in
+      1993. The origin of its name is unclear.
+
+- id: ethiopia
+  name: Ethiopia
+  uids: {country: f4LAeHni0F, capital: Di5fZFJ5Rz}
+  tier: 1
+  note: >-
+    Ethiopia is a landlocked country in the Horn of Africa, bordered by Eritrea, Djibouti, Somalia, Kenya, South
+    Sudan and Sudan. One of the oldest independent countries in the world, it defeated Italian forces to remain free
+    of colonial rule. It adopted Christianity in the 4th century.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320617}}
+  expect: [32.98, 3.4, 47.98, 14.88]
+  capital:
+    name: Addis Ababa
+    ne_id: 1159151549
+    expect: [38.65, 8.99, 38.75, 9.09]
+    note: >-
+      Addis Ababa lies in the centre of Ethiopia. Its Amharic name means "new flower", a name Empress Taitu gave the
+      new capital in 1887.
+
+- id: somalia
+  name: Somalia
+  uids: {country: LwIqOqxHXt, capital: J5MH6tXx8j}
+  tier: 1
+  note: >-
+    Somalia wraps around the Horn of Africa, with coasts on the Gulf of Aden and the Indian Ocean, and borders
+    Djibouti, Ethiopia and Kenya. The state collapsed in 1991, after clan militias overthrew Siad Barre. Somaliland,
+    in the north-west, lies within Somalia's internationally recognised borders but runs its own administration.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321261}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321259}}
+  expect: [40.96, -1.7, 51.42, 11.99]
+  capital:
+    name: Mogadishu
+    ne_id: 1159150715
+    expect: [45.31, 2.02, 45.41, 2.12]
+    note: >-
+      Mogadishu is a port on Somalia's Indian Ocean coast. Its name probably comes from the Arabic *mukaddas*,
+      "holy".
+
+- id: kenya
+  name: Kenya
+  uids: {country: fS2AfevWUi, capital: 9NisEbL99i}
+  tier: 1
+  note: >-
+    Kenya lies on the Indian Ocean between Somalia and Tanzania, and borders Ethiopia, South Sudan and Uganda
+    inland. The Great Rift Valley cuts through its central highlands. Coastal trading towns such as Mombasa traded
+    across the Indian Ocean for centuries before British rule, which ended with independence in 1963.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320971}}
+  expect: [33.89, -4.68, 41.89, 5.04]
+  capital:
+    name: Nairobi
+    ne_id: 1159151597
+    expect: [36.76, -1.33, 36.86, -1.23]
+    note: >-
+      Nairobi lies inland in southern Kenya. Its name comes from a Maasai expression meaning "cool waters", after a
+      local water hole.
+
+- id: tanzania
+  name: Tanzania
+  uids: {country: qP2785r9Ls, capital: Ip28VMelrK}
+  tier: 1
+  note: >-
+    Tanzania lies on the Indian Ocean between Kenya and Mozambique, framed by Lake Victoria to the north, Lake
+    Tanganyika to the west and Lake Nyasa (Lake Malawi) to the south-west. It holds Kilimanjaro, Africa's highest
+    point. It was formed in 1964, when Tanganyika united with Zanzibar.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321337}}
+  expect: [29.32, -11.74, 40.45, -0.98]
+  capital:
+    name: Dodoma
+    ne_id: 1159149731
+    expect: [35.7, -6.23, 35.8, -6.13]
+    note: >-
+      Dodoma, in the interior, is Tanzania's capital. Parliament sits there, and the ministries and the president
+      moved there from Dar es Salaam by 2019. Dar es Salaam, the large port on the coast, is still the biggest city
+      and commercial centre.
+
+- id: burundi
+  name: Burundi
+  uids: {country: DRNqndLSEz, capital: EWd7kVYYyf}
+  tier: 1
+  note: >-
+    Burundi is a small landlocked country on the north-eastern shore of Lake Tanganyika, between Rwanda, Tanzania
+    and DR Congo. Like Rwanda, its northern neighbour, it was a Belgian-run UN trust territory until independence in
+    1962.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320387}}
+  expect: [28.98, -4.47, 30.84, -2.3]
+  capital:
+    name: Gitega
+    ne_id: 1159146001
+    expect: [29.79, -3.48, 29.89, -3.38]
+    note: >-
+      Gitega, inland from Lake Tanganyika, became Burundi's political capital by a vote of parliament in 2019.
+      Bujumbura, on the lake shore, remains the economic capital, and the government's move to Gitega was still
+      incomplete as of 2023 (as of 2026-10, verify).
+
+- id: rwanda
+  name: Rwanda
+  uids: {country: L8UewbFQ8w, capital: ViDzPDRHQB}
+  tier: 1
+  note: >-
+    Rwanda is a small, landlocked country north of Burundi, bordered by Uganda, Tanzania and DR Congo. In 1994, a
+    state-orchestrated genocide against the Tutsi killed hundreds of thousands of people.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321219}}
+  expect: [28.85, -2.83, 30.89, -1.05]
+  capital:
+    name: Kigali
+    ne_id: 1159149385
+    expect: [30.01, -2.0, 30.11, -1.9]
+    note: >-
+      Kigali lies near the centre of Rwanda. It takes its name from nearby Mount Kigali.
+
+- id: uganda
+  name: Uganda
+  uids: {country: uwkSUXor0L, capital: xmLBYWuR8f}
+  tier: 1
+  note: >-
+    Uganda is a landlocked country west of Kenya and east of DR Congo, with South Sudan to the north and Tanzania
+    and Rwanda to the south. It shares Lake Victoria, the world's largest tropical lake. It became independent from
+    the UK in 1962.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321343}}
+  expect: [29.54, -1.48, 35.01, 4.22]
+  capital:
+    name: Kampala
+    ne_id: 1159150593
+    expect: [32.53, 0.27, 32.63, 0.37]
+    note: >-
+      Kampala lies near the northern shore of Lake Victoria. Its name is said to come from the impala antelope.
+
+- id: south-sudan
+  name: South Sudan
+  uids: {country: rcy1eorBiO, capital: NSvsyjcuT2}
+  tier: 1
+  note: >-
+    South Sudan is a landlocked country on the upper White Nile, south of Sudan and north of Uganda and Kenya. It
+    won independence from Sudan in 2011, after two long civil wars, which makes it the world's newest country.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321235}}
+  expect: [24.12, 3.49, 35.93, 12.22]
+  capital:
+    name: Juba
+    ne_id: 1159149449
+    expect: [31.53, 4.78, 31.63, 4.88]
+    note: >-
+      Juba stands on the White Nile, called the Bahr el Jebel along this stretch, in the south of the country. It is
+      named after a small Bari village near the present city.
+
+- id: sudan
+  name: Sudan
+  uids: {country: BXuf2N7ee1, capital: zoDniv5XVW}
+  tier: 1
+  note: >-
+    Sudan lies south of Egypt on the Red Sea, and the Blue Nile and White Nile meet within it to form the Nile.
+    Independent from Egypt and the UK since 1956, it lost its south when South Sudan became independent in 2011. War
+    between the army and the Rapid Support Forces has gone on since 2023 (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321229}}
+  expect: [21.8, 8.68, 38.61, 22.23]
+  capital:
+    name: Khartoum
+    ne_id: 1159151275
+    expect: [32.48, 15.54, 32.58, 15.64]
+    note: >-
+      Khartoum stands where the Blue Nile and White Nile meet; its name refers to the "elephant's trunk" of land
+      between them. During the war the government ran from Port Sudan, and it announced its return to Khartoum in
+      January 2026 (as of 2026-10, verify).
+
+- id: egypt
+  name: Egypt
+  uids: {country: oEAraTt0XB, capital: w2aMwrVCPB}
+  tier: 1
+  note: >-
+    Egypt occupies Africa's north-east corner, on the Mediterranean and the Red Sea, and borders Libya, Sudan,
+    Israel and the Gaza Strip. It controls the Suez Canal and the Sinai Peninsula, the only land bridge between
+    Africa and Asia.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320575}}
+  expect: [24.68, 21.99, 36.9, 31.66]
+  capital:
+    name: Cairo
+    ne_id: 1159151603
+    expect: [31.2, 30.0, 31.3, 30.1]
+    note: >-
+      Cairo lies on the Nile at the head of its delta. Its name may come from the Arabic *al-qahir*, "the
+      victorious".
+
+- id: libya
+  name: Libya
+  uids: {country: O1Zxwe96zv, capital: WDbgIQP4Fl}
+  tier: 1
+  note: >-
+    Libya stretches along the Mediterranean between Egypt and Tunisia, with Algeria, Niger, Chad and Sudan to the
+    south and west. After the 2011 uprising, it split between rival governments based in the east and the west (as
+    of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321017}}
+  expect: [9.28, 19.49, 25.16, 33.19]
+  capital:
+    name: Tripoli
+    ne_id: 1159151415
+    expect: [13.13, 32.84, 13.23, 32.94]
+    note: >-
+      Tripoli is a port on Libya's north-western Mediterranean coast. Its Arabic name is Tarabulus.
+
+- id: tunisia
+  name: Tunisia
+  uids: {country: EYcP8527nX, capital: fUfnZDfjHL}
+  tier: 1
+  note: >-
+    Tunisia sits on the Mediterranean between Algeria and Libya. Ancient Carthage stood here, and the street
+    protests in Tunis in 2010–11 began the Arab Spring.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321327}}
+  expect: [7.47, 30.22, 11.57, 37.35]
+  capital:
+    name: Tunis
+    ne_id: 1159150537
+    expect: [10.13, 36.75, 10.23, 36.85]
+    note: >-
+      Tunis lies on the Mediterranean coast in the north of the country. Its ancient name is sometimes linked to the
+      Phoenician goddess Tanith.
+
+- id: algeria
+  name: Algeria
+  uids: {country: lvmFs9SFMl, capital: jSB0N8cHrP}
+  tier: 1
+  note: >-
+    Algeria is the largest country in Africa. It reaches from the Mediterranean coast, between Morocco and Tunisia,
+    deep into the desert, which covers most of it. It won independence from France in 1962.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320565}}
+  expect: [-8.69, 18.97, 11.97, 37.1]
+  capital:
+    name: Algiers
+    ne_id: 1159151471
+    expect: [3.0, 36.72, 3.1, 36.82]
+    note: >-
+      Algiers is a port on the Mediterranean coast. Its name refers to four islands that once lay offshore and were
+      joined to the mainland in 1525.
+
+- id: morocco
+  name: Morocco
+  uids: {country: O9y7WXptkf, capital: kMkxdZ21xT}
+  tier: 1
+  note: >-
+    Morocco occupies Africa's north-west corner, on the Atlantic and the Mediterranean, and faces Spain across the
+    Strait of Gibraltar. It borders Algeria and the Spanish cities of Ceuta and Melilla. A French protectorate from
+    1912, it became independent in 1956. Western Sahara, to the south, is a disputed territory with a card of its
+    own.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321035}}
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321037}, subtract: true}
+  expect: [-13.18, 27.66, -1.03, 35.93]
+  capital:
+    name: Rabat
+    ne_id: 1159150673
+    expect: [-6.89, 33.98, -6.79, 34.08]
+    note: >-
+      Rabat is a port on Morocco's Atlantic coast. Its name comes from the Arabic *Ribat el-Fath*.
+
+- id: mauritania
+  name: Mauritania
+  uids: {country: rPisaTk2co, capital: GE4gcrFv7R}
+  tier: 1
+  note: >-
+    Mauritania lies on the Atlantic coast between Western Sahara and Senegal, with Algeria and Mali inland. It
+    officially abolished slavery only in 1981, and made it a crime in 2007.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321075}}
+  expect: [-17.09, 14.73, -4.82, 27.29]
+  capital:
+    name: Nouakchott
+    ne_id: 1159150943
+    expect: [-16.03, 18.04, -15.93, 18.14]
+    note: >-
+      Nouakchott is Mauritania's capital on the Atlantic coast. The meaning of its name is unclear.
+
+- id: senegal
+  name: Senegal
+  uids: {country: 4CY6CqbAfU, capital: ECI7wuqdps}
+  tier: 1
+  note: >-
+    Senegal is the westernmost country on the African mainland, on the Atlantic between Mauritania and
+    Guinea-Bissau, and it almost surrounds The Gambia. It became independent from France in 1960; a brief federation
+    with Mali dissolved the same year.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321243}}
+  expect: [-17.54, 12.3, -11.37, 16.7]
+  capital:
+    name: Dakar
+    ne_id: 1159151513
+    expect: [-17.53, 14.67, -17.43, 14.77]
+    note: >-
+      Dakar, on the Atlantic coast, is the westernmost capital on the African mainland. Its name comes from the
+      Wolof *n'dakar*, "tamarind tree".
+
+- id: gambia
+  name: The Gambia
+  uids: {country: xry9F3Wtsm, capital: odXOJGWzR4}
+  tier: 1
+  note: >-
+    The Gambia is the smallest country on the African mainland, a sliver of land almost entirely surrounded by
+    Senegal and open to the Atlantic in the west. It became independent from the UK in 1965.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320797}}
+  expect: [-16.83, 13.06, -13.81, 13.82]
+  capital:
+    name: Banjul
+    ne_id: 1159149997
+    expect: [-16.64, 13.4, -16.54, 13.5]
+    note: >-
+      Banjul lies on the Atlantic coast at the country's western end. Its name stems from a 15th-century
+      misunderstanding between Portuguese colonists and the local people.
+
+- id: cabo-verde
+  name: Cabo Verde
+  uids: {country: itO9FQOORw, capital: lltkOGGDkC}
+  tier: 3
+  note: >-
+    Cabo Verde is an archipelago in the Atlantic, west of Senegal. The Portuguese found the islands uninhabited in
+    the 15th century and colonised them. Independence came in 1975.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320523}}
+  expect: [-25.37, 14.8, -22.66, 17.2]
+  capital:
+    name: Praia
+    ne_id: 1159151205
+    expect: [-23.57, 14.87, -23.47, 14.97]
+    note: >-
+      Praia lies on the island of Santiago (São Tiago). Its name is Portuguese for "beach", from the earlier Villa
+      de Praia.
+
+- id: guinea-bissau
+  name: Guinea-Bissau
+  uids: {country: j3QYOFFQ8N, capital: Bq6UGqaJ92}
+  tier: 1
+  note: >-
+    Guinea-Bissau lies on the Atlantic between Senegal and Guinea, with the Bijagós archipelago offshore. A former
+    Portuguese colony, it declared independence in 1973.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320799}}
+  expect: [-16.73, 10.92, -13.66, 12.68]
+  capital:
+    name: Bissau
+    ne_id: 1159150803
+    expect: [-15.65, 11.82, -15.55, 11.92]
+    note: >-
+      Bissau is a port on the Atlantic coast. Its name, from the Bijuga people, sets the country apart from
+      neighbouring Guinea.
+
+- id: guinea
+  name: Guinea
+  uids: {country: dhsa3y3W9q, capital: Bf3yT5JobD}
+  tier: 1
+  note: >-
+    Guinea curves along the Atlantic between Guinea-Bissau and Sierra Leone and reaches inland to Senegal, Mali,
+    Côte d'Ivoire and Liberia. The Niger River rises in its highlands. In 1958 it became independent from France.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320795}}
+  expect: [-15.09, 7.19, -7.66, 12.68]
+  capital:
+    name: Conakry
+    ne_id: 1159150997
+    expect: [-13.73, 9.48, -13.63, 9.58]
+    note: >-
+      Conakry is Guinea's port capital on the Atlantic. Its name comes from a Susu word meaning "over the water".
+
+- id: sierra-leone
+  name: Sierra Leone
+  uids: {country: d0HRyLUACO, capital: mmJj3psFJJ}
+  tier: 1
+  note: >-
+    Sierra Leone lies on the Atlantic between Guinea and Liberia. After Britain abolished the slave trade in 1807,
+    British ships landed thousands of liberated Africans here. It became independent in 1961.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321251}}
+  expect: [-13.31, 6.91, -10.28, 10.0]
+  capital:
+    name: Freetown
+    ne_id: 1159150625
+    expect: [-13.29, 8.42, -13.19, 8.52]
+    note: >-
+      Freetown is a port on Sierra Leone's Atlantic coast. Its name describes its origin as a settlement for freed
+      people.
+
+- id: liberia
+  name: Liberia
+  uids: {country: nwbihRgCRe, capital: Mwg9eKbRgB}
+  tier: 1
+  note: >-
+    Liberia lies on the Atlantic between Sierra Leone and Côte d'Ivoire. Settlers from the United States, among them
+    freed enslaved people, founded it, and in 1847 it declared independence as Africa's first republic.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321015}}
+  expect: [-11.48, 4.34, -7.38, 8.57]
+  capital:
+    name: Monrovia
+    ne_id: 1159151311
+    expect: [-10.85, 6.26, -10.75, 6.36]
+    note: >-
+      Monrovia is a port on Liberia's Atlantic coast, named after James Monroe, the fifth US president.
+
+- id: cote-divoire
+  name: Côte d'Ivoire
+  uids: {country: o8NQXyAfwI, capital: MA63to3Dqa}
+  tier: 1
+  note: >-
+    Côte d'Ivoire lies on the Atlantic between Liberia and Ghana, and borders Guinea, Mali and Burkina Faso inland.
+    Independent from France since 1960, it grew on the export of cocoa.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320507}}
+  expect: [-8.62, 4.34, -2.5, 10.73]
+  capital:
+    name: Yamoussoukro
+    ne_id: 1159150999
+    expect: [-5.33, 6.77, -5.23, 6.87]
+    note: >-
+      Yamoussoukro, inland in the centre of the country, is Côte d'Ivoire's official (legislative) capital. Abidjan,
+      the port on the coast, is the administrative and economic capital and the seat of government.
+
+- id: mali
+  name: Mali
+  uids: {country: LYTIO4x3ro, capital: g5Y6tc2bkb}
+  tier: 1
+  note: >-
+    Mali is a large landlocked country in West Africa's interior, south-west of Algeria, and the Niger River arcs
+    through its south and centre. It is named after the Mali Empire, which ruled the region between the 13th and
+    16th centuries; under later Songhai rule, Timbuktu became a centre of trade and scholarship. Under military rule
+    since 2020–21, it left ECOWAS in 2025 and is in the Alliance of Sahel States with Burkina Faso and Niger (as of
+    2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321063}}
+  expect: [-12.27, 10.14, 4.24, 25.0]
+  capital:
+    name: Bamako
+    ne_id: 1159150945
+    expect: [-8.05, 12.6, -7.95, 12.7]
+    note: >-
+      Bamako lies on the Niger River in south-western Mali. Its name comes from the Bambara language.
+
+- id: burkina-faso
+  name: Burkina Faso
+  uids: {country: Ykq15aEwB3, capital: Dqy2i8pIAX}
+  tier: 1
+  note: >-
+    Burkina Faso is a landlocked country north of Ghana, ringed by Mali, Niger, Benin, Togo and Côte d'Ivoire.
+    Formerly called Upper Volta, it has been under military rule since two coups in 2022. It left ECOWAS in 2025 and
+    is in the Alliance of Sahel States with Mali and Niger (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320405}}
+  expect: [-5.53, 9.39, 2.4, 15.08]
+  capital:
+    name: Ouagadougou
+    ne_id: 1159151173
+    expect: [-1.58, 12.32, -1.48, 12.42]
+    note: >-
+      Ouagadougou lies near the centre of Burkina Faso. Its name is a French spelling of the local name.
+
+- id: ghana
+  name: Ghana
+  uids: {country: v5TiCo54YS, capital: EOuJ39Gvca}
+  tier: 1
+  note: >-
+    Ghana lies on the Gulf of Guinea between Côte d'Ivoire and Togo, with Burkina Faso to the north. As the former
+    Gold Coast, in 1957 it became the first sub-Saharan colony to win independence. It holds Lake Volta, the world's
+    largest artificial lake by surface area.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320793}}
+  expect: [-3.27, 4.73, 1.19, 11.17]
+  capital:
+    name: Accra
+    ne_id: 1159151403
+    expect: [-0.27, 5.5, -0.17, 5.6]
+    note: >-
+      Accra is a port on the Gulf of Guinea coast. Its name comes from the Akan word *nkran*, "ant".
+
+- id: togo
+  name: Togo
+  uids: {country: 3SFXx6aM1D, capital: VMRQOkuKpV}
+  tier: 1
+  note: >-
+    Togo is a narrow country between Ghana and Benin, running inland from the Bight of Benin to Burkina Faso.
+    Germany declared it the protectorate of Togoland in 1884.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321303}}
+  expect: [-0.17, 6.1, 1.79, 11.14]
+  capital:
+    name: Lomé
+    ne_id: 1159150535
+    expect: [1.17, 6.08, 1.27, 6.18]
+    note: >-
+      Lomé is a port on the Bight of Benin, right beside the border with Ghana. Its name comes from a local word
+      meaning "little market".
+
+- id: benin
+  name: Benin
+  uids: {country: 0OtlVMhoor, capital: l6xmhrfeGS}
+  tier: 1
+  note: >-
+    Benin is a narrow country between Togo and Nigeria, running north from the Bight of Benin to Niger and Burkina
+    Faso. The Kingdom of Dahomey rose here in the 17th century, and the country was called Dahomey until 1975.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320399}}
+  expect: [0.75, 6.21, 3.84, 12.4]
+  capital:
+    name: Porto-Novo
+    ne_id: 1159150345
+    expect: [2.57, 6.43, 2.67, 6.53]
+    note: >-
+      Porto-Novo, near the coast and close to the Nigerian border, is Benin's constitutional capital; its name is
+      Portuguese for "new port". The seat of government is Cotonou, the port city to the west.
+
+- id: nigeria
+  name: Nigeria
+  uids: {country: HRWKr40vOR, capital: SucvCAjmyo}
+  tier: 1
+  note: >-
+    Nigeria lies on the Gulf of Guinea between Benin and Cameroon, with Niger and Chad to the north. It is Africa's
+    most populous country, and it became independent from the UK in 1960.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321089}}
+  expect: [2.67, 4.27, 14.67, 13.89]
+  capital:
+    name: Abuja
+    ne_id: 1159150799
+    expect: [7.44, 9.0, 7.54, 9.1]
+    note: >-
+      Abuja is a purpose-built city in the centre of the country. It replaced Lagos as the capital in 1991.
+
+- id: niger
+  name: Niger
+  uids: {country: ZOJc1ErJKW, capital: qa9a26OAu8}
+  tier: 1
+  note: >-
+    Niger is a landlocked country south-east of Algeria. It is mostly desert, with savanna in the south and the
+    Niger River crossing its south-west. Its army seized power in July 2023, and in 2025 it left ECOWAS; it is in
+    the Alliance of Sahel States with Mali and Burkina Faso (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321087}}
+  expect: [0.15, 11.69, 15.98, 23.52]
+  capital:
+    name: Niamey
+    ne_id: 1159150605
+    expect: [2.06, 13.47, 2.16, 13.57]
+    note: >-
+      Niamey lies on the Niger River in the south-west of the country. The origin of its name is unclear.
+
+- id: chad
+  name: Chad
+  uids: {country: TEKjKmR1Pv, capital: 2gG6n0XOS9}
+  tier: 1
+  note: >-
+    Chad is the largest landlocked country in Africa, south of Libya. Lake Chad, in its west, is the most important
+    body of water in the Sahel. The Kanem-Bornu Empire was centred on the lake basin from the 9th to the 19th
+    century.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321301}}
+  expect: [13.44, 7.45, 23.99, 23.45]
+  capital:
+    name: N'Djamena
+    ne_id: 1159150863
+    expect: [15.0, 12.07, 15.1, 12.17]
+    note: >-
+      N'Djamena stands where the Logone River meets the Chari, on the border with Cameroon. Its name is said to mean
+      "place of rest".
+
+- id: cameroon
+  name: Cameroon
+  uids: {country: GMbOv0zrzX, capital: N0vWpOks93}
+  tier: 1
+  note: >-
+    Cameroon lies on the Bight of Biafra between Nigeria and Equatorial Guinea, and reaches north to Lake Chad.
+    Mount Cameroon, an active volcano, is the highest mountain in sub-Saharan West Africa. After the First World
+    War, France and the UK divided the territory between them.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320509}}
+  expect: [8.5, 1.65, 16.21, 13.09]
+  capital:
+    name: Yaoundé
+    ne_id: 1159151115
+    expect: [11.46, 3.82, 11.56, 3.92]
+    note: >-
+      Yaoundé lies inland in southern Cameroon. Germans founded the city in 1888, but its name comes from the Ewondo
+      people.
+
+- id: central-african-republic
+  name: Central African Republic
+  uids: {country: mGmlk3qubh, capital: neNv2BS31z}
+  tier: 1
+  note: >-
+    The Central African Republic is a landlocked country in the middle of the continent, north of the two Congos,
+    with Chad and Sudan to the north, South Sudan to the east and Cameroon to the west. It began as the French
+    colony of Ubangi-Shari, and Jean-Bédel Bokassa seized power there in 1966.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320463}}
+  expect: [14.38, 2.23, 27.45, 11.01]
+  capital:
+    name: Bangui
+    ne_id: 1159151111
+    expect: [18.51, 4.32, 18.61, 4.42]
+    note: >-
+      Bangui stands on the Ubangi River, on the border with DR Congo. Its name means "rapids", after the first great
+      rapids of the Ubangi, which lie just below the city.
+
+- id: equatorial-guinea
+  name: Equatorial Guinea
+  uids: {country: bigyBNVi3q, capital: cnUtmlZgSD}
+  tier: 1
+  note: >-
+    Equatorial Guinea joins the island of Bioko, in the Bight of Biafra, to a mainland region between Cameroon and
+    Gabon. It became independent from Spain in 1968.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320801}}
+  expect: [5.61, -1.48, 11.34, 3.78]
+  capital:
+    name: Malabo
+    ne_id: 1159150867
+    expect: [8.73, 3.7, 8.83, 3.8]
+    note: >-
+      Malabo, on the island of Bioko in the Bight of Biafra, was Equatorial Guinea's capital until January 2026,
+      when a decree named Ciudad de la Paz on the mainland as capital. The move of government is still under way (as
+      of 2026-10, verify).
+
+- id: sao-tome-and-principe
+  name: São Tomé and Príncipe
+  uids: {country: C7wAAr2Upf, capital: qfGNM5rN1n}
+  tier: 3
+  note: >-
+    São Tomé and Príncipe is an island nation in the Gulf of Guinea, just north of the Equator and west of Gabon.
+    The Portuguese found the islands uninhabited in the late 15th century; a sugar, then coffee and cocoa, economy
+    followed. It became independent in 1975.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321273}}
+  expect: [6.46, 0.02, 7.47, 1.7]
+  capital:
+    name: São Tomé
+    ne_id: 1159151195
+    expect: [6.68, 0.29, 6.78, 0.39]
+    note: >-
+      São Tomé is a port on the island of the same name. The Portuguese named it after Saint Thomas the Apostle.
+
+- id: gabon
+  name: Gabon
+  uids: {country: KVXqFsZRlv, capital: NrBNJgfwuP}
+  tier: 1
+  note: >-
+    Gabon lies on the Atlantic at the Equator, between Equatorial Guinea and the Republic of the Congo, with
+    Cameroon to the north. The Bongo family, father and then son, ruled from 1967 until a military coup in 2023.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320693}}
+  expect: [8.69, -3.94, 14.5, 2.33]
+  capital:
+    name: Libreville
+    ne_id: 1159150913
+    expect: [9.41, 0.34, 9.51, 0.44]
+    note: >-
+      Libreville is a port on Gabon's Atlantic coast, just north of the Equator. Freed slaves founded it in 1849,
+      and its name is French for "free town".
+
+- id: congo
+  name: Republic of the Congo
+  uids: {country: mXpNqyMH4o, capital: XTwcofuojP}
+  tier: 1
+  note: >-
+    The Republic of the Congo lies between Gabon and DR Congo, with a short Atlantic coast and Cameroon and the
+    Central African Republic to the north. The former French colony of Middle Congo, it became independent in 1960.
+    It is not DR Congo, its larger neighbour across the Congo River.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320515}}
+  expect: [11.11, -5.02, 18.65, 3.71]
+  capital:
+    name: Brazzaville
+    ne_id: 1159150993
+    expect: [15.23, -4.31, 15.33, -4.21]
+    note: >-
+      Brazzaville stands on the Congo River, directly across from Kinshasa. It is named after the explorer Pierre
+      Savorgnan de Brazza.
+
+- id: dr-congo
+  name: Democratic Republic of the Congo
+  uids: {country: 8IfHdljqto, capital: Rj8szzfeZC}
+  tier: 1
+  note: >-
+    DR Congo spans the Congo River basin in the heart of Africa, and its only outlet to the Atlantic is a short
+    coast at the river's mouth. King Leopold II ruled it as his own colony until international condemnation forced
+    him to hand it to Belgium; Mobutu later renamed it Zaire. Armed groups, including the M23, have long fought in
+    the east (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320513}}
+  expect: [12.21, -13.46, 31.29, 5.38]
+  capital:
+    name: Kinshasa
+    ne_id: 1159151539
+    expect: [15.26, -4.38, 15.36, -4.28]
+    note: >-
+      Kinshasa lies on the south bank of the Congo River, across from Brazzaville. It was founded as a trading post
+      in 1881 and named Léopoldville after King Leopold II.
+
+- id: angola
+  name: Angola
+  uids: {country: PFVOci0FpX, capital: OfOqF8X0nt}
+  tier: 1
+  note: >-
+    Angola lies on the South Atlantic between Namibia and DR Congo, with Zambia to the east. Its province of Cabinda
+    is an exclave, cut off from the rest of the country by DR Congo. Independent from Portugal since 1975, it
+    endured a civil war until 2002 and has rebuilt on its oil.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320323}}
+  expect: [11.66, -18.04, 24.07, -4.39]
+  capital:
+    name: Luanda
+    ne_id: 1159151469
+    expect: [13.18, -8.89, 13.28, -8.79]
+    note: >-
+      Luanda is a port on Angola's Atlantic coast. Its name may come from a Bantu word meaning "tax" or "duty".
+
+- id: zambia
+  name: Zambia
+  uids: {country: dDEYCruq0R, capital: 7Xs1baqMKr}
+  tier: 1
+  note: >-
+    Zambia is a landlocked country east of Angola and south of DR Congo. The Zambezi forms its border with Zimbabwe,
+    and Victoria Falls and Lake Kariba lie on that border. Formerly Northern Rhodesia, it took the name Zambia at
+    independence in 1964 and built its economy on copper.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321439}}
+  expect: [21.97, -18.07, 33.68, -8.19]
+  capital:
+    name: Lusaka
+    ne_id: 1159150571
+    expect: [28.23, -15.46, 28.33, -15.36]
+    note: >-
+      Lusaka lies in south-central Zambia. It is named after a village whose headman was called Lusaaka.
+
+- id: malawi
+  name: Malawi
+  uids: {country: 28jyFKCEJe, capital: Ap0MjPIXxW}
+  tier: 1
+  note: >-
+    Malawi is a long, narrow, landlocked country beside Lake Malawi (Lake Nyasa), between Zambia, Tanzania and
+    Mozambique. The lake is its most prominent feature. The British called it Nyasaland, and it became independent
+    in 1964.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321081}}
+  expect: [32.66, -17.14, 35.91, -9.38]
+  capital:
+    name: Lilongwe
+    ne_id: 1159150907
+    expect: [33.73, -14.03, 33.83, -13.93]
+    note: >-
+      Lilongwe lies in central Malawi, west of the lake. It is named after the Lilongwe River, which flows through
+      the city.
+
+- id: mozambique
+  name: Mozambique
+  uids: {country: wz29Xes82s, capital: 9l0dKEqCxv}
+  tier: 1
+  note: >-
+    Mozambique runs down Africa's Indian Ocean coast from Tanzania to South Africa, facing Madagascar across the
+    Mozambique Channel. The Zambezi flows through its fertile north-central region. A Portuguese colony until 1975,
+    it then went through a long civil war.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321073}}
+  expect: [30.21, -26.87, 40.85, -10.46]
+  capital:
+    name: Maputo
+    ne_id: 1159150683
+    expect: [32.54, -26.0, 32.64, -25.9]
+    note: >-
+      Maputo is a port in the far south of the country. It is named after the Maputo River, which drains into Maputo
+      Bay just south of the city.
+
+- id: zimbabwe
+  name: Zimbabwe
+  uids: {country: 0UkmaB73yV, capital: Qkb4Sik9dV}
+  tier: 1
+  note: >-
+    Zimbabwe is a landlocked country between South Africa and Zambia; the Zambezi forms the Zambian border and
+    plunges over Victoria Falls. The country is named after Great Zimbabwe, a stone-built medieval capital. As
+    Rhodesia, its white-minority government declared independence from the UK in 1965; recognised independence came
+    in 1980.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321441}}
+  expect: [25.21, -22.4, 33.05, -15.61]
+  capital:
+    name: Harare
+    ne_id: 1159150573
+    expect: [30.99, -17.87, 31.09, -17.77]
+    note: >-
+      Harare lies in the north-east of the country. It is named after a village called Harare that stood on the
+      site.
+
+- id: botswana
+  name: Botswana
+  uids: {country: qJNGJRgiko, capital: EhhmDJAndQ}
+  tier: 1
+  note: >-
+    Botswana is a landlocked country north of South Africa, between Namibia and Zimbabwe. The Kalahari Desert covers
+    most of it, and the Okavango Delta is one of the world's largest inland deltas. Diamond mining dominates its
+    economy.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320461}}
+  expect: [19.97, -26.9, 29.36, -17.78]
+  capital:
+    name: Gaborone
+    ne_id: 1159151153
+    expect: [25.86, -24.7, 25.96, -24.6]
+    note: >-
+      Gaborone lies in the south-east, close to the South African border. It is named after Gaborone, a chief of the
+      Tlokwa.
+
+- id: namibia
+  name: Namibia
+  uids: {country: WpEuHAjA1T, capital: 7XueJEbFr6}
+  tier: 1
+  note: >-
+    Namibia lies on the South Atlantic between Angola and South Africa, and is named after the Namib, considered the
+    oldest desert in the world. It was German South West Africa until South Africa took it in 1915, and it became
+    independent in 1990.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321085}}
+  expect: [11.71, -28.96, 25.26, -16.95]
+  capital:
+    name: Windhoek
+    ne_id: 1159150785
+    expect: [17.03, -22.62, 17.13, -22.52]
+    note: >-
+      Windhoek lies inland in central Namibia. Its Afrikaans name means "windy corner".
+
+- id: south-africa
+  name: South Africa
+  uids: {country: 9qL6AQ9nyY, capital: TtEQLji6eE}
+  tier: 1
+  note: >-
+    South Africa occupies the southern tip of the continent. It surrounds Lesotho completely and Eswatini almost
+    completely, and borders Namibia, Botswana, Zimbabwe and Mozambique. Its first multi-racial elections, in 1994,
+    ended apartheid's minority rule.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321431}}
+  mainland: [16.0, -35.5, 33.5, -22.0]
+  expect: [16.46, -34.83, 32.9, -22.12]
+  capital:
+    name: Pretoria
+    ne_id: 1159150661
+    expect: [28.18, -25.75, 28.28, -25.65]
+    note: >-
+      Pretoria is South Africa's administrative capital and seat of government, named in 1855 after the Boer leader
+      Andries Pretorius. The country has three capitals: Parliament sits in Cape Town, the legislative capital, and
+      Bloemfontein is the judicial capital.
+
+- id: lesotho
+  name: Lesotho
+  uids: {country: 9CR0k0WMHb, capital: bDR8QUTGCj}
+  tier: 1
+  host: south-africa
+  note: >-
+    Lesotho is a small, mountainous country completely surrounded by South Africa, and most of it is high mountain
+    country. Paramount chief Moshoeshoe I founded the state that became British Basutoland, and it became
+    independent in 1966.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321027}}
+  expect: [27.0, -30.66, 29.44, -28.57]
+  capital:
+    name: Maseru
+    ne_id: 1159150831
+    expect: [27.43, -29.37, 27.53, -29.27]
+    note: >-
+      Maseru stands on the Caledon River, right on the border with South Africa. Its name means "(place of) red
+      sandstones" in Sesotho.
+
+- id: eswatini
+  name: Eswatini
+  uids: {country: g35JR9qURg, capital: PBrbgFgi3L}
+  tier: 1
+  host: south-africa
+  note: >-
+    Eswatini is a small landlocked kingdom between South Africa and Mozambique, and it is still considered an
+    absolute monarchy. King Mswati III renamed it from Swaziland in 2018.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321289}}
+  expect: [30.78, -27.32, 32.12, -25.73]
+  capital:
+    name: Mbabane
+    ne_id: 1159149413
+    expect: [31.08, -26.37, 31.18, -26.27]
+    note: >-
+      Mbabane is Eswatini's administrative capital. The royal and legislative capital is Lobamba, a short way to the
+      south-east.
+
+- id: madagascar
+  name: Madagascar
+  uids: {country: rtqCOpl8kf, capital: IEMIZklKQO}
+  tier: 1
+  note: >-
+    Madagascar is the world's fourth-largest island, in the Indian Ocean east of Mozambique. Most of its plants and
+    animals are found nowhere else. The Merina Kingdom ruled much of the island until France conquered it in 1896.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321051}}
+  expect: [43.22, -25.6, 50.51, -11.94]
+  capital:
+    name: Antananarivo
+    ne_id: 1159150835
+    expect: [47.46, -18.96, 47.56, -18.86]
+    note: >-
+      Antananarivo lies inland, near the middle of the island, well away from either coast.
+
+- id: comoros
+  name: Comoros
+  uids: {country: ImzNN4VdYW, capital: bcJskUQhSd}
+  tier: 3
+  note: >-
+    The Comoros are volcanic islands at the northern mouth of the Mozambique Channel, between Mozambique and
+    Madagascar. When the country became independent from France in 1975, the island of Mayotte voted to remain
+    French. Many coups and coup attempts followed, mostly before 2000.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320521}}
+  expect: [43.21, -12.39, 44.53, -11.36]
+  capital:
+    name: Moroni
+    ne_id: 1159149083
+    expect: [43.19, -11.75, 43.29, -11.65]
+    note: >-
+      Moroni lies on the west coast of Grande Comore, below the active volcano Mount Karthala. Its name means "at
+      the place of fire".
+
+- id: mauritius
+  name: Mauritius
+  uids: {country: mVAKotE1Aj, capital: aa6DLDLM4R}
+  tier: 3
+  note: >-
+    Mauritius is an island nation in the Indian Ocean, east of Madagascar. The island was uninhabited until the
+    Dutch settled it in 1638, and their arrival brought the rapid extinction of the dodo; France and then Britain
+    later ruled it. It claims the Chagos Archipelago from the UK (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321079}}
+  expect: [56.52, -20.52, 63.5, -10.32]
+  capital:
+    name: Port Louis
+    ne_id: 1159150443
+    expect: [57.45, -20.22, 57.55, -20.12]
+    note: >-
+      Port Louis is the port capital on the island's north-west coast. It is named after Louis XV, who was king of
+      France when the port became the island's administrative centre in 1736.
+
+- id: seychelles
+  name: Seychelles
+  uids: {country: 9fwYnSfoQP, capital: JX1LP760qC}
+  tier: 3
+  note: >-
+    Seychelles is an archipelago of granite and coral islands in the Indian Ocean, north-east of Madagascar. It is
+    Africa's smallest country in both area and population. The islands were uninhabited until Europeans found them
+    early in the 16th century.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321291}}
+  expect: [46.2, -9.76, 56.29, -3.79]
+  capital:
+    name: Victoria
+    ne_id: 1159151191
+    expect: [55.4, -4.67, 55.5, -4.57]
+    note: >-
+      Victoria is the capital port on Mahé, by far the largest island.
+
+- id: maldives
+  name: Maldives
+  uids: {country: KGAyklOQPC, capital: SJ0hYjiBBw}
+  tier: 3
+  note: >-
+    A chain of low-lying coral atolls in the Indian Ocean, south-southwest of India. It is the smallest country in
+    Asia, and its islands are so low-lying that even the highest point is only a few metres above the sea.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321053}}
+  expect: [72.68, -0.69, 73.76, 7.11]
+  capital:
+    name: Malé
+    ne_id: 1159151201
+    expect: [73.46, 4.12, 73.56, 4.22]
+    note: >-
+      The capital and largest city, covering almost all of Malé island in the Malé Atoll. Its name may come from the
+      Sanskrit for "garland".
+
+- id: sri-lanka
+  name: Sri Lanka
+  uids: {country: JWUGXjskUK, capital: VnUU40NJ5g}
+  tier: 1
+  note: >-
+    A teardrop-shaped island in the Indian Ocean, just south of India. A chain of shoals called Adam's Bridge almost
+    links it to the Indian coast.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321025}}
+  expect: [79.65, 5.92, 81.9, 9.83]
+  capital:
+    name: Sri Jayewardenepura Kotte
+    ne_id: 1159149593
+    expect: [79.9, 6.85, 80.0, 6.95]
+    note: >-
+      The official (legislative) capital, a suburb just southeast of Colombo where the parliament sits on an island
+      in a lake. Colombo, the largest city and port, is the commercial capital and still holds the president's and
+      prime minister's offices.
+
+- id: india
+  name: India
+  uids: {country: s32fGklbzj, capital: UILBa1e4eX}
+  tier: 1
+  note: >-
+    It fills most of the South Asian subcontinent, a peninsula between the Arabian Sea and the Bay of Bengal, with
+    the Himalayas along its northern edge. Its outline follows the areas it administers in Kashmir; the disputed
+    areas have their own cards.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320847}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320963}}
+  expect: [68.14, 6.74, 97.37, 35.65]
+  capital:
+    name: New Delhi
+    ne_id: 1159151541
+    expect: [77.15, 28.55, 77.25, 28.65]
+    note: >-
+      A planned capital built by the British just south of Old Delhi, on the west bank of the Yamuna River. It was
+      built as the capital of British India and stayed the capital after independence.
+
+- id: bangladesh
+  name: Bangladesh
+  uids: {country: 7I9SWYqFVh, capital: MqGOEFobaN}
+  tier: 1
+  note: >-
+    Almost wholly surrounded by India, it touches Myanmar in the southeast and opens south onto the Bay of Bengal.
+    Most of the country lies on the delta where the Ganges, Brahmaputra and Meghna rivers meet.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320407}}
+  expect: [88.02, 20.73, 92.65, 26.63]
+  capital:
+    name: Dhaka
+    ne_id: 1159151467
+    expect: [90.36, 23.68, 90.46, 23.78]
+    note: >-
+      The capital and largest city, on the Buriganga River in the middle of the great delta. It became a national
+      capital when Bangladesh became independent.
+
+- id: bhutan
+  name: Bhutan
+  uids: {country: s0txMwbTfc, capital: MAoCWu8ffX}
+  tier: 1
+  note: >-
+    A landlocked Himalayan kingdom between China and India that controls several key mountain passes. It is a
+    constitutional monarchy.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320453}}
+  expect: [88.73, 26.69, 92.09, 28.36]
+  capital:
+    name: Thimphu
+    ne_id: 1159151151
+    expect: [89.59, 27.42, 89.69, 27.52]
+    note: >-
+      A small capital high in a Himalayan river valley in western Bhutan. Its name is traditionally explained as
+      "dissolving rock", after a local deity said to have merged into the rock where the city stands.
+
+- id: nepal
+  name: Nepal
+  uids: {country: 7PcRA06aS9, capital: n624CYmvt8}
+  tier: 1
+  note: >-
+    A landlocked country on the Himalayan slope between China and India. It holds several of the world's highest
+    peaks, including Mount Everest on its border with China.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321121}}
+  expect: [80.03, 26.34, 88.17, 30.42]
+  capital:
+    name: Kathmandu
+    ne_id: 1159150655
+    expect: [85.26, 27.67, 85.36, 27.77]
+    note: >-
+      The capital sits in the Kathmandu Valley in the centre of the country, near where the Bagmati and Vishnumati
+      rivers meet. Its name is said to mean "wooden temple".
+
+- id: pakistan
+  name: Pakistan
+  uids: {country: lZfIs7h1Bg, capital: Rsd0gTspvX}
+  tier: 1
+  note: >-
+    It runs from the Arabian Sea north to the high mountains, between India to the east and Iran and Afghanistan to
+    the west. It holds the Khyber and Bolan passes, old routes from Central Asia into India; its outline follows the
+    areas it administers in Kashmir, and the disputed areas have their own cards.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321153}}
+  expect: [60.84, 23.69, 77.05, 37.06]
+  capital:
+    name: Islamabad
+    ne_id: 1159150645
+    expect: [73.03, 33.64, 73.13, 33.74]
+    note: >-
+      A planned capital built on the Potwar Plateau beside the older city of Rawalpindi, in the north. It replaced
+      Karachi, the coastal port that was the first capital.
+
+- id: afghanistan
+  name: Afghanistan
+  uids: {country: GDx6o0YhpQ, capital: 2Qsx5V9la2}
+  tier: 1
+  note: >-
+    A landlocked, mountainous country between Pakistan and Iran, split by the Hindu Kush; its thin Wakhan Corridor
+    reaches east to touch China. The Taliban took back control when US-led forces withdrew, and very few states
+    formally recognise their government (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320319}}
+  expect: [60.48, 29.38, 74.9, 38.48]
+  capital:
+    name: Kabul
+    ne_id: 1159151561
+    expect: [69.13, 34.47, 69.23, 34.57]
+    note: >-
+      The capital and largest city, in a mountain valley on the Kabul River, south of the Hindu Kush. It commands
+      routes north and south, and east to Pakistan through the Khyber Pass.
+
+- id: iran
+  name: Iran
+  uids: {country: TnGqDLXnpP, capital: 0tVkHRt8FQ}
+  tier: 1
+  note: >-
+    A large country between Iraq and Pakistan, with the Caspian Sea to the north and the Persian Gulf and Gulf of
+    Oman to the south. It was long known to outsiders as Persia, and it holds the north shore of the Strait of
+    Hormuz.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320881}}
+  expect: [44.01, 25.05, 63.32, 39.78]
+  capital:
+    name: Tehran
+    ne_id: 1159151551
+    expect: [51.37, 35.62, 51.47, 35.72]
+    note: >-
+      The capital lies at the southern foot of the Elburz (Alborz) Mountains, in the north of the country. The Qajar
+      dynasty made it the capital.
+
+- id: turkmenistan
+  name: Turkmenistan
+  uids: {country: g9XLjq3Epi, capital: Sqd5uw8Ekc}
+  tier: 1
+  note: >-
+    A Central Asian country on the east shore of the Caspian Sea, between Iran and Kazakhstan. Most of it is the
+    Karakum desert.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321309}}
+  expect: [52.43, 35.14, 66.65, 42.8]
+  capital:
+    name: Ashgabat
+    ne_id: 1159150567
+    expect: [58.33, 37.9, 58.43, 38.0]
+    note: >-
+      The capital sits in an oasis at the northern foot of the Kopet Dag mountains, on the edge of the Karakum
+      desert and close to the Iranian border. It began as a Russian fort.
+
+- id: uzbekistan
+  name: Uzbekistan
+  uids: {country: RqTGKd789C, capital: ebmkpB003M}
+  tier: 1
+  note: >-
+    The central country of Central Asia, north of Turkmenistan and south of Kazakhstan. It is one of only two doubly
+    landlocked countries in the world; the other is Liechtenstein.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321405}}
+  expect: [55.97, 37.18, 73.15, 45.56]
+  capital:
+    name: Tashkent
+    ne_id: 1159151501
+    expect: [69.22, 41.25, 69.32, 41.35]
+    note: >-
+      Uzbekistan's capital and the largest city in Central Asia, in the Chirchiq River valley in the northeast of
+      the country. Its name is usually read as "stone town".
+
+- id: tajikistan
+  name: Tajikistan
+  uids: {country: dZUvgEnr4w, capital: iiimKOTQzl}
+  tier: 1
+  note: >-
+    A small, landlocked, very mountainous country west of China and south of Kyrgyzstan, with the Pamirs in its
+    east. Its highest peak, Ismoil Somoni, was once the tallest mountain in the Soviet Union.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321307}}
+  expect: [67.34, 36.67, 75.17, 41.04]
+  capital:
+    name: Dushanbe
+    ne_id: 1159150609
+    expect: [68.72, 38.51, 68.82, 38.61]
+    note: >-
+      The capital lies in the Gissar (Hisor) valley on the Varzob River, in the southwest of the country. Its name
+      means "Monday" in Persian, after a Monday bazaar held at the site.
+
+- id: kyrgyzstan
+  name: Kyrgyzstan
+  uids: {country: u4I3oDwS7I, capital: TOqtIHudRt}
+  tier: 1
+  note: >-
+    A landlocked country west of China and south of Kazakhstan, entirely mountainous and dominated by the Tien Shan
+    range.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320977}}
+  expect: [69.22, 39.18, 80.26, 43.27]
+  capital:
+    name: Bishkek
+    ne_id: 1159150813
+    expect: [74.53, 42.83, 74.63, 42.93]
+    note: >-
+      The capital lies in the Chüy (Chu) valley near the Kyrgyz Range of the Tien Shan. It was called Frunze in
+      Soviet times and took back the name Bishkek in 1991.
+
+- id: kazakhstan
+  name: Kazakhstan
+  uids: {country: ka1fri6z77, capital: VLFqfAc9wM}
+  tier: 1
+  note: >-
+    The world's largest landlocked country, a vast steppe between Russia and China with a small part west of the
+    Ural River in Europe. Russia leases the Baikonur Cosmodrome inside it; the card's outline includes Baikonur.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320967}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320965}}
+  expect: [46.47, 40.58, 87.33, 55.44]
+  capital:
+    name: Astana
+    ne_id: 1159150965
+    expect: [71.38, 51.13, 71.48, 51.23]
+    note: >-
+      A planned capital on the Ishim River in the steppe of north-central Kazakhstan, which replaced Almaty as
+      capital. Its name means "capital"; it was briefly renamed Nur-Sultan and then went back to Astana.
+
+- id: china
+  name: China
+  uids: {country: yxl6uywlbi, capital: ugWAv0E8uH}
+  tier: 1
+  note: >-
+    China fills much of eastern Asia, with coasts on the Yellow, East China and South China seas and, with Russia,
+    it borders more countries than any other. Its great rivers, the Yangtze and the Huang He (Yellow River), run
+    east to the Pacific, and Mount Everest stands on its border with Nepal. Recorded Chinese civilisation reaches
+    back to the Shang dynasty, and emperors ruled until the Republic of China replaced them.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320471}}
+  expect: [73.6, 15.77, 134.78, 53.57]
+  capital:
+    name: Beijing
+    ne_id: 1159151595
+    expect: [116.34, 39.85, 116.44, 39.95]
+    note: >-
+      China's capital, on the northwest edge of the North China Plain. Its name means "northern capital", and it has
+      been China's capital for most of the last six centuries.
+
+- id: mongolia
+  name: Mongolia
+  uids: {country: 0POn5qvOc0, capital: TpeyP1gyLk}
+  tier: 1
+  note: >-
+    A landlocked country sandwiched between Russia to the north and China to the south. Most of it is steppe,
+    semidesert and mountains, with the Gobi Desert in the south. It was the homeland of Genghis Khan, whose Mongol
+    Empire stretched across much of Eurasia.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321071}}
+  expect: [87.73, 41.58, 119.91, 52.13]
+  capital:
+    name: Ulaanbaatar
+    ne_id: 1159150781
+    expect: [106.86, 47.87, 106.96, 47.97]
+    note: >-
+      Mongolia's capital and largest city, on the Tuul River on a windswept plateau.
+
+- id: north-korea
+  name: North Korea
+  uids: {country: ZYnpgjSrPE, capital: SA29oNqkJ7}
+  tier: 1
+  note: >-
+    The northern half of the Korean Peninsula, bordering China and, for a short stretch, Russia, with the Yellow
+    Sea's Korea Bay to the west and the Sea of Japan to the east. Korea was divided after the Second World War, and
+    since the Korean War a demilitarised zone has separated North from South. It is a single-party communist state.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321181}}
+  expect: [124.21, 37.67, 130.7, 43.02]
+  capital:
+    name: Pyongyang
+    ne_id: 1159151303
+    expect: [125.7, 38.97, 125.8, 39.07]
+    note: >-
+      North Korea's capital, in the west of the country on the Taedong River, inland from Korea Bay.
+
+- id: south-korea
+  name: South Korea
+  uids: {country: D4eY4lzEQk, capital: BJi3GD1LFi}
+  tier: 1
+  note: >-
+    The southern half of the Korean Peninsula, between the Yellow Sea and the Sea of Japan. Its only land border is
+    the demilitarised zone with North Korea, which crosses the middle of the peninsula.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320985}}
+  expect: [124.61, 33.19, 131.87, 38.63]
+  capital:
+    name: Seoul
+    ne_id: 1159151523
+    expect: [126.95, 37.52, 127.05, 37.62]
+    note: >-
+      South Korea's capital, on the Han River in the northwest of the country, not far south of the border with
+      North Korea. Some ministries have moved to the planned city of Sejong, which serves as an administrative
+      capital.
+
+- id: japan
+  name: Japan
+  uids: {country: kHWZMNI4KE, capital: XP8UpFlhnG}
+  tier: 1
+  note: >-
+    An island chain off the east coast of mainland Asia, between the Sea of Japan and the Pacific Ocean. Its four
+    main islands, from north to south, are Hokkaido, Honshu, Shikoku and Kyushu, and the country is mostly rugged
+    mountains. It sits on the Pacific Ring of Fire and has frequent earthquakes.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320937}}
+  mainland: [122.0, 24.0, 146.0, 46.0]
+  expect: [122.93, 24.21, 145.83, 45.53]
+  capital:
+    name: Tokyo
+    ne_id: 1159151609
+    expect: [139.7, 35.64, 139.8, 35.74]
+    note: >-
+      Japan's capital, on the Pacific coast of central Honshu at the head of Tokyo Bay. It was called Edo until the
+      emperor moved there from Kyoto and renamed it Tokyo, "eastern capital".
+
+- id: taiwan
+  name: Taiwan
+  uids: {country: NIg2un15Ab, capital: v7YzanH9sj}
+  tier: 1
+  note: >-
+    A mountainous island off the southeast coast of China, across the Taiwan Strait, north of the Philippines. It
+    has been governed from Taipei under the name Republic of China since the Nationalist government withdrew there
+    at the end of the Chinese civil war; the People's Republic of China claims it. Only a small number of states
+    recognise it diplomatically (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321335}}
+  expect: [118.27, 21.9, 122.01, 25.29]
+  capital:
+    name: Taipei
+    ne_id: 1159151567
+    expect: [121.52, 24.99, 121.62, 25.09]
+    note: >-
+      Taiwan's seat of government, in a river basin near the island's northern tip. Its name means "northern
+      Taiwan".
+
+- id: philippines
+  name: Philippines
+  uids: {country: knw0MPuRZQ, capital: 8x6kKAL1xY}
+  tier: 1
+  note: >-
+    An archipelago of thousands of islands between the Philippine Sea and the South China Sea, east of Vietnam and
+    south of Taiwan. It lies on the Ring of Fire and in the Pacific typhoon belt. A Spanish colony for over three
+    centuries, it passed to the United States after the Spanish-American War.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321169}}
+  expect: [116.95, 4.65, 126.62, 21.13]
+  capital:
+    name: Manila
+    ne_id: 1159151525
+    expect: [120.93, 14.56, 121.03, 14.66]
+    note: >-
+      The Philippines' capital, on Luzon, the largest island, on the eastern shore of Manila Bay at the mouth of the
+      Pasig River.
+
+- id: malaysia
+  name: Malaysia
+  uids: {country: OdnB718Dzt, capital: SXBjRlNjxV}
+  tier: 1
+  note: >-
+    Malaysia is in two parts: the southern Malay Peninsula, bordering Thailand, and the northern third of Borneo,
+    which it shares with Indonesia and Brunei. The South China Sea separates the two halves. The Strait of Malacca,
+    along its west coast, has carried trade between the Indian Ocean and East Asia for centuries.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321083}}
+  expect: [99.64, 0.85, 119.28, 7.36]
+  capital:
+    name: Kuala Lumpur
+    ne_id: 1159151317
+    expect: [101.64, 3.09, 101.74, 3.19]
+    note: >-
+      Malaysia's capital, on the Malay Peninsula, where the Kelang and Gombak rivers meet; the name means "muddy
+      confluence". Parliament meets here, but most federal government offices have moved to Putrajaya, a planned
+      administrative centre to the south.
+
+- id: brunei
+  name: Brunei
+  uids: {country: SbkXsd8eav, capital: ZvFI593Dtn}
+  tier: 3
+  note: >-
+    A small sultanate on the north coast of Borneo, facing the South China Sea and otherwise surrounded by Malaysia.
+    Malaysian territory splits it into two parts.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320451}}
+  expect: [113.99, 4.01, 115.37, 5.06]
+  capital:
+    name: Bandar Seri Begawan
+    ne_id: 1159151083
+    expect: [114.88, 4.83, 114.98, 4.93]
+    note: >-
+      Brunei's capital, on the Brunei River near Brunei Bay. Kampong Ayer, a village of houses on stilts over the
+      river, faces the city.
+
+- id: singapore
+  name: Singapore
+  uids: {country: tyzdq3kdxF}
+  tier: 3
+  note: >-
+    A city-state on islands off the southern tip of the Malay Peninsula, between Malaysia and Indonesia, at the
+    focus of Southeast Asia's sea routes. The British founded the modern port. The city is the whole country, so it
+    has no separate capital card.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321247}}
+  expect: [103.64, 1.26, 104.01, 1.45]
+  capital:
+
+- id: thailand
+  name: Thailand
+  uids: {country: FOBEejdExP, capital: xU9Dl2xmUt}
+  tier: 1
+  note: >-
+    Thailand is at the heart of mainland Southeast Asia, between the Andaman Sea and the Gulf of Thailand. It
+    borders Myanmar, Laos, Cambodia and Malaysia, and a long narrow arm runs south down the Malay Peninsula. It is a
+    constitutional monarchy.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321305}}
+  expect: [97.35, 5.62, 105.66, 20.45]
+  capital:
+    name: Bangkok
+    ne_id: 1159151509
+    expect: [100.46, 13.7, 100.56, 13.8]
+    note: >-
+      Thailand's capital and chief port, on the Chao Phraya River delta, a short distance inland from the Gulf of
+      Thailand. Thais call it Krung Thep.
+
+- id: myanmar
+  name: Myanmar
+  uids: {country: XHz07hcXZM, capital: AoiR36d8dl}
+  tier: 1
+  note: >-
+    The westernmost country of mainland Southeast Asia, on the Bay of Bengal and Andaman Sea between Bangladesh and
+    India to the west and China, Laos and Thailand to the east. It is also called Burma, and it was under British
+    rule until independence. Its armed forces have dominated government for most of the time since, including after
+    a 2021 coup (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321067}}
+  expect: [92.17, 9.79, 101.18, 28.54]
+  capital:
+    name: Naypyidaw
+    ne_id: 1159151179
+    expect: [96.07, 19.72, 96.17, 19.82]
+    note: >-
+      Myanmar's capital, a planned city built in the interior; the government moved there from Yangon. Yangon
+      (Rangoon), on the coast, was the capital before that and is still the largest city.
+
+- id: laos
+  name: Laos
+  uids: {country: LHt1iqNc9m, capital: MUSlvzPxM7}
+  tier: 1
+  note: >-
+    The only landlocked country in Southeast Asia, mountainous and thickly forested, between Thailand and Vietnam.
+    The Mekong River forms much of its western border with Thailand.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321011}}
+  expect: [100.09, 13.91, 107.67, 22.5]
+  capital:
+    name: Vientiane
+    ne_id: 1159150991
+    expect: [102.55, 17.92, 102.65, 18.02]
+    note: >-
+      Laos's capital, on the Mekong River, across from Thailand.
+
+- id: vietnam
+  name: Vietnam
+  uids: {country: SxKU9LYhYu, capital: yjSBrmC7cs}
+  tier: 1
+  note: >-
+    A long, narrow country on the eastern edge of mainland Southeast Asia, facing the South China Sea and bordering
+    China, Laos and Cambodia. Its two great deltas are the Red River in the north and the Mekong in the south.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321417}}
+  expect: [102.11, 8.56, 109.48, 23.37]
+  capital:
+    name: Hanoi
+    ne_id: 1159151251
+    expect: [105.8, 20.99, 105.9, 21.09]
+    note: >-
+      Vietnam's capital, in the north on the Red River; the name means roughly "inside the river". It was the
+      capital of the first independent Vietnamese state, Dai Viet, under the name Thang Long.
+
+- id: cambodia
+  name: Cambodia
+  uids: {country: fv1atkqTiM, capital: vl0s8IJ1KJ}
+  tier: 1
+  note: >-
+    Cambodia lies on the Gulf of Thailand, between Thailand, Laos and Vietnam. Its lowland of rice paddies and
+    forest is dominated by the Mekong and the Tonle Sap, Southeast Asia's largest freshwater lake. It is the heart
+    of the old Khmer (Angkor) Empire.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320979}}
+  expect: [102.31, 10.41, 107.62, 14.71]
+  capital:
+    name: Phnom Penh
+    ne_id: 1159151127
+    expect: [104.86, 11.5, 104.96, 11.6]
+    note: >-
+      Cambodia's capital, in the south-central lowland where the Mekong meets the river from the Tonle Sap.
+
+- id: indonesia
+  name: Indonesia
+  uids: {country: zt3UAgEwzi, capital: DPXCxG30xy}
+  tier: 1
+  note: >-
+    The world's largest country made up only of islands, an archipelago straddling the equator between the Indian
+    and Pacific oceans. Its main islands include Sumatra, Java, part of Borneo, Sulawesi and the western half of New
+    Guinea. It shares land borders with Malaysia, Papua New Guinea and Timor-Leste.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320845}}
+  expect: [95.01, -10.93, 140.98, 5.92]
+  capital:
+    name: Jakarta
+    ne_id: 1159151599
+    expect: [106.78, -6.22, 106.88, -6.12]
+    note: >-
+      Indonesia's capital, on the northwest coast of Java on the Java Sea; under Dutch rule it was called Batavia. A
+      new capital, Nusantara, is being built on Borneo, but Jakarta stays the legal capital until a presidential
+      decree makes the move (as of 2026-10, verify).
+
+- id: timor-leste
+  name: Timor-Leste
+  uids: {country: lcL93lm86T, capital: YwGYFMw3dz}
+  tier: 1
+  note: >-
+    Timor-Leste, also called East Timor, covers the eastern half of the island of Timor, at the eastern end of the
+    Indonesian archipelago, northwest of Australia. It also holds the exclave of Oecussi, surrounded by Indonesian
+    territory. A former Portuguese colony, it was occupied by Indonesia and became independent after a UN-run vote
+    and transition.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321313}}
+  expect: [124.03, -9.51, 127.32, -8.13]
+  capital:
+    name: Dili
+    ne_id: 1159150577
+    expect: [125.53, -8.61, 125.63, -8.51]
+    note: >-
+      Timor-Leste's capital, largest city and main port, on the north coast of Timor.
+
+- id: australia
+  name: Australia
+  uids: {country: xqL26e3iLp, capital: vKspDkdra5}
+  tier: 1
+  note: >-
+    A country that occupies a whole continent, between the Indian Ocean and the South Pacific. Aboriginal
+    Australians have lived there for many millennia; Dutch navigators were the first Europeans to land. It is a
+    federal parliamentary democracy and a Commonwealth realm.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320355}}
+  mainland: [112.0, -44.0, 160.0, -9.0]
+  expect: [112.91, -43.65, 159.11, -9.24]
+  capital:
+    name: Canberra
+    ne_id: 1159151161
+    expect: [149.08, -35.33, 149.18, -35.23]
+    note: >-
+      Australia's capital, a purpose-built city in the southeast, inland between the two rival cities of Sydney and
+      Melbourne. It was chosen as a compromise site and designed by Walter Burley Griffin after an international
+      competition; Parliament moved there from Melbourne.
+
+- id: papua-new-guinea
+  name: Papua New Guinea
+  uids: {country: C0ToaF44FZ, capital: s5EbQGCXDx}
+  tier: 1
+  note: >-
+    Occupies the eastern half of the island of New Guinea, plus many smaller islands, between the Coral Sea and the
+    South Pacific. Its only land border is with Indonesia, which holds the western half of the island. It is part of
+    Melanesia.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321173}}
+  expect: [140.84, -11.64, 155.97, -1.34]
+  capital:
+    name: Port Moresby
+    ne_id: 1159150663
+    expect: [147.14, -9.51, 147.24, -9.41]
+    note: >-
+      Papua New Guinea's capital, on the southeast coast of New Guinea facing the Gulf of Papua and the Coral Sea.
+      It became the national capital at independence.
+
+- id: solomon-islands
+  name: Solomon Islands
+  uids: {country: U7PKVsTD6I, capital: RUSf8yxZVl}
+  tier: 1
+  note: >-
+    A Melanesian island chain in the South Pacific, east of Papua New Guinea. Its largest island, Guadalcanal, is
+    named by Spanish explorers after a town in Spain.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321249}}
+  expect: [155.5, -12.3, 168.83, -6.59]
+  capital:
+    name: Honiara
+    ne_id: 1159150665
+    expect: [159.9, -9.49, 160.0, -9.39]
+    note: >-
+      Capital of the Solomon Islands, on the north coast of Guadalcanal. It replaced Tulagi as the capital; its name
+      comes from a local phrase meaning "facing the trade winds".
+
+- id: vanuatu
+  name: Vanuatu
+  uids: {country: qPuw5MJfG8, capital: 56yKzwTvtE}
+  tier: 3
+  note: >-
+    A chain of Melanesian islands in the South Pacific, about three-quarters of the way from Hawaii to Australia,
+    first settled from the Solomon Islands. Before independence it was the New Hebrides, ruled jointly by Britain
+    and France as a condominium.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321421}}
+  expect: [166.52, -20.26, 169.9, -13.06]
+  capital:
+    name: Port Vila
+    ne_id: 1159150579
+    expect: [168.27, -17.78, 168.37, -17.68]
+    note: >-
+      Vanuatu's capital and largest town, a port on the island of Efate. Locally it is often just called Vila.
+
+- id: new-zealand
+  name: New Zealand
+  uids: {country: oQeHFXOis8, capital: iow7ThgbZG}
+  tier: 1
+  note: >-
+    Two main islands, North Island and South Island, in the South Pacific, southeast of Australia. Polynesians
+    settled it in the late Middle Ages and called it Aotearoa. It is a parliamentary democracy and a Commonwealth
+    realm.
+  geometry:
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321135}}
+  mainland: [166.0, -48.0, 179.0, -34.0]
+  expect: [166.46, -47.28, 178.57, -34.14]
+  capital:
+    name: Wellington
+    ne_id: 1159151699
+    expect: [174.73, -41.34, 174.83, -41.24]
+    note: >-
+      New Zealand's capital, at the southern tip of the North Island on a sheltered harbour opening onto Cook
+      Strait. The seat of government moved there from Auckland; Auckland remains the largest city.
+
+- id: fiji
+  name: Fiji
+  uids: {country: q1q9qxeuXq, capital: NosIbmtwlz}
+  tier: 3
+  note: >-
+    A Melanesian island group in the South Pacific, roughly two-thirds of the way from Hawaii to New Zealand. Two
+    large islands, Viti Levu and Vanua Levu, hold most of its land.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320625}}
+  expect: [174.58, -21.72, -178.21, -12.47]
+  capital:
+    name: Suva
+    ne_id: 1159150917
+    expect: [178.39, -18.18, 178.49, -18.08]
+    note: >-
+      Fiji's capital and main port, on the southeast coast of Viti Levu, the largest island. Its name means "little
+      hill" in Fijian.
+
+- id: tonga
+  name: Tonga
+  uids: {country: VcDu4Y1307, capital: 03PdnXGsco}
+  tier: 3
+  note: >-
+    A Polynesian archipelago in the South Pacific, east of Fiji. It is a kingdom: it was a British protected state
+    for a time but never lost its own monarchy.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321319}}
+  expect: [-176.22, -22.34, -173.91, -15.55]
+  capital:
+    name: Nuku'alofa
+    ne_id: 1159151187
+    expect: [-175.27, -21.19, -175.17, -21.09]
+    note: >-
+      Tonga's capital and chief port, on the northern shore of Tongatapu, the main island. Its harbour is sheltered
+      by reefs.
+
+- id: samoa
+  name: Samoa
+  uids: {country: kppEd3vhvo, capital: 1WyHnUJIww}
+  tier: 3
+  note: >-
+    A Polynesian island group in the South Pacific, about halfway between Hawaii and New Zealand. Its two main
+    islands are Upolu and Savai'i, and traditional family chiefs (matai) dominate its politics.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321423}}
+  expect: [-172.79, -14.06, -171.43, -13.46]
+  capital:
+    name: Apia
+    ne_id: 1159151197
+    expect: [-171.82, -13.89, -171.72, -13.79]
+    note: >-
+      Samoa's capital and port, on the north coast of Upolu.
+
+- id: tuvalu
+  name: Tuvalu
+  uids: {country: Vn6VjP0ayj, capital: J16eHtZI0G}
+  tier: 3
+  note: >-
+    A chain of low coral islands and atolls in the South Pacific, about halfway from Hawaii to Australia, settled by
+    Polynesian voyagers from Samoa or Tonga. It is a parliamentary democracy and a Commonwealth realm.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321333}}
+  expect: [176.12, -9.43, 179.91, -5.67]
+  capital:
+    name: Funafuti
+    ne_id: 1159149071
+    expect: [179.17, -8.57, 179.27, -8.47]
+    note: >-
+      Tuvalu's capital is Funafuti, a ring-shaped atoll of many islets. Government offices sit in Vaiaku village on
+      Fongafale, its largest islet.
+
+- id: kiribati
+  name: Kiribati
+  uids: {country: O8qHQXEAd0, capital: vQukswE5eJ}
+  tier: 3
+  note: >-
+    Coral atolls scattered across the central Pacific, straddling the Equator, in three groups: the Gilbert, Phoenix
+    and Line Islands. Its people are mostly Micronesian.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320981}}
+  expect: [169.52, -11.47, -151.78, 4.73]
+  capital:
+    name: Tarawa
+    ne_id: 1159149079
+    expect: [172.97, 1.29, 173.07, 1.39]
+    note: >-
+      Kiribati's capital, an atoll in the Gilbert Islands. Government is spread across islets of South Tarawa:
+      Bairiki (executive), Ambo (parliament) and Betio (courts and port).
+
+- id: nauru
+  name: Nauru
+  alt_names: [Naoero]
+  uids: {country: 2KZ2UXO3Og, capital: OaPaVecp4j}
+  tier: 3
+  note: >-
+    A single raised coral island in the central Pacific, south of the Marshall Islands, one of the world's smallest
+    states. Its economy was built on phosphate mining. In 2026 it told the UN that it had changed its name to the
+    Republic of Naoero (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321123}}
+  expect: [166.9, -0.56, 166.96, -0.49]
+  capital:
+    name: Yaren
+    file: yaren.geojson
+    expect: [166.87, -0.58, 166.97, -0.48]
+    note: >-
+      Nauru has no official capital; Yaren district, on the island's south coast, holds Parliament House and most
+      government offices.
+
+- id: marshall-islands
+  name: Marshall Islands
+  uids: {country: VhZHd8n0t7, capital: 450JCjLn1m}
+  tier: 3
+  note: >-
+    Two parallel chains of coral atolls in the North Pacific, part of Micronesia, in free association with the
+    United States (as of 2026-10, verify). Bikini and Enewetak atolls were US nuclear test sites after the Second
+    World War.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321057}}
+  expect: [165.28, 4.57, 172.03, 14.62]
+  capital:
+    name: Majuro
+    ne_id: 1159149063
+    expect: [171.33, 7.05, 171.43, 7.15]
+    note: >-
+      The Marshall Islands' capital, an atoll in the eastern (Ratak) chain. Government offices are in the town of
+      Delap-Uliga-Djarrit.
+
+- id: micronesia
+  name: Micronesia
+  uids: {country: xnIrAUmkCK, capital: AEj39lKwe8}
+  tier: 3
+  note: >-
+    The Federated States of Micronesia: four island states (Yap, Chuuk, Pohnpei and Kosrae) spread across the
+    Caroline Islands in the North Pacific, north of New Guinea. It is in free association with the United States (as
+    of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320691}}
+  expect: [138.06, 0.91, 163.05, 9.78]
+  capital:
+    name: Palikir
+    ne_id: 1159149061
+    expect: [158.1, 6.87, 158.2, 6.97]
+    note: >-
+      Capital of the Federated States of Micronesia, on Pohnpei. It replaced Kolonia, which still hosts most
+      embassies.
+
+- id: palau
+  name: Palau
+  uids: {country: 0mlO6YmzlS, capital: CJBxRL8SbW}
+  tier: 3
+  note: >-
+    The westernmost Caroline Islands, in the North Pacific southeast of the Philippines. A Micronesian republic in
+    free association with the United States (as of 2026-10, verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321171}}
+  expect: [131.13, 2.94, 134.73, 8.1]
+  capital:
+    name: Ngerulmud
+    ne_id: 1159149073
+    expect: [134.58, 7.44, 134.68, 7.54]
+    note: >-
+      Palau's capitol complex, in Melekeok State on the large island of Babeldaob. It replaced Koror as the seat of
+      government.
+
+- id: united-states
+  name: United States
+  uids: {country: rsl8pK6bjC, capital: 5atWodoWCe}
+  tier: 1
+  note: >-
+    The United States spans the middle of North America from the Atlantic to the Pacific, between Canada and Mexico,
+    and also includes Alaska and Hawaii. Its interior is a vast central plain, with high mountains in the west and
+    lower hills and mountains in the east. It declared independence from Great Britain in 1776.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321369}}
+  mainland: [172.0, 18.5, -66.5, 72.0]
+  expect: [172.47, 18.9, -66.97, 71.42]
+  capital:
+    name: Washington, D.C.
+    ne_id: 1159151573
+    expect: [-77.06, 38.85, -76.96, 38.95]
+    note: >-
+      Washington lies on the Potomac River between Maryland and Virginia. It occupies the District of Columbia, a
+      federal district created in 1790 that is not part of any state, and it is named after George Washington, the
+      first president.
+
+- id: canada
+  name: Canada
+  uids: {country: yJnfS3pU0E, capital: yyIyPLZLwu}
+  tier: 1
+  note: >-
+    Canada fills northern North America, with coasts on the Atlantic, Pacific and Arctic oceans, and is the
+    second-largest country in the world after Russia. Most Canadians live near its southern border with the US, the
+    world's longest international border. It became a self-governing dominion in 1867 and took full constitutional
+    control from the UK in 1982.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320467}}
+  expect: [-141.01, 41.66, -52.61, 83.12]
+  capital:
+    name: Ottawa
+    ne_id: 1159151059
+    expect: [-75.75, 45.37, -75.65, 45.47]
+    note: >-
+      Ottawa stands on the south bank of the Ottawa River, which divides English-speaking Ontario from
+      French-speaking Quebec. Queen Victoria chose it as the capital in 1857, partly because it lay on that
+      boundary.
+
+- id: mexico
+  name: Mexico
+  uids: {country: zQ0roTdkI8, capital: 4ZnCgcBYii}
+  tier: 1
+  note: >-
+    Mexico runs south from the United States to Guatemala and Belize, with a Pacific coast in the west and Gulf of
+    Mexico and Caribbean coasts in the east; the Yucatán Peninsula juts north between those two seas. Its high
+    central plateau is framed by mountain ranges. It was home to the Olmec, Maya and Aztec civilizations, then
+    Spain's Viceroyalty of New Spain, and declared independence in 1810.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321055}}
+  expect: [-118.37, 14.54, -86.7, 32.72]
+  capital:
+    name: Mexico City
+    ne_id: 1159151587
+    expect: [-99.18, 19.39, -99.08, 19.49]
+    note: >-
+      Mexico City lies in the highland Valley of Mexico, on the site of Tenochtitlan, the Aztec capital built on
+      islands in Lake Texcoco. The Spanish razed Tenochtitlan in 1521 and built over it, and pumping groundwater
+      from beneath the old lakebed has left the city slowly sinking.
+
+- id: guatemala
+  name: Guatemala
+  uids: {country: J4t04J0n7x, capital: XPPiuTLSFW}
+  tier: 1
+  note: >-
+    Guatemala is the northernmost Central American country, bordering Mexico, Belize, Honduras and El Salvador, with
+    coasts on both the Pacific and the Caribbean. Volcanic highlands cross the south, and the northern Petén
+    lowlands were a heartland of the Maya. It became independent from Spain in 1821.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320815}}
+  expect: [-92.25, 13.73, -88.22, 17.82]
+  capital:
+    name: Guatemala City
+    ne_id: 1159150909
+    expect: [-90.58, 14.57, -90.48, 14.67]
+    note: >-
+      Guatemala City lies inland in the southern highlands. It became the capital in 1776, after the 1773
+      earthquakes wrecked the old capital, now called Antigua Guatemala ("Old Guatemala").
+
+- id: belize
+  name: Belize
+  uids: {country: E15fL34PZL, capital: VnjoQJ4I5r}
+  tier: 1
+  note: >-
+    Belize lies on the Caribbean coast south of Mexico's Yucatán and east of Guatemala, and it is the only Central
+    American country with no Pacific coast. Formerly the colony of British Honduras, it became independent in 1981.
+    Guatemala's long-standing territorial claim against Belize is before the International Court of Justice, which
+    as of 2026-10 has not ruled (verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320431}}
+  expect: [-89.24, 15.87, -87.78, 18.5]
+  capital:
+    name: Belmopan
+    ne_id: 1159151109
+    expect: [-88.82, 17.2, -88.72, 17.3]
+    note: >-
+      Belmopan is a small planned capital in the Belize River valley, inland from the coast. It was built after
+      Hurricane Hattie badly damaged the coastal capital, Belize City, in 1961, and the government moved there
+      around 1970; Belize City remains the largest city.
+
+- id: el-salvador
+  name: El Salvador
+  uids: {country: 32LlVyTamX, capital: k5RY34HRVr}
+  tier: 1
+  note: >-
+    El Salvador is the smallest Central American country and the only one with no Caribbean coast; it faces the
+    Pacific between Guatemala and Honduras. It is mostly mountains and volcanoes, with a narrow coastal belt. It
+    became independent from Spain in 1821, and a civil war ended with a peace agreement in 1992.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321253}}
+  expect: [-90.12, 13.15, -87.69, 14.45]
+  capital:
+    name: San Salvador
+    ne_id: 1159150853
+    expect: [-89.27, 13.65, -89.17, 13.75]
+    note: >-
+      San Salvador lies in a highland valley, the Valley of the Hammocks, close to the San Salvador volcano.
+      Earthquakes have damaged it repeatedly. Its name means "Holy Saviour" in Spanish.
+
+- id: honduras
+  name: Honduras
+  uids: {country: 9Whn1wQH4h, capital: JtoZUY94uW}
+  tier: 1
+  note: >-
+    Honduras has a long Caribbean coast, including the thinly populated Mosquito Coast in the east, but only a short
+    Pacific shore on the Gulf of Fonseca. Its interior is mostly mountains. It borders Guatemala, El Salvador and
+    Nicaragua.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320827}}
+  expect: [-89.37, 12.97, -83.13, 17.42]
+  capital:
+    name: Tegucigalpa
+    ne_id: 1159150583
+    expect: [-87.27, 14.05, -87.17, 14.15]
+    note: >-
+      Tegucigalpa sits on hilly ground hemmed in by mountains in the interior. The constitution names Tegucigalpa
+      and Comayagüela, across the Choluteca River, jointly as the capital, but almost all government institutions
+      are on the Tegucigalpa side.
+
+- id: nicaragua
+  name: Nicaragua
+  uids: {country: 6MgRR5cYrk, capital: CSxOWagJwe}
+  tier: 1
+  note: >-
+    Nicaragua is the largest country in Central America, between Honduras and Costa Rica, with both Caribbean and
+    Pacific coasts. Wide plains run along the Caribbean side, while volcanoes break up the narrow Pacific plain in
+    the west. Lake Nicaragua is the largest freshwater lake in Central America.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321091}}
+  expect: [-87.69, 10.71, -82.72, 15.04]
+  capital:
+    name: Managua
+    ne_id: 1159150623
+    expect: [-86.32, 12.1, -86.22, 12.2]
+    note: >-
+      Managua sits on the southern shore of Lake Managua in western Nicaragua. Earthquakes in 1931 and 1972
+      destroyed its centre, which is why the city is spread out with no true downtown.
+
+- id: costa-rica
+  name: Costa Rica
+  uids: {country: KVCdXoUD1v, capital: WgJSzHj8so}
+  tier: 1
+  note: >-
+    Costa Rica lies between Nicaragua and Panama, with Caribbean and Pacific coasts on either side of a rugged,
+    volcanic mountain spine. Its 1949 constitution abolished the army, and it has had a long, largely peaceful
+    democratic history.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320525}}
+  expect: [-87.12, 5.51, -82.56, 11.21]
+  capital:
+    name: San José
+    ne_id: 1159150849
+    expect: [-84.13, 9.88, -84.03, 9.98]
+    note: >-
+      San José lies in the Central Valley (Meseta Central), a temperate highland basin in the middle of the country
+      that holds most of its large cities. Several volcanoes rise nearby, and the city has been the capital since
+      1823.
+
+- id: panama
+  name: Panama
+  uids: {country: 4SosBRnCmD, capital: laLLJeCKyZ}
+  tier: 1
+  note: >-
+    Panama is the narrow isthmus that joins Central and South America, between Costa Rica and Colombia. The Panama
+    Canal cuts across it to link the Caribbean (and so the Atlantic) with the Pacific; the US built it in 1904–14
+    and agreed in 1977 to hand it to Panama by the end of the century. Panama broke away from Colombia in 1903.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321161}}
+  expect: [-83.06, 7.2, -77.16, 9.63]
+  capital:
+    name: Panama City
+    ne_id: 1159150667
+    expect: [-79.58, 8.92, -79.48, 9.02]
+    note: >-
+      Panama City stands on the Gulf of Panama, near the Pacific entrance of the Panama Canal. The Spanish founded
+      the original city, now the ruins of Panamá Viejo, in 1519.
+
+- id: colombia
+  name: Colombia
+  uids: {country: 1PeEdtMjtK, capital: kxjPsldP2o}
+  tier: 1
+  note: >-
+    Colombia fills the north-west corner of South America and is the only South American country with coasts on both
+    the Pacific and the Caribbean. The high Andes cross its west, and the Llanos grasslands and Amazon lowlands fill
+    its east. It is named after Christopher Columbus.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320517}}
+  expect: [-81.73, -4.24, -66.87, 13.58]
+  capital:
+    name: Bogotá
+    ne_id: 1159151601
+    expect: [-74.14, 4.55, -74.04, 4.65]
+    note: >-
+      Bogotá sits high in the Andes in the centre of Colombia. The Spanish founded it in 1538 as Santa Fe de Bacatá,
+      after a nearby settlement of the Chibcha people.
+
+- id: ecuador
+  name: Ecuador
+  uids: {country: jX1fHW1GAC, capital: zbpmdVIvmD}
+  tier: 1
+  note: >-
+    Ecuador lies on the Pacific where the Equator crosses South America, between Colombia and Peru, and its name is
+    Spanish for "equator". The Andes run down its middle between a coastal plain and the Amazon rainforest, and the
+    Galápagos Islands far out in the Pacific belong to it.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320567}}
+  expect: [-92.02, -5.02, -75.22, 1.67]
+  capital:
+    name: Quito
+    ne_id: 1159150847
+    expect: [-78.55, -0.26, -78.45, -0.16]
+    note: >-
+      Quito lies in a narrow Andean valley on the slopes of the Pichincha volcano, just south of the Equator. Its
+      old town became a UNESCO World Heritage site in 1978.
+
+- id: peru
+  name: Peru
+  uids: {country: c3cqKEKe3s, capital: RX22LzToKe}
+  tier: 1
+  note: >-
+    Peru runs along the Pacific between Ecuador and Chile, from a desert coast over the high Andes to Amazon
+    rainforest in the east. It was the heart of the Inca Empire, which Spanish conquistadors captured in 1533. The
+    Amazon River rises on its Andean slopes, and it shares Lake Titicaca with Bolivia.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321163}}
+  expect: [-81.34, -18.34, -68.68, -0.02]
+  capital:
+    name: Lima
+    ne_id: 1159151511
+    expect: [-77.1, -12.1, -77.0, -12.0]
+    note: >-
+      Lima lies on Peru's desert coast beside the Pacific, and much of the country's coastal population is focused
+      on it. Its name is an early Spanish rendering of the Quechua name Rimak.
+
+- id: chile
+  name: Chile
+  uids: {country: USwj3CTCEi, capital: RreWkC4xuO}
+  tier: 1
+  note: >-
+    Chile is a long, narrow strip between the Andes and the Pacific, the longest country north to south in the
+    world. The Atacama Desert in the north is the driest desert in the world, and most Chileans live in the fertile
+    central valley around Santiago. Chile won its northernmost lands from Peru and Bolivia in the War of the Pacific
+    (1879–83).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320493}}
+  expect: [-109.46, -55.92, -66.42, -17.5]
+  capital:
+    name: Santiago
+    ne_id: 1159151615
+    expect: [-70.7, -33.49, -70.6, -33.39]
+    note: >-
+      Santiago lies in the middle of Chile on the Mapocho River; the Spanish conquistador Pedro de Valdivia founded
+      it in 1541. The national legislature does not sit here but in the port of Valparaíso.
+
+- id: bolivia
+  name: Bolivia
+  uids: {country: dImD97LC2N, capital: 243HB97AGu}
+  tier: 1
+  note: >-
+    Bolivia is one of South America's two landlocked countries, with the high Andes and the Altiplano plateau in the
+    west and Amazon lowlands in the east. It is named after the independence leader Simón Bolívar, and it shares
+    Lake Titicaca with Peru. It lost its Pacific coast to Chile in the War of the Pacific (1879–83).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320439}}
+  expect: [-69.67, -22.9, -57.46, -9.67]
+  capital:
+    name: Sucre
+    ne_id: 1159151095
+    expect: [-65.31, -19.09, -65.21, -18.99]
+    note: >-
+      Sucre is Bolivia's constitutional capital and the seat of its highest court, but the president and the
+      legislature sit in La Paz, the seat of government. The split dates from a civil war over moving the capital in
+      1898–99, after which the executive and legislature settled in La Paz (verify). The city is named after Antonio
+      José de Sucre, Bolivia's second president.
+
+- id: argentina
+  name: Argentina
+  uids: {country: dngBYa46y9, capital: FjgXO6d1Ya}
+  tier: 1
+  note: >-
+    Argentina stretches down south-eastern South America from the subtropical north to Patagonia, with the Andes
+    along its long border with Chile and the rich Pampas plains in the north. Aconcagua, in its Andes, is the
+    highest mountain in the Western Hemisphere. It claims the British-held Falkland Islands (Islas Malvinas) and
+    fought the UK over them in 1982.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320331}}
+  expect: [-73.58, -55.06, -53.66, -21.78]
+  capital:
+    name: Buenos Aires
+    ne_id: 1159151559
+    expect: [-58.48, -34.66, -58.38, -34.56]
+    note: >-
+      Buenos Aires lies on the south-western shore of the Río de la Plata estuary, facing Montevideo across the
+      water, and is one of Latin America's great ports. Its name means "fair winds" in Spanish.
+
+- id: uruguay
+  name: Uruguay
+  uids: {country: ptdi7pj4P1, capital: FvFaC1ldG0}
+  tier: 1
+  note: >-
+    Uruguay is a small country of low, rolling grassland between Argentina and Brazil, on the Atlantic and the Río
+    de la Plata. It takes its name from the Uruguay River, which forms its western border with Argentina. Brazil
+    annexed it in 1821, and it declared independence in 1825.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321353}}
+  expect: [-58.44, -34.98, -53.11, -30.09]
+  capital:
+    name: Montevideo
+    ne_id: 1159150469
+    expect: [-56.24, -34.96, -56.14, -34.86]
+    note: >-
+      Montevideo lies on the northern shore of the Río de la Plata estuary, opposite Buenos Aires. The Spanish
+      founded it in 1726 as a stronghold against Portuguese expansion from Brazil, and its port handles most of
+      Uruguay's foreign trade.
+
+- id: paraguay
+  name: Paraguay
+  uids: {country: MYFGYxhvja, capital: wvVPP9jjpA}
+  tier: 1
+  note: >-
+    Paraguay is landlocked between Argentina, Bolivia and Brazil, and the Paraguay River divides its populated east
+    from the dry Gran Chaco in the west. Spanish and Guarani are both official languages. It lost much of its
+    territory and most of its adult men in the War of the Triple Alliance (1864–70) against Argentina, Brazil and
+    Uruguay.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321195}}
+  expect: [-62.66, -27.59, -54.24, -19.28]
+  capital:
+    name: Asunción
+    ne_id: 1159150621
+    expect: [-57.68, -25.34, -57.58, -25.24]
+    note: >-
+      Asunción, on the Paraguay River, is by far the country's largest city. Named for the Feast of the Assumption
+      in 1537, it was the base of Spanish colonisation in eastern South America for nearly half a century, until
+      Buenos Aires was refounded.
+
+- id: brazil
+  name: Brazil
+  uids: {country: 4UqrkKev1j, capital: zPlZ6k5WZY}
+  tier: 1
+  note: >-
+    Brazil is the largest country in South America and borders every other South American country except Chile and
+    Ecuador. The Amazon reaches the Atlantic through Brazil, and it shares Iguaçu Falls with Argentina. Portuguese
+    is its official language; it became independent from Portugal in 1822.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320441}}
+  mainland: [-75.0, -34.0, -32.0, 6.0]
+  expect: [-74.02, -33.75, -32.38, 5.27]
+  capital:
+    name: Brasília
+    ne_id: 1159151443
+    expect: [-47.97, -15.83, -47.87, -15.73]
+    note: >-
+      Brasília is a planned capital built in Brazil's interior and inaugurated in 1960, replacing Rio de Janeiro.
+      Lúcio Costa laid out the city and Oscar Niemeyer designed its main buildings, and it is a UNESCO World
+      Heritage site.
+
+- id: suriname
+  name: Suriname
+  uids: {country: pLWW8SIgw8, capital: hRnNUC9Uui}
+  tier: 1
+  note: >-
+    Suriname lies on the Atlantic coast between Guyana and French Guiana and is the smallest independent country in
+    South America. It was a Dutch colony from 1667 until independence in 1975, and Dutch is still its official
+    language. Most of the land is rainforest, and most people live on the narrow coastal strip.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321281}}
+  expect: [-58.07, 1.83, -53.98, 6.02]
+  capital:
+    name: Paramaribo
+    ne_id: 1159150597
+    expect: [-55.22, 5.79, -55.12, 5.89]
+    note: >-
+      Paramaribo lies on the Suriname River a short way inland from the Atlantic. Its historic inner city, a Dutch
+      colonial town of wooden buildings on its original street plan, is a UNESCO World Heritage site.
+
+- id: guyana
+  name: Guyana
+  uids: {country: NucXp2E0Dn, capital: FU7hUDe7Kf}
+  tier: 1
+  note: >-
+    Guyana lies on the Atlantic coast between Venezuela and Suriname; most people live on the low coastal plain, and
+    the interior is largely rainforest and highland. A Dutch and then British colony, independent since 1966, it has
+    English as its official language. Venezuela claims the region west of the Essequibo River, which Guyana
+    administers, and the dispute is before the International Court of Justice, which as of 2026-10 has heard the
+    merits but not ruled (verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320817}}
+  expect: [-61.4, 1.18, -56.48, 8.56]
+  capital:
+    name: Georgetown
+    ne_id: 1159150585
+    expect: [-58.22, 6.75, -58.12, 6.85]
+    note: >-
+      Georgetown lies on the Atlantic coast at the mouth of the Demerara River, below sea level and protected by
+      dikes along the river and the sea. The British founded it in 1781 and named it after King George III.
+
+- id: venezuela
+  name: Venezuela
+  uids: {country: N4LkoU6jYC, capital: gWpYi0J6eZ}
+  tier: 1
+  note: >-
+    Venezuela faces the Caribbean across the top of South America, with the Andes in the north-west, the Llanos
+    plains along the Orinoco River in the centre, and the Guiana Highlands in the south-east. Its name means "Little
+    Venice", after the stilt houses explorers saw on Lake Maracaibo in 1499. It claims the region west of the
+    Essequibo River that Guyana administers; as of 2026-10 the International Court of Justice has heard the case but
+    not ruled (verify).
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321411}}
+  expect: [-73.4, 0.64, -59.81, 15.71]
+  capital:
+    name: Caracas
+    ne_id: 1159151493
+    expect: [-66.97, 10.45, -66.87, 10.55]
+    note: >-
+      Caracas lies a short way inland from the Caribbean, which it reaches through the port of La Guaira. Simón
+      Bolívar was born here in 1783, and the city led the revolt against Spanish rule that began around 1810.
+
+- id: trinidad-and-tobago
+  name: Trinidad and Tobago
+  uids: {country: 3b0SX9Buga, capital: b5i7EhUujX}
+  tier: 3
+  note: >-
+    Trinidad and Tobago are the two southernmost Caribbean islands, just off the northeast coast of Venezuela. Oil,
+    found on Trinidad in 1910, and natural gas made it one of the region's most prosperous countries. It became
+    independent from the UK in 1962.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321321}}
+  expect: [-61.93, 10.04, -60.52, 11.36]
+  capital:
+    name: Port of Spain
+    ne_id: 1159149307
+    expect: [-61.57, 10.6, -61.47, 10.7]
+    note: >-
+      Port of Spain lies on Trinidad's northwest coast, on the Gulf of Paria, which separates the island from
+      Venezuela. It is the country's chief port.
+
+- id: grenada
+  name: Grenada
+  uids: {country: KIBlvxoMSk, capital: Tl4yaosYpH}
+  tier: 3
+  note: >-
+    Grenada is a volcanic island north of Trinidad at the southern end of the Windward Islands, and it also holds
+    the southern Grenadines. Known as the Isle of Spice, it is a leading producer of nutmeg. It became independent
+    from the UK in 1974.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320813}}
+  expect: [-61.8, 12.0, -61.42, 12.53]
+  capital:
+    name: Saint George's
+    ne_id: 1159150447
+    expect: [-61.79, 12.0, -61.69, 12.1]
+    note: >-
+      St. George's lies on Grenada's southwest coast, on a small peninsula. Its deep inner harbour, the Carenage,
+      fills a volcanic caldera.
+
+- id: saint-vincent-and-the-grenadines
+  name: Saint Vincent and the Grenadines
+  uids: {country: 1HPxsv8LwP, capital: qQmDOlIvBl}
+  tier: 3
+  note: >-
+    The country is the volcanic island of Saint Vincent plus the northern Grenadines, a chain of small islands
+    stretching south toward Grenada. La Soufrière volcano, in the north of Saint Vincent, erupted explosively in
+    2021. It became independent from the UK in 1979.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321409}}
+  expect: [-61.46, 12.58, -61.12, 13.39]
+  capital:
+    name: Kingstown
+    ne_id: 1159150431
+    expect: [-61.27, 13.11, -61.17, 13.21]
+    note: >-
+      Kingstown lies on Saint Vincent's southwest coast, on the opposite side of the island from La Soufrière. It is
+      the country's main port.
+
+- id: barbados
+  name: Barbados
+  uids: {country: xGHXl2WqON, capital: dBjfJbKtqd}
+  tier: 3
+  note: >-
+    Barbados is the easternmost Caribbean island, a fairly flat island out in the Atlantic east of the Windward
+    chain. Settled by the English in 1627 as a sugar colony, it became independent from the UK in 1966 and a
+    republic in 2021.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320449}}
+  expect: [-59.66, 13.05, -59.42, 13.35]
+  capital:
+    name: Bridgetown
+    ne_id: 1159150339
+    expect: [-59.67, 13.05, -59.57, 13.15]
+    note: >-
+      Bridgetown lies on Carlisle Bay at the southwest end of Barbados and is the island's main port. It is named
+      after a bridge over the Constitution River, which flows through the centre.
+
+- id: saint-lucia
+  name: Saint Lucia
+  uids: {country: spVcm0TU5t, capital: lSu5WBD2wo}
+  tier: 3
+  note: >-
+    Saint Lucia is a mountainous volcanic island in the Windward Islands, between Martinique and Saint Vincent.
+    England and France fought over it, and it changed hands many times before it was ceded to the UK in 1814; it
+    became independent in 1979. The twin cone-shaped Pitons rise from the sea on its southwest coast.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321019}}
+  expect: [-61.08, 13.71, -60.88, 14.12]
+  capital:
+    name: Castries
+    ne_id: 1159150433
+    expect: [-61.04, 13.96, -60.94, 14.06]
+    note: >-
+      Castries is the capital and main port, on a deep, sheltered harbour on the island's northwest coast. It was
+      renamed in 1785 after the French minister of the navy.
+
+- id: dominica
+  name: Dominica
+  uids: {country: CDLM4S6GuX, capital: grkKi6RXFN}
+  tier: 3
+  note: >-
+    Dominica is a rugged volcanic island in the Lesser Antilles, between the French islands of Guadeloupe and
+    Martinique; it is a different country from the Dominican Republic. Called the Nature Island of the Caribbean, it
+    was the last Caribbean island Europeans colonized. It became independent from the UK in 1978.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320543}}
+  expect: [-61.49, 15.2, -61.24, 15.64]
+  capital:
+    name: Roseau
+    ne_id: 1159149847
+    expect: [-61.44, 15.25, -61.34, 15.35]
+    note: >-
+      Roseau lies at the mouth of the Roseau River on Dominica's southwest coast. Its name is French for "reed",
+      after the river reeds where the first settlement stood.
+
+- id: antigua-and-barbuda
+  name: Antigua and Barbuda
+  uids: {country: hh1Pgg6Hx4, capital: 1svK3jcE6J}
+  tier: 3
+  note: >-
+    Antigua and Barbuda are two low islands, mostly limestone and coral, east-southeast of Puerto Rico. Antigua's
+    deeply indented coast has many natural harbours. The country became independent from the UK in 1981.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320345}}
+  expect: [-62.35, 16.93, -61.66, 17.73]
+  capital:
+    name: Saint John's
+    ne_id: 1159150457
+    expect: [-61.9, 17.07, -61.8, 17.17]
+    note: >-
+      St. John's lies on a sheltered harbour on Antigua's northwest coast and is the main port. It is named after
+      Saint John the Apostle.
+
+- id: saint-kitts-and-nevis
+  name: Saint Kitts and Nevis
+  uids: {country: ifTylVQYRl, capital: ktqqj2K8HZ}
+  tier: 3
+  note: >-
+    Saint Kitts and Nevis is two volcanic islands separated by a narrow channel, The Narrows, and it is the smallest
+    country in the Western Hemisphere by both area and population. Saint Kitts was an early base for British and
+    French expansion in the Caribbean. The country became independent from the UK in 1983.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320983}}
+  expect: [-62.87, 17.1, -62.53, 17.42]
+  capital:
+    name: Basseterre
+    ne_id: 1159150435
+    expect: [-62.77, 17.25, -62.67, 17.35]
+    note: >-
+      Basseterre lies on Saint Kitts's southwest coast and is the country's chief port and largest town. Its French
+      name means "low land", probably for its valley site.
+
+- id: dominican-republic
+  name: Dominican Republic
+  uids: {country: xEaTquK3Vw, capital: zQFNNwNser}
+  tier: 1
+  note: >-
+    The Dominican Republic covers the eastern two-thirds of the island of Hispaniola, which it shares with Haiti. It
+    holds both the Caribbean's highest peak, Pico Duarte, and its lowest point and largest lake, Lago Enriquillo. It
+    became independent from Haiti in 1844.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320563}}
+  expect: [-72.01, 17.54, -68.32, 19.94]
+  capital:
+    name: Santo Domingo
+    ne_id: 1159151401
+    expect: [-69.98, 18.42, -69.88, 18.52]
+    note: >-
+      Santo Domingo lies on the south coast at the mouth of the Ozama River. Founded by Bartholomew Columbus in
+      1496, it is the oldest permanent European settlement in the Americas, rebuilt on the river's west bank after a
+      hurricane in 1502.
+
+- id: haiti
+  name: Haiti
+  uids: {country: vnx3SzmUU7, capital: kgzLZdSYRQ}
+  tier: 1
+  note: >-
+    Haiti occupies the western third of Hispaniola, west of the Dominican Republic, and is the most mountainous
+    country in the Caribbean. A revolution of enslaved people against French rule made it, in 1804, the first
+    country in the world led by former slaves.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320839}}
+  expect: [-74.49, 18.02, -71.63, 20.09]
+  capital:
+    name: Port-au-Prince
+    ne_id: 1159150589
+    expect: [-72.39, 18.49, -72.29, 18.59]
+    note: >-
+      Port-au-Prince lies on the Gulf of Gonâve on Haiti's west coast. It has been the capital since 1770, before
+      independence, and was devastated by the 2010 earthquake.
+
+- id: jamaica
+  name: Jamaica
+  uids: {country: ZD7QkRyGeE, capital: EDUOH4NxOc}
+  tier: 1
+  note: >-
+    Jamaica is the third-largest Caribbean island, south of Cuba; it is mostly mountains with a narrow coastal
+    plain. England seized it from Spain in 1655 and ran it as a sugar colony, and it became independent in 1962.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320931}}
+  expect: [-78.38, 17.7, -76.18, 18.53]
+  capital:
+    name: Kingston
+    ne_id: 1159150855
+    expect: [-76.82, 17.93, -76.72, 18.03]
+    note: >-
+      Kingston lies on the southeast coast around a large natural harbour sheltered by the Palisadoes, a narrow sand
+      spit. It grew after a 1692 earthquake sank much of nearby Port Royal, and it became the political capital in
+      1872.
+
+- id: cuba
+  name: Cuba
+  uids: {country: KpKgFpXEdz, capital: iErNPa3vw4}
+  tier: 1
+  note: >-
+    Cuba is the largest Caribbean country and the westernmost island of the Greater Antilles, lying just south of
+    Florida. Spanish until 1898, it became a republic in 1902, and Fidel Castro's 1959 revolution turned it into a
+    communist state.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320527}}
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320529}}
+  expect: [-84.95, 19.82, -74.13, 23.27]
+  capital:
+    name: Havana
+    ne_id: 1159151347
+    expect: [-82.42, 23.08, -82.32, 23.18]
+    note: >-
+      Havana lies on Cuba's northwest coast around a bay entered through a narrow channel. Spanish treasure fleets
+      gathered there before crossing the Atlantic, and Old Havana and the forts that guarded the harbour are a
+      UNESCO World Heritage site.
+
+- id: bahamas
+  name: Bahamas
+  uids: {country: izgz8s0mFV, capital: 7Kcmr3IJjZ}
+  tier: 1
+  note: >-
+    The Bahamas is a long chain of flat coral islands in the Atlantic, southeast of Florida and northeast of Cuba;
+    it does not touch the Caribbean Sea but is usually grouped with the Caribbean. Columbus made his first landfall
+    in the Americas here in 1492. It became independent from the UK in 1973.
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320415}}
+  expect: [-79.6, 20.91, -72.74, 26.93]
+  capital:
+    name: Nassau
+    ne_id: 1159151207
+    expect: [-77.4, 25.03, -77.3, 25.13]
+    note: >-
+      Nassau lies on the northeast coast of New Providence island, its harbour sheltered by Paradise Island. It is
+      by far the largest city and a centre of tourism and banking; it is named after King William III, of the House
+      of Orange-Nassau.

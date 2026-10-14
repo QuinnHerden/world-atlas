@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "World Factbook 'Nauru', Government: Capital, geographic coordinates 0 32 S, 166 55 E (no official capital; government offices in the Yaren District). Natural Earth populated_places has no row for Nauru. Checked to lie inside NE 10m admin_0 Nauru (A0 1159321123).", "method": "reference-coords", "refs": ["World Factbook 'Nauru' (community mirror factbook/factbook.json, oceania/nr.json)"]}, "geometry": {"type": "Point", "coordinates": [166.9167, -0.5333]}}
+  ]
+}
