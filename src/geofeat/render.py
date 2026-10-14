@@ -1,16 +1,8 @@
 """Render one unlabelled map per feature: shaded basemap, red highlight, optional locator globe."""
 
-import hashlib
 import io
-import json
 import math
-import os
-import sys
-from collections.abc import Iterator
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from contextlib import contextmanager
 from functools import cache
-from pathlib import Path
 
 import cartopy.crs as ccrs
 import matplotlib
@@ -26,9 +18,8 @@ from shapely.geometry import LineString, Polygon, box
 from shapely.geometry.base import BaseGeometry
 
 from geofeat.frame import Frame, frame, project
-import geofeat.resolve as resolver
-from geofeat.model import BUILD, DECK, LOCK, MEDIA_INDEX, ROOT, VENDOR, Feature, active, load_features
-from geofeat.resolve import GEOD, custom, features_by_id, flow_lines, geometry_path, resolve
+from geofeat.model import VENDOR
+from geofeat.ne import GEOD, flow_lines, layer
 from geofeat.spec import RELIEF, RenderSpec
 from geofeat.style import (
     BORDER, BORDER_PX, CASING, CASING_PX, CLOSE_UP_BORDER_PX, COAST, COAST_PX, CONTEXT_EDGE,
@@ -38,9 +29,6 @@ from geofeat.style import (
     STRAIT_OUTLINE_PX, STROKE_PX, WATER_AREA_ALPHA, WIND_CASING_PX, WIND_CHEVRON_ARM_PX, WIND_CHEVRON_PX, WIND_DASH_PX,
     WIND_GLYPH_PX,
 )
-
-CACHE = BUILD / "render-cache.json"  # input hash -> rendered PNG name
-JOBS = int(os.environ.get("JOBS", "1"))  # each worker loads its own copy of the layers; ~1.5 GB per worker
 
 WIDTH_PX, HEIGHT_PX, DPI = 1600, 900, 100
 SCALE = 2  # stroke sizes below are specified for an 800 px wide card
@@ -124,15 +112,15 @@ def _basemap(ax, spec: RenderSpec, frame_: Frame, lonlat_bounds) -> None:
     world = frame_.extent is None
     span = None if world else frame_.extent[1] - frame_.extent[0]
     res = "50m" if world or span > LARGE_FRAME_M else "10m"
-    land_rows = _clip(resolver.layer(f"{res}_land"), lonlat_bounds)
+    land_rows = _clip(layer(f"{res}_land"), lonlat_bounds)
     _fill(ax, land_rows, lonlat_bounds, LAND, 1, world)
     shadow, light, extent = _relief_layers(*lonlat_bounds)
     for img in (shadow, light):
         ax.imshow(img, extent=extent, transform=PLATE, origin="upper", regrid_shape=WIDTH_PX, zorder=1.1)
-    lakes = _clip(resolver.layer("50m_lakes"), lonlat_bounds)
-    _fill(ax, _clip(resolver.layer(f"{res}_ocean"), lonlat_bounds), lonlat_bounds, OCEAN, 1.2, world)
+    lakes = _clip(layer("50m_lakes"), lonlat_bounds)
+    _fill(ax, _clip(layer(f"{res}_ocean"), lonlat_bounds), lonlat_bounds, OCEAN, 1.2, world)
     _fill(ax, lakes, lonlat_bounds, OCEAN, 1.2, world)
-    rivers = resolver.layer("50m_rivers_lake_centerlines")
+    rivers = layer("50m_rivers_lake_centerlines")
     ax.add_geometries(  # above borders, which often follow a river (the Ohio)
         _clip(rivers[rivers["scalerank"] <= 4], lonlat_bounds),
         PLATE, facecolor="none", edgecolor=CONTEXT_RIVER, linewidth=pt(CONTEXT_RIVER_PX), zorder=1.42,
@@ -140,14 +128,14 @@ def _basemap(ax, spec: RenderSpec, frame_: Frame, lonlat_bounds) -> None:
     lon0, lon1, lat0, lat1 = lonlat_bounds
     land = unary_union([shapely.clip_by_rect(g, lon0, lat0, lon1, lat1) for g in land_rows])
     dry = land.difference(shapely.make_valid(unary_union(list(lakes))))
-    borders = resolver.layer(f"{res}_admin_0_boundary_lines_land")
+    borders = layer(f"{res}_admin_0_boundary_lines_land")
     borders = unary_union(list(_clip(borders[~borders["featurecla"].isin(NOT_BORDERS)], lonlat_bounds)))
     border_px = CLOSE_UP_BORDER_PX if spec.close_up_borders and span is not None and span < CLOSE_UP_M else BORDER_PX
     ax.add_geometries(  # Natural Earth runs some land borders across straits (Kerch) and lakes (Erie); keep them on land
         [borders.intersection(dry)], PLATE, facecolor="none", edgecolor=BORDER, linewidth=pt(border_px), zorder=1.4,
     )
     if spec.frame.admin1:
-        states = unary_union(list(_clip(resolver.layer("50m_admin_1_states_provinces_lines"), lonlat_bounds)))
+        states = unary_union(list(_clip(layer("50m_admin_1_states_provinces_lines"), lonlat_bounds)))
         ax.add_geometries([states.intersection(dry)], PLATE, facecolor="none", edgecolor=BORDER, linewidth=pt(BORDER_PX), zorder=1.4)
     # Natural Earth splits land at ±180 and the clip above cuts it at the window: neither edge is a coast
     seams = unary_union([LineString([(x, -90), (x, 90)]) for x in (-180, 180)] + [box(lon0, lat0, lon1, lat1).boundary])
@@ -226,9 +214,9 @@ def _short_ring(ax, geometry: BaseGeometry, frame_: Frame) -> None:
               core=pt_full(STRAIT_RING_STROKE_PX), casing=pt_full(STRAIT_RING_CASING_PX))
 
 
-def _context(ax, spec: RenderSpec) -> None:
-    for other in spec.frame.context:
-        ax.add_geometries([resolve(features_by_id()[other])], PLATE, facecolor="none", edgecolor=CONTEXT_RIVER,
+def _context(ax, context: tuple[BaseGeometry, ...]) -> None:
+    for shape in context:
+        ax.add_geometries([shape], PLATE, facecolor="none", edgecolor=CONTEXT_RIVER,
                           linewidth=pt(PARENT_RIVER_PX), zorder=1.35)
 
 
@@ -314,7 +302,7 @@ def _inset(fig, frame_: Frame, highlight_px: tuple[float, float, float, float]) 
     ax.set_facecolor(INSET_OCEAN)
     ax.spines["geo"].set_edgecolor(COAST)
     ax.spines["geo"].set_linewidth(pt(1))
-    ax.add_geometries(resolver.layer("50m_land").geometry, PLATE, facecolor=INSET_LAND, edgecolor="none")
+    ax.add_geometries(layer("50m_land").geometry, PLATE, facecolor=INSET_LAND, edgecolor="none")
     fx0, fx1, fy0, fy1 = frame_.extent
     outline = Polygon([(fx0, fy0), (fx1, fy0), (fx1, fy1), (fx0, fy1)]).segmentize((fx1 - fx0) / 50)
     lons, lats = Transformer.from_crs(frame_.projection.proj4_init, "EPSG:4326", always_xy=True).transform(
@@ -330,8 +318,10 @@ def _inset(fig, frame_: Frame, highlight_px: tuple[float, float, float, float]) 
     ax.add_geometries([outline], frame_.projection, facecolor="none", edgecolor=INSET_FRAME, linewidth=pt(INSET_FRAME_PX), zorder=2.1)
 
 
-def render(spec: RenderSpec, geometry: BaseGeometry) -> bytes:
-    """The card's map: `geometry` drawn as `spec` says, over the basemap."""
+def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry, ...] = (),
+           former: BaseGeometry | None = None) -> bytes:
+    """The card's map: `geometry` drawn as `spec` says over the basemap, with `context` lines drawn faintly underneath
+    and a `former` shoreline dashed in grey. Reads nothing but the basemap layers and relief."""
     if spec.outline:
         raise NotImplementedError("RenderSpec.outline is reserved and not drawn yet")
     frame_ = frame(spec, geometry)
@@ -347,9 +337,9 @@ def render(spec: RenderSpec, geometry: BaseGeometry) -> bytes:
         lon0, lon1, lat0, lat1 = ax.get_extent(crs=PLATE)
         bounds = (max(lon0 - 2, -180), min(lon1 + 2, 180), max(lat0 - 2, -90), min(lat1 + 2, 90))
     _basemap(ax, spec, frame_, bounds)
-    _context(ax, spec)
-    if spec.frame.former:
-        ax.add_geometries([custom(spec.frame.former).boundary], PLATE, facecolor="none", edgecolor=FORMER_SHORE,
+    _context(ax, context)
+    if former is not None:
+        ax.add_geometries([former], PLATE, facecolor="none", edgecolor=FORMER_SHORE,
                           linewidth=pt(FORMER_SHORE_PX), linestyle=(0, (4, 3)), zorder=1.45)
     if spec.country:
         _country(ax, geometry, frame_, subject=spec.country == "subject")
@@ -373,128 +363,7 @@ def render(spec: RenderSpec, geometry: BaseGeometry) -> bytes:
     return out.getvalue()
 
 
-RENDERER = ("render.py", "frame.py", "resolve.py", "style.py", "spec.py")  # source files hashed into every key
-
-
-@cache
-def _code_hash(root: Path) -> str:
-    h = hashlib.sha256()
-    for name in RENDERER:
-        h.update(name.encode() + b"\0" + (root / "src/geofeat" / name).read_bytes())
-    h.update((root / "uv.lock").read_bytes())
-    return h.hexdigest()
-
-
-@cache
-def _lock_entries(lock: Path) -> dict[str, dict]:
-    """sources.lock entries by file name."""
-    entries = json.loads(lock.read_text())
-    by_name = {Path(entry["path"]).name: entry for entry in entries}
-    if len(by_name) != len(entries):
-        raise ValueError(f"{lock.name}: two entries share a file name")
-    return by_name
-
-
-def _layer_locks(layers: frozenset[str]) -> str:
-    """The pinned sha256 of each layer a card reads, and of the relief raster, as canonical JSON. Only the content
-    hash counts, so a relock that leaves a file's bytes unchanged doesn't re-render."""
-    entries = _lock_entries(LOCK)
-    files = sorted({f"ne_{name}.geojson" for name in layers} | {RELIEF})
-    missing = [f for f in files if f not in entries]
-    if missing:
-        raise ValueError(f"not in {LOCK.name}: {missing}")
-    return json.dumps({f: entries[f]["sha256"] for f in files}, sort_keys=True)
-
-
-def input_hash(feature: Feature, stack: tuple[str, ...] = ()) -> str:
-    """Everything that changes a feature's pixels: its RenderSpec, the renderer's code, uv.lock, the lock entries of
-    the layers it reads, and the files and features it references. Renaming, re-tiering or retyping it does not
-    count, unless that changes the spec; nor does an edit to model.py or a lock entry for a layer it doesn't read."""
-    spec = RenderSpec.from_feature(feature)
-    h = hashlib.sha256(_code_hash(ROOT).encode())
-    h.update(json.dumps(spec.model_dump(mode="json"), sort_keys=True).encode())
-    h.update(_layer_locks(spec.layers()).encode())
-    if spec.frame.former:
-        h.update(geometry_path(spec.frame.former).read_bytes())
-    for part in spec.geometry:
-        if part.file:
-            h.update(geometry_path(part.file).read_bytes())
-    for other in [p.feature for p in spec.geometry if p.feature]:
-        if other in stack:
-            raise ValueError(f"{feature.id}: reference cycle through {other!r}")
-        h.update(input_hash(features_by_id()[other], (*stack, feature.id)).encode())
-    for other in spec.frame.context:  # drawn as plain geometry, so only its shape matters
-        h.update(shapely.to_wkb(resolve(features_by_id()[other])))
-    return h.hexdigest()
-
-
-class UndeclaredLayer(RuntimeError):
-    """A render read a layer its RenderSpec doesn't declare, so the layer's lock entry isn't in the card's key."""
-
-
-@contextmanager
-def only_layers(declared: frozenset[str]) -> Iterator[None]:
-    """Make the layer loader refuse anything outside `declared` while a card resolves and renders. resolve.py isn't
-    this module's to change, so the guard replaces the loader wherever a geofeat module holds it, under any name."""
-    load = resolver.layer
-
-    def guarded(name: str):
-        if name not in declared:
-            raise UndeclaredLayer(f"layer {name!r} is not declared by this card ({sorted(declared)})")
-        return load(name)
-
-    holders = [(m, attr) for key, m in list(sys.modules.items()) if key == "geofeat" or key.startswith("geofeat.")
-               for attr, value in list(vars(m).items()) if value is load]
-    for m, attr in holders:
-        setattr(m, attr, guarded)
-    try:
-        yield
-    finally:
-        for m, attr in holders:
-            setattr(m, attr, load)
-
-
-def _render_to_file(feature: Feature) -> str:
-    spec = RenderSpec.from_feature(feature)
-    with only_layers(spec.layers()):
-        png = render(spec, resolve(feature))
-    file = f"{hashlib.sha256(png).hexdigest()[:12]}.png"
-    (DECK / file).write_bytes(png)
-    return file
-
-
-def _write_json(path: Path, data: dict) -> None:
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
-    tmp.replace(path)
-
-
-def main() -> None:
-    DECK.mkdir(exist_ok=True)
-    BUILD.mkdir(exist_ok=True)
-    cache_ = json.loads(CACHE.read_text()) if CACHE.exists() else {}
-    features = active(load_features())
-    keys = {f.id: input_hash(f) for f in features}
-    todo = [f for f in features if not (keys[f.id] in cache_ and (DECK / cache_[keys[f.id]]).exists())]
-
-    with ProcessPoolExecutor(max_workers=JOBS) as pool:
-        futures = {pool.submit(_render_to_file, f): f for f in todo}
-        try:
-            for future in as_completed(futures):
-                feature = futures[future]
-                cache_[keys[feature.id]] = future.result()
-                _write_json(CACHE, cache_)
-                print(f"rendered {feature.id} -> {cache_[keys[feature.id]]}")
-        except BaseException:
-            pool.shutdown(cancel_futures=True)
-            raise
-
-    media = {f.id: cache_[keys[f.id]] for f in features}
-    _write_json(MEDIA_INDEX, media)
-    for stale in {p.name for p in DECK.glob("*.png")} - set(media.values()):
-        (DECK / stale).unlink()
-    _write_json(CACHE, {k: v for k, v in cache_.items() if v in media.values()})
-
-
 if __name__ == "__main__":
+    from geofeat.jobs import main
+
     main()

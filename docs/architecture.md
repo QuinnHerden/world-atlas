@@ -20,7 +20,7 @@ vendor/ (NE, pinned)┘                                                ├─> d
 | `make ids` | `ids.py` | Mints a uid for each entry that lacks one with `ankc gen chunk` and writes it into `features.yaml`. Not part of `make all`. |
 | `make fetch` | `fetch.py` | Downloads the pinned Natural Earth files through `gh api` and verifies their checksums against `data/sources.lock`. `--relock` re-pins. |
 | `make check-data` | `check.py data` | Schema, geometry, provenance and sibling-pair checks. Caches the pair results in `build/siblings.json`. |
-| `make render` | `render.py` | One PNG per active card, cached by input hash. Writes `build/media.json` (feature id → file name). |
+| `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its key (below). Writes `build/media.json` (feature id → file name). |
 | `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`. |
 | `make check` | `check.py deck` | Every card rendered; `ankc --version` is 0.5.x; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/geographic-features.apkg` and checks it. |
@@ -34,7 +34,7 @@ vendor/ (NE, pinned)┘                                                ├─> d
 data/features.yaml     the feature list; the only hand-edited data besides geometry/
 data/sources.lock      Natural Earth repo, commit, path, sha256 and git blob sha per file
 geometry/*.geojson     53 hand-authored or derived shapes, each with provenance
-src/geofeat/           the pipeline (model, fetch, resolve, frame, render, style, pairs, order, deckgen, check, guide, sheet, cvd, ids)
+src/geofeat/           the pipeline (model, fetch, ne, resolve, frame, spec, render, jobs, style, pairs, order, deckgen, check, guide, sheet, cvd, ids)
 tests/                 unit tests (`make test`)
 tools/                 scripts that made the derived geometry; not part of the build (tools/README.md)
 docs/                  this file, the ADRs, the World Atlas plan, historical research
@@ -171,7 +171,14 @@ A strait or line shorter than 123 px also gets a ring. Seasonal climate systems 
 
 **Locator inset.** On regional frames under 8,000 km wide. The same 320 × 160 px plate carrée world map on every card, centred on 0° and never re-centred. It marks the frame as a `#333` box, or a 12 px dot when the box would be under 32 px or would cross 180°. Nothing in it is red. It sits bottom-left unless that covers the highlight, then moves to another corner.
 
-**Render cache.** `build/render-cache.json` maps an input hash to a PNG. The hash covers the feature's style, geometry parts, frame and trim; its land clip, fill opacity and close-up borders; every geometry file and referenced feature it uses; the source of `render.py`, `frame.py`, `resolve.py`, `model.py` and `style.py`; `uv.lock`; and `data/sources.lock`. Renaming or re-tiering a card doesn't re-render it. Editing any of those five modules re-renders everything (about 10 s per map; `JOBS=n` runs n workers at about 1.5 GB each). `render` deletes PNGs no active card uses.
+**Render cache.** `build/render-cache.json` maps a cache key to a PNG. `jobs.py` resolves each active card into a `RenderJob`: a `RenderSpec` (`spec.py`: style, frame options, fill opacity, close-up borders, and the country/dot/outline overlays), the geometry, the `frame.context` shapes and the `frame.former` outline. `render()` draws a job and reads nothing but the basemap. The key hashes:
+
+- the geometry, each context shape and the former outline, rounded to 1e-7° and normalised with `shapely.normalize`, so float noise and vertex or part order don't count. Flow geometry isn't normalised, because its arrows follow the vertex order.
+- the spec's fields, defaults included. Context ids and the former file name aren't in the spec; their shapes are hashed instead.
+- the source of the modules `render()` runs, `render.py`, `frame.py`, `ne.py` (layer loading and flow lines), `style.py` and `spec.py`, and `uv.lock`.
+- the sha256 pinned in `data/sources.lock` for each layer in `spec.BASEMAP_LAYERS` and for the relief raster. `render` first checks those files in `vendor/` against the lock.
+
+Renaming, re-tiering or retyping a card, editing `model.py`, `resolve.py`, `jobs.py` or a selector, or pinning a layer the basemap doesn't draw re-renders a card only if its resolved shape or spec changes. Editing any of the five hashed modules re-renders everything (about 3 s per map). `JOBS=1` (the default) renders in-process; `JOBS=n` runs n workers at about 1.5 GB each. Every layer the hashed modules read must be in `BASEMAP_LAYERS`; a test checks this. `render` deletes PNGs no active card uses.
 
 ## Checks
 

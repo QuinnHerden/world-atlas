@@ -6,35 +6,17 @@ from functools import cache
 from pathlib import Path
 from typing import get_args
 
-import geopandas as gpd
-import numpy as np
 import shapely
-from pyproj import Geod
 from shapely import unary_union
-from shapely.geometry import LineString, MultiLineString, shape
+from shapely.geometry import MultiLineString, shape
 from shapely.geometry.base import BaseGeometry
 
-from geofeat.model import GEOMETRY, LAND_FAMILIES, LOCK, VENDOR, Feature, Method, Part, load_features
+from geofeat.model import GEOMETRY, LAND_FAMILIES, Feature, Method, Part, load_features
+from geofeat.ne import GEOD, flow_lines, layer  # noqa: F401  flow_lines re-exported for check.py and tests
 
-GEOD = Geod(ellps="WGS84")
 SLIVER_KM2 = 2_500
 MAX_DROPPED_SHARE = 0.01
 NOT_VERIFIED = re.compile(r"unverified|placeholder", re.IGNORECASE)
-
-
-@cache
-def _locked_files() -> frozenset[str]:
-    return frozenset(Path(entry["path"]).name for entry in json.loads(LOCK.read_text()))
-
-
-@cache
-def layer(name: str) -> gpd.GeoDataFrame:
-    file = f"ne_{name}.geojson"
-    if file not in _locked_files():
-        raise ValueError(f"layer {name!r} is not in {LOCK.name}")
-    gdf = gpd.read_file(VENDOR / file)
-    gdf.columns = [c.lower() if c != "geometry" else c for c in gdf.columns]
-    return gdf
 
 
 def geometry_path(file: str) -> Path:
@@ -106,21 +88,6 @@ def _part(feature: Feature, part: Part, stack: tuple[str, ...]) -> BaseGeometry:
     if len(matched) != part.rows:
         raise ValueError(f"{feature.id}: {part.layer} {part.select} matched {len(matched)} rows, expected {part.rows}")
     return unary_union(matched.geometry.values)
-
-
-def flow_lines(geometry: BaseGeometry) -> list[LineString]:
-    """A flow geometry's lines, merged only head-to-tail, with longitudes unwrapped so a line split at ±180° rejoins."""
-    pieces = []
-    ref = None
-    for line in shapely.get_parts(geometry):
-        coords = shapely.get_coordinates(line)
-        coords[:, 0] = np.unwrap(coords[:, 0], period=360)
-        ref = coords[0, 0] if ref is None else ref
-        coords[:, 0] += 360 * round((ref - coords[0, 0]) / 360)
-        if len(coords) > 1:
-            pieces.append(LineString(coords))
-    merged = shapely.line_merge(MultiLineString(pieces), directed=True)
-    return [line for line in shapely.get_parts(merged) if line.length > 0]
 
 
 def area_km2(geometry: BaseGeometry) -> float:
