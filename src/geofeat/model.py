@@ -13,7 +13,7 @@ VENDOR = ROOT / "vendor"
 DECK = ROOT / "deck"
 BUILD = ROOT / "build"
 MEDIA_INDEX = BUILD / "media.json"  # card key (kind:id, e.g. feature:nile) -> rendered PNG name
-ROOT_DECK = "Geographic Features"
+ROOT_DECK = "World Atlas"
 
 Category = Literal[
     "Continents",

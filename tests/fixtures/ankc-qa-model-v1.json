@@ -1,0 +1,11 @@
+{
+  "_comment": "The ankc QA note type every card uses: the same in ankc 0.4-0.6 source (app/logic/sources.py) and in the v1 geographic-features.apkg. A note type mismatch makes Anki duplicate notes on import instead of updating them (ADR 0007).",
+  "id": 1764365620,
+  "name": "AnkCompiler-Question_Answer",
+  "type": 0,
+  "sortf": 0,
+  "req": [[0, "all", [0]]],
+  "fields": ["Question", "Answer", "Source"],
+  "templates": [{"name": "QA", "ord": 0, "qfmt": "{{Question}}", "afmt": "{{Question}}<hr id=answer>{{Answer}}"}],
+  "css": "@import url(\"_stylesheet.css\");"
+}

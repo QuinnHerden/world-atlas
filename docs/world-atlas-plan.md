@@ -280,7 +280,7 @@ cards ─▶ passes (from curriculum.yaml)
 ### Repo and naming
 
 - **One repo.** One order needs every card in one process, and the renderer, NE vendoring, framing and checks are shared. Splitting would turn an in-process function call into a cross-repo contract. Draw the boundaries inside the repo instead: `sources/` (features, countries, cities) → `Card` → `order/` → `deckgen`/`guide`/`check`.
-- **Rename the deck** to World Atlas once (see Migration). Rename `deck/geographic-features.md`, `dist/*.apkg` and the Makefile `DECK` with it. **Keep the package name `geofeat`**: it's internal, and renaming it is churn no user sees. Renaming the repo to `world-atlas` is the default awaiting confirmation (decision 11).
+- **Rename the deck** to World Atlas once (see Migration). Rename `deck/geographic-features.md`, `dist/*.apkg` and the Makefile `DECK` with it (done in P5: `deck/world-atlas.md`, `dist/world-atlas.apkg`). **Keep the package name `geofeat`**: it's internal, and renaming it is churn no user sees. Renaming the repo to `world-atlas` is the default awaiting confirmation (decision 11).
 
 ### Risks
 
@@ -411,7 +411,7 @@ These defaults are waiting for the user's confirmation. Numbers follow the build
 |---|---|---|
 | [0005](adr/0005-card-sources-and-card-dto.md) | Card sources and the `Card` DTO | Proposed |
 | [0006](adr/0006-positions-lock-and-pos-footnote.md) | `positions.lock` and the ankc `[^pos]` footnote; supersedes the drift consequence in ADR 0004 | Proposed |
-| [0007](adr/0007-rename-and-migration.md) | Rename to World Atlas, and migration | Proposed |
+| [0007](adr/0007-rename-and-migration.md) | Rename to World Atlas, and migration | Accepted (deck rename); repo rename pending |
 | [0008](adr/0008-state-list-borders-adjacency.md) | State list, borders worldview and adjacency | Accepted |
 | [0009](adr/0009-curriculum-order.md) | Curriculum order; supersedes ADR 0004's tier-first rule and ≥ 3 gap | Proposed |
 
@@ -428,7 +428,7 @@ Summary of the 2026-10-14 build plan. Each workstream runs in its own git worktr
 | P2 | Data and content, in parallel: the political model (`src/geofeat/sources/`), `countries.yaml` (197), `territories.yaml` (23 + 15), `cities.yaml`, `curriculum.yaml` and `adjacency.py`, `regions.py` and the continents. About 530 blurbs, written in 4 regional research streams and fact-checked by a second researcher. | Data validates. | Data done except the continents (in progress) and the verify field (in progress). |
 | P3 | Order engine (`order/` package): passes, regions, frozen walks, anchoring, repair rules, golden tests. Walk maps for review, political checks, notes merged into the data. | **User gate:** sign off the walk maps. | Next |
 | P4 | Rendering treatments: dashed dispute and territory outlines, the recognised-border basemap, close-dot frames, scattered states, a shared basemap if it is over half the render time. Review tooling by region. Cold render of about 560 maps (35–95 min). | **User gate:** sign off the region sheets. | |
-| P5 | The guide in study order (pass, then region, then position; under 80 MB), in parallel with the rename to World Atlas ([ADR 0007](adr/0007-rename-and-migration.md)). | Uid freeze test passes. | |
+| P5 | The guide in study order (pass, then region, then position; under 80 MB), in parallel with the rename to World Atlas ([ADR 0007](adr/0007-rename-and-migration.md)). | Uid freeze test passes. | Rename done: deck `World Atlas`, `dist/world-atlas.apkg`, the README migration section, and the uid and note-type identity tests. The repo rename waits for the merge. Guide in progress. |
 | P6 | QA: phone sheets, pair check (features and continents only), CVD on the new treatments. | **User gate:** device tests (fresh import order, a filtered "Order due" deck, Check Database with high dues, the v1 to World Atlas upgrade). | |
 | P7 | Multi-lens review and three-agent review. Freeze `positions.lock`. Clean-clone build, tag v2.0.0, GitHub release. Archive `poc/countries` as a tag. Release is gated on the verify markers. | Released. | |
 
