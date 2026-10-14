@@ -80,8 +80,9 @@ pairs: render
 cvd: render
 	$(PY).cvd $(if $(OUT),--out '$(OUT)') $(QIDS)
 
+# The PDF guide in study order (build/<deck>-guide.pdf); REGION=NN writes one ring region's (build/<deck>-guide-NN.pdf).
 guide: render
-	uv run --group guide python -m geofeat.guide
+	uv run --group guide python -m geofeat.guide $(if $(REGION),--region '$(REGION)')
 
 clean:
 	rm -rf build deck dist
