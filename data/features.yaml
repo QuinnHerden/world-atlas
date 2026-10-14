@@ -268,6 +268,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  region: 14
+  region_reason: >-
+    K2 and the range are framed by Pakistan and India; by area most of it lies in China.
   note: >-
     They hold the Siachen Glacier conflict zone (India–Pakistan) and Aksai Chin. The Karakoram Highway, the CPEC
     spine, crosses them at Khunjerab.
@@ -876,6 +879,9 @@
   type: Mountain range
   category: Mountain Ranges
   tier: 2
+  region: 15
+  region_reason: >-
+    Learners know it as Kyrgyzstan's range, the heart of Central Asia; by area most of it lies in China.
   note: >-
     Silk Road oases strung along their flanks, and they divide Xinjiang into the Dzungarian and Tarim basins. The
     Dzungarian Gate cuts through their northern edge.
@@ -1127,6 +1133,9 @@
   type: River
   category: Rivers & Deltas
   tier: 2
+  region: 16
+  region_reason: >-
+    It frames Manchuria, and East Asia is the later region it frames; by length most of it is Russian.
   note: >-
     It is the Russia–China border, fixed in 19th-century treaties China calls "unequal", and the scene of the 1969
     border clashes on its tributary, the Ussuri.

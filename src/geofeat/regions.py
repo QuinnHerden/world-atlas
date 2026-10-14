@@ -37,68 +37,125 @@ CLIMATE_BUFFER_DEG = 3.0  # how far either side of a flow line its climate reach
 SHORELINE_EPS_DEG = 0.1  # how close to a region a water body's edge counts as its shore
 COVERED_SHARE = 0.5  # below this share of its area inside countries, a water body is measured by its shoreline
 
-# The ring, from the plan's table: number -> (name, country codes in walk order). Codes are ISO 3166-1 alpha-3, except
-# Kosovo's KOS, which is NE's. Northern Cyprus and
-# Somaliland are inside Cyprus and Somalia's composed outlines; Western Sahara (ESH) is a pocket of region 10.
+# The ring, from the plan's table: number -> (name, country ids in walk order). Northern Cyprus and Somaliland are
+# inside Cyprus and Somalia's composed outlines; Western Sahara is a pocket of region 10.
 REGIONS: dict[int, tuple[str, tuple[str, ...]]] = {
-    1: ("Western Europe", ("PRT", "ESP", "AND", "FRA", "MCO", "BEL", "LUX", "NLD", "GBR", "IRL")),
-    2: ("Nordic & Baltic", ("ISL", "NOR", "SWE", "DNK", "FIN", "EST", "LVA", "LTU")),
+    1: ("Western Europe", ("portugal", "spain", "andorra", "france", "monaco", "belgium", "luxembourg", "netherlands", "united-kingdom", "ireland")),
+    2: ("Nordic & Baltic", ("iceland", "norway", "sweden", "denmark", "finland", "estonia", "latvia", "lithuania")),
     3: ("Central Europe & Italy",
-        ("POL", "DEU", "CZE", "AUT", "CHE", "LIE", "ITA", "SMR", "VAT", "MLT", "SVN", "HUN", "SVK")),
-    4: ("Balkans", ("HRV", "BIH", "SRB", "KOS", "MNE", "ALB", "MKD", "GRC", "BGR", "ROU")),
-    5: ("Eastern Europe", ("MDA", "UKR", "BLR", "RUS")),
-    6: ("Caucasus & Anatolia", ("GEO", "AZE", "ARM", "TUR", "CYP")),
-    7: ("Levant & Mesopotamia", ("SYR", "LBN", "ISR", "PSE", "JOR", "IRQ")),
-    8: ("Arabian Peninsula", ("KWT", "SAU", "BHR", "QAT", "ARE", "OMN", "YEM")),
-    9: ("Horn & East Africa", ("DJI", "ERI", "ETH", "SOM", "KEN", "TZA", "BDI", "RWA", "UGA", "SSD", "SDN")),
-    10: ("North Africa", ("EGY", "LBY", "TUN", "DZA", "MAR", "ESH")),
-    11: ("West Africa", ("MRT", "SEN", "GMB", "CPV", "GNB", "GIN", "SLE", "LBR", "CIV", "MLI", "BFA", "GHA", "TGO",
-                         "BEN", "NGA", "NER")),
-    12: ("Central Africa", ("TCD", "CMR", "CAF", "GNQ", "STP", "GAB", "COG", "COD")),
-    13: ("Southern Africa & Indian Ocean", ("AGO", "ZMB", "MWI", "MOZ", "ZWE", "BWA", "NAM", "ZAF", "LSO", "SWZ",
-                                            "MDG", "COM", "MUS", "SYC")),
-    14: ("South Asia", ("MDV", "LKA", "IND", "BGD", "BTN", "NPL", "PAK")),
-    15: ("Iran & Central Asia", ("AFG", "IRN", "TKM", "UZB", "TJK", "KGZ", "KAZ")),
-    16: ("East Asia", ("CHN", "MNG", "PRK", "KOR", "JPN", "TWN")),
-    17: ("Southeast Asia", ("PHL", "MYS", "BRN", "SGP", "THA", "MMR", "LAO", "VNM", "KHM", "IDN", "TLS")),
-    18: ("Oceania", ("AUS", "PNG", "SLB", "VUT", "NZL", "FJI", "TON", "WSM", "TUV", "KIR", "NRU", "MHL", "FSM",
-                     "PLW")),
-    19: ("North & Central America", ("USA", "CAN", "MEX", "GTM", "BLZ", "SLV", "HND", "NIC", "CRI", "PAN")),
-    20: ("South America", ("COL", "ECU", "PER", "CHL", "BOL", "ARG", "URY", "PRY", "BRA", "SUR", "GUY", "VEN")),
-    21: ("Caribbean", ("TTO", "GRD", "VCT", "BRB", "LCA", "DMA", "ATG", "KNA", "DOM", "HTI", "JAM", "CUB", "BHS")),
+        ("poland", "germany", "czechia", "austria", "switzerland", "liechtenstein", "italy", "san-marino", "vatican-city", "malta", "slovenia", "hungary", "slovakia")),
+    4: ("Balkans", ("croatia", "bosnia-and-herzegovina", "serbia", "kosovo", "montenegro", "albania", "north-macedonia", "greece", "bulgaria", "romania")),
+    5: ("Eastern Europe", ("moldova", "ukraine", "belarus", "russia")),
+    6: ("Caucasus & Anatolia", ("georgia", "azerbaijan", "armenia", "turkey", "cyprus")),
+    7: ("Levant & Mesopotamia", ("syria", "lebanon", "israel", "palestine", "jordan", "iraq")),
+    8: ("Arabian Peninsula", ("kuwait", "saudi-arabia", "bahrain", "qatar", "united-arab-emirates", "oman", "yemen")),
+    9: ("Horn & East Africa", ("djibouti", "eritrea", "ethiopia", "somalia", "kenya", "tanzania", "burundi", "rwanda", "uganda", "south-sudan", "sudan")),
+    10: ("North Africa", ("egypt", "libya", "tunisia", "algeria", "morocco", "western-sahara")),
+    11: ("West Africa", ("mauritania", "senegal", "gambia", "cabo-verde", "guinea-bissau", "guinea", "sierra-leone", "liberia", "cote-divoire", "mali", "burkina-faso", "ghana", "togo",
+                         "benin", "nigeria", "niger")),
+    12: ("Central Africa", ("chad", "cameroon", "central-african-republic", "equatorial-guinea", "sao-tome-and-principe", "gabon", "congo", "dr-congo")),
+    13: ("Southern Africa & Indian Ocean", ("angola", "zambia", "malawi", "mozambique", "zimbabwe", "botswana", "namibia", "south-africa", "lesotho", "eswatini",
+                                            "madagascar", "comoros", "mauritius", "seychelles")),
+    14: ("South Asia", ("maldives", "sri-lanka", "india", "bangladesh", "bhutan", "nepal", "pakistan")),
+    15: ("Iran & Central Asia", ("afghanistan", "iran", "turkmenistan", "uzbekistan", "tajikistan", "kyrgyzstan", "kazakhstan")),
+    16: ("East Asia", ("china", "mongolia", "north-korea", "south-korea", "japan", "taiwan")),
+    17: ("Southeast Asia", ("philippines", "malaysia", "brunei", "singapore", "thailand", "myanmar", "laos", "vietnam", "cambodia", "indonesia", "timor-leste")),
+    18: ("Oceania", ("australia", "papua-new-guinea", "solomon-islands", "vanuatu", "new-zealand", "fiji", "tonga", "samoa", "tuvalu", "kiribati", "nauru", "marshall-islands", "micronesia",
+                     "palau")),
+    19: ("North & Central America", ("united-states", "canada", "mexico", "guatemala", "belize", "el-salvador", "honduras", "nicaragua", "costa-rica", "panama")),
+    20: ("South America", ("colombia", "ecuador", "peru", "chile", "bolivia", "argentina", "uruguay", "paraguay", "brazil", "suriname", "guyana", "venezuela")),
+    21: ("Caribbean", ("trinidad-and-tobago", "grenada", "saint-vincent-and-the-grenadines", "barbados", "saint-lucia", "dominica", "antigua-and-barbuda", "saint-kitts-and-nevis", "dominican-republic", "haiti", "jamaica", "cuba", "bahamas")),
 }
 # Territories have no place in the ring yet (open decision 5, default: geographic pockets). Their land still frames
 # features, so each counts towards the region it lies in. Greenland and Bermuda wait for the manual look the decision
 # names; Antarctica is in no region.
 TERRITORIES: dict[int, tuple[str, ...]] = {
-    1: ("GIB",),
-    2: ("ALD", "FRO"),
-    6: ("ESB", "WSB"),  # the UK's Cyprus base areas
-    13: ("REU", "MYT"),
-    16: ("HKG", "MAC"),
-    18: ("NCL", "PYF"),
-    20: ("GUF", "FLK"),
-    21: ("PRI", "VIR", "VGB", "CYM", "TCA", "ABW", "CUW", "SXM", "MAF", "BLM", "AIA", "MSR", "GLP", "MTQ"),
+    1: ("gibraltar",),
+    2: ("aland", "faroe-islands"),
+    6: ("dhekelia", "akrotiri"),  # the UK's Cyprus base areas
+    13: ("reunion", "mayotte"),
+    16: ("hong-kong", "macau"),
+    18: ("new-caledonia", "french-polynesia"),
+    20: ("french-guiana", "falkland-islands"),
+    21: ("puerto-rico", "us-virgin-islands", "british-virgin-islands", "cayman-islands", "turks-and-caicos-islands", "aruba", "curacao", "sint-maarten", "saint-martin", "saint-barthelemy", "anguilla", "montserrat", "guadeloupe", "martinique"),
 }
 
 # Country outlines, per docs/research/ne-political-layers.md (a) and (c): the admin_0 row, or the map unit for the four
-# states whose row carries overseas parts, composed with the recognised-border rows. ISO code -> NE code where they
-# differ.
-_NE_CODE = {"SSD": "SDS", "PSE": "PSX", "ESH": "SAH"}
-_MAP_UNIT = {"FRA": "FXX", "NLD": "NLX", "NOR": "NOW", "NZL": "NZL",
-             "GUF": "GUF", "GLP": "GLP", "MTQ": "MTQ", "REU": "REU", "MYT": "MYT"}  # France's overseas departments
+# states whose row carries overseas parts (and France's overseas departments), composed with the recognised-border rows.
+# id -> NE admin_0 ADM0_A3, or map-unit GU_A3.
+_ADMIN_0 = {
+    "portugal": "PRT", "spain": "ESP", "andorra": "AND", "monaco": "MCO",
+    "belgium": "BEL", "luxembourg": "LUX", "united-kingdom": "GBR", "ireland": "IRL",
+    "iceland": "ISL", "sweden": "SWE", "denmark": "DNK", "finland": "FIN",
+    "estonia": "EST", "latvia": "LVA", "lithuania": "LTU", "poland": "POL",
+    "germany": "DEU", "czechia": "CZE", "austria": "AUT", "switzerland": "CHE",
+    "liechtenstein": "LIE", "italy": "ITA", "san-marino": "SMR", "vatican-city": "VAT",
+    "malta": "MLT", "slovenia": "SVN", "hungary": "HUN", "slovakia": "SVK",
+    "croatia": "HRV", "bosnia-and-herzegovina": "BIH", "serbia": "SRB", "kosovo": "KOS",
+    "montenegro": "MNE", "albania": "ALB", "north-macedonia": "MKD", "greece": "GRC",
+    "bulgaria": "BGR", "romania": "ROU", "moldova": "MDA", "ukraine": "UKR",
+    "belarus": "BLR", "russia": "RUS", "georgia": "GEO", "azerbaijan": "AZE",
+    "armenia": "ARM", "turkey": "TUR", "cyprus": "CYP", "syria": "SYR",
+    "lebanon": "LBN", "israel": "ISR", "palestine": "PSX", "jordan": "JOR",
+    "iraq": "IRQ", "kuwait": "KWT", "saudi-arabia": "SAU", "bahrain": "BHR",
+    "qatar": "QAT", "united-arab-emirates": "ARE", "oman": "OMN", "yemen": "YEM",
+    "djibouti": "DJI", "eritrea": "ERI", "ethiopia": "ETH", "somalia": "SOM",
+    "kenya": "KEN", "tanzania": "TZA", "burundi": "BDI", "rwanda": "RWA",
+    "uganda": "UGA", "south-sudan": "SDS", "sudan": "SDN", "egypt": "EGY",
+    "libya": "LBY", "tunisia": "TUN", "algeria": "DZA", "morocco": "MAR",
+    "western-sahara": "SAH", "mauritania": "MRT", "senegal": "SEN", "gambia": "GMB",
+    "cabo-verde": "CPV", "guinea-bissau": "GNB", "guinea": "GIN", "sierra-leone": "SLE",
+    "liberia": "LBR", "cote-divoire": "CIV", "mali": "MLI", "burkina-faso": "BFA",
+    "ghana": "GHA", "togo": "TGO", "benin": "BEN", "nigeria": "NGA",
+    "niger": "NER", "chad": "TCD", "cameroon": "CMR", "central-african-republic": "CAF",
+    "equatorial-guinea": "GNQ", "sao-tome-and-principe": "STP", "gabon": "GAB", "congo": "COG",
+    "dr-congo": "COD", "angola": "AGO", "zambia": "ZMB", "malawi": "MWI",
+    "mozambique": "MOZ", "zimbabwe": "ZWE", "botswana": "BWA", "namibia": "NAM",
+    "south-africa": "ZAF", "lesotho": "LSO", "eswatini": "SWZ", "madagascar": "MDG",
+    "comoros": "COM", "mauritius": "MUS", "seychelles": "SYC", "maldives": "MDV",
+    "sri-lanka": "LKA", "india": "IND", "bangladesh": "BGD", "bhutan": "BTN",
+    "nepal": "NPL", "pakistan": "PAK", "afghanistan": "AFG", "iran": "IRN",
+    "turkmenistan": "TKM", "uzbekistan": "UZB", "tajikistan": "TJK", "kyrgyzstan": "KGZ",
+    "kazakhstan": "KAZ", "china": "CHN", "mongolia": "MNG", "north-korea": "PRK",
+    "south-korea": "KOR", "japan": "JPN", "taiwan": "TWN", "philippines": "PHL",
+    "malaysia": "MYS", "brunei": "BRN", "singapore": "SGP", "thailand": "THA",
+    "myanmar": "MMR", "laos": "LAO", "vietnam": "VNM", "cambodia": "KHM",
+    "indonesia": "IDN", "timor-leste": "TLS", "australia": "AUS", "papua-new-guinea": "PNG",
+    "solomon-islands": "SLB", "vanuatu": "VUT", "fiji": "FJI", "tonga": "TON",
+    "samoa": "WSM", "tuvalu": "TUV", "kiribati": "KIR", "nauru": "NRU",
+    "marshall-islands": "MHL", "micronesia": "FSM", "palau": "PLW", "united-states": "USA",
+    "canada": "CAN", "mexico": "MEX", "guatemala": "GTM", "belize": "BLZ",
+    "el-salvador": "SLV", "honduras": "HND", "nicaragua": "NIC", "costa-rica": "CRI",
+    "panama": "PAN", "colombia": "COL", "ecuador": "ECU", "peru": "PER",
+    "chile": "CHL", "bolivia": "BOL", "argentina": "ARG", "uruguay": "URY",
+    "paraguay": "PRY", "brazil": "BRA", "suriname": "SUR", "guyana": "GUY",
+    "venezuela": "VEN", "trinidad-and-tobago": "TTO", "grenada": "GRD", "saint-vincent-and-the-grenadines": "VCT",
+    "barbados": "BRB", "saint-lucia": "LCA", "dominica": "DMA", "antigua-and-barbuda": "ATG",
+    "saint-kitts-and-nevis": "KNA", "dominican-republic": "DOM", "haiti": "HTI", "jamaica": "JAM",
+    "cuba": "CUB", "bahamas": "BHS", "gibraltar": "GIB", "aland": "ALD",
+    "faroe-islands": "FRO", "dhekelia": "ESB", "akrotiri": "WSB", "hong-kong": "HKG",
+    "macau": "MAC", "new-caledonia": "NCL", "french-polynesia": "PYF", "falkland-islands": "FLK",
+    "puerto-rico": "PRI", "us-virgin-islands": "VIR", "british-virgin-islands": "VGB", "cayman-islands": "CYM",
+    "turks-and-caicos-islands": "TCA", "aruba": "ABW", "curacao": "CUW", "sint-maarten": "SXM",
+    "saint-martin": "MAF", "saint-barthelemy": "BLM", "anguilla": "AIA", "montserrat": "MSR",
+}
+_MAP_UNIT = {
+    "france": "FXX", "netherlands": "NLX", "norway": "NOW", "new-zealand": "NZL",
+    "reunion": "REU", "mayotte": "MYT", "french-guiana": "GUF", "guadeloupe": "GLP",
+    "martinique": "MTQ",
+}
 _COMPOSITION: dict[str, tuple[tuple[Literal["+", "-"], str, int], ...]] = {
-    "UKR": (("+", "10m_admin_0_disputed_areas", 1159321217),),  # Crimea
-    "RUS": (("-", "10m_admin_0_disputed_areas", 1159321217),),
-    "CYP": (("+", "10m_admin_0_countries", 1159320531), ("+", "10m_admin_0_countries", 1159320511)),  # N. Cyprus, buffer zone
-    "SYR": (("+", "10m_admin_0_disputed_areas", 1159320905),),  # Golan
-    "ISR": (("-", "10m_admin_0_disputed_areas", 1159320905),),
-    "MAR": (("-", "10m_admin_0_disputed_areas", 1159321037),),  # Western Sahara's Moroccan-held part
-    "ESH": (("+", "10m_admin_0_disputed_areas", 1159321037),),
-    "SOM": (("+", "10m_admin_0_countries", 1159321259),),  # Somaliland
-    "IND": (("+", "10m_admin_0_countries", 1159320963),),  # Siachen
-    "KAZ": (("+", "10m_admin_0_countries", 1159320965),),  # Baikonur
-    "CUB": (("+", "10m_admin_0_countries", 1159320529),),  # Guantanamo Bay
+    "ukraine": (("+", "10m_admin_0_disputed_areas", 1159321217),),  # Crimea
+    "russia": (("-", "10m_admin_0_disputed_areas", 1159321217),),
+    "cyprus": (("+", "10m_admin_0_countries", 1159320531), ("+", "10m_admin_0_countries", 1159320511)),  # N. Cyprus, buffer zone
+    "syria": (("+", "10m_admin_0_disputed_areas", 1159320905),),  # Golan
+    "israel": (("-", "10m_admin_0_disputed_areas", 1159320905),),
+    "morocco": (("-", "10m_admin_0_disputed_areas", 1159321037),),  # Western Sahara's Moroccan-held part
+    "western-sahara": (("+", "10m_admin_0_disputed_areas", 1159321037),),
+    "somalia": (("+", "10m_admin_0_countries", 1159321259),),  # Somaliland
+    "india": (("+", "10m_admin_0_countries", 1159320963),),  # Siachen
+    "kazakhstan": (("+", "10m_admin_0_countries", 1159320965),),  # Baikonur
+    "cuba": (("+", "10m_admin_0_countries", 1159320529),),  # Guantanamo Bay
 }
 
 
@@ -109,15 +166,14 @@ def _row(layer_name: str, ne_id: int) -> BaseGeometry:
 
 @cache
 def country_geometry(id: str) -> BaseGeometry:
-    """A country's or territory's recognised-border outline, keyed by code. A stand-in until P2.2's countries.yaml
-    and territories.yaml replace it."""
-    code = _NE_CODE.get(id, id)
-    if code in _MAP_UNIT:
+    """A country's or territory's recognised-border outline, keyed by its slug id. A stand-in until P2.2's
+    countries.yaml and territories.yaml replace it."""
+    if id in _MAP_UNIT:
         units = layer("10m_admin_0_map_units")
-        base = units[units.gu_a3 == _MAP_UNIT[code]].geometry.iloc[0]
+        base = units[units.gu_a3 == _MAP_UNIT[id]].geometry.iloc[0]
     else:
         rows = layer("10m_admin_0_countries")
-        base = rows[rows.adm0_a3 == code].geometry.iloc[0]
+        base = rows[rows.adm0_a3 == _ADMIN_0[id]].geometry.iloc[0]
     geometry = shapely.make_valid(base)
     for op, layer_name, ne_id in _COMPOSITION.get(id, ()):
         part = _row(layer_name, ne_id)
@@ -219,8 +275,16 @@ def _top(feature: Feature, shares: Mapping[int, float]) -> int:
     return next(iter(shares))
 
 
+def override_errors(features: Iterable[Feature]) -> list[str]:
+    """A `region:` override must name a region of the ring (the plan's table until data/curriculum.yaml lands)."""
+    return [f"{f.id}: region {f.region} is not in the ring" for f in features
+            if f.region is not None and f.region not in REGIONS]
+
+
 def derive(feature: Feature, geometry: BaseGeometry, regions: Mapping[int, BaseGeometry]) -> Assignment:
     """The feature's region by the plan's rules, then its `region:` override if it has one."""
+    if errors := override_errors([feature]):
+        raise ValueError(errors[0])
     if feature.type in ("Ocean", "Continent") or feature.id in PLANETARY:
         rule, measure, shares, derived = "orientation", "none", {}, ORIENTATION
     elif feature.type in SHORE_TYPES:
@@ -271,11 +335,11 @@ def report(features: list[Feature], assignments: Mapping[str, Assignment]) -> st
 # `ne_10m_geography_regions_polys` rows of one REGION with FEATURECLA in {Continent, Island, Island group, Isthmus},
 # per docs/research/continents.md. Wiring this to real data waits for P2.2's country outlines.
 TRANSCONTINENTAL = frozenset({
-    "RUS", "TUR", "KAZ", "AZE", "GEO",  # the Europe–Asia line: Urals, Ural River, Caspian, Caucasus crest, Straits
-    "EGY",  # Suez; NE draws the Africa–Asia line along Egypt's border with Israel, so Sinai falls in Africa
-    "IDN",  # western New Guinea is Oceania in NE
-    "USA", "CHL",  # Hawaii and Easter Island are Oceania in NE
-    "ESP", "PRT",  # the Canaries and Madeira are Africa in NE
+    "russia", "turkey", "kazakhstan", "azerbaijan", "georgia",  # the Europe–Asia line: Urals, Ural River, Caspian, Caucasus crest, Straits
+    "egypt",  # Suez; NE draws the Africa–Asia line along Egypt's border with Israel, so Sinai falls in Africa
+    "indonesia",  # western New Guinea is Oceania in NE
+    "united-states", "chile",  # Hawaii and Easter Island are Oceania in NE
+    "spain", "portugal",  # the Canaries and Madeira are Africa in NE
 })
 
 
