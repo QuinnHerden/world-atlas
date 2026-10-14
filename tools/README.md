@@ -132,6 +132,11 @@ python tools/climate/write_geo.py currents
 
 - `siliguri_corridor.py` writes the polygon in `geometry/siliguri-corridor.geojson`: NE India within 40 km of both Nepal and Bangladesh.
 
+## Curriculum walks
+
+- `walk_maps.py` (`make walks`) draws each region's neighbour walk and lists its cards in study order, for review: `build/walks-NN.png`, `build/walks-NN.txt` and `build/walks-ring.png`.
+- `freeze_walks.py --all`, or `freeze_walks.py REGION ...`, writes the current walks into `data/curriculum.yaml` (`walk:`) once they're approved. Commit the result. A frozen walk is kept as is; to regenerate one, delete its `walk:` first.
+
 ## Surveys
 
 Read-only scripts that inspect the pinned `vendor/` layers and write nothing.
