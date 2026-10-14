@@ -3,7 +3,7 @@
 import re
 
 from geofeat.card import Card, Geometry, RenderRef, id_tag, pass_tag, study_pass
-from geofeat.model import FEATURES, Feature, active, load_features
+from geofeat.model import FEATURES, Feature, active, load_features, orientation
 from geofeat.resolve import custom, features_by_id, resolve
 from geofeat.spec import RenderSpec
 
@@ -12,15 +12,6 @@ PATH = FEATURES
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
-
-
-ORIENTATION_TYPES = frozenset({"Ocean", "Continent"})
-PLANETARY_WINDS = frozenset({"trade-winds", "westerlies"})
-
-
-def orientation(feature: Feature) -> bool:
-    """The oceans, the planetary wind belts and the continents open the deck, before the ring."""
-    return feature.type in ORIENTATION_TYPES or feature.id in PLANETARY_WINDS
 
 
 def tags(feature: Feature) -> tuple[str, ...]:

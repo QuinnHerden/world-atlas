@@ -12,6 +12,7 @@ from ruamel.yaml import YAML
 from shapely.geometry import MultiPolygon, Point, box
 
 import geofeat.ids as ids
+import geofeat.polities as polities
 import geofeat.resolve as resolve
 import geofeat.sources as sources
 import geofeat.sources.cities as cities
@@ -20,7 +21,7 @@ import geofeat.sources.features as features_source
 from geofeat.card import PASS_ORDER, Card, pass_tag, study_pass
 from geofeat.model import Feature, load_features
 from geofeat.model import Part
-from geofeat.sources.political import Country, Dispute, Territory, in_bbox, outline
+from geofeat.polities import Country, Dispute, RingPlace, Territory, in_bbox, outline
 
 A0, DA = "10m_admin_0_countries", "10m_admin_0_disputed_areas"
 LAYERS = {
@@ -37,7 +38,10 @@ def a0(ne_id: int, **kw) -> dict:
 
 
 FEATURE_REGIONS = {"nile": 1}  # what regions.py would derive; anything else is region 1 too
-PLACEMENTS = {"alpha": (1, None), "beta": (2, None), "gamma": (3, None), "delta": (1, "alpha")}  # what data/curriculum.yaml would give
+PLACEMENTS = {  # what data/curriculum.yaml would give
+    "alpha": RingPlace(1, None, "country"), "beta": RingPlace(2, None, "country"),
+    "gamma": RingPlace(3, None, "territory"), "delta": RingPlace(1, "alpha", "dispute"),
+}
 
 
 def countries() -> list[dict]:
@@ -78,8 +82,13 @@ def data(countries=None, territories=None, cities_=None):
             paths[name] = Path(tmp) / f"{name}.yaml"
             if entries is not None:
                 YAML().dump(entries, paths[name])
-        with mock.patch.multiple(political, COUNTRIES=paths["countries"], TERRITORIES=paths["territories"],
-                                 layer=LAYERS.__getitem__, curriculum_placements=lambda states: PLACEMENTS), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
+        placed = set(e["id"] for e in territories or [] if isinstance(e, dict) and "id" in e)
+
+        def placements(states: list[str]) -> dict[str, RingPlace]:  # the curriculum places only what the files hold
+            return {k: v for k, v in PLACEMENTS.items() if k in states or k in placed}
+
+        with mock.patch.multiple(polities, COUNTRIES=paths["countries"], TERRITORIES=paths["territories"],
+                                 layer=LAYERS.__getitem__, curriculum_placements=placements), mock.patch.object(resolve, "layer", LAYERS.__getitem__), \
                 mock.patch.object(cities, "PATH", paths["cities"]), \
                 mock.patch.object(cities, "feature_region", lambda f: FEATURE_REGIONS.get(f, 1)):
             yield paths
@@ -173,6 +182,16 @@ class CardTextTest(unittest.TestCase):
             self.assertEqual(political.check()[0], ["territories.yaml: not placed in any region of curriculum.yaml: gamma"])
             with self.assertRaisesRegex(ValueError, "territories.yaml: not placed"):
                 political.cards()
+        with data(countries(), territories(), [cities_data()[0] | {"anchor": "nile"}]), mock.patch.dict(PLACEMENTS), \
+                mock.patch.object(cities, "feature_region", side_effect=AssertionError("political failed: no region rule")):
+            del PLACEMENTS["gamma"]
+            self.assertEqual(cities.check(political.check()[1]), [])
+        with data(countries(), territories()), mock.patch.dict(PLACEMENTS, {"gamma": RingPlace(3, None, "dispute")}):
+            self.assertEqual(political.check()[0], ["gamma: a territory that curriculum.yaml places as a dispute"])
+        with data(countries(), territories()[1:]), \
+                mock.patch.object(polities, "curriculum_placements", lambda states: PLACEMENTS):
+            self.assertEqual(political.check()[0],
+                             ["curriculum.yaml: places what territories.yaml has no entry for: gamma"])
 
     def test_bbox_must_be_finite_and_in_range(self) -> None:
         for expect in ([float("-inf"), 0, 10, 10], [0, 0, 190, 10], [0, -91, 10, 10]):
@@ -248,7 +267,7 @@ class UniquenessTest(unittest.TestCase):
         clash = territories()
         clash[1]["id"] = "gamma"
         with data(territories=clash), self.assertRaisesRegex(ValueError, "duplicate territory or dispute id"):
-            political.load_territories()
+            polities.load_territories()
 
     def test_two_kinds_share_an_id(self) -> None:
         city = cities_data()[0] | {"id": "alpha"}
@@ -391,7 +410,7 @@ class EdgeCaseTest(unittest.TestCase):
 
     def test_bad_yaml_and_kind(self) -> None:
         with data(territories=[{"kind": "colony", "id": "x"}]), self.assertRaisesRegex(ValueError, "`kind` must be"):
-            political.load_disputes()
+            polities.load_disputes()
         with data() as paths:
             paths["countries"].write_text("- id: [unclosed\n")
             self.assertIn("countries.yaml", political.check()[0][0])
@@ -459,7 +478,7 @@ class TextRulesTest(unittest.TestCase):
 class LazyDotTest(unittest.TestCase):
     def test_building_cards_reads_no_points(self) -> None:
         layers = {k: v for k, v in LAYERS.items() if k != political.PLACES}
-        with data(countries(), territories(), cities_data()), mock.patch.object(political, "layer", layers.__getitem__):
+        with data(countries(), territories(), cities_data()), mock.patch.object(polities, "layer", layers.__getitem__):
             built = by_key(political.cards() + cities.cards())
             self.assertIsNone(built["capital:alpha"].render.spec.dot)
             with self.assertRaises(KeyError):

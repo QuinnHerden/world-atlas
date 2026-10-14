@@ -23,7 +23,7 @@ from shapely.geometry.base import BaseGeometry
 from shapely.ops import nearest_points
 from shapely.strtree import STRtree
 
-from geofeat import countries_ne, ne
+from geofeat import countries_ne, model, ne, polities, resolve
 from geofeat.countries_ne import outlines, parts, state_ids
 from geofeat.curriculum import Region, load_curriculum
 from geofeat.model import BUILD, LOCK, ROOT
@@ -213,17 +213,18 @@ def country_ids() -> list[str]:
 def outline_specs() -> dict[str, list[dict]]:
     """Each state's geometry parts from data/countries.yaml. The cache key hashes these, not the whole file, so editing
     a note or a capital doesn't recompute the graph."""
-    return {i: [p.model_dump(exclude_defaults=True) for p in parts(i)] for i in state_ids()}
+    return {i: [p.model_dump() for p in parts(i)] for i in state_ids()}
 
 
 def geometry_key() -> str:
-    """Hash of everything the computed edges depend on: the states' geometry parts, this module's code and thresholds, the NE
-    reader, the pinned layers' lock (which pins each file's sha256; `make fetch` verifies it), and the geometry
-    libraries' versions."""
+    """Hash of everything the computed edges depend on: the states' geometry parts, this module's code and thresholds,
+    the outline composer and the Part grammar (countries_ne, polities, resolve, model), the NE reader, the pinned
+    layers' lock (which pins each file's sha256; `make fetch` verifies it), and the geometry libraries' versions."""
     versions = f"shapely {shapely.__version__} geos {shapely.geos_version_string} pyproj {pyproj.__version__} " \
                f"proj {pyproj.proj_version_str}"
     specs = json.dumps(outline_specs(), sort_keys=True)
-    return _hash([Path(__file__), Path(countries_ne.__file__), Path(ne.__file__), LOCK], f"{versions}\0{specs}")
+    files = [Path(__file__), *(Path(m.__file__) for m in (countries_ne, polities, resolve, model, ne)), LOCK]
+    return _hash(files, f"{versions}\0{specs}")
 
 
 def _read(path: Path) -> dict:

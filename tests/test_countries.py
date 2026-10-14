@@ -1,7 +1,7 @@
 import unittest
 
 from geofeat import countries_ne
-from geofeat.sources.political import load_political
+from geofeat.polities import load_political
 
 
 class CountriesDataTest(unittest.TestCase):
@@ -22,8 +22,6 @@ class CountriesDataTest(unittest.TestCase):
         for entry in (*self.countries, *self.others):
             with self.subTest(id=entry.id):
                 self.assertEqual(countries_ne.parts(entry.id), tuple(entry.geometry))
-                self.assertTrue(all(p.layer and set(p.select or {}) == {"ne_id"} and p.rows == 1 for p in entry.geometry))
-                self.assertFalse(entry.geometry[0].subtract)
 
 
 if __name__ == "__main__":

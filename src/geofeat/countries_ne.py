@@ -9,17 +9,16 @@ changes an edge or a feature's region today."""
 
 from functools import cache
 
-import shapely
 from shapely.geometry.base import BaseGeometry
 
-from geofeat import ne
 from geofeat.model import Part
-from geofeat.sources.political import load_political
+from geofeat.polities import compose, read_countries, read_territory_file
 
 
 @cache
 def _sources() -> tuple[tuple[str, ...], dict[str, tuple[Part, ...]]]:
-    countries, others = load_political()
+    """The entries unplaced: geometry needs no curriculum, so the graph builds while curriculum.yaml is mid-edit."""
+    countries, others = read_countries(), read_territory_file()
     return tuple(sorted(c.id for c in countries)), {e.id: tuple(e.geometry) for e in (*countries, *others)}
 
 
@@ -33,27 +32,9 @@ def parts(id: str) -> tuple[Part, ...]:
     return _sources()[1][id]
 
 
-@cache
-def _row(layer: str, nid: int) -> BaseGeometry:
-    rows = ne.layer(layer)
-    match = rows[rows["ne_id"] == nid]
-    if len(match) != 1:
-        raise ValueError(f"{layer} {nid}: {len(match)} rows")
-    return shapely.make_valid(match.geometry.iloc[0])
-
-
-def _part_row(id: str, part: Part) -> BaseGeometry:
-    if part.layer is None or part.select is None or set(part.select) != {"ne_id"} or part.rows != 1:
-        raise ValueError(f"{id}: an outline part must be one Natural Earth row selected by ne_id, not {part}")
-    return _row(part.layer, int(part.select["ne_id"]))
-
-
 def outline(id: str) -> BaseGeometry:
-    """A state's, territory's or dispute's full outline: the union of its added rows less its subtracted ones."""
-    geometry = shapely.union_all([_part_row(id, p) for p in parts(id) if not p.subtract])
-    if cut := [_part_row(id, p) for p in parts(id) if p.subtract]:
-        geometry = geometry.difference(shapely.union_all(cut))
-    return geometry
+    """A state's, territory's or dispute's full outline, composed as its card's is but never cropped."""
+    return compose(id, list(parts(id)))
 
 
 def outlines() -> dict[str, BaseGeometry]:

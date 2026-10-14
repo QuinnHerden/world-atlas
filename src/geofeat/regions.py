@@ -27,10 +27,9 @@ from shapely.ops import unary_union
 
 from geofeat.countries_ne import outline, state_ids
 from geofeat.curriculum import Region, load_curriculum
-from geofeat.model import Feature, active, load_features
+from geofeat.model import Feature, active, load_features, orientation
 from geofeat.ne import GEOD
 from geofeat.resolve import area_km2, resolve
-from geofeat.sources.features import orientation
 
 ORIENTATION = 0  # the block before region 1: oceans, planetary wind belts, continents
 SHORE_TYPES = frozenset({"Strait", "Canal", "Cape"})

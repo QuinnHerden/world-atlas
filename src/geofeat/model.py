@@ -204,3 +204,12 @@ def load_features() -> list[Feature]:
 
 def active(features: list[Feature]) -> list[Feature]:
     return [f for f in features if not f.retired]
+
+
+ORIENTATION_TYPES = frozenset({"Ocean", "Continent"})
+PLANETARY_WINDS = frozenset({"trade-winds", "westerlies"})
+
+
+def orientation(feature: Feature) -> bool:
+    """The oceans, the planetary wind belts and the continents open the deck, before the ring."""
+    return feature.type in ORIENTATION_TYPES or feature.id in PLANETARY_WINDS
