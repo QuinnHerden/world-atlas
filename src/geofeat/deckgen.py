@@ -9,7 +9,7 @@ from geofeat.model import DECK, ROOT_DECK, Feature, active, load_features
 from geofeat.order import OrderError, Siblings, dependencies, report, study_order
 from geofeat.order.inputs import ideal_order, ordering  # noqa: F401  ideal_order re-exported for check.py
 
-DECK_FILE = DECK / "geographic-features.md"
+DECK_FILE = DECK / "world-atlas.md"
 
 
 def card(c: Card, image: str, pos: int | None = None) -> str:

@@ -1,10 +1,8 @@
 # Architecture
 
-How the Geographic Features deck is built. This describes the system as it is now; the reasons for the larger choices are in the [ADRs](adr/), and the extension to countries, World Atlas, is in the [World Atlas plan](world-atlas-plan.md).
+How the World Atlas deck is built. This describes the system as it is now; the reasons for the larger choices are in the [ADRs](adr/), and the plan for the extension beyond the original feature deck is in the [World Atlas plan](world-atlas-plan.md).
 
-The released deck is the 166 entries in `data/features.yaml`: 132 active cards (126 places and 6 climate systems) and 34 retired ones (7 passes, 3 corridors, 15 islands and 9 climate systems). One command turns the data into an `.apkg`, with no manual step per build.
-
-The World Atlas sources are on `main` too, and they already produce cards: 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`, and the 7 continents are `Continent` entries in `data/features.yaml`. The curriculum order engine (P3, `order/`) orders every kind, and every kind has its map (P4), so `make all` builds the whole deck.
+The deck is 607 cards from four sources: 139 active entries in `data/features.yaml` (132 physical features, 6 of them climate systems, and the 7 continents), 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`. `data/features.yaml` also keeps 34 retired entries (7 passes, 3 corridors, 15 islands and 9 climate systems). The 132 features were released as the Geographic Features deck (v1); the curriculum order engine (`order/`) orders every kind, and one command turns the data into an `.apkg`, with no manual step per build.
 
 ## Pipeline
 
@@ -16,7 +14,7 @@ data/cities.yaml ───────┤                     │
 data/curriculum.yaml ───┘                     │
 geometry/*.geojson ─┐                         │
 vendor/ (NE, pinned)┴─> resolve ──────────────┴─> render ─> deck/<sha256[:12]>.png + build/media.json ─┐
-                        check data ─> build/siblings.json ───────────────────────────────────────┼─> deckgen ─> deck/geographic-features.md ─> ankc check ─> ankc build ─> dist/*.apkg
+                        check data ─> build/siblings.json ───────────────────────────────────────┼─> deckgen ─> deck/world-atlas.md ─> ankc check ─> ankc build ─> dist/world-atlas.apkg
                         data/positions.lock (written by `make positions`) ───────────────────────┘
 ```
 
@@ -32,9 +30,9 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make positions` | `positions.py` | Places new uids in `data/positions.lock` (below). The lock's only writer; commit the result. Not part of `make all`. |
 | `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
 | `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). `IDS="country:france city:*"` renders only the matching cards and deletes nothing, for a pilot. |
-| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map. |
+| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/world-atlas.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map. |
 | `make check` | `check.py deck` | Every card rendered and in the lock; ankc `>=0.5,<0.7`; `ankc check` passes. |
-| `make build` | `ankc build`, then `check.py package` | Builds `dist/geographic-features.apkg` and checks it. |
+| `make build` | `ankc build`, then `check.py package` | Builds `dist/world-atlas.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
 
 `deck/`, `build/`, `dist/` and `vendor/` are gitignored. `deck/` is pure output: nothing reads it back.
@@ -333,15 +331,15 @@ It prints every trim, every `allow_nested` override, references to retired featu
 - **Nested** pairs from different families (a delta in its river's frame, a strait inside a cyclone belt) are allowed and reported.
 - **Override policy.** Fix a same-family nesting in the data first: subtract the inner card when the outer shape shouldn't include it. Use `allow_nested: [{id, reason}]` only when the inner feature is a named part of the outer one and cutting it out would misdraw the outer shape. The reason must say why the cards still differ. Current overrides: Aegean/Mediterranean, Barents/Arctic Ocean, Levant/Fertile Crescent, Pontic–Caspian Steppe/Eurasian Steppe, Zagros/Iranian Plateau, and Arabian Desert/Arabian Peninsula (cross-family, so not required, but recorded because its IoU sits just under 0.8).
 
-**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "Geographic Features"` passes.
+**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "World Atlas"` passes.
 
-**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `Geographic Features` deck, every note carrying all its tags, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
+**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `World Atlas` deck, every note carrying all its tags, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
 
 ## Deck and study order
 
 **Card.** Front: the type word in bold above the map. Back: the answer lines (see [Cards](#cards)). The uid comes from the card's source YAML.
 
-**One deck,** `Geographic Features`, with no subdecks ([ADR 0004](adr/0004-flat-deck-and-study-order.md)). Each card carries the [tags](#tags) above. All cards go, in study order, into one file, `deck/geographic-features.md`.
+**One deck,** `World Atlas`, with no subdecks ([ADR 0004](adr/0004-flat-deck-and-study-order.md)). Each card carries the [tags](#tags) above. All cards go, in study order, into one file, `deck/world-atlas.md`.
 
 **Study order** (`order/`, [ADR 0009](adr/0009-curriculum-order.md)):
 

@@ -1,5 +1,5 @@
 PY := uv run python -m geofeat
-DECK := Geographic Features
+DECK := World Atlas
 # Card key patterns for render, sheet, phone and cvd: keys or globs, e.g. IDS="country:france city:*"; a bare id is a
 # feature. `make render IDS=...` renders only those cards and deletes nothing (a pilot); unset, every card.
 IDS ?=

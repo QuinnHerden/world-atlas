@@ -1,29 +1,31 @@
-# Geographic Features
+# World Atlas
 
-An Anki deck of 132 physical features that shaped settlement, trade and war: oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems. Each card front shows an unlabelled map with one feature highlighted in red and its type ("Strait", "River") above it. The back gives its name.
+An Anki deck of 607 map cards that teaches the political and physical map of the world together: 197 countries, 191 capitals, 42 other cities, 23 territories, 15 disputed areas, the 7 continents and 132 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name.
+
+World Atlas grew out of the **Geographic Features** deck (v1), which held the 132 features alone. Its notes carry over; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
 
 Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.5 or 0.6.
 
 - How the build works: [docs/architecture.md](docs/architecture.md)
 - Why it works that way: [docs/adr/](docs/adr/)
-- The extension to countries, capitals, cities and territories, World Atlas: [docs/world-atlas-plan.md](docs/world-atlas-plan.md)
+- The plan behind World Atlas (curriculum, decisions, build phases): [docs/world-atlas-plan.md](docs/world-atlas-plan.md)
 
 ## Build
 
 Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x or 0.6.x (0.6.0 is on PyPI as `ankcompiler`) and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
 
-**World Atlas in progress.** `main` also holds the country, territory, city and continent cards, each with its map; the curriculum order engine (P3) orders them all.
+**In progress toward v2.0.0,** the first World Atlas release.
 
 ```sh
 make ids        # mint uids for new entries, then commit features.yaml
 make positions  # give new uids a place in data/positions.lock, then commit it
 make all        # test → fetch → check-data → render → deck → check → build
-make adjacency  # the country adjacency graph and its report (World Atlas)
+make adjacency  # the country adjacency graph and its report
 ```
 
 `ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. With ankc 0.6 every card gets its position from `data/positions.lock` as a `[^pos]` footnote; with 0.5 positions follow the study order. Once the lock is frozen, the build requires 0.6.
 
-Output: `dist/geographic-features.apkg`. Import it in Anki with **File → Import**.
+Output: `dist/world-atlas.apkg`. Import it in Anki with **File → Import**.
 
 Rendering takes about 10 s per map and is cached, so only changed maps re-render. `JOBS=2 make all` renders in parallel; each worker needs about 1.5 GB of RAM.
 
@@ -31,17 +33,18 @@ Rendering takes about 10 s per map and is cached, so only changed maps re-render
 
 ## Study
 
-Every card is in one deck, `Geographic Features`, with no subdecks. Each card has these tags:
+Every card is in one deck, `World Atlas`, with no subdecks. Each card has these tags:
 
-- `tier::1`, `tier::2` or `tier::3` (49, 73 and 10 cards)
-- `kind::feature`
-- `pass::orientation`, `pass::1` or `pass::2`: the World Atlas pass the card belongs to (6, 116 and 10 cards)
-- `category::<slug>`: `water-bodies`, `straits-chokepoints`, `mountain-ranges`, `rivers-deltas`, `deserts-plateaus-plains`, `peninsulas-isthmuses`, `regions-rifts` or `climate-systems`
-- `id_<feature-id>`, e.g. `id_nile`
+- `kind::<kind>`: `country` (197), `capital` (191), `city` (42), `territory` (23), `dispute` (15), `continent` (7) or `feature` (132)
+- `pass::orientation`, `pass::1` or `pass::2` (13, 584 and 10 cards)
+- `region::01` to `region::21`: the region of a country, capital, city, territory or disputed area (features have none)
+- `tier::1`, `tier::2` or `tier::3` (381, 153 and 73 cards)
+- `category::<slug>`: `countries`, `cities` (capitals and other cities), `territories` (territories and disputed areas), `continents`, or a feature category: `water-bodies`, `straits-chokepoints`, `mountain-ranges`, `rivers-deltas`, `deserts-plateaus-plains`, `peninsulas-isthmuses`, `regions-rifts` or `climate-systems`
+- `id_<id>` for a feature, e.g. `id_nile`, or `id_<kind>_<id>` for any other kind, e.g. `id_country_france`
 
-New cards come up in a fixed order: all of tier 1, then tier 2, then tier 3. Within a tier, a broad feature comes before the features inside it (the Nile before the Nile Delta, the Himalayas before the Tibetan Plateau). Categories alternate, and features close together on the map are kept at least three cards apart where possible. [ADR 0004](docs/adr/0004-flat-deck-and-study-order.md) explains the design.
+New cards come up in a fixed order. An orientation block (the continents, the oceans and the planetary winds) comes first. Pass 1 then goes once round a ring of 21 regions, starting in Western Europe, country by neighbouring country, with each capital 2–3 cards after its country and each feature after the countries around it. Pass 2 goes round the ring again with the tier 3 features. `data/curriculum.yaml` names the regions. [ADR 0009](docs/adr/0009-curriculum-order.md) explains the design.
 
-To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) with a search such as `deck:"Geographic Features" tag:tier::1` or `tag:category::rivers-deltas`.
+To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) with a search such as `deck:"World Atlas" tag:region::04` or `tag:kind::capital`.
 
 **Re-importing a new build** updates each note's text, map and tags, but not its card's deck or new-card position, and it never deletes notes:
 
@@ -49,17 +52,35 @@ To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) wit
 - **Old maps:** a re-rendered map gets a new file name. Run **Tools → Check Media** to delete the old image.
 - **Fresh order:** only a fresh import gets the full study order. If you haven't started studying, delete the deck and import the new package.
 
-### Upgrading to a build with card kinds
+### Upgrading from Geographic Features
 
-Every card now carries a `kind::feature` tag, and answers are built from lines joined with `<br>`. A feature card's answer is one line, so its front and back text are byte-for-byte what earlier builds wrote: re-importing rewrites a note's answer only if its text actually changed. The import adds the new tag and changes nothing else.
+World Atlas v2.0.0 replaces the **Geographic Features** deck (v1), which held the physical features alone. World Atlas has 607 cards: the same 132 features, plus countries, capitals, cities, territories, disputed areas and continents. Pick one of the two paths below.
 
-### Upgrading from a version with subdecks
+**Fresh start.** Use this if you haven't studied much. You get the full study order.
 
-Builds before the flat deck put cards in `Geographic Features::<Category>::Tier <n>`. Re-importing leaves each card in its old subdeck, so move them by hand:
+1. Delete the `Geographic Features` deck. Anki deletes its cards and their review history with it.
+2. Import `world-atlas.apkg` with **File → Import**.
 
-1. In **Browse**, search `deck:"Geographic Features"` and select all cards.
-2. Choose **Cards → Change Deck** and pick `Geographic Features`.
-3. Delete the empty subdecks.
+**Keep your review history.** Your feature cards keep their scheduling. The import matches each feature note by its note ID (GUID) and updates it in place. Anki doesn't move existing cards on import, so the matched cards stay in `Geographic Features`. The new cards land in `World Atlas`. Keep the import's default **Update notes: If newer**; if you edited the `AnkCompiler-Question_Answer` note type, tick **Merge notetypes** too.
+
+1. Import `world-atlas.apkg` with **File → Import**.
+2. In **Browse**, search `deck:"Geographic Features"` and select all cards. The search also finds cards in old subdecks (`Geographic Features::<Category>::Tier <n>`), so builds that used subdecks are covered too.
+3. Choose **Cards → Change Deck** and pick `World Atlas`.
+4. Delete the empty `Geographic Features` deck and any subdecks under it.
+
+The moved cards keep their old queue positions (0 to 131), ahead of every new card, so any unstudied features come up before the first country. Only the new cards follow the new order. To start the ring alongside them, use a region filtered deck (see **Pacing**). If you skip steps 2 to 4, you end up with two decks. The old cards still work under the old name.
+
+**Retired cards.** Importing never deletes notes, so the cards v1 retired stay in your collection and keep coming up. The searches in [Retired cards](#retired-cards) find them in any deck.
+
+**Card content.** The import updates each feature note's fields where they changed: most fronts point to a re-rendered map, the hidden Source field names the new deck file, and answers are now built from lines joined with `<br>` (a feature's answer text is unchanged). It also adds the `kind::`, `pass::` and other new tags. The notes stay the same notes, with the same history. Afterwards, run **Tools → Check Media** to delete the old maps.
+
+**Pacing.** At 15 new cards a day, the 607 cards take about 6 weeks. Set this under **New cards/day** in the deck's options. To work through one region alongside the main order, make a filtered deck (**Tools → Create Filtered Deck**) with this search, where `NN` is `01` to `21`:
+
+```
+deck:"World Atlas" tag:region::NN is:new
+```
+
+Set its order to "Order due". Features have no region tag, so this deck holds only countries, capitals, cities, territories and disputed areas.
 
 ## Edit the data
 
