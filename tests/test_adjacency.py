@@ -6,8 +6,9 @@ from shapely.geometry import box
 
 from shapely.geometry import LineString
 
-from geofeat.adjacency import (CURRICULUM, Curriculum, Edge, Override, Overrides, Region, apply_overrides, build_graph,
-                               compute_edges, country_ids, distance_km, load_curriculum, report)
+from geofeat.adjacency import (Edge, Override, Overrides, apply_overrides, build_graph, compute_edges, country_ids,
+                               distance_km, report)
+from geofeat.curriculum import Curriculum, Region, load_curriculum
 
 # On the equator one degree is about 111 km.
 WORLD = {
@@ -147,7 +148,7 @@ class CurriculumTest(unittest.TestCase):
     """data/curriculum.yaml against the state table, and the checks on a small one; no geometry."""
 
     def test_the_real_curriculum_is_valid(self) -> None:
-        curriculum = load_curriculum()
+        curriculum = load_curriculum(country_ids())
         self.assertEqual(len(curriculum.regions), 21)
         self.assertEqual(sum(len(r.countries) for r in curriculum.regions), len(country_ids()))
         self.assertEqual(len(country_ids()), 197)

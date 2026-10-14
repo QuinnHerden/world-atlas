@@ -24,10 +24,10 @@ from shapely.ops import nearest_points
 from shapely.strtree import STRtree
 
 from geofeat import countries_ne, ne
-from geofeat.countries_ne import SOURCES, outlines
+from geofeat.countries_ne import SOURCES, outlines, state_ids
+from geofeat.curriculum import Region, load_curriculum
 from geofeat.model import BUILD, LOCK, ROOT
 
-CURRICULUM = ROOT / "data/curriculum.yaml"
 OVERRIDES = ROOT / "data/adjacency.yaml"
 CACHE = BUILD / "adjacency.json"
 
@@ -207,7 +207,7 @@ def _hash(paths: Iterable[Path], extra: str = "") -> str:
 
 
 def country_ids() -> list[str]:
-    return sorted(SOURCES)
+    return state_ids()
 
 
 def outline_specs() -> dict[str, str]:
@@ -276,111 +276,6 @@ def build_graph(geometries: Callable[[], dict[str, BaseGeometry]], ids: Iterable
 def graph() -> list[Edge]:
     """The final adjacency edges for the 197 states."""
     return build_graph(outlines, country_ids(), geometry_key())[1]
-
-
-# Curriculum. A runtime check of the parts of data/curriculum.yaml this module and P3 rely on; P3 can move it into its
-# own module.
-
-
-class Placement(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    region: str
-    host: str
-
-
-class Ambiguous(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    card: str
-    default: Placement
-    alternative: Placement
-    reason: str = Field(min_length=1)
-
-
-class Pass(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    id: str
-    name: str
-    ring: bool
-    kinds: list[Literal["feature", "continent", "country", "capital", "territory", "dispute", "city"]]
-    feature_tiers: list[int] = []
-    city_tiers: list[Literal["core", "secondary"]] = []
-    global_features: bool = False
-
-
-class Region(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    number: int
-    slug: str
-    name: str
-    entry: str
-    exit: str
-    way_in: str = ""
-    countries: list[str]
-    pockets: dict[str, str] = {}
-    territories: dict[str, str] = {}
-    disputes: dict[str, str] = {}
-
-    def placed(self) -> dict[str, str]:
-        return self.territories | self.disputes
-
-
-class Curriculum(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    passes: list[Pass]
-    start: str
-    regions: list[Region]
-    ambiguous: list[Ambiguous] = []
-    confusables: list[list[str]]
-
-    def check(self, states: Iterable[str]) -> list[str]:
-        """Errors: every state in exactly one region, regions numbered in ring order, entry and exit walk nodes, hosts
-        walk nodes of the region, ambiguous cards at their default, confusables naming known cards."""
-        errors = []
-        states = set(states)
-        slugs = [r.slug for r in self.regions]
-        if [r.number for r in self.regions] != list(range(1, len(self.regions) + 1)):
-            errors.append("regions must be numbered 1..n in ring order")
-        if len(set(slugs)) != len(slugs) or self.start not in slugs:
-            errors.append("region slugs must be unique and `start` one of them")
-        members = [c for r in self.regions for c in r.countries]
-        if dupes := sorted({c for c in members if members.count(c) > 1}):
-            errors.append(f"in more than one region: {', '.join(dupes)}")
-        if extra := sorted(set(members) - states):
-            errors.append(f"unknown states: {', '.join(extra)}")
-        if unplaced := sorted(states - set(members)):
-            errors.append(f"states in no region: {', '.join(unplaced)}")
-        cards = [c for r in self.regions for c in r.placed()]
-        if dupes := sorted({c for c in cards if cards.count(c) > 1} | (set(cards) & states)):
-            errors.append(f"territory or dispute placed twice or clashing with a state: {', '.join(dupes)}")
-        for r in self.regions:
-            walk = set(r.countries) - set(r.pockets)
-            for role, c in (("entry", r.entry), ("exit", r.exit)):
-                if c not in walk:
-                    errors.append(f"{r.slug}: {role} {c} is not a walk node (a member and not a pocket)")
-            for card, host in r.pockets.items() | r.placed().items():
-                if card in r.pockets and card not in r.countries:
-                    errors.append(f"{r.slug}: pocket {card} is not a member")
-                if host not in walk:
-                    errors.append(f"{r.slug}: {card}'s host {host} is not a walk node")
-        by_slug = {r.slug: r for r in self.regions}
-        for a in self.ambiguous:
-            for label, p in (("default", a.default), ("alternative", a.alternative)):
-                region = by_slug.get(p.region)
-                if region is None or p.host not in set(region.countries) - set(region.pockets):
-                    errors.append(f"ambiguous {a.card}: {label} host {p.host} is not a walk node of {p.region}")
-            if by_slug.get(a.default.region) and by_slug[a.default.region].placed().get(a.card) != a.default.host:
-                errors.append(f"ambiguous {a.card}: not placed at its default")
-        for group in self.confusables:
-            if len(group) < 2 or not set(group) <= states | set(cards):
-                errors.append(f"confusables {group}: needs two or more known cards")
-        return errors
-
-
-def load_curriculum(path: Path = CURRICULUM, states: Iterable[str] | None = None) -> Curriculum:
-    curriculum = Curriculum.model_validate(YAML(typ="safe").load(path))
-    if errors := curriculum.check(country_ids() if states is None else states):
-        raise ValueError(f"{path.name}: " + "; ".join(errors))
-    return curriculum
 
 
 # The report
@@ -455,7 +350,7 @@ def report(ids: list[str], computed: list[Edge], edges: list[Edge], regions: lis
 def main() -> None:
     ids = country_ids()
     computed, edges = build_graph(outlines, ids, geometry_key())
-    lines, ok = report(ids, computed, edges, load_curriculum().regions)
+    lines, ok = report(ids, computed, edges, load_curriculum(state_ids()).regions)
     print("\n".join(lines))
     sys.exit(0 if ok else 1)
 
