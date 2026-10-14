@@ -131,5 +131,33 @@
     "path": "geojson/ne_50m_admin_1_states_provinces_lines.geojson",
     "sha256": "72cca93c850d412628a5da4bc5ebfe21ba4d376eb34611bde6b623ee73f0fdcf",
     "blob": "41da0731acea59ed0ffc499e517e185a0d033a14"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_populated_places.geojson",
+    "sha256": "9b8e3de09048ef00dfc70357dbb9fa324493f214b5e0ae4daf1aa79a8d10116b",
+    "blob": "376fb028c390a7a23213800ae4babaa6f534a0f3"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_admin_0_map_units.geojson",
+    "sha256": "57da82be755f4afccd8f3b14251bb2752f5df1395f47d2d86f817470c4a48862",
+    "blob": "003025bf947f0c083318dfdb86a69b8dd0678947"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_admin_0_disputed_areas.geojson",
+    "sha256": "9cafef8b7dfb6b164dc58f218f981f4ace9f716f6c03795d4c62d1ac9f3d50f5",
+    "blob": "20866d163d8e7557bb9808d286060229f79e2e42"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_admin_0_boundary_lines_disputed_areas.geojson",
+    "sha256": "69f19da764e6982b43aebae4b1a356ffe74c33f2a3cdb462637c0ba8e969c30b",
+    "blob": "5ceb37949bab9b2be8745caf7c67c8111bb679b5"
   }
 ]

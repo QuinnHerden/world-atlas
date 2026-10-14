@@ -123,7 +123,7 @@ class KeyScopeTest(unittest.TestCase):
                 self.assertNotEqual(base, self._key(lambda r: self._append(r, name)))
 
     def test_an_unrelated_lock_entry_keeps_the_key(self) -> None:
-        new = {"repo": "nvkelso/natural-earth-vector", "commit": "0" * 40, "path": "geojson/ne_10m_populated_places.geojson",
+        new = {"repo": "nvkelso/natural-earth-vector", "commit": "0" * 40, "path": "geojson/ne_10m_urban_areas.geojson",
                "sha256": "0" * 64, "blob": "0" * 40}
         self.assertEqual(self._key(), self._key(lambda r: self._edit_lock(r, lambda lock: [*lock, new])))
 
