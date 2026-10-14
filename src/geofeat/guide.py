@@ -273,8 +273,8 @@ def build(parts: list[Section], names: dict[int, str], images: dict[str, Path], 
 
 def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     """The real cards, in lock order and sectioned, with region names and rendered maps. Fails on a card that is
-    unrendered, has no note, or whose note carries a research marker, and on a lock that doesn't fit the current
-    study order (positions.lock_error)."""
+    unrendered, has no note, or whose note carries a research marker, and on a draft lock the current study order
+    would rewrite (positions.lock_error)."""
     from geofeat.countries_ne import state_ids
     from geofeat.curriculum import load_curriculum
     from geofeat.sources import all_cards

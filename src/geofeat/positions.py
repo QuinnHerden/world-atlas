@@ -4,7 +4,7 @@ docs/adr/0006-positions-lock-and-pos-footnote.md.
 `make positions` (this module's main) is the only writer. While the lock says `draft: true` it is regenerated from
 the ideal order at STRIDE. Once it isn't a draft, existing entries never change: a new uid goes into the gap after
 the nearest earlier card in the ideal order that is already locked, and a retired uid keeps its slot. The freeze
-guard (`frozen_errors`) holds the lock to that against the last frozen lock on BASE_REF.
+guard (`guard`) holds the lock to that against the lock on origin/main and on the newest release tag.
 """
 
 import os
@@ -19,8 +19,7 @@ from geofeat.model import ROOT
 LOCK_FILE = ROOT / "data/positions.lock"
 STRIDE = 500
 LIMIT = 1_000_000  # a margin under 2,000,000, where Anki's Check Database rewrites new-card dues (ADR 0006)
-# The ref whose committed lock a frozen lock must extend; the env var overrides it (e.g. upstream/main in a fork).
-BASE_REF = os.environ.get("POSITIONS_BASE", "origin/main")
+DEFAULT_BASE = "origin/main"  # the ref whose committed lock a frozen lock must extend; POSITIONS_BASE overrides it
 _HEADER = re.compile(r"draft: (true|false)")
 _ENTRY = re.compile(r"([A-Za-z0-9]{10}): (\d+) pass=(orientation|1|2) region=(-|\d{2})")
 
@@ -161,9 +160,28 @@ def stale_draft(lock: Lock, placed: list[Placement]) -> bool:
 
 
 def moved(lock: Lock, placed: list[Placement]) -> list[str]:
-    """Locked cards whose pass or region is no longer the one the lock records."""
-    return [f"{uid} ({e.study_pass}, region {e.region} -> {study}, region {region})" for uid, study, region in placed
+    """Locked cards whose pass or region the order engine would now give differently. A frozen card keeps the lock's:
+    its slot, its guide section and its `pass::`/`region::` tags (`locked_tags`)."""
+    return [f"{uid} (locked: pass {e.study_pass}, region {e.region}; now: pass {study}, region {region})"
+            for uid, study, region in placed
             if (e := lock.entries.get(uid)) is not None and (e.study_pass, e.region) != (study, region)]
+
+
+def locked_tags(tags: list[str], entry: Entry | None) -> list[str]:
+    """A card's tags with `pass::` and any `region::` tag taken from its lock entry, so a filtered deck finds the card
+    where its slot is. A card without an entry, or without a region tag (a feature), is left as it is."""
+    if entry is None:
+        return list(tags)
+    out = []
+    for tag in tags:
+        if tag.startswith("pass::"):
+            out.append(f"pass::{entry.study_pass}")
+        elif tag.startswith("region::"):
+            if entry.region is not None:
+                out.append(f"region::{entry.region:02d}")
+        else:
+            out.append(tag)
+    return out
 
 
 def placements(ideal: list[Card] | None = None) -> list[Placement]:
@@ -179,8 +197,8 @@ def placements(ideal: list[Card] | None = None) -> list[Placement]:
 
 
 def lock_error(lock: Lock) -> str | None:
-    """Why the lock doesn't fit the current study order: a stale draft, a frozen card whose pass or region changed,
-    or an order that can't be built."""
+    """Why the lock doesn't fit the current study order: a stale draft, or an order that can't be built. A frozen
+    card whose pass or region changed only gets a warning: it keeps the lock's."""
     from geofeat.order import OrderError
 
     try:
@@ -189,11 +207,14 @@ def lock_error(lock: Lock) -> str | None:
         return f"study order: {exc}"
     if stale_draft(lock, placed):
         return f"{LOCK_FILE.name} is a draft written for an older study order; run `make positions` and commit it"
-    if not lock.draft and (changed := moved(lock, placed)):
-        return (f"{LOCK_FILE.name} is frozen, but these cards' pass or region changed since they were locked, so the "
-                f"guide and the pass::/region:: tags would no longer match their slots (retire the uid and add a new "
-                f"one instead; ADR 0006): {changed}")
+    if not lock.draft:
+        warn_moved(lock, placed)
     return None
+
+
+def warn_moved(lock: Lock, placed: list[Placement]) -> None:
+    for line in moved(lock, placed):
+        print(f"warning: frozen card keeps its locked pass and region (slot, guide section, tags): {line}")
 
 
 def update(lock: Lock, placed: list[Placement]) -> Lock:
@@ -203,28 +224,66 @@ def update(lock: Lock, placed: list[Placement]) -> Lock:
     return Lock(False, _entries(place(lock.positions, ideal), placed, lock.entries))
 
 
-def frozen_errors(lock: Lock, base_text: str | None) -> list[str]:
-    """The freeze guard: once the lock on the base ref is frozen, this lock must keep it frozen and hold every one
-    of its entries unchanged (position, pass and region). It may only add uids. A draft or missing base passes."""
-    if base_text is None or not (header := _HEADER.fullmatch(base_text.split("\n", 1)[0])) or header.group(1) == "true":
+def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE) -> list[str]:
+    """The freeze guard: once the lock on `ref` is frozen, this lock must keep it frozen and hold every one of its
+    entries unchanged (position, pass and region). It may only add uids. A draft or missing base passes."""
+    if base_text is None:
+        return []
+    header = _HEADER.fullmatch(base_text.split("\n", 1)[0])
+    if header is None:
+        return [f"{ref}'s {LOCK_FILE.name} has no `draft: true|false` header"]
+    if header.group(1) == "true":
         return []  # a draft base may be in the old `<uid>: <position>` format, so it isn't parsed
-    base = parse(base_text)
-    errors = [f"{LOCK_FILE.name} is a draft again, but {BASE_REF}'s is frozen"] if lock.draft else []
+    try:
+        base = parse(base_text)
+    except ValueError as exc:
+        return [f"{ref}'s {LOCK_FILE.name}: {exc}"]
+    errors = [f"{LOCK_FILE.name} is a draft again, but {ref}'s is frozen"] if lock.draft else []
     if dropped := sorted(set(base.entries) - set(lock.entries)):
-        errors.append(f"{LOCK_FILE.name} drops uids frozen on {BASE_REF}: {dropped}")
+        errors.append(f"{LOCK_FILE.name} drops uids frozen on {ref}: {dropped}")
     if changed := sorted(u for u, e in base.entries.items() if u in lock.entries and lock.entries[u] != e):
-        errors.append(f"{LOCK_FILE.name} changes entries frozen on {BASE_REF}: {changed}")
+        errors.append(f"{LOCK_FILE.name} changes entries frozen on {ref}: {changed}")
     return errors
 
 
-def base_text(ref: str = BASE_REF) -> str | None:
-    """The lock committed on `ref`, or None when git, the ref or the file isn't there (e.g. a source archive)."""
-    path = LOCK_FILE.relative_to(ROOT).as_posix()
+def _git(*args: str) -> str | None:
     try:
-        result = subprocess.run(["git", "-C", str(ROOT), "show", f"{ref}:{path}"], capture_output=True, text=True)
+        result = subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, text=True)
     except OSError:
         return None
     return result.stdout if result.returncode == 0 else None
+
+
+def base_ref() -> str:
+    return os.environ.get("POSITIONS_BASE") or DEFAULT_BASE
+
+
+def base_text(ref: str) -> str | None:
+    """The lock committed on `ref`, or None when git, the ref or the file isn't there (e.g. a source archive)."""
+    if ref.startswith("-"):  # never let the ref read as a git option
+        return None
+    return _git("show", "--end-of-options", f"{ref}:{LOCK_FILE.relative_to(ROOT).as_posix()}")
+
+
+def release_tag() -> str | None:
+    """The newest `v*` release tag reachable from HEAD: what users last imported."""
+    out = _git("describe", "--tags", "--abbrev=0", "--match", "v*", "HEAD")
+    return out.strip() or None if out else None
+
+
+def guard(lock: Lock, strict: bool) -> tuple[list[str], list[str]]:
+    """The freeze guard against the base ref and the newest release tag: (errors, warnings). An unreadable base ref
+    for a frozen lock is an error when `strict` (a release build, or `make positions`), else a warning."""
+    ref = base_ref()
+    text = base_text(ref)
+    errors, warnings = frozen_errors(lock, text, ref), []
+    if text is None and not lock.draft:
+        message = (f"can't read {LOCK_FILE.name} on {ref} to check the frozen lock against it (fetch it, e.g. "
+                   f"`git fetch origin main` or a full-depth CI checkout, or set POSITIONS_BASE)")
+        (errors if strict else warnings).append(message)
+    if (tag := release_tag()) is not None and tag != ref:
+        errors += frozen_errors(lock, base_text(tag), tag)
+    return errors, warnings
 
 
 def main() -> None:
@@ -240,11 +299,10 @@ def main() -> None:
     if not old.draft and (generated := sorted({r.region.slug for r in result.reports if not r.walk.frozen})):
         raise SystemExit(f"{LOCK_FILE.name} is frozen (draft: false), but these regions' walks are generated, not "
                          f"frozen in curriculum.yaml (ADR 0009): {generated}")
-    if errors := frozen_errors(old, base_text()):
+    if errors := guard(old, strict=True)[0]:
         raise SystemExit("; ".join(errors))
-    if not old.draft and (changed := moved(old, placed)):
-        raise SystemExit(f"{LOCK_FILE.name} is frozen, but these cards' pass or region changed since they were "
-                         f"locked; retire the uid and add a new one instead (ADR 0006): {changed}")
+    if not old.draft:
+        warn_moved(old, placed)
     new = update(old, placed)
     tmp = LOCK_FILE.with_suffix(".tmp")
     tmp.write_text(dump(new))

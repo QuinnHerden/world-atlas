@@ -1,6 +1,6 @@
 # World Atlas plan
 
-Status: in progress, 2026-10-14. P0–P5 are done; P6 (QA) is done apart from its user gate, the device tests (see [Build phases](#build-phases)). What is built is described in [architecture.md](architecture.md). This plan extends the current deck (described in [architecture.md](architecture.md)) with countries, capitals, cities and territories. This file merges three earlier planning documents (the curriculum proposal, the program architecture and the territories list); where they disagreed, the [Decisions so far](#decisions-so-far) table is the source of truth.
+Status: released as v2.0.0, 2026-10-14. P0–P7 are done (see [Build phases](#build-phases)). What is built is described in [architecture.md](architecture.md). This plan extends the current deck (described in [architecture.md](architecture.md)) with countries, capitals, cities and territories. This file merges three earlier planning documents (the curriculum proposal, the program architecture and the territories list); where they disagreed, the [Decisions so far](#decisions-so-far) table is the source of truth.
 
 The design of the country cards comes from the 9-card proof of concept on branch `poc/countries` (`f4a3503`, documented in `docs/poc-countries.md` on that branch). **The PoC's de facto border view is superseded** by internationally recognised borders ([ADR 0008](adr/0008-state-list-borders-adjacency.md)); the rest of its card design stands.
 
@@ -285,7 +285,7 @@ cards ─▶ passes (from curriculum.yaml)
 
 ### Risks
 
-1. **No stable positions without an ankc change.** *Resolved in P1:* `positions.lock` and ankc 0.6's `[^pos]`. The lock stays a draft until P7, so freeze it before the countries ship, not after.
+1. **No stable positions without an ankc change.** *Resolved in P1:* `positions.lock` and ankc 0.6's `[^pos]`. The lock stayed a draft until P7 and was frozen then, before the countries shipped.
 2. **Political edge cases in the data:** disputed states (Kosovo, Taiwan, Western Sahara, Palestine, Somaliland), dependencies, and whether the target is ~200 or ~215 states. *Decided* ([ADR 0008](adr/0008-state-list-borders-adjacency.md)) and in the P2 data; the time-sensitive items are under [Territories](#territories).
 3. **Microstates at the 2,600 km minimum frame** ([ADR 0003](adr/0003-projection-and-framing.md)): an outline card for Vatican City, Monaco or Nauru is just a ring, so "outline → name" teaches the frame, not the shape. 38 of the PoC's 200 states get a ring. The decision keeps their country cards; a smaller minimum frame for small outline cards is still an option.
 4. **Wide or split countries:** Russia, Fiji and Kiribati cross the antimeridian, and France and the USA have overseas parts. The `mainland` box handles this; a box with `lon_min > lon_max` crosses 180°, and every outline has an `expect` bbox.
@@ -410,7 +410,7 @@ These defaults are waiting for the user's confirmation. Numbers follow the build
 | ADR | Topic | Status |
 |---|---|---|
 | [0005](adr/0005-card-sources-and-card-dto.md) | Card sources and the `Card` DTO | Proposed |
-| [0006](adr/0006-positions-lock-and-pos-footnote.md) | `positions.lock` and the ankc `[^pos]` footnote; supersedes the drift consequence in ADR 0004 | Proposed |
+| [0006](adr/0006-positions-lock-and-pos-footnote.md) | `positions.lock` and the ankc `[^pos]` footnote; supersedes the drift consequence in ADR 0004 | Accepted (amended in P7) |
 | [0007](adr/0007-rename-and-migration.md) | Rename to World Atlas, and migration | Accepted; deck and repo renamed |
 | [0008](adr/0008-state-list-borders-adjacency.md) | State list, borders worldview and adjacency | Accepted |
 | [0009](adr/0009-curriculum-order.md) | Curriculum order; supersedes ADR 0004's tier-first rule and ≥ 3 gap | Proposed |
@@ -429,8 +429,8 @@ Summary of the 2026-10-14 build plan. Each workstream runs in its own git worktr
 | P3 | Order engine (`order/` package): passes, regions, frozen walks, anchoring, repair rules, golden tests. Walk maps for review, political checks, notes merged into the data. | **User gate:** sign off the walk maps. | Done: order engine and walk maps merged. |
 | P4 | Rendering treatments: dashed dispute and territory outlines, the recognised-border basemap, close-dot frames, scattered states, a shared basemap if it is over half the render time. Review tooling by region. Cold render of about 560 maps (35–95 min). | **User gate:** sign off the region sheets. | Done: every card kind renders; region sheets signed off. |
 | P5 | The guide in study order (pass, then region, then position; under 80 MB), in parallel with the rename to World Atlas ([ADR 0007](adr/0007-rename-and-migration.md)). | Uid freeze test passes. | Done. Rename: deck `World Atlas`, `dist/world-atlas.apkg`, the README migration section, the uid and note-type identity tests, and the repo, now `world-atlas`. Guide: every card in study order, `make guide REGION=NN` for one region. |
-| P6 | QA: phone sheets, pair check (features and continents only), CVD on the new treatments. | **User gate:** device tests (fresh import order, a filtered "Order due" deck, Check Database with high dues, the v1 to World Atlas upgrade). | Automated QA done: phone and region sheets reviewed, no flagged pairs, CVD contrast on every kind, `make import-test` passes on Anki 26.09.3. Device tests open: [device-test-checklist.md](device-test-checklist.md). |
-| P7 | Multi-lens review and three-agent review. Freeze `positions.lock`. Clean-clone build, tag v2.0.0, GitHub release. Archive `poc/countries` as a tag. Release is gated on the verify markers. | Released. | |
+| P6 | QA: phone sheets, pair check (features and continents only), CVD on the new treatments. | **User gate:** device tests (fresh import order, a filtered "Order due" deck, Check Database with high dues, the v1 to World Atlas upgrade). | Done. Automated QA: phone and region sheets reviewed, no flagged pairs, CVD contrast on every kind, `make import-test` passes on Anki 26.09.3. Device tests: [device-test-checklist.md](device-test-checklist.md). |
+| P7 | Multi-lens review and three-agent review. Freeze `positions.lock`. Clean-clone build, tag v2.0.0, GitHub release. Archive `poc/countries` as a tag. Release is gated on the verify markers. | Released. | Done. Released as v2.0.0 on 2026-10-14: positions.lock frozen with pass and region, freeze guard, clean-clone reproducible build, tags v1.0.0/v2.0.0, poc/countries archived as tag archive/poc-countries. |
 
 ## Appendix A: territories sources and method
 

@@ -259,16 +259,17 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
 
 
 def lock_freeze_errors(release: bool) -> list[str]:
-    """The freeze guard (ADR 0006): a frozen lock only adds to the frozen lock on positions.BASE_REF. A release
-    build must be able to read that base; any other build without it (a source archive) skips the guard."""
-    lock = positions.read()
-    base = positions.base_text()
-    if base is None and not lock.draft:
-        message = f"can't read {positions.LOCK_FILE.name} on {positions.BASE_REF} to check the frozen lock against it"
-        if release:
-            return [message]
-        print(f"warning: {message}")
-    return positions.frozen_errors(lock, base)
+    """The freeze guard (ADR 0006): a frozen lock only adds to the frozen locks on the base ref and the newest
+    release tag. A release build must be able to read the base ref; any other build without it (a source archive)
+    only warns."""
+    try:
+        lock = positions.read()
+    except (SystemExit, ValueError) as exc:
+        return [str(exc)]
+    errors, warnings = positions.guard(lock, strict=release)
+    for warning in warnings:
+        print(f"warning: {warning}")
+    return errors
 
 
 def ankc_supported() -> str | None:
@@ -319,8 +320,9 @@ def check_package() -> list[str]:
     note_tags = {guid: set(tags.split()) for guid, tags, *_ in rows}
     guids = set(note_tags)
     name = packages[0].name
-    errors = [f"{name}: note {c.uid} ({c.key}) lacks tags {sorted(missing)}" for c in cards
-              if c.uid in note_tags and (missing := set(c.tags) - note_tags[c.uid])]
+    lock = positions.read()
+    errors = [f"{name}: note {c.uid} ({c.key}) lacks tags {sorted(missing)}" for c in cards if c.uid in note_tags
+              and (missing := set(positions.locked_tags(c.tags, lock.entries.get(c.uid))) - note_tags[c.uid])]
     if wrong := sorted({decks[str(did)]["name"] for _, _, did, *_ in rows} - {ROOT_DECK}):
         errors.append(f"{name}: cards outside the {ROOT_DECK!r} deck: {wrong}")
     if any((ctype, queue) != (0, 0) for *_, ctype, queue, _ in rows):
@@ -328,13 +330,12 @@ def check_package() -> list[str]:
     media = load_media()
     if odd := packaged_media ^ {media.get(c.key) for c in cards}:  # nothing a card's text pulled in from elsewhere
         errors.append(f"{name}: packaged media differ from the rendered maps: {sorted(map(str, odd))}")
-    lock = positions.read()
     for guid, tags, *_ in rows:  # the tags filtered decks search must name the pass and region the lock placed it in
         if (entry := lock.entries.get(guid)) is None:
             continue
-        place = {f"pass::{entry.study_pass}"} | ({f"region::{entry.region:02d}"} if entry.region is not None else set())
-        if wrong := {t for t in tags.split() if t.startswith(("pass::", "region::"))} - place:
-            errors.append(f"{name}: note {guid}'s tags {sorted(wrong)} differ from its lock entry {sorted(place)}")
+        placed = {t for t in tags.split() if t.startswith(("pass::", "region::"))}
+        if f"pass::{entry.study_pass}" not in placed or placed - set(positions.locked_tags(list(placed), entry)):
+            errors.append(f"{name}: note {guid}'s tags {sorted(placed)} differ from its lock entry {entry}")
     if writes_pos() or not lock.draft:
         if wrong := sorted(g for g, *_, due in rows if g in expected and due != lock.positions.get(g)):
             errors.append(f"{name}: new-card positions differ from {positions.LOCK_FILE.name} for {wrong}")
