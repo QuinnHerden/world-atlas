@@ -8,7 +8,7 @@ $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions adjacency render deck check build sheet phone pairs cvd guide verify-report clean
+.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone pairs cvd guide verify-report clean
 
 all: build
 
@@ -35,6 +35,11 @@ positions: check-data
 # The country adjacency graph (ADR 0008) and its report; cached in build/adjacency.json.
 adjacency: fetch
 	$(PY).adjacency
+
+# Each region's walk map and card list for review (build/walks-NN.png/.txt, build/walks-ring.png). Freeze approved
+# walks with `uv run python tools/freeze_walks.py --all` (or REGION ...), then commit data/curriculum.yaml.
+walks: check-data
+	uv run python tools/walk_maps.py
 
 render: check-data
 	$(PY).jobs
