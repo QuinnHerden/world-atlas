@@ -386,6 +386,107 @@
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115123}}
   expect: {bbox: [19.5, -61, 166.5, 10.5], area_km2: [63000000, 78000000]}
 
+- id: africa
+  uid: XM7tYaI6Yg
+  name: Africa
+  type: Continent
+  category: Regions & Rifts
+  tier: 1
+  note: >-
+    Africa is the second most populous continent, after Asia. It meets Asia only at the Isthmus of Suez.
+  style: area
+  geometry:
+  - {layer: continent, select: {id: africa}}
+  expect: {bbox: [-25.4, -47, 72.5, 37.4], area_km2: [29590000, 30190000]}
+
+- id: antarctica
+  uid: 5Ad1iuLyxv
+  name: Antarctica
+  type: Continent
+  category: Regions & Rifts
+  tier: 1
+  note: >-
+    Antarctica surrounds the South Pole and is the only continent with no permanent population; people live there
+    only at research stations. The Antarctic Treaty, signed in 1959 and in force since 1961, reserves it for
+    peaceful use and science and freezes the territorial claims that seven countries have made.
+  style: area
+  geometry:
+  - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104367}}
+  expect: {bbox: [-180, -90, 180, -61], area_km2: [12220000, 12470000]}
+
+- id: asia
+  uid: fhfdR5asO6
+  name: Asia
+  type: Continent
+  category: Regions & Rifts
+  tier: 1
+  note: >-
+    Asia is the most populous continent. Its boundary with Europe is a convention, not a coastline: this deck
+    follows the common line along the Ural Mountains, the Ural River, the Caspian Sea, the Caucasus, the Black Sea
+    and the Turkish Straits.
+  style: area
+  geometry:
+  - {layer: continent, select: {id: asia}}
+  expect: {bbox: [25.9, -11, -168.9, 81.3], area_km2: [43610000, 44500000]}
+
+- id: europe
+  uid: b8dfk0W5fY
+  name: Europe
+  type: Continent
+  category: Regions & Rifts
+  tier: 1
+  note: >-
+    Europe is the western end of the Eurasian landmass, so its eastern boundary with Asia is a convention rather
+    than a coast. This deck uses the National Geographic line (Urals, Ural River, Caspian Sea, Caucasus, Black Sea,
+    Bosporus and Dardanelles); some geographers draw it further north, which moves the Caucasus into Asia.
+  style: area
+  geometry:
+  - {layer: continent, select: {id: europe}}
+  expect: {bbox: [-31.3, 27.6, 69.1, 81.9], area_km2: [9920000, 10120000]}
+
+- id: north-america
+  uid: zcPC5VJkNH
+  name: North America
+  type: Continent
+  category: Regions & Rifts
+  tier: 1
+  note: >-
+    North America runs from the Arctic to the Isthmus of Panama, where it joins South America. On this deck's map it
+    includes Central America, the Caribbean islands and Greenland.
+  style: area
+  geometry:
+  - {layer: continent, select: {id: north-america}}
+  expect: {bbox: [172.4, 5.5, -11.3, 83.7], area_km2: [24030000, 24510000]}
+
+- id: oceania
+  uid: Ki7AgVZfiE
+  name: Oceania
+  type: Continent
+  category: Regions & Rifts
+  tier: 1
+  note: >-
+    In this deck, Oceania means Australia, New Zealand, New Guinea and the Pacific islands of Melanesia, Micronesia
+    and Polynesia. Some atlases call the seventh continent "Australia" and treat Oceania as a wider region around
+    it. It is the least populous of the six inhabited continents.
+  style: area
+  geometry:
+  - {layer: continent, select: {id: oceania}}
+  expect: {bbox: [112.9, -54.8, -134.9, 14.7], area_km2: [8430000, 8600000]}
+
+- id: south-america
+  uid: 4ngjhORp67
+  name: South America
+  type: Continent
+  category: Regions & Rifts
+  tier: 1
+  note: >-
+    South America is joined to North America by the Isthmus of Panama, with the seam at the Panama–Colombia border.
+    The Andes run along its western side, from Colombia and Venezuela to the southern tip of Chile and Argentina.
+  style: area
+  geometry:
+  - {layer: continent, select: {id: south-america}}
+  expect: {bbox: [-109.5, -56, -28.8, 15.8], area_km2: [17520000, 17880000]}
+
 - id: mediterranean-sea
   uid: Q6rYtpkMsK
   name: Mediterranean Sea

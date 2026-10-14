@@ -17,6 +17,7 @@ from geofeat.ne import GEOD, flow_lines, layer  # noqa: F401  flow_lines re-expo
 SLIVER_KM2 = 2_500
 MAX_DROPPED_SHARE = 0.01
 NOT_VERIFIED = re.compile(r"unverified|placeholder", re.IGNORECASE)
+CONTINENT_LAYER = "continent"  # not a Natural Earth layer: {layer: continent, select: {id: …}} is continents.py's
 
 
 def geometry_path(file: str) -> Path:
@@ -77,6 +78,10 @@ def _part(feature: Feature, part: Part, stack: tuple[str, ...]) -> BaseGeometry:
         if part.feature not in features_by_id():
             raise ValueError(f"{feature.id}: references unknown feature {part.feature!r}")
         return resolve_with_trim(features_by_id()[part.feature], stack)[0]
+    if part.layer == CONTINENT_LAYER:
+        from geofeat.continents import part_geometry  # continents.py composes from outlines that import this module
+
+        return part_geometry(feature.id, part)
     return select_rows(feature.id, part)
 
 

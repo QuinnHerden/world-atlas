@@ -5,8 +5,7 @@ from shapely.geometry import LineString, Point, box
 from shapely.ops import unary_union
 
 from geofeat.model import Expect, Feature, Part, load_features
-from geofeat.regions import (ORIENTATION, continent_geometry, derive, disjoint, later_shore, override_errors,
-                             region_outline, ring)
+from geofeat.regions import ORIENTATION, derive, later_shore, override_errors, region_outline, ring
 
 # A synthetic ring on the equator: regions 1 and 3 face each other across a 1° strait, region 2 lies north of both.
 WORLD = {1: box(0, 0, 10, 10), 2: box(0, 12, 25, 20), 3: box(11, 0, 25, 10)}
@@ -106,32 +105,6 @@ class OverrideFieldTest(unittest.TestCase):
 
     def test_continent_is_its_own_family(self) -> None:
         self.assertEqual(feature("Continent").family, "continent")
-
-
-class ContinentTest(unittest.TestCase):
-    # NE's landmasses overlap at 6–6.5°E; Russia straddles the line and has an island off every landmass.
-    landmasses = {"Europe": box(0, 0, 6.5, 10), "Asia": box(6, 0, 20, 10)}
-    island = box(13, 11, 14, 12)
-    countries = {"germany": box(0, 0, 4, 10), "russia": unary_union([box(4, 0, 12, 10), island]),
-                 "china": box(12, 0, 20, 10), "greenland": box(5, 10.5, 6, 11)}
-    members = {"germany": "Europe", "russia": ("Europe", "Asia"), "china": "Asia", "greenland": "Europe"}
-
-    def test_overlap_goes_to_the_smaller_continent(self) -> None:
-        lands = disjoint(self.landmasses)
-        self.assertTrue(lands["Europe"].equals(box(0, 0, 6.5, 10)))
-        self.assertTrue(lands["Asia"].equals(box(6.5, 0, 20, 10)))
-
-    def test_continent_is_the_union_of_its_countries_split_along_the_line(self) -> None:
-        europe = continent_geometry("Europe", self.members, self.countries, self.landmasses)
-        asia = continent_geometry("Asia", self.members, self.countries, self.landmasses)
-        self.assertTrue(europe.equals(unary_union([box(0, 0, 6.5, 10), self.countries["greenland"]])))
-        self.assertTrue(asia.equals(unary_union([box(6.5, 0, 20, 10), self.island])))
-        self.assertAlmostEqual(europe.intersection(asia).area, 0)
-        self.assertTrue(unary_union([europe, asia]).equals(unary_union(list(self.countries.values()))))
-
-    def test_a_country_off_the_landmasses_stays_whole(self) -> None:
-        europe = continent_geometry("Europe", self.members, self.countries, self.landmasses)
-        self.assertTrue(europe.contains(self.countries["greenland"]))
 
 
 if __name__ == "__main__":
