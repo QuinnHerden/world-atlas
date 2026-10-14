@@ -10,12 +10,15 @@ Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. 
 
 ## Build
 
-Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
+Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x or 0.6.x and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
 
 ```sh
 make ids        # mint uids for new entries, then commit features.yaml
+make positions  # give new uids a place in data/positions.lock, then commit it
 make all        # test → fetch → check-data → render → deck → check → build
 ```
+
+`ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. With ankc 0.6 every card gets its position from `data/positions.lock` as a `[^pos]` footnote; with 0.5 positions follow the study order.
 
 Output: `dist/geographic-features.apkg`. Import it in Anki with **File → Import**.
 
@@ -41,6 +44,10 @@ To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) wit
 - **Old maps:** a re-rendered map gets a new file name. Run **Tools → Check Media** to delete the old image.
 - **Fresh order:** only a fresh import gets the full study order. If you haven't started studying, delete the deck and import the new package.
 
+### Upgrading to a build with card kinds
+
+Every card now carries a `kind::feature` tag, and answers are built from lines joined with `<br>`. A feature card's answer is one line, so its front and back text are byte-for-byte what earlier builds wrote: re-importing rewrites a note's answer only if its text actually changed. The import adds the new tag and changes nothing else.
+
 ### Upgrading from a version with subdecks
 
 Builds before the flat deck put cards in `Geographic Features::<Category>::Tier <n>`. Re-importing leaves each card in its old subdeck, so move them by hand:
@@ -57,7 +64,7 @@ Builds before the flat deck put cards in `Geographic Features::<Category>::Tier 
 
 [docs/architecture.md](docs/architecture.md) covers the selectors, frame options, nesting overrides and every check.
 
-**Uids.** `make ids` gives each new entry a permanent `uid`, the Anki note GUID; `make all` refuses to build while one is missing. Never edit or reuse a uid. A feature's `id`, `name`, tier and category can change freely without losing review history.
+**Uids.** `make ids` gives each new entry a permanent `uid`, the Anki note GUID, and `make positions` gives it a new-card position; `make all` refuses to build while either is missing. Never edit or reuse a uid. A feature's `id`, `name`, tier and category can change freely without losing review history.
 
 **Retiring a card.** Set `retired: true` and keep the rest of the entry. After un-retiring one, run `make check-data`.
 

@@ -15,9 +15,11 @@ import shapely
 from shapely.geometry.base import BaseGeometry
 
 import geofeat.ne as ne
-from geofeat.model import BUILD, DECK, LOCK, MEDIA_INDEX, ROOT, VENDOR, Feature, active, load_features
+from geofeat.card import Card
+from geofeat.model import BUILD, DECK, LOCK, MEDIA_INDEX, ROOT, VENDOR
 from geofeat.render import render
-from geofeat.resolve import custom, features_by_id, resolve
+from geofeat.resolve import features_by_id
+from geofeat.sources import all_cards
 from geofeat.spec import BASEMAP_LAYERS, RELIEF, RenderSpec
 
 CACHE = BUILD / "render-cache.json"  # cache key -> rendered PNG name
@@ -103,15 +105,8 @@ class RenderJob:
         return render(self.spec, self.geometry, self.context, self.former)
 
 
-def feature_job(feature: Feature) -> RenderJob:
-    """Resolve a feature, and the context and former shapes its frame names, into a RenderJob."""
-    options = feature.frame
-    return RenderJob(
-        spec=RenderSpec.from_feature(feature),
-        geometry=resolve(feature),
-        context=tuple(resolve(features_by_id()[other]) for other in options.context),
-        former=custom(options.former).boundary if options.former else None,
-    )
+def card_job(card: Card) -> RenderJob:
+    return RenderJob(card.render.spec, *card.render.geometry())
 
 
 def _render_to_file(job: RenderJob) -> str:
@@ -129,32 +124,32 @@ def _write_json(path: Path, data: dict) -> None:
     tmp.replace(path)
 
 
-def main() -> None:
+def render_cards(cards: list[Card]) -> dict[str, str]:
+    """Render what the cache lacks, write media.json (card key -> PNG) and drop the PNGs and cache entries no card
+    uses. Everything is keyed by Card.key, so two kinds may share an id, and the cleanup spans every kind."""
     DECK.mkdir(exist_ok=True)
     BUILD.mkdir(exist_ok=True)
     cache_ = json.loads(CACHE.read_text()) if CACHE.exists() else {}
-    _check_vendor()
-    features = active(load_features())
-    jobs = {f.id: feature_job(f) for f in features}
-    keys = {id_: job.key() for id_, job in jobs.items()}
-    todo = [f.id for f in features if not (keys[f.id] in cache_ and (DECK / cache_[keys[f.id]]).exists())]
+    jobs = {c.key: card_job(c) for c in cards}
+    keys = {key: job.key() for key, job in jobs.items()}
+    todo = [key for key in jobs if not (keys[key] in cache_ and (DECK / cache_[keys[key]]).exists())]
 
-    def done(id_: str, file: str) -> None:
-        cache_[keys[id_]] = file
+    def done(key: str, file: str) -> None:
+        cache_[keys[key]] = file
         _write_json(CACHE, cache_)
-        print(f"rendered {id_} -> {file}", flush=True)
+        print(f"rendered {key} -> {file}", flush=True)
 
     if JOBS <= 1:  # in this process, so the layers loaded to resolve the jobs aren't loaded a second time
-        for id_ in todo:
-            done(id_, _render_to_file(jobs[id_]))
+        for key in todo:
+            done(key, _render_to_file(jobs[key]))
     else:
-        todo_jobs = {id_: jobs[id_] for id_ in todo}
+        todo_jobs = {key: jobs[key] for key in todo}
         del jobs
         ne.layer.cache_clear()  # don't fork n copies of the layers the parent loaded to resolve
         features_by_id.cache_clear()
         gc.collect()
         with ProcessPoolExecutor(max_workers=JOBS) as pool:
-            futures = {pool.submit(_render_to_file, todo_jobs[id_]): id_ for id_ in todo}
+            futures = {pool.submit(_render_to_file, todo_jobs[key]): key for key in todo}
             try:
                 for future in as_completed(futures):
                     done(futures[future], future.result())
@@ -162,11 +157,18 @@ def main() -> None:
                 pool.shutdown(cancel_futures=True)
                 raise
 
-    media = {f.id: cache_[keys[f.id]] for f in features}
+    media = {key: cache_[keys[key]] for key in keys}
     _write_json(MEDIA_INDEX, media)
     for stale in {p.name for p in DECK.glob("*.png")} - set(media.values()):
         (DECK / stale).unlink()
     _write_json(CACHE, {k: v for k, v in cache_.items() if v in media.values()})
+    print(f"rendered {len(todo)} of {len(keys)} cards")
+    return media
+
+
+def main() -> None:
+    _check_vendor()
+    render_cards(all_cards())
 
 
 if __name__ == "__main__":

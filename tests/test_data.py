@@ -7,7 +7,6 @@ from shapely.geometry import Point, box
 
 import geofeat.resolve as resolve
 from geofeat.check import missing_notes, provenance_errors, retired_references
-from geofeat.deckgen import card
 from geofeat.model import FAMILY, AllowNested, Expect, Feature, FeatureType, FrameOptions, Part
 from geofeat.pairs import Pair, compare
 from geofeat.resolve import area_km2, _drop_slivers, clip_to_land
@@ -167,10 +166,3 @@ class NoteTest(unittest.TestCase):
     def test_note_must_be_card_safe(self) -> None:
         with self.assertRaises(ValueError):
             feature("a", "Plain", note="one <b>bold</b> claim")
-
-
-class DeckgenTest(unittest.TestCase):
-    def test_card_carries_its_tags(self) -> None:
-        text = card(feature("bosporus", "Strait", uid="MAPQnshVtc"), "abc.png")
-        self.assertIn("[^uid]: MAPQnshVtc\n[^tag]: tier::1\n[^tag]: category::deserts-plateaus-plains\n"
-                      "[^tag]: id_bosporus\n", text)

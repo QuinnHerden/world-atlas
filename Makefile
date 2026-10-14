@@ -1,8 +1,11 @@
 PY := uv run python -m geofeat
 DECK := Geographic Features
 IDS ?=
+# The ankc to build with; a command line works, e.g. ANKC="uv run --with ../ankcompiler ankc". 0.6+ gets [^pos].
+ANKC ?= ankc
+export ANKC
 
-.PHONY: all test fetch ids check-data render deck check build sheet phone pairs cvd guide clean
+.PHONY: all test fetch ids check-data positions render deck check build sheet phone pairs cvd guide clean
 
 all: build
 
@@ -18,8 +21,12 @@ test:
 check-data: test fetch
 	$(PY).check data
 
+# The only writer of data/positions.lock; commit the result. Not part of `make all`.
+positions: check-data
+	$(PY).positions
+
 render: check-data
-	$(PY).render
+	$(PY).jobs
 
 deck: render
 	$(PY).deckgen
@@ -30,7 +37,7 @@ check: deck
 build: check
 	mkdir -p dist
 	rm -f dist/*.apkg
-	ankc build --deck "$(DECK)" --path deck --output dist
+	$(ANKC) build --deck "$(DECK)" --path deck --output dist
 	$(PY).check package
 	@ls dist/*.apkg
 

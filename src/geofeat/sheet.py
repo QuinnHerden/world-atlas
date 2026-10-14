@@ -1,12 +1,11 @@
 """Contact sheets for visual QA, written to build/.
 
-`sheet [--out NAME.png] [ids…]`: a grid of maps, every map by default.
+`sheet [--out NAME.png] [keys…]`: a grid of maps, every map by default. A key is `kind:id`; a bare id means a feature.
 `sheet --phone [ids…]`: the same at phone size, PHONE_W px wide per map, PHONE_PER_PAGE to a page (build/phone-NN.png).
 `sheet --pairs`: flagged, nested, allowed and near-threshold sibling pairs side by side, labelled with their overlap
 scores, PAIRS_PER_PAGE to a page (build/pairs-NN.png); every pair goes to build/pairs.log.
 """
 
-import json
 import math
 import re
 import sys
@@ -15,7 +14,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from geofeat.model import BUILD, DECK, MEDIA_INDEX, active, load_features
+from geofeat.card import card_key, load_media
+from geofeat.model import BUILD, DECK, active, load_features
 from geofeat.pairs import find_pairs
 from geofeat.resolve import resolve
 
@@ -27,16 +27,17 @@ PHONE_W, PHONE_PER_PAGE = 390, 48  # a phone screen's width in CSS px
 
 @cache
 def _media() -> dict[str, str]:
-    return json.loads(MEDIA_INDEX.read_text())
+    return load_media()
 
 
-def card_image(feature_id: str) -> Image.Image:
-    return Image.open(DECK / _media()[feature_id]).convert("RGB")
+def card_image(key: str) -> Image.Image:
+    """The map of the card with this key (`kind:id`, or a bare feature id)."""
+    return Image.open(DECK / _media()[key if ":" in key else card_key("feature", key)]).convert("RGB")
 
 
-def thumbnail(feature_id: str, width: int = THUMB_W) -> Image.Image:
+def thumbnail(key: str, width: int = THUMB_W) -> Image.Image:
     """A card shrunk to sheet size on load, so a sheet of hundreds of maps doesn't hold them all at full size."""
-    image = card_image(feature_id)
+    image = card_image(key)
     return image.resize((width, round(width * image.height / image.width)), Image.Resampling.LANCZOS)
 
 
