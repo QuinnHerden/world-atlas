@@ -27,9 +27,9 @@ from shapely.ops import unary_union
 from geofeat.model import Feature, active, load_features
 from geofeat.ne import GEOD, layer
 from geofeat.resolve import area_km2, resolve
+from geofeat.sources.features import orientation
 
 ORIENTATION = 0  # the block before region 1: oceans, planetary wind belts, continents
-PLANETARY = frozenset({"trade-winds", "westerlies"})  # the two planetary bands the plan keeps in orientation
 SHORE_TYPES = frozenset({"Strait", "Canal", "Cape"})
 SHORE_BUFFER_DEG = 0.5  # how far from a passage counts as its shore
 SHORE_MIN_SHARE = 0.15  # a region with less of the shore than this is a passing neighbour, not a shore
@@ -285,7 +285,7 @@ def derive(feature: Feature, geometry: BaseGeometry, regions: Mapping[int, BaseG
     """The feature's region by the plan's rules, then its `region:` override if it has one."""
     if errors := override_errors([feature]):
         raise ValueError(errors[0])
-    if feature.type in ("Ocean", "Continent") or feature.id in PLANETARY:
+    if orientation(feature):
         rule, measure, shares, derived = "orientation", "none", {}, ORIENTATION
     elif feature.type in SHORE_TYPES:
         rule, measure, shares = "shore", "shore", shore_shares(geometry, regions)
