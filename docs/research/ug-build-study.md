@@ -1,5 +1,7 @@
 # Ultimate Geography: build pipeline study
 
+> **Historical source material, as of 2026-10-12.** A study of the Ultimate Geography deck's build pipeline, written before this repo's pipeline existed. It is a process reference only, never an input to feature selection. Several of its suggestions were adopted and have since changed; the pipeline as it stands is described in [docs/architecture.md](../architecture.md).
+
 Repo studied: `/home/dev/ultimate-geography` at `6725c0f` (read-only). Scope is process and architecture only. Paths below are relative to that repo unless absolute. The build was also run in a scratch clone (Brain Brew 0.3.11, Python 3.11 via `uv`) to verify the behaviour described here.
 
 ## TL;DR

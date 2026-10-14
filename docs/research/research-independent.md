@@ -1,12 +1,14 @@
 # Physical features that shaped history and still matter: an independent selection
 
+> **Historical source material, as of 2026-10-12.** This is the research the feature list was drawn from. It is not kept up to date: the deck has since split, merged, retired and re-tiered rows, and its counts (169 features, 16 climate systems) describe this document only. The current list, with each card's tier, category and note, is `data/features.yaml`; how it is built is in [docs/architecture.md](../architecture.md). The [Near-misses](#12-near-misses-considered-and-cut) table is still the revisit list for features that were considered and cut, and the [Verify flags](#13-verify-flags) explain which figures were left out of the notes.
+
 Prepared 2026-10-12. I picked these from first principles. I did not consult any existing deck, list or file in this directory.
 
-**How to read the source keys.** Every key is defined in the [Source list](#source-list). Each source carries one of these tags:
+**How to read the source keys.** Every key is defined in the [Source list](#14-source-list). Each source carries one of these tags:
 - **[V]**: I opened the page and checked the figure at its primary source.
 - **[S]**: I confirmed the claim from search-indexed text of the named source but did not open the full page. britannica.com returned HTTP 403 to direct fetches, so every Britannica claim is [S].
 - **[M]**: a book cited from memory. I did not open it during this session.
-- **GK**: general historical knowledge that I did not check against a source this session. Treat these rows as needing a check before they go on a card (see [Verify flags](#verify-flags)).
+- **GK**: general historical knowledge that I did not check against a source this session. Treat these rows as needing a check before they go on a card (see [Verify flags](#13-verify-flags)).
 
 ---
 

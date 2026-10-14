@@ -1,6 +1,6 @@
 # 2. Provenance classes for hand-authored geometry
 
-Status: accepted, 2026-10-13
+Status: accepted, 2026-10-13. Still the current rule; the summary is in [architecture.md](../architecture.md#geometry-and-provenance). Some examples below (passes, Siliguri, Kuroshio, Canary, the East Asian and West African monsoons) are now retired cards; their files and provenance remain.
 
 ## Context
 
@@ -28,7 +28,7 @@ Rules:
 
 - A feature takes the weakest class that honestly fits. If a large part of a line is hand-placed, the feature is `hand-drawn` even if checked against a dataset (Kuroshio, Canary, monsoons).
 - Shapes drawn from Britannica's text are `hand-drawn`, and their `source` says "drawn from Britannica's text description, not its map images".
-- No OSM or CC-BY-SA geometry, in line with PLAN.md's licence rule.
+- No OSM or CC-BY-SA geometry, in line with the licence rule in [architecture.md](../architecture.md#geometry-and-provenance) (then PLAN.md).
 - Wikipedia and Britannica are used only for facts and coordinates. Geometry is never traced from Wikipedia, Wikimedia or OSM.
 
 `make check-data` fails when:

@@ -1,6 +1,6 @@
 # 3. Projection and framing
 
-Status: accepted, 2026-10-13
+Status: accepted, 2026-10-13. Amended on 2026-10-13 (`cf89ef5`) to note the retired passes, islands and Cumberland Gap. Still the current rule; the summary is in [architecture.md](../architecture.md#rendering). The inset's 160 × 80 px is at an 800 px-wide card (320 × 160 at 1600 px); the other sizes are at 1600 px as stated.
 
 ## Context
 

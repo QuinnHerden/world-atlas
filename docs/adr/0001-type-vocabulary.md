@@ -1,6 +1,6 @@
 # 1. Type vocabulary and families
 
-Status: accepted, 2026-10-13
+Status: accepted, 2026-10-13. Amended in place on 2026-10-13 (`cf89ef5`: categories restructured, passes, corridors and islands retired) and 2026-10-14 (`41fdf95`: 9 climate cards retired). Still the current rule; the summary is in [architecture.md](../architecture.md#type-words-and-families).
 
 ## Context
 
@@ -72,6 +72,6 @@ Island is a family of its own. NE draws some island groups as sea-area envelopes
 ## Consequences
 
 - Re-typing a card usually changes only the note text. The map re-renders when the new word moves it into or out of a land family (the land clip changes its geometry, and the render hash records this, including through `{feature:}` references), or changes its fill opacity or close-up borders.
-- Moving the Sahel to another category leaves an already-imported card in its old subdeck; see the tier note in the README.
+- Moving the Sahel to another category leaves an already-imported card in its old subdeck; see the tier note in the README. (Superseded by [ADR 0004](0004-flat-deck-and-study-order.md): there are no subdecks now, and a category change updates the card's tag on re-import.)
 - The vocabulary is 23 words, above the 15–18 first estimated. The ≥3 rule kept every word that covered 3 or more cards when it was adopted; retiring the passes and islands has since left Pass, Corridor and Island with no active card, and retiring 9 climate cards left Ocean current and Climate belt under 3. Fewer words would mean merging informative ones, for example Delta into Plain, Corridor into Pass, or Canal and Sea route into one word.
 - Switching the pair check to families surfaced three nestings: Singapore in the Malay Peninsula, now subtracted (Singapore is since retired, so the peninsula subtracts Singapore's Natural Earth row directly and its shape is unchanged); Barents in the Arctic Ocean, allowed; and the Zagros in the Iranian Plateau, allowed.

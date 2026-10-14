@@ -1,6 +1,6 @@
 # 4. Flat deck and study order
 
-Status: accepted, 2026-10-13
+Status: accepted, 2026-10-13. Still the rule for the current deck. The [World Atlas plan](../world-atlas-plan.md) has decided to replace the tier-first order with the atlas ring and the ≥ 3 card gap with a 3–10 card window; when that ships, a new curriculum ADR supersedes rules 1 and 3 here, and a stable-positions ADR supersedes the drift consequence below.
 
 ## Context
 

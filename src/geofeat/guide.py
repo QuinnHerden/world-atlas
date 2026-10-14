@@ -27,7 +27,7 @@ from geofeat.model import BUILD, DECK, MEDIA_INDEX, ROOT, Category, Feature, act
 
 OUT = BUILD / "guide.pdf"
 TITLE = "Geographic Features — Card Guide"
-RESEARCH_AS_OF = "2026-10-12"  # research-independent.md, where the notes in features.yaml come from
+RESEARCH_AS_OF = "2026-10-12"  # docs/research/research-independent.md, where the notes in features.yaml come from
 IMAGE_PX = 900
 JPEG_QUALITY = 85
 
