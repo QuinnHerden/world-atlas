@@ -12,8 +12,8 @@ A `region:` override in features.yaml replaces the derived region. Rule 5 there 
 engine's job, not this module's. `python -m geofeat.regions` prints the assignment of every active feature.
 
 Ring membership comes from data/curriculum.yaml. A region's outline is the union of its member states and the
-territories placed in it, plus any land of a dispute placed there that no state's outline holds (Western Sahara);
-the outlines come from countries_ne.py.
+territories placed in it, plus any land of a dispute placed there that no state's outline holds (Western Sahara). A
+dispute's sea is left out. The outlines come from countries_ne.py.
 """
 
 from collections.abc import Iterable, Mapping
@@ -28,7 +28,7 @@ from shapely.ops import unary_union
 from geofeat.countries_ne import outline, state_ids
 from geofeat.curriculum import Region, load_curriculum
 from geofeat.model import Feature, active, load_features, orientation
-from geofeat.ne import GEOD
+from geofeat.ne import GEOD, layer
 from geofeat.resolve import area_km2, resolve
 
 ORIENTATION = 0  # the block before region 1: oceans, planetary wind belts, continents
@@ -46,9 +46,16 @@ def ring() -> dict[int, Region]:
 
 
 def region_outline(members: Iterable[BaseGeometry], disputes: Iterable[BaseGeometry],
-                   held: BaseGeometry) -> BaseGeometry:
-    """A region's land: its member states and territories, plus whatever of its disputes no state holds (`held`)."""
-    return unary_union([*members, *(d.difference(held) for d in disputes)])
+                   held: BaseGeometry, land_mask: BaseGeometry) -> BaseGeometry:
+    """A region's land: its member states and territories, plus whatever of its disputes is land (`land_mask`) that no
+    state holds (`held`). A dispute's card outline may take in sea, as an island group's does."""
+    return unary_union([*members, *(d.intersection(land_mask).difference(held) for d in disputes)])
+
+
+@cache
+def land() -> BaseGeometry:
+    """NE's land and minor islands, what a dispute's outline is clipped to before it joins a region or continent."""
+    return unary_union([*layer("10m_land").geometry, *layer("10m_minor_islands").geometry])
 
 
 @cache
@@ -60,7 +67,7 @@ def held_land() -> BaseGeometry:
 @cache
 def region_outlines() -> dict[int, BaseGeometry]:
     return {n: region_outline([outline(c) for c in (*r.countries, *r.territories)],
-                              [outline(d) for d in r.disputes], held_land())
+                              [outline(d) for d in r.disputes], held_land(), land())
             for n, r in ring().items()}
 
 

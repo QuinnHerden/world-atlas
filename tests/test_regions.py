@@ -70,8 +70,12 @@ class DeriveTest(unittest.TestCase):
 class OutlineTest(unittest.TestCase):
     def test_a_region_gets_only_dispute_land_no_state_holds(self) -> None:
         held = box(0, 0, 10, 10)
-        outline = region_outline([box(20, 0, 30, 10)], [box(5, 0, 15, 10), box(1, 1, 2, 2)], held)
+        outline = region_outline([box(20, 0, 30, 10)], [box(5, 0, 15, 10), box(1, 1, 2, 2)], held, box(0, 0, 40, 10))
         self.assertTrue(outline.equals(unary_union([box(10, 0, 15, 10), box(20, 0, 30, 10)])))
+
+    def test_a_region_gets_none_of_a_disputes_sea(self) -> None:
+        outline = region_outline([box(20, 0, 30, 10)], [box(5, 0, 15, 10)], box(0, 0, 10, 10), box(0, 0, 12, 10))
+        self.assertTrue(outline.equals(unary_union([box(10, 0, 12, 10), box(20, 0, 30, 10)])))
 
     def test_later_shore_falls_back_to_the_largest_when_no_shore_is_real(self) -> None:
         self.assertEqual(later_shore({4: 0.14, 9: 0.13, 2: 0.12}), 4)

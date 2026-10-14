@@ -24,7 +24,7 @@ from shapely.ops import unary_union
 from geofeat.countries_ne import outline
 from geofeat.model import Part
 from geofeat.ne import layer
-from geofeat.regions import held_land, region_outline, ring
+from geofeat.regions import held_land, land, region_outline, ring
 from geofeat.resolve import CONTINENT_LAYER
 
 COMPOSED = ("africa", "asia", "europe", "north-america", "oceania", "south-america")
@@ -127,7 +127,7 @@ def geometry(continent: str) -> BaseGeometry:
     entries = {i: c for i, c in everyone.items() if i not in disputes}
     countries = continent_geometry(continent, entries, outlines, landmasses())
     mine = [outlines[d] for d in disputes if everyone[d] == continent]
-    return shapely.make_valid(region_outline([countries], mine, held_land()))
+    return shapely.make_valid(region_outline([countries], mine, held_land(), land()))
 
 
 def part_geometry(owner: str, part: Part) -> BaseGeometry:
