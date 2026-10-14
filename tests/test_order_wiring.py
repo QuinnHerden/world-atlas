@@ -1,7 +1,6 @@
-"""The curriculum order's real-data wiring: frames and look-alike pairs from the geometry facts, openers, and the P4
-skip for unrendered kinds."""
+"""The curriculum order's real-data wiring: frames and look-alike pairs from the geometry facts, openers, and deckgen's
+check that every card has its map."""
 
-import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,7 +10,8 @@ from shapely.geometry import box
 
 from geofeat.card import Card, Kind, RenderRef, pass_tag, study_pass
 from geofeat.curriculum import Curriculum, Region
-from geofeat.deckgen import skip_unrendered
+import geofeat.deckgen as deckgen
+from geofeat.deckgen import require_rendered
 from geofeat.order import Frame, OrderError
 from geofeat.order import frames
 from geofeat.order.frames import Facts, GeometryFacts
@@ -104,15 +104,15 @@ class FactsCacheTest(unittest.TestCase):
             self.assertEqual(compute.call_count, 3)
 
 
-class SkipUnrenderedTest(unittest.TestCase):
+class RequireRenderedTest(unittest.TestCase):
     cards = [make("feature", "alps"), make("country", "chile")]
 
-    def test_every_card_needs_a_map_by_default(self) -> None:
-        with mock.patch.dict(os.environ, {"ALLOW_UNRENDERED": ""}), self.assertRaises(SystemExit):
-            skip_unrendered(self.cards, {"feature:alps": "a.png"})
-
-    def test_flag_skips_only_new_kinds(self) -> None:
-        with mock.patch.dict(os.environ, {"ALLOW_UNRENDERED": "1"}):
-            self.assertEqual(skip_unrendered(self.cards, {"feature:alps": "a.png"}), self.cards[:1])
-            with self.assertRaises(SystemExit):
-                skip_unrendered(self.cards, {"country:chile": "c.png"})
+    def test_every_card_needs_a_map_on_disk(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(deckgen, "DECK", Path(tmp)):
+            (Path(tmp) / "a.png").touch()
+            (Path(tmp) / "c.png").touch()
+            require_rendered(self.cards, {"feature:alps": "a.png", "country:chile": "c.png"})
+            for media in ({"feature:alps": "a.png"}, {"country:chile": "c.png"},
+                          {"feature:alps": "a.png", "country:chile": "gone.png"}):
+                with self.subTest(media), self.assertRaises(SystemExit):
+                    require_rendered(self.cards, media)

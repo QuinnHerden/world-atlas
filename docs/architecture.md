@@ -4,7 +4,7 @@ How the Geographic Features deck is built. This describes the system as it is no
 
 The released deck is the 166 entries in `data/features.yaml`: 132 active cards (126 places and 6 climate systems) and 34 retired ones (7 passes, 3 corridors, 15 islands and 9 climate systems). One command turns the data into an `.apkg`, with no manual step per build.
 
-The World Atlas sources are on `main` too, and they already produce cards: 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`. Continent cards are in progress. The curriculum order engine (P3, `order/`) orders every kind. Only feature cards have maps until P4, so **`ALLOW_UNRENDERED=1`** lets `make render` and `make deck` leave the other kinds out, loudly (`card.UNRENDERED_KINDS`; feature cards always need their maps; remove at the end of P4). `make check` and `make build` still fail on unrendered cards, so `make all` doesn't complete on `main`.
+The World Atlas sources are on `main` too, and they already produce cards: 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`, and the 7 continents are `Continent` entries in `data/features.yaml`. The curriculum order engine (P3, `order/`) orders every kind, and every kind has its map (P4), so `make all` builds the whole deck.
 
 ## Pipeline
 
@@ -31,8 +31,8 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make check-data` | `check.py data` | Schema, geometry, provenance and sibling-pair checks. Caches the pair results in `build/siblings.json`. |
 | `make positions` | `positions.py` | Places new uids in `data/positions.lock` (below). The lock's only writer; commit the result. Not part of `make all`. |
 | `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
-| `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). |
-| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Under `ALLOW_UNRENDERED=1`, leaves out the kinds with no maps yet (P4). |
+| `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). `IDS="country:france city:*"` renders only the matching cards and deletes nothing, for a pilot. |
+| `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/geographic-features.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map. |
 | `make check` | `check.py deck` | Every card rendered and in the lock; ankc `>=0.5,<0.7`; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/geographic-features.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
@@ -72,7 +72,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 | `sources/` | One adapter per data file: `features.py`, `political.py` (countries, capitals, territories, disputes) and `cities.py`. `all_cards()` collects them. |
 | `polities.py` | The political entities: `Country` (with `Capital`), `Territory` and `Dispute`. Loads `countries.yaml` and `territories.yaml`, places each entry from `curriculum.yaml`, and composes outlines from their `geometry` parts, cropped to `mainland` for the card. |
 | `countries_ne.py` | Each state's, territory's and dispute's full outline, never cropped, read from the yaml `geometry`. What the adjacency graph and the region outlines use. |
-| `curriculum.py` | The `curriculum.yaml` schema and its checks: every state in exactly one region, regions numbered in ring order, entry, exit and hosts being walk nodes, ambiguous placements at their default, confusables naming known cards. |
+| `curriculum.py` | The `curriculum.yaml` schema and its checks: every state in exactly one region, regions numbered in ring order, entry, exit and hosts being walk nodes, confusables naming known cards. |
 | `adjacency.py` | The country adjacency graph: land edges (1 km buffer), sea edges (200 km), the `adjacency.yaml` edits, the cache and the report. |
 | `regions.py` | Each feature's ring region by the plan's rules and the `region` override check. |
 | `continents.py` | The 7 continents' geometry: member states' and territories' outlines by UN geoscheme, transcontinental states split on Natural Earth's line. A feature part `{layer: continent, select: {id: …}}` draws one. |
@@ -257,7 +257,8 @@ The scripts behind the `pd-dataset` and derived shapes are in `tools/`; dataset 
 | Shaded relief | `GRAY_50M_SR` split into a shadow layer (up to 55%) and a highlight layer (up to 35%), under the ocean and lakes |
 | Ocean and lakes | `#C3D5E2` |
 | Major rivers (scalerank ≤ 4) | `#9DB8CC`, 2 px, above borders so a border river still shows |
-| Country borders | `#8E887E`, 2 px; 3 px on Lake frames under 3,000 km (the rule also covers Pass and Corridor, now retired). Cut out of lakes and straits. |
+| Country borders | Recognised borders ([ADR 0008](adr/0008-state-list-borders-adjacency.md)). `#8E887E`, 2 px; 3 px on Lake frames under 3,000 km (the rule also covers Pass and Corridor, now retired). Cut out of lakes and straits. Lease and overlay limits (Baikonur, Guantánamo, buffer zones) are left out. |
+| Disputed borders | The same colour and width, dashed 8 px on, 6 px off: every line of NE's `boundary_lines_disputed_areas` except the reference lines and the stale Nagorno-Karabakh and 2014–22 Donbas lines, and the land-boundary segments the outline composition makes disputed or internal (Crimea's isthmus, Somaliland–Somalia, the Western Sahara berm, the Cyprus Green Line, the Golan line, Siachen–India; `render.DASHED_LAND`). On a country card, and on a capital or city card's context country, the borders inside that country are left out. |
 | State borders | `frame.admin1` only, NE 50m admin-1, 2 px |
 | Coastline | `#7F8A93`, 2.4 px |
 
@@ -275,7 +276,18 @@ The scripts behind the `pd-dataset` and derived shapes are in `tools/`; dataset 
 
 A strait or line shorter than 123 px also gets a ring. Seasonal climate systems are drawn for one season, named by the qualifier ("Wind system, July").
 
-**Political overlays** (`RenderSpec.country`, `dot`). A country, territory or dispute card draws its outline as the subject: a red outline with a white casing over a faint fill, ringed when small. A capital or city card draws its country as context (washed lighter, edged in a dark neutral, nothing red) with a 36 px red dot on top and no ring. `RenderSpec.outline` reserves the dashed territory and dispute outline for P4; until then it draws solid.
+**Political overlays** (`RenderSpec.country`, `dot`, `outline`).
+
+| Card | Drawn as |
+|---|---|
+| country | Its `mainland` outline as the subject: a 6 px red outline in a white casing over a 12% red fill. Neighbours stay neutral. |
+| territory, dispute | The same, with the red edge dashed (`outline: dashed`, 24 px on, 14 px off, over the solid white casing). |
+| capital, city | Its country as context (a 45% white wash, edged in a dark neutral, nothing red), and a 36 px red dot in a 3 px white casing with a dark hairline. No ring. |
+| continent | Its area (40% fill, 5.5 px outline) on the world map, whatever its size (`RenderSpec.world`). Antarctica is the band along the bottom. |
+
+**Rings on political cards.** A subject smaller than a 66 px disc, or under 100 px long, is ringed. Its parts within 160 px of each other share a ring, so a microstate gets one ring and a state scattered across an ocean (Kiribati, Micronesia, Tuvalu, the Marshall Islands) gets one round each island group, with the frame holding the whole spread. A large state's small remote islands are never ringed: the test is on the whole outline (the US card's Northwestern Hawaiian Islands show as specks, unringed; the Aleutians, not they, set its frame).
+
+**Close dots** ([ADR 0003](adr/0003-projection-and-framing.md)). A capital or city whose dot has another carded dot within 150 km (geodesic) gets a frame 1,000 km wide centred on its dot, with the locator inset, instead of its country's frame: Kyoto and Osaka, Dubai and Abu Dhabi, Vienna and Bratislava. `jobs.py` finds them over every card, so a filtered render frames them the same way, and `make render` lists them. The inset avoids the country if it can, else the dot.
 
 **Locator inset.** On regional frames under 8,000 km wide. The same 320 × 160 px plate carrée world map on every card, centred on 0° and never re-centred. It marks the frame as a `#333` box, or a 12 px dot when the box would be under 32 px or would cross 180°. Nothing in it is red. It sits bottom-left unless that covers the highlight, then moves to another corner.
 
@@ -286,7 +298,7 @@ A strait or line shorter than 123 px also gets a ring. Seasonal climate systems 
 - the source of the modules `render()` runs, `render.py`, `frame.py`, `ne.py` (layer loading and flow lines), `style.py` and `spec.py`, and `uv.lock`.
 - the sha256 pinned in `data/sources.lock` for each layer in `spec.BASEMAP_LAYERS` and for the relief raster. `render` first checks those files in `vendor/` against the lock.
 
-Renaming, re-tiering or retyping a card, editing `model.py`, `resolve.py`, `jobs.py` or a selector, or pinning a layer the basemap doesn't draw re-renders a card only if its resolved shape or spec changes. Editing any of the five hashed modules re-renders everything (about 3 s per map). `JOBS=1` (the default) renders in-process; `JOBS=n` runs n workers at about 1.5 GB each. Every layer the hashed modules read must be in `BASEMAP_LAYERS`; a test checks this. `render` deletes PNGs no active card uses.
+Renaming, re-tiering or retyping a card, editing `model.py`, `resolve.py`, `jobs.py` or a selector, or pinning a layer the basemap doesn't draw re-renders a card only if its resolved shape or spec changes. Editing any of the five hashed modules re-renders everything (about 3 s per map, under an hour for the ~610 cards). `JOBS=1` (the default) renders in-process; `JOBS=n` runs n workers at about 1.5 GB each. Every layer the hashed modules read must be in `BASEMAP_LAYERS`; a test checks this. `render` deletes PNGs no active card uses.
 
 ## Checks
 
@@ -350,7 +362,10 @@ The order uses the pair results that `check data` caches in `build/siblings.json
 
 | Target | Output |
 |---|---|
-| `make sheet [IDS="a b"]` | `build/sheet.png`, a grid of maps |
-| `make phone [IDS=...]` | `build/phone-NN.png`, each map 390 px wide |
+| `make sheet [IDS="a b"] [OUT=x.png]` | `build/sheet.png`, a grid of maps |
+| `make phone [IDS=...] [OUT=x.png]` | `build/phone-NN.png`, each map 390 px wide |
+| `make review` | `build/review-NN.png` per ring region and `build/review-orientation.png`: every card 390 px wide in study order, labelled with its position, key and answer |
 | `make pairs` | `build/pairs.log` (every pair), and `build/pairs-NN.png` with flagged, nested, allowed and near-limit pairs (IoU ≥ 0.5 or cover ≥ 0.7) side by side, 50 to a page |
-| `make cvd [IDS=...]` | `build/cvd.png`, each map beside deuteranopia and protanopia simulations |
+| `make cvd [IDS=...] [OUT=x.png]` | `build/cvd.png`, each map beside deuteranopia and protanopia simulations, after the contrast of each mark |
+
+`IDS` takes card keys or globs over them (`country:france`, `city:*`, `*:georgia`); a bare id is a feature.

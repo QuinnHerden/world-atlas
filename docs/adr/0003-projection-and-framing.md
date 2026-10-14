@@ -2,7 +2,7 @@
 
 Status: accepted, 2026-10-13. Amended on 2026-10-13 (`cf89ef5`) to note the retired passes, islands and Cumberland Gap. Still the current rule; the summary is in [architecture.md](../architecture.md#rendering). The inset's 160 × 80 px is at an 800 px-wide card (320 × 160 at 1600 px); the other sizes are at 1600 px as stated.
 
-To be amended by decision 6 of the [World Atlas plan](../world-atlas-plan.md#open-decisions), if confirmed: the **Minimum frame** rule. A capital or city card would get a tighter frame (at least 1,000 km wide) when another dot is within 150 km, below the 2,600 km minimum.
+Amended on 2026-10-14 (World Atlas P4) by the [World Atlas plan](../world-atlas-plan.md)'s decisions 6, 7 and 9: the close-dot exception to the **Minimum frame**, continents on the world map, and scattered states (see [Amendment: political cards](#amendment-political-cards-2026-10-14)).
 
 ## Context
 
@@ -52,3 +52,16 @@ The rule that widened a frame until it showed sea, a lake or a major river is dr
 - At 2,600 km, short straits and capes are found by their ring, with little local detail. This applied to passes and small islands too, until those cards were retired.
 - The Danish Straits and the Strait of Magellan fall under 24 px mean width at this zoom, so they draw as channel lines.
 - Lake Chad and the Hindu Kush/Pamirs/Karakoram trio keep a fixed `frame.centre`. Cumberland Gap (since retired) kept `admin1`, which draws state borders.
+
+## Amendment: political cards (2026-10-14)
+
+World Atlas adds country, territory, dispute, capital, city and continent cards. They keep the cylindrical, north-up rule and the 2,600 km minimum, with these exceptions and clarifications.
+
+**Close dots (decision 6).** A capital or city card whose dot has another carded dot (a capital or a city) within 150 km, measured on the ellipsoid, is framed on its own dot: 1,000 km wide, centred on the dot, with the locator inset. Without it the two dots sit about 40–150 px apart at their country's frame and read as one place; at 1,000 km they are 65–240 px apart. Every other dot card keeps its country's frame, at least 2,600 km wide. The rule is symmetric, so both cards of a pair get the tight frame (Kyoto and Osaka; Dubai and Abu Dhabi), and it covers capitals of neighbouring states (Vienna and Bratislava, Kinshasa and Brazzaville). The tight frame is centred on the dot alone, not on the pair, and it is the only frame narrower than 2,600 km. Kinshasa and Brazzaville, 5 km apart, still overlap at 1,000 km; their context countries and the Congo between them tell them apart.
+
+**Continents (decision 7).** A continent card is always drawn on the plate carrée world map, centred on its own longitude, whatever its size. Equal Earth was considered and rejected under this ADR: its meridians curve. Antarctica is the band along the bottom of the world map. A full-width polar band frame like the Arctic Ocean's was tried and rejected, because at Antarctica's centre parallel it shows only a third of the continent.
+
+**Scattered states (decision 9).** A small subject (under the 66 px disc or 100 px long) is ringed per group of parts within 160 px of each other, not with one ring round its bounds. The frame holds the whole spread at the usual 45% fill, so Kiribati shows its Gilbert, Phoenix and Line groups, each ringed. The test is on the whole outline, so a large state never rings its remote specks.
+
+**Microstates and small territories** keep the ring rule above: at 2,600 km, Vatican City, Monaco, Gibraltar and Macau are rings.
+

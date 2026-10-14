@@ -1,7 +1,13 @@
 """Contact sheets for visual QA, written to build/.
 
-`sheet [--out NAME.png] [keys…]`: a grid of maps, every map by default. A key is `kind:id`; a bare id means a feature.
-`sheet --phone [ids…]`: the same at phone size, PHONE_W px wide per map, PHONE_PER_PAGE to a page (build/phone-NN.png).
+Cards are named by key patterns: a key (`country:france`), a glob (`city:*`, `*:georgia`), or a bare id, which means a
+feature (`nile`). No pattern means every rendered card.
+
+`sheet [--out NAME.png] [patterns…]`: a grid of maps (build/sheet.png by default).
+`sheet --phone [--out NAME.png] [patterns…]`: the same at phone size, PHONE_W px wide per map, PHONE_PER_PAGE to a page
+(build/phone-NN.png), or all on one page with --out.
+`sheet --review`: one phone-size sheet per ring region, cards in study order (build/review-NN.png), and one for the
+orientation block (build/review-orientation.png), each map labelled with its study position, key and answer.
 `sheet --pairs`: flagged, nested, allowed and near-threshold sibling pairs side by side, labelled with their overlap
 scores, PAIRS_PER_PAGE to a page (build/pairs-NN.png); every pair goes to build/pairs.log.
 """
@@ -14,7 +20,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from geofeat.card import card_key, load_media
+from geofeat.card import card_key, load_media, match_keys
 from geofeat.model import BUILD, DECK, active, load_features
 from geofeat.pairs import find_pairs
 from geofeat.resolve import resolve
@@ -23,6 +29,7 @@ THUMB_W, THUMB_H, LABEL_H = 480, 270, 22
 OUT_NAME = re.compile(r"^[a-z0-9-]+\.png$")
 PAIRS_PER_PAGE = 50
 PHONE_W, PHONE_PER_PAGE = 390, 48  # a phone screen's width in CSS px
+REVIEW_COLUMNS = 4
 
 
 @cache
@@ -31,8 +38,8 @@ def _media() -> dict[str, str]:
 
 
 def card_image(key: str) -> Image.Image:
-    """The map of the card with this key (`kind:id`, or a bare feature id)."""
-    return Image.open(DECK / _media()[key if ":" in key else card_key("feature", key)]).convert("RGB")
+    """The map of the card with this key (`kind:id`)."""
+    return Image.open(DECK / _media()[key]).convert("RGB")
 
 
 def thumbnail(key: str, width: int = THUMB_W) -> Image.Image:
@@ -65,8 +72,35 @@ def pairs_sheet() -> None:
     for page, start in enumerate(range(0, len(shown), PAIRS_PER_PAGE), 1):
         cells = []
         for pair in shown[start:start + PAIRS_PER_PAGE]:
-            cells += [(str(pair), thumbnail(pair.a)), ("", thumbnail(pair.b))]
+            cells += [(str(pair), thumbnail(card_key("feature", pair.a))), ("", thumbnail(card_key("feature", pair.b)))]
         contact_sheet(cells, 2, BUILD / f"pairs-{page:02d}.png")
+
+
+def review_sheets() -> None:
+    """Every card at phone size, by region in study order: what the user signs off. Pass 2 cards follow pass 1."""
+    from geofeat.curriculum import load_curriculum
+    from geofeat.countries_ne import state_ids
+    from geofeat.order import frames
+    from geofeat.order.inputs import feature_frames, ordering
+
+    result = ordering()
+    regions = {k: f.region for k, f in feature_frames(frames.load(), load_curriculum(state_ids())).items()}
+    sheets: dict[str, list[tuple[str, str]]] = {}
+    for position, card in enumerate(result.cards, 1):
+        name = "orientation" if card.study_pass == "orientation" else f"{int(card.region or regions[card.key]):02d}"
+        sheets.setdefault(name, []).append((f"{position} {card.key}: {' / '.join(card.answer_lines)}", card.key))
+    for old in BUILD.glob("review-[0-9o]*.png"):
+        old.unlink()
+    for name, cells in sheets.items():  # one sheet's thumbnails in memory at a time
+        contact_sheet([(label, thumbnail(key, PHONE_W)) for label, key in cells], REVIEW_COLUMNS, BUILD / f"review-{name}.png")
+
+
+def out_name(args: list[str], default: str | None) -> tuple[str | None, list[str]]:
+    if args[:1] != ["--out"]:
+        return default, args
+    if len(args) < 2 or not OUT_NAME.fullmatch(args[1]):
+        sys.exit(f"--out must be a bare name like cluster.png, got {args[1:2]}")
+    return args[1], args[2:]
 
 
 def main() -> None:
@@ -74,21 +108,25 @@ def main() -> None:
     if args == ["--pairs"]:
         pairs_sheet()
         return
-    if args[:1] == ["--phone"]:
-        ids = args[1:] or sorted(_media())
+    if args == ["--review"]:
+        review_sheets()
+        return
+    phone = args[:1] == ["--phone"]
+    out, patterns = out_name(args[1:] if phone else args, None if phone else "sheet.png")
+    try:
+        keys = match_keys(patterns, sorted(_media())) if patterns else sorted(_media())
+    except ValueError as exc:
+        sys.exit(f"{exc} among the rendered cards")
+    if not phone:
+        contact_sheet([(k, thumbnail(k)) for k in keys], 4, BUILD / out)
+    elif out:
+        contact_sheet([(k, thumbnail(k, PHONE_W)) for k in keys], 4, BUILD / out)
+    else:
         for old in BUILD.glob("phone-*.png"):
             old.unlink()
-        for page, start in enumerate(range(0, len(ids), PHONE_PER_PAGE), 1):
-            cells = [(i, thumbnail(i, PHONE_W)) for i in ids[start:start + PHONE_PER_PAGE]]
-            contact_sheet(cells, 4, BUILD / f"phone-{page:02d}.png")
-        return
-    out = "sheet.png"
-    if args[:1] == ["--out"]:
-        out, args = args[1], args[2:]
-        if not OUT_NAME.fullmatch(out):
-            sys.exit(f"--out must be a bare name like cluster.png, got {out!r}")
-    ids = args or sorted(_media())
-    contact_sheet([(i, thumbnail(i)) for i in ids], 4, BUILD / out)
+        for page, start in enumerate(range(0, len(keys), PHONE_PER_PAGE), 1):
+            contact_sheet([(k, thumbnail(k, PHONE_W)) for k in keys[start:start + PHONE_PER_PAGE]], 4,
+                          BUILD / f"phone-{page:02d}.png")
 
 
 if __name__ == "__main__":

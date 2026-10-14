@@ -1,6 +1,12 @@
 PY := uv run python -m geofeat
 DECK := Geographic Features
+# Card key patterns for render, sheet, phone and cvd: keys or globs, e.g. IDS="country:france city:*"; a bare id is a
+# feature. `make render IDS=...` renders only those cards and deletes nothing (a pilot); unset, every card.
 IDS ?=
+# OUT=name.png: sheet, phone or cvd to one named file in build/.
+OUT ?=
+# Each pattern single-quoted, so the shell neither globs nor interprets it.
+QIDS = $(foreach p,$(IDS),'$(p)')
 # RELEASE=1: check-data (and everything after it) also fails while any note has an open verify item.
 RELEASE ?=
 $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
@@ -8,7 +14,7 @@ $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone pairs cvd guide verify-report clean
+.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone review pairs cvd guide verify-report clean
 
 all: build
 
@@ -42,9 +48,10 @@ walks: check-data
 	uv run python tools/walk_maps.py
 
 render: check-data
-	$(PY).jobs
+	$(PY).jobs $(QIDS)
 
 deck: render
+	@test -z "$(IDS)" || { echo "IDS renders only some cards; unset it for deck, check, build and all" >&2; exit 1; }
 	$(PY).deckgen
 
 check: deck
@@ -58,16 +65,20 @@ build: check
 	@ls dist/*.apkg
 
 sheet:
-	$(PY).sheet $(IDS)
+	$(PY).sheet $(if $(OUT),--out '$(OUT)') $(QIDS)
 
 phone:
-	$(PY).sheet --phone $(IDS)
+	$(PY).sheet --phone $(if $(OUT),--out '$(OUT)') $(QIDS)
+
+# One phone-size sheet per ring region, in study order (build/review-NN.png), and build/review-orientation.png.
+review:
+	$(PY).sheet --review
 
 pairs: render
 	$(PY).sheet --pairs
 
 cvd: render
-	$(PY).cvd $(IDS)
+	$(PY).cvd $(if $(OUT),--out '$(OUT)') $(QIDS)
 
 guide: render
 	uv run --group guide python -m geofeat.guide

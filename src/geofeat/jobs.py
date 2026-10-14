@@ -1,5 +1,6 @@
-"""Turn cards into render jobs, key them, and render the ones the cache doesn't hold. Nothing here changes pixels,
-so this module isn't in the cache key; render.py and the modules it draws with are."""
+"""Turn cards into render jobs, key them, and render the ones the cache doesn't hold. This module isn't in the cache
+key; render.py and the modules it draws with are. So anything decided here that changes pixels (the close-dot frame)
+must travel in the job's RenderSpec, which is keyed."""
 
 import gc
 import hashlib
@@ -7,7 +8,7 @@ import json
 import os
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import cache
 from pathlib import Path
 
@@ -16,7 +17,7 @@ import shapely
 from shapely.geometry.base import BaseGeometry
 
 import geofeat.ne as ne
-from geofeat.card import UNRENDERED_KINDS, Card, allow_unrendered
+from geofeat.card import Card, load_media, match_keys
 from geofeat.model import BUILD, DECK, LOCK, MEDIA_INDEX, ROOT, VENDOR
 from geofeat.render import render
 from geofeat.resolve import features_by_id
@@ -28,6 +29,7 @@ JOBS = int(os.environ.get("JOBS", "1"))  # each worker loads its own copy of the
 
 RENDERER = ("render.py", "frame.py", "ne.py", "style.py", "spec.py")  # what render() runs; hashed into every key
 GEOMETRY_DECIMALS = 7  # degrees: ~1 cm, far below a pixel, and above float noise between runs
+CLOSE_DOT_KM = 150  # a dot with another carded dot this close gets a close-dot frame (ADR 0003)
 
 
 @cache
@@ -110,6 +112,31 @@ def card_job(card: Card) -> RenderJob:
     return RenderJob(*card.render.resolve())
 
 
+def close_dots(dots: dict[str, tuple[float, float]], km: float = CLOSE_DOT_KM) -> dict[str, list[tuple[str, float]]]:
+    """Each dot (key -> lon, lat) with another within `km`: those others and their distances in km, nearest first."""
+    keys = sorted(dots)
+    lons, lats = np.array([dots[k] for k in keys], dtype=float).reshape(-1, 2).T
+    out = {}
+    for i, key in enumerate(keys):
+        _, _, metres = ne.GEOD.inv(np.full(len(keys), lons[i]), np.full(len(keys), lats[i]), lons, lats)
+        near = sorted((metres[j] / 1000, keys[j]) for j in range(len(keys)) if j != i and metres[j] <= km * 1000)
+        if near:
+            out[key] = [(other, d) for d, other in near]
+    return out
+
+
+def card_jobs(cards: list[Card], report: set[str] | None = None) -> dict[str, RenderJob]:
+    """Every card's job, by key. A dot with another carded dot within CLOSE_DOT_KM gets the close-dot frame, so this
+    takes every card, even when only some are rendered. Prints the close dots among `report` (default: all)."""
+    jobs = {c.key: card_job(c) for c in cards}
+    close = close_dots({key: job.spec.dot for key, job in jobs.items() if job.spec.dot})
+    for key, near in close.items():
+        jobs[key] = replace(jobs[key], spec=jobs[key].spec.model_copy(update={"close_dot": True}))
+        if report is None or key in report:
+            print(f"close dot: {key} ({', '.join(f'{other} {km:.0f} km' for other, km in near)})")
+    return jobs
+
+
 def _render_to_file(job: RenderJob) -> str:
     png = job.render()
     file = f"{hashlib.sha256(png).hexdigest()[:12]}.png"
@@ -125,13 +152,17 @@ def _write_json(path: Path, data: dict) -> None:
     tmp.replace(path)
 
 
-def render_cards(cards: list[Card]) -> dict[str, str]:
+def render_cards(cards: list[Card], only: list[str] | None = None) -> dict[str, str]:
     """Render what the cache lacks, write media.json (card key -> PNG) and drop the PNGs and cache entries no card
-    uses. Everything is keyed by Card.key, so two kinds may share an id, and the cleanup spans every kind."""
+    uses. Everything is keyed by Card.key, so two kinds may share an id, and the cleanup spans every kind.
+
+    `only` (card keys) renders just those cards and adds them to media.json, deleting nothing: a pilot or a fix."""
     DECK.mkdir(exist_ok=True)
     BUILD.mkdir(exist_ok=True)
     cache_ = json.loads(CACHE.read_text()) if CACHE.exists() else {}
-    jobs = {c.key: card_job(c) for c in cards}
+    jobs = card_jobs(cards, None if only is None else set(only))
+    if only is not None:
+        jobs = {key: jobs[key] for key in only}
     keys = {key: job.key() for key, job in jobs.items()}
     todo = [key for key in jobs if not (keys[key] in cache_ and (DECK / cache_[keys[key]]).exists())]
 
@@ -159,6 +190,10 @@ def render_cards(cards: list[Card]) -> dict[str, str]:
                 raise
 
     media = {key: cache_[keys[key]] for key in keys}
+    if only is not None:
+        _write_json(MEDIA_INDEX, load_media() | media)
+        print(f"rendered {len(todo)} of {len(keys)} selected cards")
+        return media
     _write_json(MEDIA_INDEX, media)
     for stale in {p.name for p in DECK.glob("*.png")} - set(media.values()):
         (DECK / stale).unlink()
@@ -168,14 +203,16 @@ def render_cards(cards: list[Card]) -> dict[str, str]:
 
 
 def main() -> None:
+    """`jobs [pattern…]`: render every active card, or only the cards whose keys match (`country:france`, `city:*`)."""
     _check_vendor()
     cards = all_cards()
-    if allow_unrendered():
-        skipped = [c for c in cards if c.kind in UNRENDERED_KINDS]
-        cards = [c for c in cards if c.kind not in UNRENDERED_KINDS]
-        print(f"WARNING: ALLOW_UNRENDERED=1: not rendering {len(skipped)} "
-              f"{', '.join(sorted({c.kind for c in skipped}))} cards (P4)", file=sys.stderr)
-    render_cards(cards)
+    only = None
+    if patterns := sys.argv[1:]:
+        try:
+            only = match_keys(patterns, [c.key for c in cards])
+        except ValueError as exc:
+            sys.exit(str(exc))
+    render_cards(cards, only)
 
 
 if __name__ == "__main__":

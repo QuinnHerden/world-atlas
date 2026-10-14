@@ -149,7 +149,7 @@ class CardTextTest(unittest.TestCase):
         self.assertEqual((spec["capital:alpha"].country, spec["capital:alpha"].dot), ("context", (5.0, 5.0)))
         self.assertEqual((spec["city:alpha-port"].country, spec["city:alpha-port"].dot), ("context", (1.0, 1.0)))
         for key in ("territory:gamma", "dispute:delta"):
-            self.assertEqual((spec[key].country, spec[key].outline), ("subject", None))  # dashed waits for P4
+            self.assertEqual((spec[key].country, spec[key].outline), ("subject", "dashed"))
 
     def test_dot_cards_draw_their_country(self) -> None:
         with data(countries(), territories(), cities_data()):

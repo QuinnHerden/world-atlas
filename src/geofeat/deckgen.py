@@ -1,11 +1,10 @@
 """Write the deck markdown for ankc: one file, every card in the one deck, in the curriculum order (geofeat.order)."""
 
 import html
-import sys
 
 import geofeat.positions as positions
 from geofeat.ankc import writes_pos
-from geofeat.card import UNRENDERED_KINDS, Card, allow_unrendered, load_media
+from geofeat.card import Card, load_media
 from geofeat.model import DECK, ROOT_DECK, Feature, active, load_features
 from geofeat.order import OrderError, Siblings, dependencies, report, study_order
 from geofeat.order.inputs import ideal_order, ordering  # noqa: F401  ideal_order re-exported for check.py
@@ -27,16 +26,9 @@ def ordered(features: list[Feature], siblings: Siblings) -> list[Feature]:
     return study_order(features, dependencies(features, siblings), {frozenset(pair) for pair in siblings.close})
 
 
-def skip_unrendered(cards: list[Card], media: dict[str, str]) -> list[Card]:
-    """`cards` less those without a map: allowed, with a warning, for UNRENDERED_KINDS under ALLOW_UNRENDERED=1."""
-    missing = [c for c in cards if c.key not in media]
-    if bad := [c.key for c in missing if c.kind not in UNRENDERED_KINDS or not allow_unrendered()]:
-        raise SystemExit(f"cards not rendered (run `make render`; ALLOW_UNRENDERED=1 skips only "
-                         f"{', '.join(sorted(UNRENDERED_KINDS))} cards until P4): {bad}")
-    if missing:
-        print(f"WARNING: ALLOW_UNRENDERED=1: {len(missing)} unrendered cards left out of the deck "
-              f"({', '.join(sorted({c.kind for c in missing}))}); not a releasable build", file=sys.stderr)
-    return [c for c in cards if c.key in media]
+def require_rendered(cards: list[Card], media: dict[str, str]) -> None:
+    if missing := [c.key for c in cards if c.key not in media or not (DECK / media[c.key]).exists()]:
+        raise SystemExit(f"cards not rendered (run `make render`): {missing}")
 
 
 def main() -> None:
@@ -54,14 +46,15 @@ def main() -> None:
     if not lock.draft and not writes_pos():
         raise SystemExit(f"{positions.LOCK_FILE.name} is frozen (draft: false), so ankc 0.6+ must write it")
     pos = lock.positions if writes_pos() else {}
-    cards = skip_unrendered(result.cards, media)
+    cards = result.cards
+    require_rendered(cards, media)
 
     DECK.mkdir(exist_ok=True)
     for old in DECK.glob("*.md"):
         old.unlink()
     header = f"---\ndeck: \"{ROOT_DECK}\"\n---\n"
     DECK_FILE.write_text(header + "\n".join(card(c, media[c.key], pos.get(c.uid)) for c in cards))
-    print(f"wrote {len(cards)} of {len(result.cards)} cards to {DECK_FILE.name}" + (" with [^pos]" if pos else ""))
+    print(f"wrote {len(cards)} cards to {DECK_FILE.name}" + (" with [^pos]" if pos else ""))
 
 
 if __name__ == "__main__":

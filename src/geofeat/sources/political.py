@@ -29,8 +29,8 @@ def dot_spec() -> RenderSpec:
 
 
 def outline_spec() -> RenderSpec:
-    """Territories and disputes: the subject outline. `outline: dashed` is theirs once P4 draws it; solid until then."""
-    return RenderSpec(style="area", country="subject")
+    """Territories and disputes: the subject outline, dashed."""
+    return RenderSpec(style="area", country="subject", outline="dashed")
 
 
 def tags(kind: Kind, id: str, tier: int, category: str, region: int) -> tuple[str, ...]:

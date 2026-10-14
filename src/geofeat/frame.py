@@ -22,10 +22,13 @@ GLOBAL_SPAN_M = 10_000_000  # wider than this goes on a world map
 MIN_FRAME_M = 2_600_000
 EARTH_R_M = 6_371_008
 INSET_BELOW_M = 8_000_000  # wider frames show whole continents, and their box on the world inset wraps
+# A capital or city with another carded dot this close gets a frame of its own, this wide, centred on it (ADR 0003)
+CLOSE_DOT_FRAME_M = 1_000_000
 
 
 class Framed(Protocol):
-    """A Feature or a RenderSpec: anything carrying frame options."""
+    """A Feature or a RenderSpec: anything carrying frame options. A RenderSpec may also ask for the world map
+    (`world`) or a close-dot frame (`close_dot`, with its `dot`)."""
 
     @property
     def frame(self) -> FrameOptions: ...
@@ -85,11 +88,16 @@ def _fit(geometry: BaseGeometry, projection: ccrs.Projection, at: tuple[float, f
 def frame(feature: Framed, geometry: BaseGeometry) -> Frame:
     """Fit the highlight in an equirectangular map round its centre (or `frame.centre`), then redraw that frame with
     the projection centred on it, true to scale along its centre parallel, and refit. A highlight wider than
-    GLOBAL_SPAN_M, or one the frame can't hold, goes on a world map."""
+    GLOBAL_SPAN_M, or one the frame can't hold, goes on a world map, as does a spec asking for it (continents). A
+    close-dot spec gets CLOSE_DOT_FRAME_M round its dot instead."""
+    world = Frame(Equirectangular(centre(geometry)[0], 0), None, inset=False)
+    if getattr(feature, "world", False):
+        return world
+    if getattr(feature, "close_dot", False):
+        return _close_dot(*feature.dot)
     fixed = feature.frame.centre
     lon, lat = fixed or centre(geometry)
     min_w = max(MIN_FRAME_M, (feature.frame.min_span_km or 0) * 1000)
-    world = Frame(Equirectangular(centre(geometry)[0], 0), None, inset=False)
     first = Equirectangular(lon, lat)
     x0, y0, x1, y1 = project(geometry, first).bounds
     if not math.isfinite(x1 - x0 + y1 - y0) or max(x1 - x0, y1 - y0) > GLOBAL_SPAN_M:
@@ -107,6 +115,15 @@ def frame(feature: Framed, geometry: BaseGeometry) -> Frame:
     if not box(fx0, fy0, fx1, fy1).buffer(frame_w * 1e-6).contains(project(geometry, projection).envelope):
         return world
     return Frame(projection, extent, inset=frame_w < INSET_BELOW_M)
+
+
+def _close_dot(lon: float, lat: float) -> Frame:
+    """CLOSE_DOT_FRAME_M wide, centred on the dot (moved back from a pole), with the inset."""
+    projection = Equirectangular(lon, lat)
+    half_w, half_h = CLOSE_DOT_FRAME_M / 2, CLOSE_DOT_FRAME_M / ASPECT / 2
+    pole_y = projection.y_limits[1]
+    cy = min(max(_to_map(projection, lon, lat)[1], -pole_y + half_h), pole_y - half_h)
+    return Frame(projection, (-half_w, half_w, cy - half_h, cy + half_h), inset=True)
 
 
 def _to_map(projection: ccrs.Projection, lon: float, lat: float) -> tuple[float, float]:

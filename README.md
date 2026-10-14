@@ -12,7 +12,7 @@ Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. 
 
 Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x or 0.6.x (0.6.0 is on PyPI as `ankcompiler`) and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
 
-**World Atlas in progress.** `main` also holds the country, territory and city data. The curriculum order engine (P3) orders every card, but only feature cards have maps until P4. Until then, `make deck ALLOW_UNRENDERED=1` renders and writes the feature cards only, with a warning, while `make positions` still places every card. `make check` and `make build` still fail on the unrendered cards, so `make all` doesn't complete on `main`.
+**World Atlas in progress.** `main` also holds the country, territory, city and continent cards, each with its map; the curriculum order engine (P3) orders them all.
 
 ```sh
 make ids        # mint uids for new entries, then commit features.yaml
@@ -74,7 +74,7 @@ Builds before the flat deck put cards in `Geographic Features::<Category>::Tier 
 
 **Retiring a card.** Set `retired: true` and keep the rest of the entry. After un-retiring one, run `make check-data`.
 
-**Reviewing maps.** `make sheet` writes a grid of every map to `build/sheet.png`; `make phone` writes each map 390 px wide, as on a phone; `make pairs` shows neighbouring features side by side; `make cvd` simulates colour blindness. Each except `pairs` takes `IDS="bosporus kerch-strait"` to limit it to the maps you name.
+**Reviewing maps.** `make sheet` writes a grid of every map to `build/sheet.png`; `make phone` writes each map 390 px wide, as on a phone; `make pairs` shows neighbouring features side by side; `make cvd` simulates colour blindness. Each except `pairs` takes `IDS="bosporus country:france city:*"` to limit it to the maps you name (a bare id is a feature); `make review` writes one phone-size sheet per region in study order.
 
 ## Retired cards
 

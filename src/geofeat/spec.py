@@ -14,6 +14,7 @@ CLOSE_UP_TYPES = frozenset({"Pass", "Corridor", "Lake"})  # borders are a main l
 BASEMAP_LAYERS = frozenset({
     "10m_land", "50m_land", "10m_ocean", "50m_ocean", "50m_lakes", "50m_rivers_lake_centerlines",
     "10m_admin_0_boundary_lines_land", "50m_admin_0_boundary_lines_land", "50m_admin_1_states_provinces_lines",
+    "10m_admin_0_boundary_lines_disputed_areas",
 })
 RELIEF = "GRAY_50M_SR.tif"
 
@@ -23,8 +24,11 @@ class RenderSpec(BaseModel):
     `frame.context` and `frame.former` name, are resolved by the caller and passed to `render()` alongside.
 
     Overlays: `country` draws the geometry as a country (the subject, outlined in red, or faint context) in place of
-    the style's highlight; `dot` (lon, lat) marks a city on top. `outline` is reserved for territory and dispute
-    outlines and isn't drawn yet.
+    the style's highlight; `dot` (lon, lat) marks a city on top. `outline: dashed` draws a subject's red edge dashed
+    (territories and disputes); a state's overlay (`outline` unset) also clears the basemap's borders inside it.
+
+    Framing: `world` puts the card on the world map whatever its size (continents); `close_dot` frames the dot
+    itself, tighter than the minimum frame, because another carded dot lies close by (ADR 0003's close-dot rule).
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -35,7 +39,9 @@ class RenderSpec(BaseModel):
     close_up_borders: bool = False  # heavier country borders when the frame is a close-up
     country: Literal["subject", "context"] | None = None
     dot: tuple[float, float] | None = None
-    outline: Literal["solid", "dashed"] | None = None
+    outline: Literal["dashed"] | None = None
+    world: bool = False
+    close_dot: bool = False
 
     @classmethod
     def from_feature(cls, feature: Feature) -> "RenderSpec":
@@ -45,4 +51,5 @@ class RenderSpec(BaseModel):
             frame=feature.frame.model_copy(update={"context": [], "former": None}),  # resolved into the job
             fill_alpha=WATER_AREA_ALPHA if water else AREA_ALPHA,
             close_up_borders=feature.type in CLOSE_UP_TYPES,
+            world=feature.type == "Continent",
         )
