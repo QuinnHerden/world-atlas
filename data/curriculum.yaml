@@ -62,6 +62,7 @@ regions:
     countries: [portugal, spain, andorra, france, monaco, belgium, luxembourg, netherlands, united-kingdom, ireland]
     pockets: {andorra: spain, monaco: france}
     territories: {gibraltar: united-kingdom, isle-of-man: united-kingdom, jersey: united-kingdom, guernsey: united-kingdom}
+    walk: [portugal, spain, france, luxembourg, belgium, netherlands, united-kingdom, ireland]
 
   - number: 2
     slug: nordic-baltic
@@ -71,6 +72,7 @@ regions:
     way_in: North Sea
     countries: [iceland, norway, sweden, denmark, finland, estonia, latvia, lithuania]
     territories: {faroe-islands: denmark, svalbard: norway}
+    walk: [iceland, norway, denmark, sweden, finland, estonia, latvia, lithuania]
 
   - number: 3
     slug: central-europe-italy
@@ -82,6 +84,7 @@ regions:
     countries: [poland, germany, czechia, austria, switzerland, liechtenstein, italy, san-marino, vatican, malta,
                 slovenia, hungary, slovakia]
     pockets: {liechtenstein: switzerland, san-marino: italy, vatican: italy, malta: italy}
+    walk: [poland, slovakia, czechia, germany, switzerland, austria, italy, slovenia, hungary]
 
   - number: 4
     slug: balkans
@@ -93,6 +96,7 @@ regions:
     countries: [croatia, bosnia-and-herzegovina, serbia, kosovo, montenegro, albania, north-macedonia, greece,
                 bulgaria, romania]
     pockets: {kosovo: serbia}
+    walk: [croatia, bosnia-and-herzegovina, albania, greece, montenegro, bulgaria, north-macedonia, serbia, romania]
 
   - number: 5
     slug: eastern-europe
@@ -102,6 +106,7 @@ regions:
     way_in: Romania → Moldova
     countries: [moldova, ukraine, belarus, russia]
     disputes: {crimea: ukraine, transnistria: moldova}
+    walk: [moldova, ukraine, belarus, russia]
 
   - number: 6
     slug: caucasus-anatolia
@@ -112,6 +117,7 @@ regions:
     way_in: Russia → Georgia
     countries: [georgia, azerbaijan, armenia, turkey, cyprus]
     disputes: {abkhazia: georgia, south-ossetia: georgia, northern-cyprus: cyprus}
+    walk: [georgia, armenia, azerbaijan, turkey, cyprus]
 
   - number: 7
     slug: levant-mesopotamia
@@ -123,6 +129,7 @@ regions:
     countries: [syria, lebanon, israel, palestine, jordan, iraq]
     pockets: {palestine: israel}
     disputes: {golan-heights: syria}
+    walk: [syria, israel, lebanon, jordan, iraq]
 
   - number: 8
     slug: arabian-peninsula
@@ -132,6 +139,7 @@ regions:
     opener: arabian-peninsula
     way_in: Iraq → Kuwait
     countries: [kuwait, saudi-arabia, bahrain, qatar, united-arab-emirates, oman, yemen]
+    walk: [kuwait, saudi-arabia, bahrain, qatar, united-arab-emirates, oman, yemen]
 
   - number: 9
     slug: horn-east-africa
@@ -141,6 +149,7 @@ regions:
     way_in: Bab el-Mandeb (Yemen → Djibouti)
     countries: [djibouti, eritrea, ethiopia, somalia, kenya, tanzania, burundi, rwanda, uganda, south-sudan, sudan]
     disputes: {somaliland: somalia}
+    walk: [djibouti, eritrea, somalia, ethiopia, kenya, south-sudan, uganda, burundi, rwanda, tanzania, sudan]
 
   - number: 10
     slug: north-africa
@@ -150,6 +159,7 @@ regions:
     way_in: Sudan → Egypt, following the Nile downstream
     countries: [egypt, libya, tunisia, algeria, morocco]
     disputes: {western-sahara: morocco}
+    walk: [egypt, libya, tunisia, algeria, morocco]
 
   - number: 11
     slug: west-africa
@@ -159,6 +169,8 @@ regions:
     way_in: Morocco → Western Sahara → Mauritania
     countries: [mauritania, senegal, gambia, cabo-verde, guinea-bissau, guinea, sierra-leone, liberia, cote-divoire,
                 mali, burkina-faso, ghana, togo, benin, nigeria, niger]
+    walk: [mauritania, senegal, cabo-verde, guinea-bissau, gambia, guinea, sierra-leone, liberia, cote-divoire, mali,
+           burkina-faso, ghana, benin, nigeria, togo, niger]
 
   - number: 12
     slug: central-africa
@@ -168,6 +180,7 @@ regions:
     way_in: Niger → Chad
     countries: [chad, cameroon, central-african-republic, equatorial-guinea, sao-tome-and-principe, gabon, congo,
                 dr-congo]
+    walk: [chad, central-african-republic, cameroon, congo, equatorial-guinea, sao-tome-and-principe, gabon, dr-congo]
 
   - number: 13
     slug: southern-africa-indian-ocean
@@ -179,6 +192,8 @@ regions:
                 madagascar, comoros, mauritius, seychelles]
     pockets: {lesotho: south-africa, eswatini: south-africa}
     territories: {reunion: mauritius}
+    walk: [angola, botswana, namibia, south-africa, zimbabwe, malawi, zambia, mozambique, comoros, madagascar,
+           seychelles, mauritius]
 
   - number: 14
     slug: south-asia
@@ -189,6 +204,7 @@ regions:
     countries: [maldives, sri-lanka, india, bangladesh, bhutan, nepal, pakistan]
     territories: {british-indian-ocean-territory: maldives}
     disputes: {kashmir-indian-administered: india, kashmir-pakistani-administered: pakistan, arunachal-pradesh: india}
+    walk: [maldives, india, sri-lanka, bangladesh, bhutan, nepal, pakistan]
 
   - number: 15
     slug: iran-central-asia
@@ -197,6 +213,7 @@ regions:
     exit: kazakhstan
     way_in: Pakistan → Afghanistan
     countries: [afghanistan, iran, turkmenistan, uzbekistan, tajikistan, kyrgyzstan, kazakhstan]
+    walk: [afghanistan, iran, turkmenistan, tajikistan, kyrgyzstan, uzbekistan, kazakhstan]
 
   - number: 16
     slug: east-asia
@@ -207,7 +224,8 @@ regions:
     way_in: Kazakhstan → China
     countries: [china, mongolia, north-korea, south-korea, japan, taiwan]
     territories: {hong-kong: china, macau: china}
-    disputes: {aksai-chin: china, kuril-islands: japan}  # kuril-islands: see ambiguous
+    disputes: {aksai-chin: china, kuril-islands: japan}  # kuril-islands: decided, see placements below
+    walk: [china, mongolia, north-korea, south-korea, japan, taiwan]
 
   - number: 17
     slug: southeast-asia
@@ -219,6 +237,7 @@ regions:
     countries: [philippines, malaysia, brunei, singapore, thailand, myanmar, laos, vietnam, cambodia, indonesia,
                 timor-leste]
     disputes: {spratly-islands: philippines}
+    walk: [philippines, indonesia, brunei, malaysia, singapore, thailand, cambodia, laos, myanmar, vietnam, timor-leste]
 
   - number: 18
     slug: oceania
@@ -229,6 +248,8 @@ regions:
     countries: [australia, papua-new-guinea, solomon-islands, vanuatu, new-zealand, fiji, tonga, samoa, tuvalu,
                 kiribati, nauru, marshall-islands, micronesia, palau]
     territories: {guam: micronesia, new-caledonia: vanuatu, french-polynesia: kiribati}
+    walk: [australia, new-zealand, papua-new-guinea, micronesia, palau, solomon-islands, vanuatu, fiji, tonga, samoa,
+           tuvalu, kiribati, marshall-islands, nauru]
 
   - number: 19
     slug: north-central-america
@@ -237,7 +258,8 @@ regions:
     exit: panama
     way_in: Pacific crossing, the one long seam
     countries: [united-states, canada, mexico, guatemala, belize, el-salvador, honduras, nicaragua, costa-rica, panama]
-    territories: {greenland: canada, bermuda: united-states}  # both: see ambiguous
+    territories: {greenland: canada, bermuda: united-states}  # both: decided, see placements below
+    walk: [united-states, canada, mexico, belize, guatemala, el-salvador, honduras, nicaragua, costa-rica, panama]
 
   - number: 20
     slug: south-america
@@ -249,6 +271,7 @@ regions:
                 venezuela]
     territories: {falkland-islands: argentina, french-guiana: brazil, aruba: venezuela, curacao: venezuela}
     disputes: {essequibo: guyana}
+    walk: [colombia, ecuador, peru, chile, bolivia, paraguay, argentina, uruguay, brazil, suriname, guyana, venezuela]
 
   - number: 21
     slug: caribbean
@@ -259,21 +282,20 @@ regions:
     countries: [trinidad-and-tobago, grenada, saint-vincent-and-the-grenadines, barbados, saint-lucia, dominica,
                 antigua-and-barbuda, saint-kitts-and-nevis, dominican-republic, haiti, jamaica, cuba, bahamas]
     territories: {puerto-rico: dominican-republic, cayman-islands: cuba, guadeloupe: dominica, martinique: saint-lucia}
+    walk: [trinidad-and-tobago, grenada, saint-vincent-and-the-grenadines, barbados, saint-lucia, dominica,
+           antigua-and-barbuda, saint-kitts-and-nevis, dominican-republic, haiti, jamaica, cuba, bahamas]
 
-# Placements waiting for a PM/user decision (decision 5). Each card sits at its default above until decided.
-ambiguous:
-  - card: greenland
-    default: {region: north-central-america, host: canada}
-    alternative: {region: nordic-baltic, host: denmark}
-    reason: "geography (North American plate, 19 km from Canada) against sovereignty (Kingdom of Denmark, beside Iceland and the Faroes)"
-  - card: kuril-islands
-    default: {region: east-asia, host: japan}
-    alternative: {region: eastern-europe, host: russia}
-    reason: "geography (the southern four lie off Hokkaido; the dispute is Japan's claim) against the administering power, Russia"
-  - card: bermuda
-    default: {region: north-central-america, host: united-states}
-    alternative: {region: caribbean, host: bahamas}
-    reason: "geography (nearest state the United States, about 1,040 km) against the ring (on the Bahamas → Atlantic → Iberia exit, with the hurricane belt and the Gulf Stream)"
+# Placements decided by the PM and user (decision 5). Each card sits at the default above; the alternatives are kept
+# here for the record.
+# - greenland: north-central-america, host canada (alternative nordic-baltic, host denmark). Geography (North American
+#   plate, 19 km from Canada) against sovereignty (Kingdom of Denmark, beside Iceland and the Faroes).
+# - kuril-islands: east-asia, host japan (alternative eastern-europe, host russia). Geography (the southern four lie off
+#   Hokkaido; the dispute is Japan's claim) against the administering power, Russia.
+# - bermuda: north-central-america, host united-states (alternative caribbean, host bahamas). Geography (nearest state
+#   the United States, about 1,040 km) against the ring (on the Bahamas → Atlantic → Iberia exit, with the hurricane
+#   belt and the Gulf Stream).
+# - aruba, curacao: south-america, host venezuela (alternative caribbean, no host chosen). Geography (on the South
+#   American shelf, just off the Venezuelan coast) against the Caribbean region they are usually grouped with.
 
 # Curated country look-alikes (ADR 0009). The 3–10 card window applies to the members of a set that share a region; it
 # is waived across regions, so the cross-region sets (austria/australia, iran/iraq, mali/malawi, and equatorial-guinea
