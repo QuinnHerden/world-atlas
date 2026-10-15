@@ -43,8 +43,8 @@ class RenderRef(Frozen):
     spec: RenderSpec
     geometry: Callable[[], Geometry]
     dot: Callable[[], tuple[float, float]] | None = None  # a city's point, resolved with the geometry into spec.dot
-    # A political subject's neighbourhood (geofeat.framing), resolved into spec.framing and the neighbour shapes
-    neighbours: Callable[[BaseGeometry], tuple[str, tuple[BaseGeometry, ...]]] | None = None
+    # A political subject's region (geofeat.framing), resolved into spec.framing and the region's member points
+    region: Callable[[], tuple[str, BaseGeometry]] | None = None
 
     def resolve(self) -> tuple[RenderSpec, BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None]:
         """What render() takes: the spec, with its dot filled in, and the geometry."""
@@ -52,13 +52,13 @@ class RenderRef(Frozen):
         return spec, *self.geometry()
 
     def resolve_framed(self) -> tuple[RenderSpec, BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None,
-                                      tuple[BaseGeometry, ...]]:
-        """resolve(), plus the neighbours a political subject is framed on, with spec.framing filled in."""
+                                      BaseGeometry | None]:
+        """resolve(), plus the region a political subject is framed on, with spec.framing filled in."""
         spec, geometry, context, former = self.resolve()
-        if self.neighbours is None:
-            return spec, geometry, context, former, ()
-        framing, neighbours = self.neighbours(geometry)
-        return spec.model_copy(update={"framing": framing}), geometry, context, former, neighbours
+        if self.region is None:
+            return spec, geometry, context, former, None
+        framing, region = self.region()
+        return spec.model_copy(update={"framing": framing}), geometry, context, former, region
 
 
 class Card(Frozen):

@@ -29,7 +29,9 @@ class RenderSpec(BaseModel):
 
     Framing: `world` puts the card on the world map whatever its size (continents); `close_dot` frames the dot
     itself, tighter than the minimum frame, because another carded dot lies close by (ADR 0003's close-dot rule);
-    `framing` fits a political subject's frame to its neighbourhood, with a detail inset when it is small.
+    `framing` fits a political subject's frame to its curriculum region, with a detail inset when it is small; on a
+    capital or city card (framing.CITY_REGION_FRAMING) it frames the dot on its host's region, a close dot with an
+    inset round it in place of the 1,000 km close-dot frame.
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -43,8 +45,8 @@ class RenderSpec(BaseModel):
     outline: Literal["dashed"] | None = None
     world: bool = False
     close_dot: bool = False
-    # A country, territory or dispute subject: framed on its `neighbours`, or on the nearest landmass (`remote`)
-    framing: Literal["neighbours", "remote"] | None = None
+    # A country, territory or dispute subject: framed on its curriculum region, or on an Oceania sub-frame (`pacific`)
+    framing: Literal["region", "pacific"] | None = None
 
     @classmethod
     def from_feature(cls, feature: Feature) -> "RenderSpec":

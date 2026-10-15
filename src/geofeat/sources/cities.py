@@ -6,7 +6,7 @@ from shapely.errors import GEOSException
 from shapely.geometry import Point
 from shapely.geometry.base import BaseGeometry
 
-from geofeat import regions
+from geofeat import framing, regions
 from geofeat.card import PASS_ORDER, Card, Geometry, Note, RenderRef, Text, card_key, study_pass
 from geofeat.model import ROOT, Strict, Verify, active, load_features, orientation
 from geofeat.resolve import features_by_id, resolve
@@ -48,7 +48,8 @@ class City(Strict):
             answer_lines=(answer(self.name, self.alt_names), country.name),
             tags=tags("city", self.id, TIER[self.tier], "cities", country.region), region=f"{country.region:02d}",
             tier=TIER[self.tier], anchor=card_key("feature", self.anchor) if self.anchor else None, parents=parents,
-            note=self.note, render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(self.point())),
+            note=self.note, render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(self.point()),
+                                                       region=framing.city_region(country.id)),
         )]
 
 

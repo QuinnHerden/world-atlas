@@ -1,133 +1,92 @@
-"""Each country, territory and dispute card's neighbourhood, which frame.py fits its regional frame to: its land
-neighbours; an island's sea neighbours within 200 km; or, for a subject with neither, the nearest recognisable
-landmass. Read when jobs are built; the geometries it returns travel in the render job, so they are in its key."""
+"""Each country, territory and dispute card's region, which frame.py frames it on: the curriculum region it is studied
+in (data/curriculum.yaml), or for Oceania, which no single frame holds, one of three Pacific sub-frames. A region is
+passed as the hull points of its members' main bodies, so overseas parts and outlying islands don't stretch it. Giant
+members (frame.GIANT_FRAME_M), which keep their v2.0 frames, and outlying members (the Falklands) don't count. Read when jobs are
+built; the points travel in the render job, so they are in its key."""
 
-import math
+from collections.abc import Callable
 from functools import cache
-from typing import Literal
 
 import numpy as np
-import shapely
-from shapely.geometry import box
+from pyproj import Transformer
+from shapely.geometry import MultiPoint
 from shapely.geometry.base import BaseGeometry
-from shapely.ops import unary_union
 
-from geofeat import adjacency
-from geofeat.countries_ne import outlines
-from geofeat.frame import centre
+from geofeat.frame import ASPECT, FILL, GIANT_FRAME_M, Equirectangular, centre, main_group, project
 from geofeat.ne import GEOD
+from geofeat.polities import load_political
 
-Framing = Literal["neighbours", "remote"]
-Neighbourhood = tuple[Framing, tuple[BaseGeometry, ...]]
+Framing = tuple[str, BaseGeometry]
 
-WINDOW_KM = 3000  # neighbours are cut to this far round the subject: France's overseas departments don't count
-LANDMASS_KM2 = 9000  # a remote subject's frame reaches the nearest land part at least this big (Bougainville, Jamaica)
-LANDMASS_VIEW_KM = 400  # and shows this much of it round its nearest point
-SIMPLIFY_DEG = 0.01  # ~1 km: under a pixel at any political frame, and it keeps the jobs small in memory
-
-
-def _window(geometry: BaseGeometry, km: float, clamp: bool = True) -> BaseGeometry:
-    x0, y0, x1, y1 = geometry.bounds
-    dlat = km / adjacency.KM_PER_DEG
-    dlon = min(dlat / math.cos(math.radians(min(80.0, max(abs(y0), abs(y1)) + dlat))), 180.0)
-    if not clamp:
-        return box(x0 - dlon, y0 - dlat, x1 + dlon, y1 + dlat)
-    return box(max(x0 - dlon, -180), max(y0 - dlat, -90), min(x1 + dlon, 180), min(y1 + dlat, 90))
-
-
-def _windows(subject: BaseGeometry, km: float) -> list[BaseGeometry]:
-    """The box `km` round the subject (unwrapped about its centre), cut at ±180° and each piece wrapped back into
-    range, so a window across the antimeridian keeps both sides."""
-    lon = centre(subject)[0]
-    unwrapped = shapely.transform(subject, lambda c: np.column_stack([c[:, 0] - 360 * np.round((c[:, 0] - lon) / 360), c[:, 1]]))
-    reach = _window(unwrapped, km, clamp=False)
-    world = box(-180, -90, 180, 90)
-    return [w for shift in (0.0, 360.0, -360.0)
-            if not (w := shapely.transform(reach, lambda c: c + [shift, 0.0]).intersection(world)).is_empty]
-
-
-def _clip(geometry: BaseGeometry, windows: list[BaseGeometry]) -> BaseGeometry:
-    return unary_union([geometry.intersection(w) for w in windows])
-
-
-def _near(subject: BaseGeometry, geometries: list[BaseGeometry]) -> tuple[BaseGeometry, ...]:
-    windows = _windows(subject, WINDOW_KM)
-    return tuple(shapely.simplify(c, SIMPLIFY_DEG) for g in geometries if not (c := _clip(g, windows)).is_empty)
+# Capitals and cities on their host's region frame: a proposal under review. False reverts them to v2.0 framing
+# (their host country's frame, or the 1,000 km close-dot frame) without touching the political cards.
+CITY_REGION_FRAMING = True
+OUTLIER = 2.5  # a member farther than this many times the median member's distance from the region's centre is left out
+OCEANIA = 18
+# Oceania's sub-frames: the members each is fitted to (an anchor landmass in each: New Guinea, New Zealand) and the
+# cards drawn on it. Australia is a giant and keeps its v2.0 frame.
+PACIFIC_FRAMES = {
+    "melanesia": (("papua-new-guinea", "solomon-islands", "vanuatu", "new-caledonia"),
+                  ("australia", "papua-new-guinea", "solomon-islands", "vanuatu", "new-caledonia")),
+    "micronesia": (("papua-new-guinea", "palau", "micronesia", "guam", "marshall-islands", "nauru"),
+                   ("palau", "micronesia", "guam", "marshall-islands", "nauru", "kiribati")),
+    "polynesia": (("new-zealand", "fiji", "tonga", "samoa", "tuvalu"),
+                  ("new-zealand", "fiji", "tonga", "samoa", "tuvalu", "french-polynesia")),
+}
 
 
 @cache
-def _graph() -> dict[str, dict[str, str]]:
-    """Each state's land and sea neighbours from the cached graph; hand edits (curricular bridges) don't count."""
-    out: dict[str, dict[str, str]] = {}
-    for e in adjacency.graph():
-        if e.kind in ("land", "sea"):
-            out.setdefault(e.a, {})[e.b] = e.kind
-            out.setdefault(e.b, {})[e.a] = e.kind
-    return out
+def _entries() -> dict[str, tuple[int, BaseGeometry]]:
+    """Every country, territory and dispute: its region and its card outline."""
+    countries, others = load_political()
+    return {e.id: (e.region, e.outline()) for e in (*countries, *others)}
 
 
 @cache
-def _outlines() -> dict[str, BaseGeometry]:
-    return outlines()
-
-
-def _pick(kinds: dict[str, str], subject: BaseGeometry) -> Neighbourhood:
-    land = [i for i, k in kinds.items() if k == "land"]
-    sea = [i for i, k in kinds.items() if k == "sea"]
-    if ids := land or sea:
-        return "neighbours", _near(subject, [_outlines()[i] for i in sorted(ids)])
-    return "remote", (landmass(subject),)
-
-
-def country(id: str, subject: BaseGeometry) -> Neighbourhood:
-    return _pick(_graph().get(id, {}), subject)
-
-
-def outline(subject: BaseGeometry) -> Neighbourhood:
-    """A territory's or dispute's neighbours, measured as the graph measures states'. A state whose outline holds the
-    subject (Ukraine round Crimea) counts by what is left of it, so it is a land neighbour only if that still touches."""
-    kinds = {}
-    for id, g in _outlines().items():
-        if g.intersects(subject):
-            g = g.difference(subject.buffer(1e-6))
-        if g.is_empty or min(adjacency._lower_bound_km(c, g) for c in adjacency._copies(subject)) > adjacency.SEA_KM:
-            continue
-        km = min(adjacency.distance_km(c, g) for c in adjacency._copies(subject))
-        if km < adjacency.SEA_KM:
-            kinds[id] = "land" if km <= adjacency.LAND_KM else "sea"
-    return _pick(kinds, subject)
+def _hull_points(id: str) -> list[tuple[float, float]] | None:
+    """The lon/lat corners of the convex hull of a member's main body, or None for a giant."""
+    outline = _entries()[id][1]
+    projection = Equirectangular(*centre(outline))
+    body, _ = main_group(project(outline, projection))
+    x0, y0, x1, y1 = body.bounds
+    if max(x1 - x0, (y1 - y0) * ASPECT) / FILL > GIANT_FRAME_M:
+        return None
+    xs, ys = np.array(body.convex_hull.exterior.coords).T
+    lons, lats = Transformer.from_crs(projection.proj4_init, "EPSG:4326", always_xy=True).transform(xs, ys)
+    return list(zip(lons, lats))
 
 
 @cache
-def _landmasses() -> list[BaseGeometry]:
-    from geofeat.ne import layer
-
-    parts = [p for g in layer("50m_land").geometry for p in shapely.get_parts(g)]
-    big = [p for p in parts if _km2(p) >= LANDMASS_KM2]
-    return big
-
-
-def _km2(g: BaseGeometry) -> float:
-    lat = (g.bounds[1] + g.bounds[3]) / 2
-    return g.area * adjacency.KM_PER_DEG ** 2 * math.cos(math.radians(lat))
+def _points(members: tuple[str, ...]) -> BaseGeometry:
+    hulls = {m: hull for m in members if (hull := _hull_points(m))}
+    if not hulls:
+        raise ValueError(f"region of {', '.join(members)}: every member is a giant, so nothing shapes its frame")
+    centres = {m: centre(MultiPoint(h)) for m, h in hulls.items()}
+    mid = centre(MultiPoint(list(centres.values())))
+    far = {m: GEOD.inv(*mid, *c)[2] for m, c in centres.items()}
+    typical = float(np.median(list(far.values())))
+    return MultiPoint([p for m, h in hulls.items() if len(hulls) < 4 or far[m] <= OUTLIER * typical for p in h])
 
 
-def landmass(subject: BaseGeometry) -> BaseGeometry:
-    """The part of the nearest landmass (LANDMASS_KM2 or more, and not the subject's own) round its vertex nearest
-    the subject's centre, measured on the ellipsoid, so the search runs across ±180°."""
-    parts = _landmasses()
-    own = subject.buffer(0.05)
-    lon, lat = centre(subject)
-    best = (math.inf, None)
-    for part in parts:
-        if part.intersects(own):
-            continue
-        xs, ys = shapely.get_coordinates(part).T
-        metres = GEOD.inv(np.full(len(xs), lon), np.full(len(xs), lat), xs, ys)[2]
-        i = int(np.argmin(metres))
-        best = min(best, (metres[i], (xs[i], ys[i])), key=lambda t: t[0])
-    if best[1] is None:
-        return subject.centroid
-    near = shapely.Point(best[1])
-    windows = _windows(near, LANDMASS_VIEW_KM)
-    return unary_union([_clip(p, windows) for p in parts if not p.intersects(own)])
+def region_of(id: str) -> tuple[str, tuple[str, ...]]:
+    """The frame a card is drawn on: its name, and the members it is fitted to."""
+    entries = _entries()
+    region = entries[id][0]
+    if region == OCEANIA:
+        found = [(n, f) for n, f in PACIFIC_FRAMES.items() if id in f[1]]
+        if not found:
+            raise ValueError(f"{id}: in Oceania but on none of framing.PACIFIC_FRAMES; add it to one")
+        name, (members, _) = found[0]
+        return f"{OCEANIA}-{name}", members
+    return f"{region:02d}", tuple(sorted(i for i, (r, _) in entries.items() if r == region))
+
+
+def region(id: str) -> Framing:
+    """("region" or "pacific", the frame's member points) for a political card."""
+    name, members = region_of(id)
+    return ("pacific" if name.startswith(f"{OCEANIA}-") else "region"), _points(members)
+
+
+def city_region(country_id: str) -> Callable[[], Framing] | None:
+    """A capital's or city's region provider (its host's), or None while CITY_REGION_FRAMING is off."""
+    return (lambda: region(country_id)) if CITY_REGION_FRAMING else None

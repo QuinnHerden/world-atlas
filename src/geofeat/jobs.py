@@ -87,7 +87,7 @@ class RenderJob:
     geometry: BaseGeometry
     context: tuple[BaseGeometry, ...] = ()
     former: BaseGeometry | None = None
-    neighbours: tuple[BaseGeometry, ...] = ()
+    region: BaseGeometry | None = None  # a political subject's region points (geofeat.framing)
 
     def key(self) -> str:
         """The cache key: the spec's visual fields, the geometry it draws, the renderer's code and uv.lock, and the
@@ -101,13 +101,13 @@ class RenderJob:
             geometry_hash(self.geometry, directed=self.spec.style.startswith("flow")),
             *(f"context {geometry_hash(g)}" for g in self.context),
             f"former {geometry_hash(self.former)}" if self.former is not None else "former none",
-            *(f"neighbour {geometry_hash(g)}" for g in self.neighbours),
+            f"region {geometry_hash(self.region)}" if self.region is not None else "region none",
         ):
             h.update(part.encode() + b"\0")
         return h.hexdigest()
 
     def render(self) -> bytes:
-        return render(self.spec, self.geometry, self.context, self.former, self.neighbours)
+        return render(self.spec, self.geometry, self.context, self.former, self.region)
 
 
 def card_job(card: Card) -> RenderJob:

@@ -64,7 +64,7 @@ def country_cards(country: Country) -> list[Card]:
         answer_lines=(answer(country.name, country.alt_names),),
         tags=tags("country", country.id, country.tier, "countries", country.region), region=region, tier=country.tier,
         host=host_key(country.host), note=country.note, render=RenderRef(spec=country_spec(), geometry=geometry,
-                                                                     neighbours=lambda g: framing.country(country.id, g)),
+                                                                     region=lambda: framing.region(country.id)),
     )]
     if c := country.capital:
         out.append(Card(
@@ -72,7 +72,8 @@ def country_cards(country: Country) -> list[Card]:
             answer_lines=(answer(c.name, c.alt_names), f"Capital of {country.name}"),
             tags=tags("capital", country.id, country.tier, "cities", country.region), region=region, tier=country.tier,
             parents=(out[0].key,), note=c.note,
-            render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(country.capital_point())),
+            render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(country.capital_point()),
+                             region=framing.city_region(country.id)),
         ))
     return out
 
@@ -84,7 +85,7 @@ def territory_cards(territory: Territory) -> list[Card]:
         tags=tags("territory", territory.id, TERRITORY_TIER, "territories", territory.region), region=f"{territory.region:02d}",
         tier=TERRITORY_TIER, host=host_key(territory.host), note=territory.note,
         render=RenderRef(spec=outline_spec(), geometry=lambda: (territory.outline(), (), None),
-                         neighbours=framing.outline),
+                         region=lambda: framing.region(territory.id)),
     )]
 
 
@@ -96,7 +97,7 @@ def dispute_cards(dispute: Dispute, countries: dict[str, str]) -> list[Card]:
         tags=tags("dispute", dispute.id, TERRITORY_TIER, "territories", dispute.region), region=f"{dispute.region:02d}",
         tier=TERRITORY_TIER, host=host_key(dispute.host), note=dispute.note,
         render=RenderRef(spec=outline_spec(), geometry=lambda: (dispute.outline(), (), None),
-                         neighbours=framing.outline),
+                         region=lambda: framing.region(dispute.id)),
     )]
 
 

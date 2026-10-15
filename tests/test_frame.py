@@ -1,7 +1,7 @@
 import unittest
 
 from pyproj import Transformer
-from shapely.geometry import box
+from shapely.geometry import MultiPoint, Point, box
 
 from geofeat.frame import ASPECT, MIN_FRAME_M, Equirectangular, frame
 from geofeat.model import Expect, Feature, FrameOptions, Part
@@ -60,75 +60,84 @@ class FrameTest(unittest.TestCase):
 
 
 class PoliticalFrameTest(unittest.TestCase):
-    """Country, territory and dispute subjects (spec.framing): ADR 0003's v2.1 amendment."""
+    """Country, territory and dispute subjects (spec.framing) on their curriculum region's frame."""
 
-    def frame(self, subject, neighbours=(), framing="neighbours"):
+    REGION = MultiPoint([(14, 42), (30, 42), (14, 52), (30, 52)])  # member hull points, a Central Europe-sized box
+
+    def frame(self, subject, region=REGION, **spec):
         from geofeat.spec import RenderSpec
 
-        return frame(RenderSpec(style="area", country="subject", framing=framing), subject, neighbours)
+        return frame(RenderSpec(style="area", **({"country": "subject", "framing": "region"} | spec)), subject, region)
 
-    def width(self, f) -> float:
-        return f.extent[1] - f.extent[0]
+    def test_cards_in_a_region_share_its_frame(self) -> None:
+        a, b = self.frame(box(19, 46, 22, 48)), self.frame(box(24, 44, 27, 47))
+        self.assertEqual(a.extent, b.extent)
+        self.assertEqual(a.projection.proj4_params, b.projection.proj4_params)
 
-    def fill(self, f, subject) -> float:
+    def test_a_subject_outside_the_region_frame_moves_its_own_frame(self) -> None:
+        shared, outlier = self.frame(box(19, 46, 22, 48)), self.frame(box(44, 36, 46, 38))
+        self.assertNotEqual(shared.extent, outlier.extent)
         from geofeat.frame import project
 
-        x0, y0, x1, y1 = project(subject, f.projection).bounds
-        return max(x1 - x0, (y1 - y0) * ASPECT) / self.width(f)
+        x0, y0, x1, y1 = project(box(44, 36, 46, 38), outlier.projection).bounds
+        fx0, fx1, fy0, fy1 = outlier.extent
+        self.assertTrue(fx0 < x0 and x1 < fx1 and fy0 < y0 and y1 < fy1)
 
-    def test_mid_size_subject_fills_at_most_the_band_ceiling(self) -> None:
-        from geofeat.frame import FILL_MAX
+    def test_a_giant_keeps_its_v2_frame(self) -> None:
+        from geofeat.spec import RenderSpec
 
-        germany = box(6, 47.3, 15, 55)
-        f = self.frame(germany, (box(15, 49, 24, 55), box(-5, 42, 8, 51)))
-        self.assertLessEqual(self.fill(f, germany), FILL_MAX + 0.01)
+        giant = box(-74, -34, -35, 5)  # Brazil-sized
+        v2 = frame(RenderSpec(style="area", country="subject"), giant)
+        self.assertEqual(self.frame(giant).extent, v2.extent)
+
+    def test_small_subject_gets_a_detail_inset_without_the_locator(self) -> None:
+        f = self.frame(box(20.0, 42.2, 21.8, 43.2))  # Kosovo-sized
+        self.assertIsNotNone(f.detail)
+        self.assertFalse(f.inset)
+
+    def test_a_mid_size_subject_keeps_the_locator_and_no_inset(self) -> None:
+        f = self.frame(box(16, 45.7, 22.9, 48.6))  # Hungary-sized
         self.assertIsNone(f.detail)
-
-    def test_a_giant_neighbour_is_clamped_by_the_band_floor(self) -> None:
-        from geofeat.frame import FILL_MIN
-
-        nepal = box(80, 26.4, 88.2, 30.4)
-        f = self.frame(nepal, (box(73, 18, 135, 53), box(68, 8, 97, 35)))
-        self.assertGreaterEqual(self.fill(f, nepal), FILL_MIN - 0.01)
-
-    def test_cap_holds_a_big_subject_with_big_neighbours(self) -> None:
-        from geofeat.frame import MAX_FRAME_M
-
-        mongolia = box(87.7, 41.6, 119.9, 52.1)
-        f = self.frame(mongolia, (box(73, 18, 135, 53), box(27, 41, 180, 78)))
-        self.assertAlmostEqual(self.width(f), MAX_FRAME_M, delta=1)
-        self.assertEqual(f.capped, "cap")
-
-    def test_small_subject_gets_a_regional_frame_and_a_detail_inset_without_the_locator(self) -> None:
-        from geofeat.frame import POLITICAL_MIN_M
-
-        andorra = box(1.4, 42.4, 1.8, 42.65)
-        f = self.frame(andorra, (box(-9, 36, 3.3, 43.8), box(-5, 42.3, 8.2, 51.1)))
-        self.assertAlmostEqual(self.width(f), POLITICAL_MIN_M, delta=1)
-        self.assertIsNotNone(f.detail)
-        self.assertFalse(f.inset)
-        dx0, dx1, dy0, dy1 = f.detail
-        self.assertLess(dx1 - dx0, self.width(f) / 4)
-
-    def test_a_thin_subject_gets_a_detail_inset(self) -> None:
-        gambia = box(-16.8, 13.2, -13.8, 13.55)  # 330 km long, under 40 km across
-        self.assertIsNotNone(self.frame(gambia, (box(-17.5, 12.3, -11.4, 16.7),)).detail)
-
-    def test_remote_subject_reaches_its_landmass_without_the_locator(self) -> None:
-        nauru = box(166.9, -0.56, 166.96, -0.5)
-        landmass = box(150, -6, 153, -3)
-        f = self.frame(nauru, (landmass,), framing="remote")
-        x0, x1, y0, y1 = f.extent
-        from geofeat.frame import project
-
-        self.assertTrue(box(x0, y0, x1, y1).intersects(project(landmass, f.projection)))
-        self.assertFalse(f.inset)
-        self.assertIsNotNone(f.detail)
-
-    def test_remote_subject_too_far_from_land_keeps_the_locator(self) -> None:
-        f = self.frame(box(-140.1, -25.1, -140.0, -25.0), (box(-75, -20, -70, -15),), framing="remote")
-        self.assertEqual(f.capped, "remote")
         self.assertTrue(f.inset)
+
+    def test_close_dot_city_gets_a_detail_inset_round_its_dot(self) -> None:
+        from geofeat.frame import CLOSE_DOT_DETAIL_M, DETAIL_SHARE, DETAIL_ZOOM, project
+
+        f = self.frame(box(19, 46, 22, 48), country="context", dot=(20.0, 47.0), close_dot=True)
+        dx0, dx1, dy0, dy1 = f.detail
+        width = f.extent[1] - f.extent[0]
+        self.assertAlmostEqual(dx1 - dx0, min(CLOSE_DOT_DETAIL_M, width * DETAIL_SHARE / DETAIL_ZOOM))
+        x, y = project(Point(20.0, 47.0), f.projection).coords[0]
+        self.assertTrue(dx0 < x < dx1 and dy0 < y < dy1)
+
+    def test_pacific_sub_frames_keep_the_locator(self) -> None:
+        f = self.frame(box(20.0, 42.2, 21.8, 43.2), framing="pacific")
+        self.assertTrue(f.inset)
+
+
+class FitAxisTest(unittest.TestCase):
+    def test_moves_to_hold_the_subject_or_widens(self) -> None:
+        from geofeat.frame import _fit_axis
+
+        self.assertEqual(_fit_axis(0, 10, 2, 8, 1), (0, 10))  # already holds it
+        self.assertEqual(_fit_axis(0, 10, 8, 12, 1), (3, 10))  # moved right
+        self.assertEqual(_fit_axis(0, 10, -4, 1, 1), (-5, 10))  # moved left
+        self.assertEqual(_fit_axis(0, 10, 0, 12, 1), (-1, 14))  # widened
+
+
+class PacificFramesTest(unittest.TestCase):
+    def test_every_oceania_entry_is_on_exactly_one_sub_frame(self) -> None:
+        from ruamel.yaml import YAML
+
+        from geofeat.framing import OCEANIA, PACIFIC_FRAMES
+        from geofeat.model import ROOT
+
+        regions = YAML(typ="safe").load(ROOT / "data/curriculum.yaml")["regions"]
+        oceania = next(r for r in regions if r["number"] == OCEANIA)
+        ids = [*oceania["countries"], *oceania.get("territories", {}), *oceania.get("disputes", {})]
+        for id in ids:
+            with self.subTest(id):
+                self.assertEqual(sum(id in cards for _, cards in PACIFIC_FRAMES.values()), 1)
 
 
 if __name__ == "__main__":
