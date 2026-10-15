@@ -40,6 +40,7 @@ STRAIT_OUTLINE_PX = 3  # a strait wide enough to be drawn as a sea
 INSET_FRAME_PX = 1.25
 INSET_FRAME_MIN_PX = 16  # a smaller frame rectangle is drawn as a dot
 INSET_DOT_PX = 6
+LINK_PX = 2  # a detail inset's frame, its box on the main map and the leader lines, with a white casing
 PARENT_RIVER_PX = 1.5
 
 CURRENT_HEAD_PX = (20, 22)  # length, width: over 4x the shaft, so direction reads on a phone

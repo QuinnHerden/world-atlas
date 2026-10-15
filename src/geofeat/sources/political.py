@@ -5,6 +5,7 @@ from shapely.errors import GEOSException
 from shapely.geometry import Point
 from shapely.geometry.base import BaseGeometry
 
+from geofeat import framing
 from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, pass_tag, study_pass
 from geofeat.polities import (  # noqa: F401  re-exported for cities.py and the tests
     COUNTRIES, PATHS, PLACES, TERRITORIES, BBox, Capital, Country, Dispute, Id, Territory, Uid, composition_errors,
@@ -62,7 +63,8 @@ def country_cards(country: Country) -> list[Card]:
         uid=require_uid(country.id, country.uids["country"]), kind="country", id=country.id, prompt="Country",
         answer_lines=(answer(country.name, country.alt_names),),
         tags=tags("country", country.id, country.tier, "countries", country.region), region=region, tier=country.tier,
-        host=host_key(country.host), note=country.note, render=RenderRef(spec=country_spec(), geometry=geometry),
+        host=host_key(country.host), note=country.note, render=RenderRef(spec=country_spec(), geometry=geometry,
+                                                                     neighbours=lambda g: framing.country(country.id, g)),
     )]
     if c := country.capital:
         out.append(Card(
@@ -81,7 +83,8 @@ def territory_cards(territory: Territory) -> list[Card]:
         answer_lines=(answer(territory.name, territory.alt_names), territory.status_line),
         tags=tags("territory", territory.id, TERRITORY_TIER, "territories", territory.region), region=f"{territory.region:02d}",
         tier=TERRITORY_TIER, host=host_key(territory.host), note=territory.note,
-        render=RenderRef(spec=outline_spec(), geometry=lambda: (territory.outline(), (), None)),
+        render=RenderRef(spec=outline_spec(), geometry=lambda: (territory.outline(), (), None),
+                         neighbours=framing.outline),
     )]
 
 
@@ -92,7 +95,8 @@ def dispute_cards(dispute: Dispute, countries: dict[str, str]) -> list[Card]:
         answer_lines=(answer(dispute.name, dispute.alt_names), dispute.parties_line(countries)),
         tags=tags("dispute", dispute.id, TERRITORY_TIER, "territories", dispute.region), region=f"{dispute.region:02d}",
         tier=TERRITORY_TIER, host=host_key(dispute.host), note=dispute.note,
-        render=RenderRef(spec=outline_spec(), geometry=lambda: (dispute.outline(), (), None)),
+        render=RenderRef(spec=outline_spec(), geometry=lambda: (dispute.outline(), (), None),
+                         neighbours=framing.outline),
     )]
 
 

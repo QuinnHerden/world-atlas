@@ -48,6 +48,7 @@ class KeyTest(unittest.TestCase):
         changes = {
             "style": "band", "fill_alpha": 0.3, "close_up_borders": True, "country": "subject", "dot": (11.0, 41.0),
             "outline": "dashed", "frame": FrameOptions(min_span_km=4000), "world": True, "close_dot": True,
+            "framing": "neighbours",
         }
         self.assertEqual(set(changes), set(RenderSpec.model_fields), "a new RenderSpec field needs a case here")
         for field, value in changes.items():
@@ -69,6 +70,11 @@ class KeyTest(unittest.TestCase):
         self.assertNotEqual(with_river.key(), RenderJob(SPEC, SHAPE, context=(LineString([(10, 39), (11, 44)]),)).key())
         self.assertNotEqual(JOB.key(), RenderJob(SPEC, SHAPE, former=SHAPE.boundary).key())
         self.assertNotEqual(RenderJob(SPEC, SHAPE, context=(SHAPE.boundary,)).key(), RenderJob(SPEC, SHAPE, former=SHAPE.boundary).key())
+
+    def test_neighbours_count_by_shape(self) -> None:
+        near = RenderJob(SPEC, SHAPE, neighbours=(box(12, 40, 14, 42),))
+        self.assertNotEqual(JOB.key(), near.key())
+        self.assertNotEqual(near.key(), RenderJob(SPEC, SHAPE, neighbours=(box(12, 40, 14, 43),)).key())
 
 
 class KeyScopeTest(unittest.TestCase):
