@@ -16,7 +16,7 @@ from shapely.geometry.base import BaseGeometry
 
 from geofeat.card import Text
 from geofeat.curriculum import CURRICULUM, load_curriculum
-from geofeat.model import ROOT, Note, Part, Strict, Verify
+from geofeat.model import ROOT, AnchorKey, Note, Part, Reason, Strict, Verify
 from geofeat.resolve import area_km2, custom, features_by_id, layer, resolve, select_rows
 
 COUNTRIES = ROOT / "data/countries.yaml"
@@ -213,6 +213,18 @@ class Territory(Placed):
     expect: BBox
     note: Note | None = None
     verify: list[Verify] = []
+    # A retired entry keeps its uid and data, like a retired feature, but makes no card and isn't placed. Its id may be
+    # reused by the active entry that replaces it (Greenland, moved from region 19 to 02 in v2.1.0).
+    retired: bool = False
+    # The card it comes right after in its region, instead of its host's capital (ADR 0009), with the reason.
+    anchor: AnchorKey | None = None
+    anchor_reason: Reason | None = None
+
+    @model_validator(mode="after")
+    def _anchor_has_reason(self) -> "Territory":
+        if (self.anchor is None) != (self.anchor_reason is None):
+            raise ValueError(f"{self.id}: `anchor` and `anchor_reason` go together")
+        return self
 
     def outline(self) -> BaseGeometry:
         return outline(self.id, self.geometry, self.expect)
@@ -308,13 +320,13 @@ def read_countries() -> list[Country]:
 
 
 def read_territory_file() -> list[Territory | Dispute]:
-    """data/territories.yaml's entries in file order, unplaced."""
+    """data/territories.yaml's active entries in file order, unplaced. Retired territories are validated and dropped."""
     models = {"territory": Territory, "dispute": Dispute}
     entries = read_entries(TERRITORIES)
     for i, entry in enumerate(entries):
         if not isinstance(entry, dict) or entry.get("kind") not in models:
             raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be territory or dispute")
-    loaded = [models[e["kind"]].model_validate(e) for e in entries]
+    loaded = [m for e in entries if not getattr(m := models[e["kind"]].model_validate(e), "retired", False)]
     unique(loaded, "territory or dispute")
     return loaded
 

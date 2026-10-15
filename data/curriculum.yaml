@@ -71,7 +71,7 @@ regions:
     exit: lithuania
     way_in: North Sea
     countries: [iceland, norway, sweden, denmark, finland, estonia, latvia, lithuania]
-    territories: {faroe-islands: denmark, svalbard: norway}
+    territories: {faroe-islands: denmark, svalbard: norway, greenland: denmark}  # greenland: see placements below
     walk: [iceland, norway, denmark, sweden, finland, estonia, latvia, lithuania]
 
   - number: 3
@@ -258,7 +258,7 @@ regions:
     exit: panama
     way_in: Pacific crossing, the one long seam
     countries: [united-states, canada, mexico, guatemala, belize, el-salvador, honduras, nicaragua, costa-rica, panama]
-    territories: {greenland: canada, bermuda: united-states}  # both: decided, see placements below
+    territories: {bermuda: united-states}  # decided, see placements below
     walk: [united-states, canada, mexico, belize, guatemala, el-salvador, honduras, nicaragua, costa-rica, panama]
 
   - number: 20
@@ -287,8 +287,10 @@ regions:
 
 # Placements decided by the PM and user (decision 5). Each card sits at the default above; the alternatives are kept
 # here for the record.
-# - greenland: north-central-america, host canada (alternative nordic-baltic, host denmark). Geography (North American
-#   plate, 19 km from Canada) against sovereignty (Kingdom of Denmark, beside Iceland and the Faroes).
+# - greenland: nordic-baltic, host denmark, anchored right after Iceland and before the GIUK Gap (v2.1.0; v2.0.0 had
+#   north-central-america, host canada). Sovereignty (Kingdom of Denmark, beside Iceland and the Faroes) and the GIUK
+#   Gap's west shore against geography (North American plate, 19 km from Canada). The v2.0 card is retired and replaced
+#   (data/territories.yaml), since a frozen card keeps its slot and region (ADR 0006).
 # - kuril-islands: east-asia, host japan (alternative eastern-europe, host russia). Geography (the southern four lie off
 #   Hokkaido; the dispute is Japan's claim) against the administering power, Russia.
 # - bermuda: north-central-america, host united-states (alternative caribbean, host bahamas). Geography (nearest state

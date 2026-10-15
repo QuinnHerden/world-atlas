@@ -285,6 +285,43 @@ class UniquenessTest(unittest.TestCase):
             self.assertEqual(cities.load_cities()[0].uid, "MintedBBBB")
 
 
+class RetiredTerritoryTest(unittest.TestCase):
+    """Retire and replace (ADR 0006): the retired entry keeps its uid and data but makes no card; its replacement may
+    reuse the id (Greenland, moved to region 02 in v2.1.0)."""
+
+    def entries(self) -> list[dict]:
+        old = territories()[0] | {"retired": True}
+        return [old, territories()[0] | {"uid": "TerritoryH", "anchor": "country:alpha",
+                                         "anchor_reason": "Right after Alpha, for the test."}, territories()[1]]
+
+    def test_retired_entry_makes_no_card(self) -> None:
+        with data(countries(), self.entries()):
+            cards = [c for c in political.cards() if c.kind == "territory"]
+            self.assertEqual([(c.key, c.uid) for c in cards], [("territory:gamma", "TerritoryH")])
+            self.assertEqual([t.uid for t in polities.load_territories()], ["TerritoryH"])
+
+    def test_retired_uid_still_counts_for_duplicates(self) -> None:
+        clash = self.entries()
+        clash[1]["uid"] = "TerritoryG"
+        with data(countries(), clash) as paths:
+            self.assertEqual(ids.duplicate_uids([paths["territories"]]), ["TerritoryG"])
+
+    def test_two_active_entries_still_clash(self) -> None:
+        clash = self.entries()
+        del clash[0]["retired"]
+        with data(countries(), clash), self.assertRaisesRegex(ValueError, "duplicate territory or dispute id"):
+            polities.load_territories()
+
+    def test_anchor_reaches_the_card_and_needs_a_reason(self) -> None:
+        with data(countries(), self.entries()):
+            (card,) = [c for c in political.cards() if c.kind == "territory"]
+        self.assertEqual(card.anchor, "country:alpha")
+        bad = self.entries()
+        del bad[1]["anchor_reason"]
+        with data(countries(), bad), self.assertRaisesRegex(ValueError, "go together"):
+            polities.load_territories()
+
+
 class CheckTest(unittest.TestCase):
     def test_clean(self) -> None:
         with data(countries(), territories(), cities_data()):

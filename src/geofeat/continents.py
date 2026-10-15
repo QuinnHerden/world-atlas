@@ -43,6 +43,7 @@ REGION_CONTINENT = {  # by slug, so renumbering the ring can't move a region to 
 MEMBERSHIP = {
     "british-indian-ocean-territory": "africa",  # M49 Eastern Africa; the ring places it with the Maldives
     "aruba": "north-america", "curacao": "north-america",  # Caribbean islands; the ring places them by Venezuela
+    "greenland": "north-america",  # M49 Northern America; the ring places it with the Nordic states (v2.1.0)
 }
 # Split along NE's line. Europe–Asia: the Urals, Ural River, Caspian, Caucasus crest and Turkish Straits. Egypt: NE
 # draws the Africa–Asia line along Egypt's border with Israel, not at Suez, so Sinai falls in Africa and the split

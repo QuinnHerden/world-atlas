@@ -7,7 +7,8 @@ Within a region the countries follow the neighbour walk, and every other card ha
   the host's or country's capital;
 - a physical feature comes right after the last country of its region that frames it, or just before the first one
   when it opens the region (the Iberian Peninsula); one that no country frames closes the region;
-- a city with an `anchor` comes right after that feature.
+- a city with an `anchor` comes right after that feature, and a feature or territory with an `anchor` override right
+  after that card (Greenland after Iceland, the GIUK Gap after Greenland).
 
 In pass 2 the countries and capitals are already known, so they are placeholders: their cards aren't there, but the
 cards that hang off them keep the walk's order. Local repair then applies, in precedence order, parent before child,
@@ -232,6 +233,17 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
         children.setdefault(under, []).append(key)
         anchors[key] = under
 
+    def anchored(c: Card) -> bool:
+        """Hang a feature, territory or dispute with an `anchor` override right after that card, which must be in the
+        same region and pass (ADR 0009)."""
+        if c.anchor is None:
+            return False
+        if c.anchor not in present:
+            problems.append(f"{c.key}: anchor {c.anchor} is not a card of pass {c.study_pass} region {region.number}")
+        else:
+            hang(c.key, c.anchor)
+        return True
+
     for p in sorted(region.pockets, key=member_order.__getitem__):
         hang(f"country:{p}", f"capital:{region.pockets[p]}")
     for c in cards:
@@ -246,7 +258,7 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
                 problems.append(f"{c.key}: host {c.host} isn't its curriculum host in region {region.number}")
             elif host not in rank:
                 problems.append(f"{c.key}: host {c.host} is not a country of region {region.number}")
-            else:
+            elif not anchored(c):
                 hang(c.key, f"capital:{host}")
         elif c.kind == "city":
             country = next((p.removeprefix("country:") for p in c.parents if p.startswith("country:")), None)
@@ -260,7 +272,9 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
             frame = frame_of(c)
             assert frame is not None  # region_of checked
             framing = sorted((n for n in frame.countries if n in rank), key=lambda n: (rank[n], n))
-            if frame.opens:
+            if anchored(c):
+                pass
+            elif frame.opens:
                 before.setdefault(f"country:{framing[0] if framing else walk.nodes[0]}", []).append(c.key)
             elif framing:
                 hang(c.key, f"country:{framing[-1]}")
