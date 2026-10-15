@@ -18,7 +18,7 @@ from geofeat.polities import load_political
 
 Framing = tuple[str, BaseGeometry, tuple[float, float, float, float] | None]
 
-# Capitals and cities on their host's region frame: a proposal under review. False reverts them to v2.0 framing
+# Capitals and cities on their host's region frame (v2.1.0, ADR 0003). False reverts them to v2.0 framing
 # (their host country's frame, or the 1,000 km close-dot frame) without touching the political cards.
 CITY_REGION_FRAMING = True
 OUTLIER = 2.5  # a member farther than this many times the median member's distance from the region's centre is left out
