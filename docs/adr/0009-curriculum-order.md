@@ -2,6 +2,8 @@
 
 Status: proposed, 2026-10-14. When accepted, supersedes rules 1 (tier first) and 3 (category alternation and the ≥ 3 card gap) of [ADR 0004](0004-flat-deck-and-study-order.md). ADR 0004's rule 2 (prerequisites first) stays. The design and its reasons are in the [World Atlas plan](../world-atlas-plan.md#curriculum); several parameters are defaults under decision 8 ([open decisions](../world-atlas-plan.md#open-decisions)). Built in P3.
 
+Amended on 2026-10-15 (v2.1.0): Greenland moves to region 02, and features and territories gain an `anchor` override (see [Amendment: anchor overrides](#amendment-anchor-overrides-v210)).
+
 ## Context
 
 ADR 0004 orders new cards tier first: all of tier 1, then 2, then 3. Countries have no tiers, so a tier-first order either puts every country in tier 1 or leaves holes in the political map. World Atlas is for a total beginner, who learns a map best as landmarks, then routes between them, then the whole.
@@ -23,7 +25,7 @@ The ring has 21 regions by default (decision 8).
 **Within a region:**
 
 - **Countries** follow a neighbour walk. Each new country borders one already introduced, by land or by a sea edge ([ADR 0008](0008-state-list-borders-adjacency.md)), preferring the most recent. The walk is generated once, reviewed, and frozen as an explicit list in `data/curriculum.yaml`. The build checks it and reports every jump.
-- **Pockets** are microstates, enclaves and disputed areas. They aren't nodes in the walk. Each sits in its host's run, after the host's capital. Territory cards go in geographic pockets too (decision 5, decided: Greenland and Bermuda in 19, the Kurils in 16, Aruba and Curaçao in 20).
+- **Pockets** are microstates, enclaves and disputed areas. They aren't nodes in the walk. Each sits in its host's run, after the host's capital. Territory cards go in geographic pockets too (decision 5, decided: Bermuda in 19, the Kurils in 16, Aruba and Curaçao in 20; Greenland in 19 until v2.1.0, now in 02, see the amendment).
 - **Capitals** come 2–3 cards after their country, and never in a later cluster.
 - **Physical features** come right after the country that completes their frame (Pyrenees after France), unless a region frame feature opens the region (Iberian Peninsula).
 - **Core cities** come at least 2 cards after their country's capital, or right after the feature they hang on (Alexandria after the Nile Delta).
@@ -46,3 +48,18 @@ Precedence: frontier continuity, then parent before child, then the look-alike w
 - Tier no longer decides order across the deck, but it still decides which pass a feature is in.
 - The walk in archipelago regions (Caribbean, Oceania, Southeast Asia) has jumps. They are reported, not hidden.
 - At 15 new cards a day (default, decision 8), the 607 new cards take about 6 weeks.
+
+## Amendment: anchor overrides (v2.1.0)
+
+**Greenland is in region 02, Nordic & Baltic** (host Denmark), not 19. Sovereignty (the Kingdom of Denmark, beside Iceland and the Faroes) and its place on the GIUK Gap's west shore now outweigh geography (the North American plate, 19 km from Canada). It stays in North America on the continent cards. `data/curriculum.yaml` records the decision and the v2.0.0 placement in its placements comment. The v2.0 card can't move, because a frozen card keeps its slot and region, so it is retired and replaced ([ADR 0006](0006-positions-lock-and-pos-footnote.md#amendment-retire-and-replace-v210)).
+
+**`anchor` overrides.** A feature (`features.yaml`) or a territory (`territories.yaml`) may name an `anchor`, a card key, with an `anchor_reason`. One without the other fails the schema. The engine hangs the card right after its anchor, instead of after its host's capital (a territory) or the countries that frame it (a feature). The anchor must be a card of the same pass and region; otherwise the order engine fails and names the card. The feature schema had the field since P3, but nothing passed it to the engine before v2.1.0.
+
+Two are in use, chained:
+
+| Card | Anchor | Reason |
+|---|---|---|
+| Greenland (territory) | `country:iceland` | Studied with the Nordic states, beside Iceland, right before the GIUK Gap that runs from it. |
+| GIUK Gap (feature) | `territory:greenland` | Right after Greenland, its west shore, so the gap is introduced once all three of its shores are on the map. |
+
+So region 02 opens with Iceland, Greenland and the GIUK Gap, then Reykjavík. The GIUK Gap keeps its `region: 2` override; with Greenland in 02 the later-shore rule gives the same region.

@@ -2,6 +2,37 @@
 
 All notable changes to this deck are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - 2026-10-15
+
+Political and city maps are redrawn on their curriculum regions, and Greenland moves to Nordic & Baltic.
+
+### Added
+
+- Detail insets: a small country, territory or disputed area gets a zoomed corner inset of its main body, joined to it by leader lines. Every capital and city card gets one round its dot ([ADR 0010](docs/adr/0010-region-framing.md)).
+- Fixed sub-frames for Oceania (Melanesia, Micronesia, central Pacific, Polynesia) and the Lesser Antilles. The Lesser Antilles frame has a small Caribbean locator.
+- Per-card `frame: {inset, inset_km}` overrides in `countries.yaml` and `territories.yaml`. Kuwait and the Spratly Islands use them.
+- `anchor` overrides for features and territories, each with an `anchor_reason`: the card comes right after its anchor in the same pass and region ([ADR 0009](docs/adr/0009-curriculum-order.md)).
+- Retired territories (`retired: true`), kept with their uid and lock entry, so a political card can move region by retire and replace ([ADR 0006](docs/adr/0006-positions-lock-and-pos-footnote.md)).
+
+### Changed
+
+- Country, territory and dispute cards are framed on their curriculum region: one frame round the region's members, at least 3,500 km wide, shared by the cards that fit it. States whose v2.0 frame was over 8,000 km wide keep it.
+- Capital and city cards are framed on their country's region. A close-dot city shows its region, with the close-up in its inset; in a giant country (Kinshasa, Kyoto, Osaka) it keeps the 1,000 km close-dot frame.
+- Country, territory, dispute, capital and city cards no longer show the world locator. Feature cards keep it.
+- Political land is ringed only at microstate scale, per island group.
+- Greenland moves from North & Central America (region 19) to Nordic & Baltic (region 02), right after Iceland. The GIUK Gap now follows Greenland. Greenland stays in North America on the continent cards.
+
+### Removed
+
+- The v2.0 Greenland card (`24rdGoHY6W`) is retired and replaced by a new card (`zjAlvxD9jl`). The deck still has 607 active cards and 23 territories.
+
+### Upgrade notes
+
+- Re-importing updates the maps and tags of existing cards in place. They keep their review history and queue position.
+- Greenland is a new note. It arrives as a new card between Iceland and the GIUK Gap.
+- The old Greenland card stays in an upgraded collection, with its review history, until you delete it. Its history does not carry over to the new card. Find it with `deck:"World Atlas" tag:id_territory_greenland tag:region::19`; see [Upgrading from v2.0](README.md#upgrading-from-v20).
+- Run **Tools → Check Media** afterwards to delete the old maps.
+
 ## [2.0.0] - 2026-10-14
 
 The first **World Atlas** release. It replaces the Geographic Features deck (v1) and adds the political map.
@@ -49,5 +80,6 @@ The **Geographic Features** deck. Tagged retrospectively at commit `b63bf0e`.
 - North-up framing with a 2,600 km minimum width, and a fixed world inset.
 - Built with ankc 0.4. Output: `geographic-features.apkg`.
 
+[2.1.0]: https://github.com/QuinnHerden/world-atlas/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/QuinnHerden/world-atlas/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/QuinnHerden/world-atlas/releases/tag/v1.0.0

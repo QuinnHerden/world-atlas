@@ -2,6 +2,8 @@
 
 Status: accepted, 2026-10-14; amended in P7 (lock format, freeze). Supersedes the drift consequence of [ADR 0004](0004-flat-deck-and-study-order.md). Built in P1 (WS1 in ankcompiler, WS3 here); the lock was frozen in P7 for v2.0.0.
 
+Amended on 2026-10-15 (v2.1.0): retire and replace, for a political card that must move region (see [the amendment](#amendment-retire-and-replace-v210)).
+
 ## Context
 
 Anki sets a new card's position once, on first import, and keeps it on every re-import ([ADR 0004](0004-flat-deck-and-study-order.md)). ankc 0.5 numbers new cards 0..N in source order and can't set a position directly.
@@ -44,3 +46,19 @@ So the position of every card depends on the whole deck. Adding one card shifts 
 - A frozen card's pass and region are fixed with its position: a later data change moves neither its slot nor its `pass::`/`region::` tags, only the warning shows it. The ring's region numbers can't be renumbered without a migration.
 - Existing users' 132 feature cards keep the positions they were imported with (0 to 131). The lock can't change those; see [ADR 0007](0007-rename-and-migration.md).
 - The Anki behaviour this relies on (due kept on import, Check Database rewriting dues of 2,000,000 or more) was measured on Anki 26.09.3 desktop in the P1 spike. P6 tests it on AnkiDroid and AnkiMobile before release.
+
+## Amendment: retire and replace (v2.1.0)
+
+A frozen card's slot, pass and region can't change. A data change only warns, and the card stays where it was (above). That is right for a feature whose frame region drifts, but not for a political card deliberately moved to another region: it would keep the old region's slot and `region::` tag.
+
+So a political card moves by **retire and replace**:
+
+1. Set `retired: true` on the old entry in `territories.yaml` and keep the rest of it, uid included. A retired territory is validated, then dropped: it makes no card and isn't placed. Its lock entry stays as it is, as the freeze guard requires, and since it has no card it takes no number in the guide.
+2. Add a new entry with a fresh uid (`make ids`). It may reuse the old `id`.
+3. Run `make positions`. It places the new uid by the usual rule, between its `pred`'s slot and the next locked value.
+
+The freeze guard is unchanged: the lock only gains an entry. `check deck` holds the rest: every locked uid must belong to a source entry, active or `retired: true`, so deleting a retired entry fails the build; and a retired territory and the replacement that reuses its id must be locked in different regions, since the `region::` tag is what tells the two notes apart in Browse. Each such move also halves the gap it lands in (250 either side of Greenland), so about 7 more inserts fit there before `GapExhausted`.
+
+Greenland, v2.1.0: the old card, `24rdGoHY6W` at 250500 in region 19, is retired. The new card, `zjAlvxD9jl`, is at 21750 in region 02, between Iceland (21500) and the GIUK Gap (22000).
+
+For users the replacement is a new note. An upgraded collection keeps the old card, with its review history, until the user deletes it; the history doesn't carry over to the new card. The README's [Retired cards](../../README.md#retired-cards) section says how to find it.

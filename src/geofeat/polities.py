@@ -326,7 +326,8 @@ def read_territory_file() -> list[Territory | Dispute]:
     for i, entry in enumerate(entries):
         if not isinstance(entry, dict) or entry.get("kind") not in models:
             raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be territory or dispute")
-    loaded = [m for e in entries if not getattr(m := models[e["kind"]].model_validate(e), "retired", False)]
+    validated = [models[e["kind"]].model_validate(e) for e in entries]
+    loaded = [m for m in validated if not (isinstance(m, Territory) and m.retired)]
     unique(loaded, "territory or dispute")
     return loaded
 

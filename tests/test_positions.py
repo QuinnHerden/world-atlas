@@ -181,5 +181,47 @@ class LockedTagsTest(unittest.TestCase):
         self.assertEqual(locked_tags(["kind::feature", "pass::2"], Entry(5, 1, 7)), ["kind::feature", "pass::1"])
 
 
+class RetiredLockTest(unittest.TestCase):
+    """Retire and replace (ADR 0006): a retired uid keeps its frozen entry and must stay accounted for."""
+
+    def lock(self, old_region: int = 19) -> Lock:
+        return Lock(False, {A: Entry(500, 1, old_region), B: Entry(250, 1, 2)})
+
+    def entries(self) -> list[dict]:
+        return [{"kind": "territory", "id": "isle", "uid": A, "retired": True},
+                {"kind": "territory", "id": "isle", "uid": B}]
+
+    def errors(self, lock: Lock, entries: list[dict]) -> list[str]:
+        from geofeat.check import retired_lock_errors
+
+        return retired_lock_errors(lock, {B}, entries)
+
+    def test_a_replaced_card_in_another_region_passes(self) -> None:
+        self.assertEqual(self.errors(self.lock(), self.entries()), [])
+
+    def test_a_locked_uid_needs_its_retired_entry(self) -> None:
+        self.assertRegex(" ".join(self.errors(self.lock(), self.entries()[1:])), "no source entry has")
+        unmarked = self.entries()
+        del unmarked[0]["retired"]
+        self.assertRegex(" ".join(self.errors(self.lock(), unmarked)), "aren't `retired: true`")
+
+    def test_same_region_replacement_fails(self) -> None:
+        self.assertRegex(" ".join(self.errors(self.lock(old_region=2), self.entries())), "share region 02")
+
+
+class GreenlandTest(unittest.TestCase):
+    """v2.1.0 moved Greenland to region 02, right before the GIUK Gap, by retire and replace."""
+
+    def test_the_lock(self) -> None:
+        lock = positions.read().entries
+        iceland, old, new, giuk = (lock[u] for u in ("PJEhGX8mTx", "24rdGoHY6W", "zjAlvxD9jl", "M4Edjpe30k"))
+        self.assertEqual(old, Entry(250500, 1, 19))
+        self.assertEqual(new, Entry(21750, 1, 2))
+        self.assertLess(iceland.position, new.position)
+        self.assertLess(new.position, giuk.position)
+        self.assertEqual(sorted(e.position for e in lock.values() if iceland.position < e.position < giuk.position),
+                         [new.position])
+
+
 if __name__ == "__main__":
     unittest.main()

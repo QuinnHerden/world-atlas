@@ -120,6 +120,16 @@ class PoliticalFrameTest(unittest.TestCase):
         self.assertTrue(dx0 < x < dx1 and dy0 < y < dy1)
         self.assertFalse(f.inset)
 
+    def test_a_giant_sized_subject_on_a_sub_frame_keeps_the_box(self) -> None:
+        # French Polynesia measured as a giant by a hair (main body 0.650 of its land) and lost its Polynesia frame.
+        from geofeat.framing import _box_points
+        from geofeat.spec import RenderSpec
+
+        spread = box(-178, -28, -134, -4)
+        f = self.frame(spread, _box_points(148.0, -48.0, 228.0, -2.0), framing="fixed")
+        v2 = frame(RenderSpec(style="area", country="subject"), spread)
+        self.assertNotEqual(f.extent, v2.extent)
+
     def test_a_city_in_a_giant_host_gets_an_inset_on_the_v2_frame(self) -> None:
         f = self.frame(box(-74, -34, -35, 5), country="context", dot=(-47.9, -15.8))  # Brasília in Brazil
         self.assertIsNotNone(f.detail)

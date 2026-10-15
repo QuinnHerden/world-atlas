@@ -14,6 +14,7 @@ from typing import NamedTuple
 import geopandas as gpd
 import shapely
 from pyproj import Transformer
+from ruamel.yaml import YAML
 from shapely import unary_union
 from shapely.geometry import MultiLineString, Point, Polygon
 from shapely.geometry.base import BaseGeometry
@@ -23,7 +24,7 @@ from geofeat.ankc import ankc_command, ankc_version, ankc_version_text, writes_p
 from geofeat.card import card_key, load_media
 from geofeat.frame import laea, project
 from geofeat.deckgen import ideal_order, ordered
-from geofeat.ids import duplicate_uids
+from geofeat.ids import duplicate_uids, uids as entry_uids
 from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, Verify, active, load_features
 from geofeat.polities import read_countries, read_territory_file
 from geofeat.order import Siblings, load_siblings, save_siblings
@@ -272,6 +273,30 @@ def lock_freeze_errors(release: bool) -> list[str]:
     return errors
 
 
+def retired_lock_errors(lock: positions.Lock, active: set[str], entries: list[dict]) -> list[str]:
+    """A frozen lock keeps retired uids (ADR 0006), so every locked uid must belong to a source entry, active or
+    marked `retired: true`. A retired territory whose id its replacement reuses must have been locked in another
+    region: its `region::` tag is what tells the two notes apart in Browse (the README's search)."""
+    known = {u for e in entries for u in entry_uids(e)}
+    retired = {u for e in entries if e.get("retired") for u in entry_uids(e)}
+    errors = []
+    if orphans := sorted(set(lock.entries) - known):
+        errors.append(f"{positions.LOCK_FILE.name} holds uids no source entry has (keep a retired entry): {orphans}")
+    if loose := sorted(set(lock.entries) & known - active - retired):
+        errors.append(f"{positions.LOCK_FILE.name} holds inactive uids whose entries aren't `retired: true`: {loose}")
+    by_id = {}
+    for e in entries:
+        if e.get("kind") == "territory" and not e.get("retired") and e.get("uid"):
+            by_id[e["id"]] = e["uid"]
+    for e in entries:
+        if e.get("kind") == "territory" and e.get("retired") and (new := by_id.get(e["id"])):
+            old_entry, new_entry = lock.entries.get(e.get("uid")), lock.entries.get(new)
+            if old_entry and new_entry and old_entry.region == new_entry.region:
+                errors.append(f"territory {e['id']}: the retired and the active card share region "
+                              f"{old_entry.region:02d}, so their tags can't tell them apart")
+    return errors
+
+
 def ankc_supported() -> str | None:
     """An error unless the configured ankc is 0.5.x or 0.6.x: both keep `::` in footnote tags and number new cards
     in source order; 0.6 also reads `[^pos]`."""
@@ -291,6 +316,8 @@ def check_deck() -> list[str]:
     lock = positions.read()
     if missing := sorted(c.uid for c in cards if c.uid not in lock.positions):
         errors.append(f"uids not in {positions.LOCK_FILE.name} (run `make positions`): {missing}")
+    entries = [e for path in PATHS for e in (YAML(typ="safe").load(path) or [])]
+    errors += retired_lock_errors(lock, {c.uid for c in cards}, entries)
     if error := ankc_supported():
         return errors + [error]
     if error := positions.lock_error(lock):

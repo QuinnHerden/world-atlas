@@ -234,7 +234,7 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
         anchors[key] = under
 
     def anchored(c: Card) -> bool:
-        """Hang a feature, territory or dispute with an `anchor` override right after that card, which must be in the
+        """Hang a feature or territory with an `anchor` override right after that card, which must be in the
         same region and pass (ADR 0009)."""
         if c.anchor is None:
             return False

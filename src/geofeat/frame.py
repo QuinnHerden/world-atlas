@@ -31,8 +31,8 @@ CLOSE_DOT_FRAME_M = 1_000_000
 # theirs). A subject that would still fill more than REGION_FILL_MAX of it widens its frame to that fill, unless it is
 # a giant, whose v2.0 frame was over GIANT_FRAME_M wide: those keep their v2.0 frames (Russia, Canada, the United
 # States, Greenland, China, India, Japan, Myanmar, Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru;
-# Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant. No political
-# card has the world locator.
+# Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant, nor is any card
+# on a sub-frame. No political card has the world locator.
 REGION_MARGIN = 1.1
 REGION_FILL_MAX = 0.35
 GIANT_FRAME_M = 8_000_000
@@ -208,7 +208,9 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         width = max(w, h * ASPECT)
         x0, y0 = cx - width / 2, cy - width / ASPECT / 2
     size = _long(sx0, sy0, sx1, sy1)
-    if (size / FILL > GIANT_FRAME_M and share >= MAIN_GROUP_DETAIL) or width > 2 * projection.x_limits[1]:
+    # A card on a sub-frame keeps the box, however large (French Polynesia measures as a giant by a hair).
+    giant = feature.framing == "region" and size / FILL > GIANT_FRAME_M and share >= MAIN_GROUP_DETAIL
+    if giant or width > 2 * projection.x_limits[1]:
         return None
     if size / width > REGION_FILL_MAX:  # widen round the subject's side of the frame
         grown = size / REGION_FILL_MAX

@@ -4,7 +4,7 @@ An Anki deck of 607 map cards that teaches the political and physical map of the
 
 World Atlas grew out of the **Geographic Features** deck (v1), which held physical features alone. Its 132 active feature notes carry over, with their review history; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
 
-Current release: [v2.0.0](https://github.com/QuinnHerden/world-atlas/releases/tag/v2.0.0) (2026-10-14), the first World Atlas release. Changes by release are in [CHANGELOG.md](CHANGELOG.md).
+Current release: [v2.1.0](https://github.com/QuinnHerden/world-atlas/releases/tag/v2.1.0) (2026-10-15), which redraws the political and city maps on their regions and moves Greenland to the Nordic & Baltic region; see [Upgrading from v2.0](#upgrading-from-v20). Changes by release are in [CHANGELOG.md](CHANGELOG.md).
 
 Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.6.
 
@@ -20,6 +20,8 @@ Download two files from the [latest release](https://github.com/QuinnHerden/worl
 - `world-atlas-guide.pdf`: the printable study guide.
 
 **New to the deck.** In Anki, choose **File → Import** and pick `world-atlas.apkg`. Every card lands in one deck, `World Atlas`, in the study order described under [Study](#study).
+
+**Upgrading from v2.0.** Import it the same way. Your cards are updated in place; [Upgrading from v2.0](#upgrading-from-v20) covers what changes and the one new card, Greenland.
 
 **Upgrading from Geographic Features.** Follow [Upgrading from Geographic Features](#upgrading-from-geographic-features) instead. It covers keeping your review history and moving the old cards into `World Atlas`.
 
@@ -63,8 +65,32 @@ To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) wit
 
 - **New cards:** a later release slots its new cards in between existing ones. No existing card moves, so a fresh import and an updated collection see the same order.
 - **Moved tier or category:** the card keeps its place in the queue. To move it anyway, select it in **Browse** and use **Cards → Reposition**.
+- **Moved region:** a political card that moves to another region comes as a new card, and the old one is retired (see [Retired cards](#retired-cards)). Greenland in v2.1 is the only one so far.
 - **Old maps:** a re-rendered map gets a new file name. Run **Tools → Check Media** to delete the old image.
 - **Older imports:** cards imported from v1 or from a pre-release build keep the positions they had then. If you haven't started studying, delete the deck and import the new package to get the full study order.
+
+### Upgrading from v2.0
+
+**What changed in v2.1:**
+
+- Country, territory and disputed-area maps are drawn on their region's map, so cards you study together share one frame. The largest states (Russia, Canada, Brazil and the like) keep their v2.0 framing.
+- Capital and city maps use their country's region map too.
+- Small places get a zoomed detail inset in a corner, joined to them by leader lines. Every capital and city card gets one round its dot.
+- Country, territory, disputed-area, capital and city cards no longer show the small world map. Feature cards still do.
+- Greenland moved from North & Central America (region 19) to Nordic & Baltic (region 02). It now comes right after Iceland and before the GIUK Gap.
+
+**Importing.** Import `world-atlas.apkg` with **File → Import**, keeping the default **Update notes: If newer**.
+
+- **Existing cards** get their new maps and tags in place. They keep their review history and their place in the queue.
+- **Greenland is a new card**, a new note. It lands in the queue between Iceland and the GIUK Gap. If you are already past that point, it comes up among your next new cards.
+- **The old Greenland card stays** in your collection, with its review history, until you delete it. Its history does not carry over to the new card: if you had learned Greenland, you learn it again from scratch. To delete the old card, search for it in **Browse**, check that it finds one card, select it and delete the note:
+
+  ```
+  deck:"World Atlas" tag:id_territory_greenland tag:region::19
+  ```
+
+  Both cards carry `id_territory_greenland`. The old one is tagged `region::19`, the new one `region::02`.
+- **Old maps** stay in your media folder. Run **Tools → Check Media** to delete them.
 
 ### Upgrading from Geographic Features
 
@@ -113,7 +139,13 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 
 ## Retired cards
 
-34 cards have been retired: all 10 passes and corridors, all 15 islands, and 9 climate systems. Re-importing never deletes notes, so a retired card stays in your collection and keeps coming up for review. Delete it by hand: in **Browse**, search for it, check the count, select all and delete the notes.
+35 cards have been retired: from v1, all 10 passes and corridors, all 15 islands and 9 climate systems; in v2.1, the v2.0 Greenland card, replaced by a new one. Re-importing never deletes notes, so a retired card stays in your collection and keeps coming up for review. Delete it by hand: in **Browse**, search for it, check the count, select all and delete the notes.
+
+The v2.0 Greenland card shares its `id_` tag with the new one, but only it has the region 19 tag:
+
+```
+deck:"World Atlas" tag:id_territory_greenland tag:region::19
+```
 
 The 9 climate cards carry an `id_` tag, so this search finds them:
 
