@@ -29,8 +29,11 @@ def cards():
 FEATURE_REGIONS = {"feature:river": 1, "feature:lake": 2}
 
 
-def region_of(card) -> int:
-    return int(card.region) if card.region else FEATURE_REGIONS[card.key]
+def place_of(card):
+    """As the lock would record it: the pass, and the region (None for orientation)."""
+    if card.study_pass == "orientation":
+        return "orientation", None
+    return card.study_pass, int(card.region) if card.region else FEATURE_REGIONS[card.key]
 
 
 @unittest.skipUnless(HAS_REPORTLAB, "needs the guide dependency group (uv sync --group guide)")
@@ -51,14 +54,14 @@ class GuideTest(unittest.TestCase):
             guide.entries(cards(), self.lock(self.ORDER[:-1]))
 
     def test_sections_by_pass_then_region(self) -> None:
-        parts = guide.sections(guide.entries(cards(), self.lock(self.ORDER)), region_of)
+        parts = guide.sections(guide.entries(cards(), self.lock(self.ORDER)), place_of)
         self.assertEqual([(s.study_pass, s.region, len(s.entries)) for s in parts],
                          [("orientation", None, 1), (1, 1, 3), (1, 2, 1), (2, 2, 1)])
 
     def runs(self, layout: list[tuple[str, int]]) -> list[tuple[object, int | None, list[str]]]:
         """Section made-up pass-1 countries, given as (id, data region) in lock order."""
         picked = [make("country", id, region=region, note="n") for id, region in layout]
-        parts = guide.sections(guide.entries(picked, {c.uid: i for i, c in enumerate(picked)}), region_of)
+        parts = guide.sections(guide.entries(picked, {c.uid: i for i, c in enumerate(picked)}), place_of)
         return [(s.study_pass, s.region, [e.card.id for e in s.entries]) for s in parts]
 
     def test_a_moved_card_joins_the_section_after_it(self) -> None:
@@ -88,7 +91,7 @@ class GuideTest(unittest.TestCase):
             for c in cards():
                 images[c.key] = Path(tmp, f"{c.id}-{c.kind}.png")
                 Image.new("RGB", (1600, 1000), "white").save(images[c.key])
-            parts = guide.sections(guide.entries(cards(), self.lock(self.ORDER)), region_of)
+            parts = guide.sections(guide.entries(cards(), self.lock(self.ORDER)), place_of)
             out = Path(tmp, "guide.pdf")
             doc = guide.build(parts, {1: "One", 2: "Two"}, images, out)
             data = out.read_bytes()

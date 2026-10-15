@@ -2,19 +2,32 @@
 
 An Anki deck of 607 map cards that teaches the political and physical map of the world together: 197 countries, 191 capitals, 42 other cities, 23 territories, 15 disputed areas, the 7 continents and 132 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name, and under a thin rule, in smaller muted text, a short note on why it matters (the same note the study guide prints).
 
-World Atlas grew out of the **Geographic Features** deck (v1), which held the 132 features alone. Its notes carry over; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
+World Atlas grew out of the **Geographic Features** deck (v1), which held physical features alone. Its 132 active feature notes carry over, with their review history; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
 
-Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.5 or 0.6.
+Current release: [v2.0.0](https://github.com/QuinnHerden/world-atlas/releases/tag/v2.0.0) (2026-10-14), the first World Atlas release. Changes by release are in [CHANGELOG.md](CHANGELOG.md).
+
+Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.6.
 
 - How the build works: [docs/architecture.md](docs/architecture.md)
 - Why it works that way: [docs/adr/](docs/adr/)
 - The plan behind World Atlas (curriculum, decisions, build phases): [docs/world-atlas-plan.md](docs/world-atlas-plan.md)
 
+## Download and import
+
+Download two files from the [latest release](https://github.com/QuinnHerden/world-atlas/releases/latest):
+
+- `world-atlas.apkg`: the deck.
+- `world-atlas-guide.pdf`: the printable study guide.
+
+**New to the deck.** In Anki, choose **File → Import** and pick `world-atlas.apkg`. Every card lands in one deck, `World Atlas`, in the study order described under [Study](#study).
+
+**Upgrading from Geographic Features.** Follow [Upgrading from Geographic Features](#upgrading-from-geographic-features) instead. It covers keeping your review history and moving the old cards into `World Atlas`.
+
+**The guide** prints every card in the order Anki shows new cards: entry N is the Nth new card, with its map, its answer and its note. It is sectioned into orientation, then pass 1 and pass 2 by region. For a single region, build it yourself with `make guide REGION=NN` (see [Build](#build)).
+
 ## Build
 
-Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.5.x or 0.6.x (0.6.0 is on PyPI as `ankcompiler`) and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
-
-**In progress toward v2.0.0,** the first World Atlas release.
+Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.6.x (on PyPI as `ankcompiler`) and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
 
 ```sh
 make ids        # mint uids for new entries, then commit features.yaml
@@ -23,7 +36,7 @@ make all        # test → fetch → check-data → render → deck → check �
 make adjacency  # the country adjacency graph and its report
 ```
 
-`ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. With ankc 0.6 every card gets its position from `data/positions.lock` as a `[^pos]` footnote; with 0.5 positions follow the study order. Once the lock is frozen, the build requires 0.6.
+`ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. Every card gets its new-card position from `data/positions.lock` as a `[^pos]` footnote. The lock is frozen and append-only, so ankc 0.5, which can't write positions, fails the build.
 
 Output: `dist/world-atlas.apkg`. Import it in Anki with **File → Import**.
 
@@ -48,9 +61,10 @@ To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) wit
 
 **Re-importing a new build** updates each note's text (every card's back, its note included), map and tags, but not its card's deck or new-card position, and it never deletes notes:
 
-- **Moved tier or category:** an unstudied card keeps its old place in the queue. To move it, select it in **Browse** and use **Cards → Reposition**.
+- **New cards:** a later release slots its new cards in between existing ones. No existing card moves, so a fresh import and an updated collection see the same order.
+- **Moved tier or category:** the card keeps its place in the queue. To move it anyway, select it in **Browse** and use **Cards → Reposition**.
 - **Old maps:** a re-rendered map gets a new file name. Run **Tools → Check Media** to delete the old image.
-- **Fresh order:** only a fresh import gets the full study order. If you haven't started studying, delete the deck and import the new package.
+- **Older imports:** cards imported from v1 or from a pre-release build keep the positions they had then. If you haven't started studying, delete the deck and import the new package to get the full study order.
 
 ### Upgrading from Geographic Features
 
@@ -70,7 +84,7 @@ World Atlas v2.0.0 replaces the **Geographic Features** deck (v1), which held th
 
 The moved cards keep their old queue positions (0 to 131), ahead of every new card, so any unstudied features come up before the first country. Only the new cards follow the new order. To start the ring alongside them, use a region filtered deck (see **Pacing**). If you skip steps 2 to 4, you end up with two decks. The old cards still work under the old name.
 
-**Retired cards.** Importing never deletes notes, so the cards v1 retired stay in your collection and keep coming up. The searches in [Retired cards](#retired-cards) find them in any deck.
+**Retired cards.** Importing never deletes notes, so the 34 cards World Atlas retired from v1 stay in your collection and keep coming up. The searches in [Retired cards](#retired-cards) find them in any deck.
 
 **Card content.** The import updates each feature note's fields where they changed: most fronts point to a re-rendered map, the hidden Source field names the new deck file, and answers are now built from lines joined with `<br>` (a feature's answer text is unchanged). Every back also gains the card's note under the answer. It also adds the `kind::`, `pass::` and other new tags. The notes stay the same notes, with the same history. Afterwards, run **Tools → Check Media** to delete the old maps.
 
@@ -84,7 +98,7 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 
 ## Edit the data
 
-- **`data/features.yaml`** is the feature list. Each entry has a name, a type word, a category, a tier, a `note`, geometry selectors and `expect` bounds that catch accidental changes to the shape. The note is one to three plain sentences on why the feature matters; it appears only in the PDF guide, and `make check-data` fails if an active card lacks one.
+- **`data/features.yaml`** is the feature list. Each entry has a name, a type word, a category, a tier, a `note`, geometry selectors and `expect` bounds that catch accidental changes to the shape. The note is one to three plain sentences on why the feature matters; it appears on the card back and in the PDF guide, and `make check-data` fails if an active card lacks one.
 - **`geometry/*.geojson`** holds shapes Natural Earth lacks. Every feature in a file needs `source`, `method` and `refs`. The scripts that made the derived shapes are in `tools/` ([tools/README.md](tools/README.md)).
 - **Type words:** `type` must be one of the 23 words in `src/geofeat/model.py`.
 - **World Atlas data:** `data/countries.yaml`, `data/territories.yaml` and `data/cities.yaml` hold the political cards; `data/curriculum.yaml` places each country, territory and disputed area in a region. See [Political data](docs/architecture.md#political-data).

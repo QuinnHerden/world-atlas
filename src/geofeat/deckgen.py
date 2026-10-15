@@ -14,12 +14,12 @@ DECK_FILE = DECK / "world-atlas.md"
 NOTE_STYLE = "font-size:0.8em;opacity:0.65;margin-top:0.4em"
 
 
-def card(c: Card, image: str, pos: int | None = None) -> str:
+def card(c: Card, image: str, pos: int | None = None, tags: list[str] | None = None) -> str:
     front = f"**{html.escape(c.prompt)}**<br>![]({image})"
     back = "<br>".join(html.escape(line) for line in c.answer_lines)
     if c.note:  # ankc renders the note's *italics* as <em>; the HTML passes through intact
         back += f'<hr><div style="{NOTE_STYLE}">{html.escape(c.note)}</div>'
-    footnotes = "".join(f"[^tag]: {tag}\n" for tag in c.tags)
+    footnotes = "".join(f"[^tag]: {tag}\n" for tag in (c.tags if tags is None else tags))
     if pos is not None:
         footnotes += f"[^pos]: {pos}\n"
     return f"---\n\n{front} ::: {back}\n\n---\n[^uid]: {c.uid}\n{footnotes}"
@@ -57,7 +57,8 @@ def main() -> None:
     for old in DECK.glob("*.md"):
         old.unlink()
     header = f"---\ndeck: \"{ROOT_DECK}\"\n---\n"
-    DECK_FILE.write_text(header + "\n".join(card(c, media[c.key], pos.get(c.uid)) for c in cards))
+    body = [card(c, media[c.key], pos.get(c.uid), positions.locked_tags(c.tags, lock.entries.get(c.uid))) for c in cards]
+    DECK_FILE.write_text(header + "\n".join(body))
     print(f"wrote {len(cards)} cards to {DECK_FILE.name}" + (" with [^pos]" if pos else ""))
 
 

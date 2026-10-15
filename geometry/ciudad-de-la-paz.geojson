@@ -1,0 +1,6 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {"type": "Feature", "properties": {"source": "English Wikipedia 'Ciudad de la Paz' (Wayback snapshot 20260927090040), coordinates 1°35′20″N 10°49′21″E (1.58889, 10.82250); Spanish Wikipedia gives 1.59167, 10.82222. The former Oyala, in Djibloho; declared capital by the Decreto Ley of 2 January 2026. Natural Earth populated_places has no row for it. Checked to lie inside NE 10m admin_0 Equatorial Guinea (A0 1159320801), about 0.5° from the nearest border.", "method": "reference-coords", "refs": ["https://web.archive.org/web/20260927090040/https://en.wikipedia.org/wiki/Ciudad_de_la_Paz", "https://es.wikipedia.org/wiki/Ciudad_de_la_Paz", "https://www.guineaecuatorialpress.com/noticias/decreto_ley_por_el_que_se_declara_la_ciudad_de_la_paz_djibloho_capital_de_la_republica_de_guinea_ecuatorial"]}, "geometry": {"type": "Point", "coordinates": [10.8225, 1.58889]}}
+  ]
+}

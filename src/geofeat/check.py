@@ -252,9 +252,24 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
             save_siblings(siblings)
         except ValueError as exc:
             errors.append(f"study order: {exc}")
+    errors += lock_freeze_errors(release)
     errors += verify_errors(release)  # last, so that nothing it finds holds back the checks above
     notes.append(f"sibling pairs flagged or nested (within {NEAR_M // 1000} km or overlapping; `make pairs` lists all):")
     return errors, notes + [f"  {p}" for p in pairs]
+
+
+def lock_freeze_errors(release: bool) -> list[str]:
+    """The freeze guard (ADR 0006): a frozen lock only adds to the frozen locks on the base ref and the newest
+    release tag. A release build must be able to read the base ref; any other build without it (a source archive)
+    only warns."""
+    try:
+        lock = positions.read()
+    except (SystemExit, ValueError) as exc:
+        return [str(exc)]
+    errors, warnings = positions.guard(lock, strict=release)
+    for warning in warnings:
+        print(f"warning: {warning}")
+    return errors
 
 
 def ankc_supported() -> str | None:
@@ -278,7 +293,7 @@ def check_deck() -> list[str]:
         errors.append(f"uids not in {positions.LOCK_FILE.name} (run `make positions`): {missing}")
     if error := ankc_supported():
         return errors + [error]
-    if error := positions.stale_draft_error(lock):
+    if error := positions.lock_error(lock):
         errors.append(error)
     if not lock.draft and not writes_pos():
         errors.append(f"{positions.LOCK_FILE.name} is frozen (draft: false), so ankc 0.6+ is required to write it")
@@ -305,8 +320,9 @@ def check_package() -> list[str]:
     note_tags = {guid: set(tags.split()) for guid, tags, *_ in rows}
     guids = set(note_tags)
     name = packages[0].name
-    errors = [f"{name}: note {c.uid} ({c.key}) lacks tags {sorted(missing)}" for c in cards
-              if c.uid in note_tags and (missing := set(c.tags) - note_tags[c.uid])]
+    lock = positions.read()
+    errors = [f"{name}: note {c.uid} ({c.key}) lacks tags {sorted(missing)}" for c in cards if c.uid in note_tags
+              and (missing := set(positions.locked_tags(c.tags, lock.entries.get(c.uid))) - note_tags[c.uid])]
     if wrong := sorted({decks[str(did)]["name"] for _, _, did, *_ in rows} - {ROOT_DECK}):
         errors.append(f"{name}: cards outside the {ROOT_DECK!r} deck: {wrong}")
     if any((ctype, queue) != (0, 0) for *_, ctype, queue, _ in rows):
@@ -314,7 +330,12 @@ def check_package() -> list[str]:
     media = load_media()
     if odd := packaged_media ^ {media.get(c.key) for c in cards}:  # nothing a card's text pulled in from elsewhere
         errors.append(f"{name}: packaged media differ from the rendered maps: {sorted(map(str, odd))}")
-    lock = positions.read()
+    for guid, tags, *_ in rows:  # the tags filtered decks search must name the pass and region the lock placed it in
+        if (entry := lock.entries.get(guid)) is None:
+            continue
+        placed = {t for t in tags.split() if t.startswith(("pass::", "region::"))}
+        if f"pass::{entry.study_pass}" not in placed or placed - set(positions.locked_tags(list(placed), entry)):
+            errors.append(f"{name}: note {guid}'s tags {sorted(placed)} differ from its lock entry {entry}")
     if writes_pos() or not lock.draft:
         if wrong := sorted(g for g, *_, due in rows if g in expected and due != lock.positions.get(g)):
             errors.append(f"{name}: new-card positions differ from {positions.LOCK_FILE.name} for {wrong}")

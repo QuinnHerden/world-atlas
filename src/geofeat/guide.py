@@ -64,15 +64,14 @@ def entries(cards: list[Card], lock: dict[str, int]) -> list[Entry]:
     return [Entry(n, c) for n, c in enumerate(sorted(cards, key=lambda c: lock[c.uid]), 1)]
 
 
-def sections(ordered: list[Entry], region_of: Callable[[Card], int]) -> list[Section]:
-    """Runs of one pass and region, in ring order. A card can sit outside its own region: the order engine moves a
-    parent to just before its earliest child (a waiver), and once the lock is frozen a card whose region or pass
-    changes keeps its old slot. So the sections are the heaviest chain of runs (by card count) whose pass and region
-    never go back in ring order, and every other run joins the next section after it, where Anki shows it."""
+def sections(ordered: list[Entry], place_of: Callable[[Card], tuple[Pass, int | None]]) -> list[Section]:
+    """Runs of one pass and region (as the lock records them), in ring order. A card can sit outside its own region:
+    the order engine moves a parent to just before its earliest child (a waiver). So the sections are the heaviest
+    chain of runs (by card count) whose pass and region never go back in ring order, and every other run joins the
+    next section after it, where Anki shows it."""
     runs: list[Section] = []
     for entry in ordered:
-        c = entry.card
-        study, region = c.study_pass, None if c.study_pass == "orientation" else region_of(c)
+        study, region = place_of(entry.card)
         if runs and (runs[-1].study_pass, runs[-1].region) == (study, region):
             runs[-1].entries.append(entry)
         else:
@@ -275,10 +274,9 @@ def build(parts: list[Section], names: dict[int, str], images: dict[str, Path], 
 def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     """The real cards, in lock order and sectioned, with region names and rendered maps. Fails on a card that is
     unrendered, has no note, or whose note carries a research marker, and on a draft lock the current study order
-    would rewrite."""
+    would rewrite (positions.lock_error)."""
     from geofeat.countries_ne import state_ids
     from geofeat.curriculum import load_curriculum
-    from geofeat.order.inputs import card_region
     from geofeat.sources import all_cards
 
     cards = all_cards()
@@ -290,15 +288,19 @@ def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
     if marked := sorted(c.key for c in cards if NOTE_MARKER.search(c.note or "")):
         raise SystemExit(f"notes with research markers: {marked}; run `make check-data`")
     lock = positions.read()
-    if error := positions.stale_draft_error(lock):
+    if error := positions.lock_error(lock):
         raise SystemExit(error)
     curriculum = load_curriculum(state_ids())
-    region = card_region(curriculum)  # the engine's own rule, so sections match how the cards were ordered
-    parts = sections(entries(cards, lock.positions), region)
+
+    def place_of(card: Card) -> tuple[Pass, int | None]:  # the lock's record, as the pass::/region:: tags are
+        entry = lock.entries[card.uid]
+        return entry.study_pass, entry.region
+
+    parts = sections(entries(cards, lock.positions), place_of)
     owned = set()
     for section in parts:
         for e in section.entries:
-            own = (e.card.study_pass, None if e.card.study_pass == "orientation" else region(e.card))
+            own = place_of(e.card)
             owned.add(own)
             if own != (section.study_pass, section.region):
                 print(f"card {e.number} ({e.card.key}, {_place(*own)}) sits in "
