@@ -10,7 +10,7 @@ from shapely.geometry import box
 
 from geofeat.card import Card, RenderRef, Kind, card_key, pass_tag, study_pass
 from geofeat.curriculum import Curriculum
-from geofeat.order import Frame, curriculum_order, report
+from geofeat.order import Frame, OrderError, curriculum_order, report
 from geofeat.order.walk import Walk, generate, region_walk
 from geofeat.spec import RenderSpec
 
@@ -189,6 +189,19 @@ class AnchorTest(unittest.TestCase):
         self.assertEqual(self.at["city:rivermouth"], self.at["feature:long-river-delta"] + 1)
         self.assertGreater(self.at["city:bravoburg"], self.at["capital:bravo"])
         self.assertEqual(self.at["city:hotelport"], self.at["feature:golf-strait"] + 1)
+
+    def test_anchor_override_for_a_territory_and_a_feature(self) -> None:
+        # As Greenland after Iceland and the GIUK Gap after Greenland: each right after its anchor, not its default.
+        moved = {"territory:isle": "country:delta", "feature:west-range": "territory:isle"}
+        cards = [c.model_copy(update={"anchor": moved[c.key]}) if c.key in moved else c for c in world_cards()]
+        o = keys(order(cards).cards)
+        start = o.index("country:delta")
+        self.assertEqual(o[start:start + 3], ["country:delta", "territory:isle", "feature:west-range"])
+
+    def test_anchor_outside_the_region_is_an_error(self) -> None:
+        cards = [c.model_copy(update={"anchor": "country:fox"}) if c.key == "territory:isle" else c for c in world_cards()]
+        with self.assertRaisesRegex(OrderError, "anchor country:fox is not a card"):
+            order(cards)
 
     def test_pass_2_follows_the_walk_without_its_countries(self) -> None:
         self.assertEqual(self.order[-3:], ["city:foxton", "feature:golf-strait", "city:hotelport"])

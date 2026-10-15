@@ -153,8 +153,22 @@
 - kind: territory
   id: greenland
   uid: 24rdGoHY6W
+  retired: true  # placed in region 19 until v2.0.0; replaced by the card below, in region 02
   name: Greenland
   sovereign: denmark
+  status_line: Autonomous territory of the Kingdom of Denmark
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320551}}
+  expect: [-73.1, 59.7, -11.3, 83.7]
+  note: "Greenland is a self-governing part of the Kingdom of Denmark: it gained home rule in 1979 and wider self-government in 2009, while Denmark keeps foreign affairs, security and financial policy. Geographically in North America, north-east of Canada, it is the world's largest island and mostly ice-capped. A US–Denmark–Greenland defence agreement signed in September 2026 provides for more US military sites, and in it the US affirms the Kingdom of Denmark's sovereignty."
+
+- kind: territory
+  id: greenland
+  uid: zjAlvxD9jl
+  name: Greenland
+  sovereign: denmark
+  anchor: country:iceland
+  anchor_reason: Studied with the Nordic states, beside Iceland, right before the GIUK Gap that runs from it.
   status_line: Autonomous territory of the Kingdom of Denmark
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320551}}

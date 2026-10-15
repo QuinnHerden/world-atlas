@@ -55,6 +55,7 @@ def card(feature: Feature) -> Card:
         tier=feature.tier,
         note=feature.note,
         orientation=orientation(feature),
+        anchor=feature.anchor,
         render=RenderRef(spec=RenderSpec.from_feature(feature), geometry=lambda: geometry(feature)),
     )
 

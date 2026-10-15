@@ -84,7 +84,7 @@ def territory_cards(territory: Territory) -> list[Card]:
         uid=require_uid(territory.id, territory.uid), kind="territory", id=territory.id, prompt="Territory",
         answer_lines=(answer(territory.name, territory.alt_names), territory.status_line),
         tags=tags("territory", territory.id, TERRITORY_TIER, "territories", territory.region), region=f"{territory.region:02d}",
-        tier=TERRITORY_TIER, host=host_key(territory.host), note=territory.note,
+        tier=TERRITORY_TIER, host=host_key(territory.host), anchor=territory.anchor, note=territory.note,
         render=RenderRef(spec=outline_spec(territory.frame), geometry=lambda: (territory.outline(), (), None),
                          region=lambda: framing.region(territory.id)),
     )]
