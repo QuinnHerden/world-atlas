@@ -20,7 +20,7 @@ The study order already groups states by curriculum region ([ADR 0009](0009-curr
 
 **Main body.** Parts of a subject within 300 km of each other form a group (`GROUP_GAP_M`); the largest is the main body. A state whose main body holds less than 65% of its land (`MAIN_GROUP_DETAIL`) is scattered (Kiribati, French Polynesia). A scattered state is never a giant and gets no detail inset unless its data forces one.
 
-**Fixed sub-frames** (`framing.SUB_FRAMES`). Two regions don't suit one frame: Oceania is too vast, and the Lesser Antilles are too fine for the Caribbean frame. Their cards are drawn on a fixed lon/lat box instead. A box takes in the land each island group is read against. The fit and fill rules above apply, but a box has no margin and no minimum width.
+**Fixed sub-frames** (`framing.SUB_FRAMES`). Two regions don't suit one frame: Oceania is too vast, and the Lesser Antilles are too fine for the Caribbean frame. Their cards are drawn on a fixed lon/lat box instead. A box takes in the land each island group is read against. The fit and fill rules above apply, but a box has no margin and no minimum width. A subject that lies inside its box is never a giant, so it keeps the box (French Polynesia's main body holds 65.0% of its land, just enough to measure as a giant); one that overflows it, Australia on the Melanesia box, keeps its v2.0 frame as a giant.
 
 | Sub-frame | Box (W, S, E, N) | Cards |
 |---|---|---|

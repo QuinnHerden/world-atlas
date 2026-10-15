@@ -129,6 +129,9 @@ class PoliticalFrameTest(unittest.TestCase):
         f = self.frame(spread, _box_points(148.0, -48.0, 228.0, -2.0), framing="fixed")
         v2 = frame(RenderSpec(style="area", country="subject"), spread)
         self.assertNotEqual(f.extent, v2.extent)
+        australia = box(113, -44, 154, -10)  # overflows the Melanesia box: still a giant
+        melanesia = self.frame(australia, _box_points(128.0, -34.0, 182.0, 2.0), framing="fixed")
+        self.assertEqual(melanesia.extent, frame(RenderSpec(style="area", country="subject"), australia).extent)
 
     def test_a_city_in_a_giant_host_gets_an_inset_on_the_v2_frame(self) -> None:
         f = self.frame(box(-74, -34, -35, 5), country="context", dot=(-47.9, -15.8))  # Brasília in Brazil
