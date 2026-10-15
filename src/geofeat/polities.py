@@ -138,11 +138,21 @@ class RingPlace(NamedTuple):
     kind: Literal["country", "territory", "dispute"]  # the curriculum map that places it
 
 
+class FrameOverride(Strict):
+    """A card's own exception to the political framing rules: `inset` forces its detail inset on or off, and
+    `inset_km` sets the inset's width (the Spratlys, zoomed in past the default so the island group reads). On a
+    country it applies to the country card only; its capital card always has an inset by the city rule."""
+
+    inset: bool | None = None
+    inset_km: Annotated[float, Field(gt=0, le=5000)] | None = None
+
+
 class Placed(Strict):
     """An entry whose region and host come from data/curriculum.yaml, the one place placement is decided. The loaders
     place it; read unplaced, it has only its own data (countries_ne.py needs no more)."""
 
     id: Id
+    frame: FrameOverride = FrameOverride()
     _place: RingPlace | None = PrivateAttr(default=None)
 
     @property

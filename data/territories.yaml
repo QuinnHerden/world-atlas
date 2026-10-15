@@ -4,6 +4,7 @@
 # must be placed there. The adjacency graph and the region outlines read `geometry` too (countries_ne.py). parties:
 # states or authorities that claim or administer the area, not backers or recognisers; a self-declared entity is
 # labelled by its short common name.
+# frame: the card's own exception to the framing rules, as in countries.yaml.
 
 - kind: territory
   id: gibraltar
@@ -402,6 +403,7 @@
   uid: V6Ch6dDZjH
   name: Spratly Islands
   parties: [china, taiwan, vietnam, philippines, malaysia, brunei]
+  frame: {inset: true, inset_km: 900}  # a sea area of reefs: zoomed in past the default so the island group reads
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103863}}
   expect: [111.8, 7.1, 117.9, 12.1]

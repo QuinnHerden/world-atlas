@@ -111,6 +111,26 @@ class PoliticalFrameTest(unittest.TestCase):
         f = self.frame(kosovo)
         self.assertAlmostEqual(f.mark.area, project(kosovo, f.projection).convex_hull.area, delta=1)
 
+    def test_every_city_gets_an_inset_round_its_dot(self) -> None:
+        from geofeat.frame import project
+
+        f = self.frame(box(16, 45.7, 22.9, 48.6), country="context", dot=(19.04, 47.5))  # Budapest in Hungary
+        dx0, dx1, dy0, dy1 = f.detail
+        x, y = project(Point(19.04, 47.5), f.projection).coords[0]
+        self.assertTrue(dx0 < x < dx1 and dy0 < y < dy1)
+        self.assertFalse(f.inset)
+
+    def test_a_city_in_a_giant_host_gets_an_inset_on_the_v2_frame(self) -> None:
+        f = self.frame(box(-74, -34, -35, 5), country="context", dot=(-47.9, -15.8))  # Brasília in Brazil
+        self.assertIsNotNone(f.detail)
+
+    def test_data_overrides_force_the_inset_and_its_width(self) -> None:
+        hungary = box(16, 45.7, 22.9, 48.6)
+        self.assertIsNotNone(self.frame(hungary, inset=True).detail)
+        self.assertIsNone(self.frame(box(20.3, 42.3, 21.5, 43.1), inset=False).detail)
+        f = self.frame(hungary, inset=True, inset_km=400.0)
+        self.assertAlmostEqual(f.detail[1] - f.detail[0], 400_000)
+
     def test_close_dot_city_gets_a_detail_inset_round_its_dot(self) -> None:
         from geofeat.frame import CLOSE_DOT_DETAIL_M, DETAIL_SHARE, DETAIL_ZOOM, project
 

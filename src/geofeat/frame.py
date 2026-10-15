@@ -53,6 +53,7 @@ DETAIL_FILL = 0.8  # the subject's share of the detail inset, on the 16:9 measur
 DETAIL_MIN_M = 200_000  # a microstate's inset still shows the coast or valley round it
 DETAIL_SHARE = 0.35  # the inset's share of the card's width (render.py draws it)
 CLOSE_DOT_DETAIL_M = CLOSE_DOT_FRAME_M  # a close-dot city's detail inset: at most the v2.0 close-dot frame
+CITY_DETAIL_MAX_M = 1_200_000  # any other city's inset: its host whole if that fits, else this much round the dot
 
 
 class Framed(Protocol):
@@ -132,7 +133,11 @@ def frame(feature: Framed, geometry: BaseGeometry, region: BaseGeometry | None =
         if political is not None:
             return political
         v2 = feature.model_copy(update={"framing": None})  # only a RenderSpec carries `framing`
-        return replace(frame(v2, geometry), inset=False)  # a giant: its v2.0 frame
+        giant = replace(frame(v2, geometry), inset=False)  # a giant: its v2.0 frame
+        if feature.dot is None or feature.close_dot or giant.extent is None:  # a close dot's frame is already local
+            return giant
+        host, _ = main_group(project(geometry, giant.projection))
+        return replace(giant, **_city_detail(feature, giant.projection, host, giant.extent[1] - giant.extent[0]))
     if getattr(feature, "close_dot", False):
         return _close_dot(*feature.dot)
     fixed = feature.frame.centre
@@ -214,25 +219,44 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
     y0 = min(max(y0, -pole_y), pole_y - width / ASPECT)
     extent = (x0, x0 + width, y0, y0 + width / ASPECT)
 
-    mpp = width / 1600  # metres per px at 1600 wide
-    detail = marked = None
-    if getattr(feature, "close_dot", False):
-        marked = shapely.Point(*_to_map(projection, *feature.dot))
-        dw = min(CLOSE_DOT_DETAIL_M, width * DETAIL_SHARE / DETAIL_ZOOM)  # tighter in a small region, still 2x
-    elif share >= MAIN_GROUP_DETAIL:
-        marked = main  # outlying specks (Rodrigues, Rotuma) neither size nor fill the inset
-        tx0, ty0, tx1, ty1 = marked.bounds
-        disc = 2 * math.sqrt(marked.area / math.pi)
-        dw = max(_long(tx0, ty0, tx1, ty1) / DETAIL_FILL, DETAIL_MIN_M)
-        if disc >= DETAIL_DISC_PX * mpp or width / dw * DETAIL_SHARE < DETAIL_ZOOM:
-            marked = None
-    if marked is None:
+    if getattr(feature, "dot", None) is not None:  # a capital or city: always an inset round its dot
+        return Frame(projection, extent, inset=False, **_city_detail(feature, projection, main, width))
+    if share < MAIN_GROUP_DETAIL and getattr(feature, "inset", None) is not True:
+        return Frame(projection, extent, inset=False)  # scattered: no main body to show
+    tx0, ty0, tx1, ty1 = main.bounds  # outlying specks (Rodrigues, Rotuma) neither size nor fill the inset
+    inset_km = getattr(feature, "inset_km", None)
+    dw = inset_km * 1000 if inset_km else max(_long(tx0, ty0, tx1, ty1) / DETAIL_FILL, DETAIL_MIN_M)
+    wanted = getattr(feature, "inset", None)
+    if wanted is None:
+        disc = 2 * math.sqrt(main.area / math.pi)
+        wanted = disc < DETAIL_DISC_PX * width / 1600 and width / dw * DETAIL_SHARE >= DETAIL_ZOOM
+    if not wanted:
         return Frame(projection, extent, inset=False)
-    tx0, ty0, tx1, ty1 = marked.bounds
-    dcx, dcy = (tx0 + tx1) / 2, (ty0 + ty1) / 2
-    dcy = min(max(dcy, -pole_y + dw / ASPECT / 2), pole_y - dw / ASPECT / 2)  # never past a pole
-    detail = (dcx - dw / 2, dcx + dw / 2, dcy - dw / ASPECT / 2, dcy + dw / ASPECT / 2)
-    return Frame(projection, extent, inset=False, detail=detail, mark=marked.convex_hull)
+    detail = _window(projection, (tx0 + tx1) / 2, (ty0 + ty1) / 2, dw)
+    return Frame(projection, extent, inset=False, detail=detail, mark=main.convex_hull)
+
+
+def _window(projection: ccrs.Projection, cx: float, cy: float, width: float) -> tuple[float, float, float, float]:
+    """A 16:9 extent `width` wide round (cx, cy), moved back from a pole."""
+    pole_y = projection.y_limits[1]
+    cy = min(max(cy, -pole_y + width / ASPECT / 2), pole_y - width / ASPECT / 2)
+    return cx - width / 2, cx + width / 2, cy - width / ASPECT / 2, cy + width / ASPECT / 2
+
+
+def _city_detail(feature: Framed, projection: ccrs.Projection, host: BaseGeometry, width: float) -> dict:
+    """A capital's or city's inset (no 2x rule): CLOSE_DOT_DETAIL_M round a close dot, as tight as a small region
+    needs; otherwise its host's main body at DETAIL_FILL, at least DETAIL_MIN_M and at most CITY_DETAIL_MAX_M wide,
+    centred on the host when that keeps the dot well inside, else on the dot."""
+    x, y = _to_map(projection, *feature.dot)
+    if getattr(feature, "close_dot", False):
+        dw, cx, cy = min(CLOSE_DOT_DETAIL_M, width * DETAIL_SHARE / DETAIL_ZOOM), x, y
+    else:
+        tx0, ty0, tx1, ty1 = host.bounds
+        dw = min(max(_long(tx0, ty0, tx1, ty1) / DETAIL_FILL, DETAIL_MIN_M), CITY_DETAIL_MAX_M)
+        cx, cy = (tx0 + tx1) / 2, (ty0 + ty1) / 2
+        if abs(x - cx) > 0.4 * dw or abs(y - cy) > 0.4 * dw / ASPECT:
+            cx, cy = x, y
+    return {"detail": _window(projection, cx, cy, dw), "mark": shapely.Point(x, y)}
 
 
 def _close_dot(lon: float, lat: float) -> Frame:

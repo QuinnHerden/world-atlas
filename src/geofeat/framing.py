@@ -16,7 +16,7 @@ from geofeat.frame import ASPECT, FILL, GIANT_FRAME_M, Equirectangular, centre, 
 from geofeat.ne import GEOD
 from geofeat.polities import load_political
 
-Framing = tuple[str, BaseGeometry]
+Framing = tuple[str, BaseGeometry, tuple[float, float, float, float] | None]
 
 # Capitals and cities on their host's region frame: a proposal under review. False reverts them to v2.0 framing
 # (their host country's frame, or the 1,000 km close-dot frame) without touching the political cards.
@@ -34,11 +34,13 @@ SUB_FRAMES = {
     "18-central-pacific": ((145.0, -25.0, 228.0, 28.0), ("kiribati",)),
     "18-polynesia": ((148.0, -48.0, 228.0, -2.0),
                      ("new-zealand", "fiji", "tonga", "samoa", "tuvalu", "french-polynesia")),
-    "21-lesser-antilles": ((-64.0, 9.8, -58.8, 18.3),
+    "21-lesser-antilles": ((-64.0, 11.6, -58.8, 18.3),
                            ("antigua-and-barbuda", "saint-kitts-and-nevis", "dominica", "saint-lucia",
-                            "saint-vincent-and-the-grenadines", "grenada", "barbados", "trinidad-and-tobago",
-                            "guadeloupe", "martinique")),
+                            "saint-vincent-and-the-grenadines", "grenada", "barbados", "guadeloupe", "martinique")),
 }
+# A sub-frame too tight to place on its own gets a small regional locator: the Caribbean basin, Florida and Cuba to
+# the north coast of South America (lon0, lon1, lat0, lat1)
+LOCATORS = {"21-lesser-antilles": (-88.0, -56.0, 7.0, 28.0)}
 MUST_SUB_FRAME = frozenset({18})  # every card in these regions must be on a sub-frame
 
 
@@ -95,11 +97,12 @@ def region_of(id: str) -> tuple[str, tuple[str, ...]]:
 
 
 def region(id: str) -> Framing:
-    """("region", the region's member points) or ("fixed", a sub-frame's box points) for a political card."""
+    """("region", the region's member points, None) or ("fixed", a sub-frame's box points, its regional locator) for
+    a political card."""
     name, members = region_of(id)
     if name in SUB_FRAMES:
-        return "fixed", _box_points(*SUB_FRAMES[name][0])
-    return "region", _points(members)
+        return "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name)
+    return "region", _points(members), None
 
 
 def city_region(country_id: str) -> Callable[[], Framing] | None:

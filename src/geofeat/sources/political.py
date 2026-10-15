@@ -8,7 +8,8 @@ from shapely.geometry.base import BaseGeometry
 from geofeat import framing
 from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, pass_tag, study_pass
 from geofeat.polities import (  # noqa: F401  re-exported for cities.py and the tests
-    COUNTRIES, PATHS, PLACES, TERRITORIES, BBox, Capital, Country, Dispute, Id, Territory, Uid, composition_errors,
+    COUNTRIES, PATHS, PLACES, TERRITORIES, BBox, Capital, Country, Dispute, FrameOverride, Id, Territory, Uid,
+    composition_errors,
     in_bbox, load_countries, load_political, outline, outside_country, place, read_entries, unique,
 )
 from geofeat.spec import RenderSpec
@@ -20,8 +21,8 @@ def answer(name: str, alt_names: list[str]) -> str:
     return f"{name} ({', '.join(alt_names)})" if alt_names else name
 
 
-def country_spec() -> RenderSpec:
-    return RenderSpec(style="area", country="subject")
+def country_spec(frame: FrameOverride = FrameOverride()) -> RenderSpec:
+    return RenderSpec(style="area", country="subject", inset=frame.inset, inset_km=frame.inset_km)
 
 
 def dot_spec() -> RenderSpec:
@@ -29,9 +30,9 @@ def dot_spec() -> RenderSpec:
     return RenderSpec(style="area", country="context")
 
 
-def outline_spec() -> RenderSpec:
+def outline_spec(frame: FrameOverride = FrameOverride()) -> RenderSpec:
     """Territories and disputes: the subject outline, dashed."""
-    return RenderSpec(style="area", country="subject", outline="dashed")
+    return RenderSpec(style="area", country="subject", outline="dashed", inset=frame.inset, inset_km=frame.inset_km)
 
 
 def tags(kind: Kind, id: str, tier: int, category: str, region: int) -> tuple[str, ...]:
@@ -63,7 +64,7 @@ def country_cards(country: Country) -> list[Card]:
         uid=require_uid(country.id, country.uids["country"]), kind="country", id=country.id, prompt="Country",
         answer_lines=(answer(country.name, country.alt_names),),
         tags=tags("country", country.id, country.tier, "countries", country.region), region=region, tier=country.tier,
-        host=host_key(country.host), note=country.note, render=RenderRef(spec=country_spec(), geometry=geometry,
+        host=host_key(country.host), note=country.note, render=RenderRef(spec=country_spec(country.frame), geometry=geometry,
                                                                      region=lambda: framing.region(country.id)),
     )]
     if c := country.capital:
@@ -84,7 +85,7 @@ def territory_cards(territory: Territory) -> list[Card]:
         answer_lines=(answer(territory.name, territory.alt_names), territory.status_line),
         tags=tags("territory", territory.id, TERRITORY_TIER, "territories", territory.region), region=f"{territory.region:02d}",
         tier=TERRITORY_TIER, host=host_key(territory.host), note=territory.note,
-        render=RenderRef(spec=outline_spec(), geometry=lambda: (territory.outline(), (), None),
+        render=RenderRef(spec=outline_spec(territory.frame), geometry=lambda: (territory.outline(), (), None),
                          region=lambda: framing.region(territory.id)),
     )]
 
@@ -96,7 +97,7 @@ def dispute_cards(dispute: Dispute, countries: dict[str, str]) -> list[Card]:
         answer_lines=(answer(dispute.name, dispute.alt_names), dispute.parties_line(countries)),
         tags=tags("dispute", dispute.id, TERRITORY_TIER, "territories", dispute.region), region=f"{dispute.region:02d}",
         tier=TERRITORY_TIER, host=host_key(dispute.host), note=dispute.note,
-        render=RenderRef(spec=outline_spec(), geometry=lambda: (dispute.outline(), (), None),
+        render=RenderRef(spec=outline_spec(dispute.frame), geometry=lambda: (dispute.outline(), (), None),
                          region=lambda: framing.region(dispute.id)),
     )]
 
