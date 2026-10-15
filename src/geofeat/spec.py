@@ -45,8 +45,8 @@ class RenderSpec(BaseModel):
     outline: Literal["dashed"] | None = None
     world: bool = False
     close_dot: bool = False
-    # A country, territory or dispute subject: framed on its curriculum region, or on an Oceania sub-frame (`pacific`)
-    framing: Literal["region", "pacific"] | None = None
+    # A country, territory or dispute subject: framed on its curriculum region, or on a fixed sub-frame (`fixed`)
+    framing: Literal["region", "fixed"] | None = None
 
     @classmethod
     def from_feature(cls, feature: Feature) -> "RenderSpec":

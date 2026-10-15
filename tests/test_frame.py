@@ -91,14 +91,25 @@ class PoliticalFrameTest(unittest.TestCase):
         self.assertEqual(self.frame(giant).extent, v2.extent)
 
     def test_small_subject_gets_a_detail_inset_without_the_locator(self) -> None:
-        f = self.frame(box(20.0, 42.2, 21.8, 43.2))  # Kosovo-sized
+        f = self.frame(box(20.3, 42.3, 21.5, 43.1))  # Kosovo-sized
         self.assertIsNotNone(f.detail)
         self.assertFalse(f.inset)
 
-    def test_a_mid_size_subject_keeps_the_locator_and_no_inset(self) -> None:
+    def test_a_mid_size_subject_gets_no_inset_and_no_card_the_locator(self) -> None:
         f = self.frame(box(16, 45.7, 22.9, 48.6))  # Hungary-sized
         self.assertIsNone(f.detail)
-        self.assertTrue(f.inset)
+        self.assertFalse(f.inset)
+        self.assertFalse(self.frame(box(-74, -34, -35, 5)).inset)  # a giant's v2.0 frame loses it too
+
+    def test_a_long_thin_but_sizeable_subject_gets_no_inset(self) -> None:
+        self.assertIsNone(self.frame(box(20, 44.5, 27, 45.5)).detail)  # 550 km by 110 km
+
+    def test_the_mark_is_the_subject_not_a_box_round_it(self) -> None:
+        from geofeat.frame import project
+
+        kosovo = box(20.3, 42.3, 21.5, 43.1)
+        f = self.frame(kosovo)
+        self.assertAlmostEqual(f.mark.area, project(kosovo, f.projection).convex_hull.area, delta=1)
 
     def test_close_dot_city_gets_a_detail_inset_round_its_dot(self) -> None:
         from geofeat.frame import CLOSE_DOT_DETAIL_M, DETAIL_SHARE, DETAIL_ZOOM, project
@@ -110,9 +121,13 @@ class PoliticalFrameTest(unittest.TestCase):
         x, y = project(Point(20.0, 47.0), f.projection).coords[0]
         self.assertTrue(dx0 < x < dx1 and dy0 < y < dy1)
 
-    def test_pacific_sub_frames_keep_the_locator(self) -> None:
-        f = self.frame(box(20.0, 42.2, 21.8, 43.2), framing="pacific")
-        self.assertTrue(f.inset)
+    def test_a_fixed_sub_frame_is_its_box_with_no_minimum(self) -> None:
+        from geofeat.frame import REGION_MIN_M
+        from geofeat.framing import SUB_FRAMES, _box_points
+
+        f = self.frame(box(-61.1, 13.7, -60.9, 14.1), _box_points(*SUB_FRAMES["21-lesser-antilles"][0]), framing="fixed")
+        self.assertLess(f.extent[1] - f.extent[0], REGION_MIN_M / 2)
+        self.assertFalse(f.inset)
 
 
 class FitAxisTest(unittest.TestCase):
@@ -125,19 +140,38 @@ class FitAxisTest(unittest.TestCase):
         self.assertEqual(_fit_axis(0, 10, 0, 12, 1), (-1, 14))  # widened
 
 
-class PacificFramesTest(unittest.TestCase):
-    def test_every_oceania_entry_is_on_exactly_one_sub_frame(self) -> None:
+class SubFramesTest(unittest.TestCase):
+    def test_every_entry_of_a_sub_framed_region_is_on_exactly_one_sub_frame(self) -> None:
         from ruamel.yaml import YAML
 
-        from geofeat.framing import OCEANIA, PACIFIC_FRAMES
+        from geofeat.framing import MUST_SUB_FRAME, SUB_FRAMES
         from geofeat.model import ROOT
 
         regions = YAML(typ="safe").load(ROOT / "data/curriculum.yaml")["regions"]
-        oceania = next(r for r in regions if r["number"] == OCEANIA)
-        ids = [*oceania["countries"], *oceania.get("territories", {}), *oceania.get("disputes", {})]
-        for id in ids:
-            with self.subTest(id):
-                self.assertEqual(sum(id in cards for _, cards in PACIFIC_FRAMES.values()), 1)
+        for region in (r for r in regions if r["number"] in MUST_SUB_FRAME):
+            for id in [*region["countries"], *region.get("territories", {}), *region.get("disputes", {})]:
+                with self.subTest(id):
+                    self.assertEqual(sum(id in cards for _, cards in SUB_FRAMES.values()), 1)
+
+    def test_each_sub_frame_holds_only_its_own_regions_cards(self) -> None:
+        from ruamel.yaml import YAML
+
+        from geofeat.framing import SUB_FRAMES
+        from geofeat.model import ROOT
+
+        regions = YAML(typ="safe").load(ROOT / "data/curriculum.yaml")["regions"]
+        members = {r["number"]: {*r["countries"], *r.get("territories", {}), *r.get("disputes", {})} for r in regions}
+        for name, (_, cards) in SUB_FRAMES.items():
+            with self.subTest(name):
+                self.assertLessEqual(set(cards), members[int(name.split("-")[0])])
+
+    def test_no_card_is_on_two_sub_frames(self) -> None:
+        from collections import Counter
+
+        from geofeat.framing import SUB_FRAMES
+
+        counts = Counter(id for _, cards in SUB_FRAMES.values() for id in cards)
+        self.assertEqual([id for id, n in counts.items() if n > 1], [])
 
 
 if __name__ == "__main__":

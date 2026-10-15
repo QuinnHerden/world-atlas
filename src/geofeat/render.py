@@ -67,11 +67,14 @@ CLUSTER_GAP_PX = 160
 SMALL_STRAIT_PX, STRAIT_RING_MIN_PX, STRAIT_RING_CLEAR_PX = 123, 120, 24
 STRAIT_RING_STROKE_PX, STRAIT_RING_CASING_PX = 6, 2
 # A detail inset (frame.detail): this share of the card's width, DETAIL_MARGIN_PX in from a corner; bottom right
-# unless that covers the box or much land. Its box on the main map is at least DETAIL_BOX_MIN_PX
-# wide, and a subject under DOT_BELOW_PX there also gets a red dot DOT_ON_BOX_PX across (px at 1600 wide).
-DETAIL_MARGIN_PX, DETAIL_CLEAR_PX, DETAIL_BOX_MIN_PX = 24, 24, 56
+# unless that comes near the subject or covers much land. Leader lines run to the subject (frame.mark); a subject
+# under DOT_BELOW_PX there also gets a red dot DOT_ON_BOX_PX across (px at 1600 wide).
+DETAIL_MARGIN_PX, DETAIL_CLEAR_PX = 24, 24
 RELIEF_MIN_M = 400_000  # narrower frames (detail insets) leave out the 50m relief, which blurs to blobs there
 DOT_BELOW_PX, DOT_ON_BOX_PX = 16, 24
+CITY_DOT_R_PX = 22  # a city dot's radius with its casing
+LEADER_GAP_PX = 8  # leader lines stop this short of the subject
+SKIP_RING_PX = 6  # the parts of a subject within this of frame.mark get no ring: the leader lines find them
 INSET_RING_BELOW_PX = 48  # in the detail inset, only a subject shorter than this keeps its ring (microstates)
 DETAIL_LAND_OK = 0.35  # the default corner may cover this share of land
 
@@ -288,7 +291,7 @@ def _small_ring(ax, shape: BaseGeometry, frame_: Frame) -> None:
 def _cluster_rings(ax, shape: BaseGeometry, frame_: Frame, skip: BaseGeometry | None = None) -> None:
     """Ring a small subject, one ring per group of its parts within CLUSTER_GAP_PX of each other: a microstate gets
     one ring, a state scattered across an ocean (Kiribati) one round each island group, and the frame shows them all.
-    A group inside `skip` (a detail inset's box, which locates it instead) gets none."""
+    A group inside `skip` (round a detail inset's subject, which the leader lines find) gets none."""
     if not _is_small(ax, shape):
         return
     if skip is not None:
@@ -305,7 +308,7 @@ def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: 
              skip: BaseGeometry | None = None) -> None:
     """A country, territory or disputed area. As the subject: a crisp red outline with a white casing over a faint
     fill, dashed for a territory or dispute, ringed when small (unless `ring` is off), except for the groups inside
-    `skip`, a detail inset's box, which locates them instead. As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
+    `skip`, round a detail inset's subject, which the leader lines find instead. As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
     fuse = 2 * _metres_per_px(ax)
     shape = project(geometry, frame_.projection).buffer(fuse).buffer(-fuse)
     crs = frame_.projection
@@ -365,17 +368,14 @@ def _highlight(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) -> N
             _short_ring(ax, geometry, frame_)
 
 
-def _inset(fig, frame_: Frame, avoid_px: list[tuple[float, float, float, float]], taken: BaseGeometry | None = None) -> None:
+def _inset(fig, frame_: Frame, avoid_px: list[tuple[float, float, float, float]]) -> None:
     """The same flat world map on every card, marking the frame as a box, or a dot where the box would be tiny. It
-    takes the first corner clear of the first box in `avoid_px` (the highlight), else of the next (a city's dot), and
-    never one that overlaps `taken` (a detail inset)."""
+    takes the first corner clear of the first box in `avoid_px` (the highlight), else of the next (a city's dot)."""
     w, margin = INSET_W_PX * SCALE, 12 * SCALE
     h = w / 2
     corners = [(margin, margin), (WIDTH_PX - w - margin, margin), (margin, HEIGHT_PX - h - margin),
                (WIDTH_PX - w - margin, HEIGHT_PX - h - margin)]
     clear_of = [box(hx0 - 20 * SCALE, hy0 - 20 * SCALE, hx1 + 20 * SCALE, hy1 + 20 * SCALE) for hx0, hy0, hx1, hy1 in avoid_px]
-    if taken is not None:
-        corners = [c for c in corners if not box(c[0], c[1], c[0] + w, c[1] + h).intersects(taken)]
     x, y = next((c for clear in clear_of for c in corners if not box(c[0], c[1], c[0] + w, c[1] + h).intersects(clear)),
                 corners[0])
 
@@ -412,16 +412,15 @@ def _link_stroke(ax, geometry: BaseGeometry) -> None:
     for colour, width, z in ((CASING, LINK_PX + 2 * CASING_PX, 7), (INSET_FRAME, LINK_PX, 7.1)):
         for line in shapely.get_parts(geometry):
             xs, ys = np.array(line.coords).T
-            ax.plot(xs, ys, color=colour, lw=pt(width), solid_capstyle="round", solid_joinstyle="miter", zorder=z)
+            ax.plot(xs, ys, color=colour, lw=pt(width), solid_capstyle="round", solid_joinstyle="round", zorder=z)
 
 
-def _detail_corner(w: float, h: float, box_px: BaseGeometry, subject_px: BaseGeometry,
-                   land_px: BaseGeometry) -> tuple[float, float]:
-    """Bottom right, unless it covers the box (or the subject) or much land; then the clear corner covering least
-    land, and if none is clear, the one farthest from the box."""
+def _detail_corner(w: float, h: float, target_px: BaseGeometry, land_px: BaseGeometry) -> tuple[float, float]:
+    """Bottom right, unless it comes near the subject or covers much land; then the clear corner covering least
+    land, and if none is clear, the one farthest from the subject."""
     m = DETAIL_MARGIN_PX
     corners = [(WIDTH_PX - w - m, m), (m, m), (WIDTH_PX - w - m, HEIGHT_PX - h - m), (m, HEIGHT_PX - h - m)]
-    keep_clear = unary_union([box_px, subject_px.envelope]).buffer(DETAIL_CLEAR_PX)
+    keep_clear = target_px.envelope.buffer(DETAIL_CLEAR_PX)
 
     def rect(c):
         return box(c[0], c[1], c[0] + w, c[1] + h)
@@ -431,15 +430,15 @@ def _detail_corner(w: float, h: float, box_px: BaseGeometry, subject_px: BaseGeo
 
     clear = [c for c in corners if not rect(c).intersects(keep_clear)]
     if not clear:
-        return max(corners, key=lambda c: rect(c).distance(box_px))
+        return max(corners, key=lambda c: rect(c).distance(target_px))
     if clear[0] == corners[0] and cover(corners[0], land_px) <= DETAIL_LAND_OK:
         return corners[0]
-    return min(clear, key=lambda c: (round(cover(c, land_px), 2), -rect(c).distance(box_px)))
+    return min(clear, key=lambda c: (round(cover(c, land_px), 2), -rect(c).distance(target_px)))
 
 
-def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) -> BaseGeometry:
-    """Picture-in-picture for a small subject: a box round it on the main map, a corner inset zoomed to
-    frame.detail, and leader lines from the box to the inset. Returns the inset's rectangle in px."""
+def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) -> None:
+    """Picture-in-picture for a small subject: a corner inset zoomed to frame.detail, and leader lines from the
+    subject (frame.mark, with its dot) to the inset. Nothing is drawn round the subject, so no neighbour is covered."""
     x0, x1 = ax.get_xlim()
     y0, y1 = ax.get_ylim()
     scale = np.array([WIDTH_PX / (x1 - x0), HEIGHT_PX / (y1 - y0)])
@@ -451,28 +450,21 @@ def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) ->
         return to_px(project(g, frame_.projection))
 
     dx0, dx1, dy0, dy1 = frame_.detail
-    bx0, by0, bx1, by1 = to_px(box(dx0, dy0, dx1, dy1)).bounds
-    if bx1 - bx0 < DETAIL_BOX_MIN_PX:
-        cx, cy, half = (bx0 + bx1) / 2, (by0 + by1) / 2, DETAIL_BOX_MIN_PX / 2
-        bx0, bx1, by0, by1 = cx - half, cx + half, cy - half / ASPECT_PX, cy + half / ASPECT_PX
-    box_px = box(bx0, by0, bx1, by1).intersection(box(0, 0, WIDTH_PX, HEIGHT_PX))
     frame_px = box(0, 0, WIDTH_PX, HEIGHT_PX)
-    if spec.dot:  # a city: its dot is what the inset must not cover
-        subject_px = to_px(shapely.Point(_to_map(frame_, *spec.dot))).buffer(DOT_PX)
-    else:
-        subject_px = projected(geometry).intersection(to_px(box(dx0, dy0, dx1, dy1)))  # the part the inset shows
+    target_px = to_px(frame_.mark)  # the subject's hull, or its dot
+    if spec.dot:  # a city: its dot
+        target_px = to_px(shapely.Point(_to_map(frame_, *spec.dot))).buffer(CITY_DOT_R_PX)
+    elif max(target_px.bounds[2] - target_px.bounds[0], target_px.bounds[3] - target_px.bounds[1]) < DOT_BELOW_PX:
+        cx, cy = target_px.centroid.x / scale[0] + x0, target_px.centroid.y / scale[1] + y0
+        for size, colour in ((DOT_ON_BOX_PX + 2 * CASING_PX * SCALE, CASING), (DOT_ON_BOX_PX, HIGHLIGHT)):
+            ax.plot(cx, cy, transform=frame_.projection, marker="o", ms=pt_full(size), mfc=colour, mec="none", zorder=6)
+        target_px = target_px.centroid.buffer(DOT_ON_BOX_PX / 2 + CASING_PX * SCALE)
     lon0, lon1, lat0, lat1 = _lonlat_bounds(ax)
     land_px = projected(unary_union(list(_clip(layer("50m_land"), (lon0, lon1, lat0, lat1))))).intersection(frame_px)
 
-    sx0, sy0, sx1, sy1 = subject_px.bounds
-    if spec.country == "subject" and max(sx1 - sx0, sy1 - sy0) < DOT_BELOW_PX:
-        cx, cy = (sx0 + sx1) / 2 / scale[0] + x0, (sy0 + sy1) / 2 / scale[1] + y0
-        for size, colour in ((DOT_ON_BOX_PX + 2 * CASING_PX * SCALE, CASING), (DOT_ON_BOX_PX, HIGHLIGHT)):
-            ax.plot(cx, cy, transform=frame_.projection, marker="o", ms=pt_full(size), mfc=colour, mec="none", zorder=6)
-
     w = DETAIL_SHARE * WIDTH_PX
     h = w / ASPECT_PX
-    ix, iy = _detail_corner(w, h, box_px, subject_px, land_px)
+    ix, iy = _detail_corner(w, h, target_px, land_px)
     inset_px = box(ix, iy, ix + w, iy + h)
 
     inset = fig.add_axes([ix / WIDTH_PX, iy / HEIGHT_PX, w / WIDTH_PX, h / HEIGHT_PX], projection=frame_.projection)
@@ -492,15 +484,14 @@ def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) ->
     overlay.set_ylim(0, HEIGHT_PX)
     overlay.set_axis_off()
     overlay.patch.set_alpha(0)
-    hull = unary_union([box_px, inset_px]).convex_hull.exterior
-    corners_box = {tuple(p) for p in np.round(np.array(box_px.exterior.coords), 6)}
-    corners_inset = {tuple(p) for p in np.round(np.array(inset_px.exterior.coords), 6)}
-    pts = [tuple(p) for p in np.round(np.array(hull.coords), 6)]
-    leaders = [] if inset_px.intersects(box_px) else [  # an inset forced over its box gets no leaders
-        LineString([a, b]) for a, b in zip(pts, pts[1:])
-        if (a in corners_box and b in corners_inset) or (a in corners_inset and b in corners_box)]
-    _link_stroke(overlay, shapely.MultiLineString([box_px.exterior, inset_px.exterior, *leaders]))
-    return inset_px
+    leaders = []
+    if not inset_px.intersects(target_px):  # the two tangents from the subject to the inset's far corners
+        corners = {tuple(p) for p in np.round(np.array(inset_px.exterior.coords), 6)}
+        pts = [tuple(p) for p in np.round(np.array(unary_union([target_px, inset_px]).convex_hull.exterior.coords), 6)]
+        leaders = [LineString([a, b]) for a, b in zip(pts, pts[1:]) if (a in corners) != (b in corners)]
+        gap = target_px.buffer(LEADER_GAP_PX)  # stop short of the subject, so the lines point at it
+        leaders = [line.difference(gap) for line in leaders]
+    _link_stroke(overlay, unary_union([inset_px.exterior, *leaders]))
 
 
 def _to_map(frame_: Frame, lon: float, lat: float) -> tuple[float, float]:
@@ -529,13 +520,14 @@ def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry
         ax.add_geometries([former], PLATE, facecolor="none", edgecolor=FORMER_SHORE,
                           linewidth=pt(FORMER_SHORE_PX), linestyle=(0, (4, 3)), zorder=1.45)
     if spec.country:
-        skip = None if frame_.detail is None else box(*np.array(frame_.detail)[[0, 2, 1, 3]])
+        skip = None if frame_.mark is None else frame_.mark.buffer(SKIP_RING_PX * _metres_per_px(ax))
         _country(ax, spec, geometry, frame_, skip=skip)
     else:
         _highlight(ax, spec, geometry, frame_)
     if spec.dot:
         _dot(ax, *spec.dot)
-    detail = _detail(fig, ax, spec, geometry, frame_) if frame_.detail is not None else None
+    if frame_.detail is not None:
+        _detail(fig, ax, spec, geometry, frame_)
 
     if frame_.inset:
         x0, x1 = ax.get_xlim()
@@ -546,7 +538,7 @@ def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry
         if spec.dot:
             dx, dy = to_px(*_to_map(frame_, *spec.dot))
             avoid.append((dx, dy, dx, dy))
-        _inset(fig, frame_, avoid, taken=detail)
+        _inset(fig, frame_, avoid)
 
     raw = io.BytesIO()
     fig.savefig(raw, format="png", dpi=DPI, facecolor=OCEAN, metadata={"Software": None})

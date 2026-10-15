@@ -1,7 +1,7 @@
 """Choose a projection and a 16:9 extent for each feature."""
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Protocol
 
 import cartopy.crs as ccrs
@@ -26,28 +26,31 @@ INSET_BELOW_M = 8_000_000  # wider frames show whole continents, and their box o
 CLOSE_DOT_FRAME_M = 1_000_000
 
 # Country, territory and dispute subjects (spec.framing) are framed on their curriculum region: the box round its
-# members' main bodies, REGION_MARGIN larger and at least REGION_MIN_M wide, shared by every card in the region whose
-# subject fits inside it SUBJECT_MARGIN in from the edges (others shift or widen theirs). A subject that would still
-# fill more than REGION_FILL_MAX of it widens its frame to that fill, unless it is a giant, whose v2.0 frame was over
-# GIANT_FRAME_M wide: those keep their v2.0 frames (Russia, Canada, the United States, Greenland, China, India, Japan,
-# Myanmar, Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru; Myanmar and Peru sit near the line). A
-# scattered Pacific state (Kiribati, French Polynesia) is never a giant: it widens on its sub-frame, with the locator.
+# members' main bodies, REGION_MARGIN larger and at least REGION_MIN_M wide ("region"), or a sub-frame's fixed box
+# ("fixed"), shared by every card on it whose subject fits SUBJECT_MARGIN in from the edges (others shift or widen
+# theirs). A subject that would still fill more than REGION_FILL_MAX of it widens its frame to that fill, unless it is
+# a giant, whose v2.0 frame was over GIANT_FRAME_M wide: those keep their v2.0 frames (Russia, Canada, the United
+# States, Greenland, China, India, Japan, Myanmar, Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru;
+# Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant. No political
+# card has the world locator.
 REGION_MARGIN = 1.1
 REGION_FILL_MAX = 0.35
 GIANT_FRAME_M = 8_000_000
 REGION_MIN_M = 3_500_000
 SUBJECT_MARGIN = 0.04  # of the frame's width
-# Parts within GROUP_GAP_M of each other form a group; the largest is the main body. A Pacific subject is fitted by
-# its main body alone when that holds MAIN_GROUP_FRAME of its land (Fiji without Rotuma).
+# Parts within GROUP_GAP_M of each other form a group; the largest is the main body, which a detail inset shows. A
+# state whose main body holds less than MAIN_GROUP_DETAIL of its land is scattered (Kiribati, French Polynesia): no
+# inset, and never a giant.
 GROUP_GAP_M = 300_000
-MAIN_GROUP_FRAME, MAIN_GROUP_DETAIL = 0.9, 0.65
-# A subject shorter than this on its long axis, or thinner (its largest part's narrowest enclosing rectangle) on its
-# short one (px at 1600 wide; 40 and 12 px on a 390 px phone), gets a detail inset of itself (of its main group, if
-# that holds MAIN_GROUP_DETAIL of its land), if the inset draws it at least DETAIL_ZOOM times as large
-DETAIL_LONG_PX, DETAIL_SHORT_PX = 165, 49
+MAIN_GROUP_DETAIL = 0.65
+# A subject gets a detail inset when its land, where it is shown, is no bigger than a disc DETAIL_DISC_PX across (px at
+# 1600 wide; 14 px on a 390 px phone). Area alone decides, so a long, thin but sizeable state (Tajikistan, Malawi,
+# Chile) doesn't qualify, and states of a size are treated alike. The inset must draw it at least DETAIL_ZOOM times as
+# large.
+DETAIL_DISC_PX = 56
 DETAIL_ZOOM = 2.0
 DETAIL_FILL = 0.8  # the subject's share of the detail inset, on the 16:9 measure
-DETAIL_MIN_M = 300_000  # a microstate's inset still shows the coast or valley round it
+DETAIL_MIN_M = 200_000  # a microstate's inset still shows the coast or valley round it
 DETAIL_SHARE = 0.35  # the inset's share of the card's width (render.py draws it)
 CLOSE_DOT_DETAIL_M = CLOSE_DOT_FRAME_M  # a close-dot city's detail inset: at most the v2.0 close-dot frame
 
@@ -66,6 +69,9 @@ class Frame:
     extent: tuple[float, float, float, float] | None  # x0, x1, y0, y1 in projection metres; None = global
     inset: bool  # the world locator
     detail: tuple[float, float, float, float] | None = None  # a detail inset's extent, in the same projection
+    # what the inset shows on the main map, in the same projection: its subject's convex hull, or a close dot. The
+    # leader lines run from it; nothing is drawn round it, so it never covers a small neighbour (Rwanda, Burundi)
+    mark: BaseGeometry | None = None
 
 
 def centre(geometry: BaseGeometry) -> tuple[float, float]:
@@ -121,8 +127,12 @@ def frame(feature: Framed, geometry: BaseGeometry, region: BaseGeometry | None =
     world = Frame(Equirectangular(centre(geometry)[0], 0), None, inset=False)
     if getattr(feature, "world", False):
         return world
-    if getattr(feature, "framing", None) and region is not None and (political := _political(feature, geometry, region)):
-        return political
+    if getattr(feature, "framing", None) and region is not None:
+        political = _political(feature, geometry, region)
+        if political is not None:
+            return political
+        v2 = feature.model_copy(update={"framing": None})  # only a RenderSpec carries `framing`
+        return replace(frame(v2, geometry), inset=False)  # a giant: its v2.0 frame
     if getattr(feature, "close_dot", False):
         return _close_dot(*feature.dot)
     fixed = feature.frame.centre
@@ -170,22 +180,21 @@ def _fit_axis(lo: float, size: float, s0: float, s1: float, margin: float) -> tu
 
 
 def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) -> Frame | None:
-    """The region's shared frame (from its member points), moved or widened for a subject that doesn't fit it. None
-    for a giant, which the caller frames as v2.0 did. A detail inset for a subject under DETAIL_LONG_PX long or
-    DETAIL_SHORT_PX thin, or CLOSE_DOT_DETAIL_M round a close dot (a city or capital card, whose subject is its host);
-    the world locator only without one, on frames under INSET_BELOW_M, and always on a Pacific sub-frame."""
-    framing = feature.framing
+    """The region's shared frame (from its member or box points), moved or widened for a subject that doesn't fit it.
+    None for a giant, which the caller frames as v2.0 did. A detail inset for a subject small at this scale, or
+    CLOSE_DOT_DETAIL_M round a close dot (a city or capital card, whose subject is its host), with its box."""
     projection = Equirectangular(*centre(points))
     rx0, ry0, rx1, ry1 = project(points, projection).bounds
-    width = max(_long(rx0, ry0, rx1, ry1) * REGION_MARGIN, REGION_MIN_M)
+    width = _long(rx0, ry0, rx1, ry1)
+    if feature.framing == "region":
+        width = max(width * REGION_MARGIN, REGION_MIN_M)
     x0, y0 = (rx0 + rx1 - width) / 2, (ry0 + ry1 - width / ASPECT) / 2
 
     projected = project(geometry, projection)
     if projected.is_empty or not math.isfinite(sum(projected.bounds)):
         return None
     main, share = main_group(projected)
-    fit = main if framing == "pacific" and share >= MAIN_GROUP_FRAME else projected
-    sx0, sy0, sx1, sy1 = fit.bounds
+    sx0, sy0, sx1, sy1 = projected.bounds
     margin = SUBJECT_MARGIN * width
     x0, w = _fit_axis(x0, width, sx0, sx1, margin)
     y0, h = _fit_axis(y0, width / ASPECT, sy0, sy1, margin)
@@ -194,8 +203,7 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         width = max(w, h * ASPECT)
         x0, y0 = cx - width / 2, cy - width / ASPECT / 2
     size = _long(sx0, sy0, sx1, sy1)
-    scattered = framing == "pacific" and share < MAIN_GROUP_FRAME
-    if (size / FILL > GIANT_FRAME_M and not scattered) or width > 2 * projection.x_limits[1]:
+    if (size / FILL > GIANT_FRAME_M and share >= MAIN_GROUP_DETAIL) or width > 2 * projection.x_limits[1]:
         return None
     if size / width > REGION_FILL_MAX:  # widen round the subject's side of the frame
         grown = size / REGION_FILL_MAX
@@ -206,28 +214,25 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
     y0 = min(max(y0, -pole_y), pole_y - width / ASPECT)
     extent = (x0, x0 + width, y0, y0 + width / ASPECT)
 
-    px = 1600 / width  # px per metre at 1600 wide
-    target = main if share >= MAIN_GROUP_DETAIL else projected
-    tx0, ty0, tx1, ty1 = target.bounds
-    body = max(shapely.get_parts(target), key=lambda p: p.area)
-    thin = 0.0  # a degenerate sliver (a line or point after make_valid) is as thin as it gets
-    if body.geom_type == "Polygon":
-        cx_, cy_ = np.array(shapely.minimum_rotated_rectangle(body).exterior.coords).T
-        thin = min(math.hypot(cx_[1] - cx_[0], cy_[1] - cy_[0]), math.hypot(cx_[2] - cx_[1], cy_[2] - cy_[1]))
-    detail = None
+    mpp = width / 1600  # metres per px at 1600 wide
+    detail = marked = None
     if getattr(feature, "close_dot", False):
-        dcx, dcy = _to_map(projection, *feature.dot)
+        marked = shapely.Point(*_to_map(projection, *feature.dot))
         dw = min(CLOSE_DOT_DETAIL_M, width * DETAIL_SHARE / DETAIL_ZOOM)  # tighter in a small region, still 2x
-        dcy = min(max(dcy, -pole_y + dw / ASPECT / 2), pole_y - dw / ASPECT / 2)
-        detail = (dcx - dw / 2, dcx + dw / 2, dcy - dw / ASPECT / 2, dcy + dw / ASPECT / 2)
-    elif max(tx1 - tx0, ty1 - ty0) * px < DETAIL_LONG_PX or thin * px < DETAIL_SHORT_PX:
+    elif share >= MAIN_GROUP_DETAIL:
+        marked = main  # outlying specks (Rodrigues, Rotuma) neither size nor fill the inset
+        tx0, ty0, tx1, ty1 = marked.bounds
+        disc = 2 * math.sqrt(marked.area / math.pi)
         dw = max(_long(tx0, ty0, tx1, ty1) / DETAIL_FILL, DETAIL_MIN_M)
-        if width / dw * DETAIL_SHARE >= DETAIL_ZOOM:
-            dcx, dcy = (tx0 + tx1) / 2, (ty0 + ty1) / 2
-            dcy = min(max(dcy, -pole_y + dw / ASPECT / 2), pole_y - dw / ASPECT / 2)  # never past a pole
-            detail = (dcx - dw / 2, dcx + dw / 2, dcy - dw / ASPECT / 2, dcy + dw / ASPECT / 2)
-    locator = framing == "pacific" or (detail is None and width < INSET_BELOW_M)
-    return Frame(projection, extent, inset=locator, detail=detail)
+        if disc >= DETAIL_DISC_PX * mpp or width / dw * DETAIL_SHARE < DETAIL_ZOOM:
+            marked = None
+    if marked is None:
+        return Frame(projection, extent, inset=False)
+    tx0, ty0, tx1, ty1 = marked.bounds
+    dcx, dcy = (tx0 + tx1) / 2, (ty0 + ty1) / 2
+    dcy = min(max(dcy, -pole_y + dw / ASPECT / 2), pole_y - dw / ASPECT / 2)  # never past a pole
+    detail = (dcx - dw / 2, dcx + dw / 2, dcy - dw / ASPECT / 2, dcy + dw / ASPECT / 2)
+    return Frame(projection, extent, inset=False, detail=detail, mark=marked.convex_hull)
 
 
 def _close_dot(lon: float, lat: float) -> Frame:

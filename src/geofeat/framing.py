@@ -1,5 +1,5 @@
 """Each country, territory and dispute card's region, which frame.py frames it on: the curriculum region it is studied
-in (data/curriculum.yaml), or for Oceania, which no single frame holds, one of three Pacific sub-frames. A region is
+in (data/curriculum.yaml), or a fixed sub-frame where one frame doesn't suit (Oceania, the Lesser Antilles). A region is
 passed as the hull points of its members' main bodies, so overseas parts and outlying islands don't stretch it. Giant
 members (frame.GIANT_FRAME_M), which keep their v2.0 frames, and outlying members (the Falklands) don't count. Read when jobs are
 built; the points travel in the render job, so they are in its key."""
@@ -22,17 +22,24 @@ Framing = tuple[str, BaseGeometry]
 # (their host country's frame, or the 1,000 km close-dot frame) without touching the political cards.
 CITY_REGION_FRAMING = True
 OUTLIER = 2.5  # a member farther than this many times the median member's distance from the region's centre is left out
-OCEANIA = 18
-# Oceania's sub-frames: the members each is fitted to (an anchor landmass in each: New Guinea, New Zealand) and the
-# cards drawn on it. Australia is a giant and keeps its v2.0 frame.
-PACIFIC_FRAMES = {
-    "melanesia": (("papua-new-guinea", "solomon-islands", "vanuatu", "new-caledonia"),
-                  ("australia", "papua-new-guinea", "solomon-islands", "vanuatu", "new-caledonia")),
-    "micronesia": (("papua-new-guinea", "palau", "micronesia", "guam", "marshall-islands", "nauru"),
-                   ("palau", "micronesia", "guam", "marshall-islands", "nauru", "kiribati")),
-    "polynesia": (("new-zealand", "fiji", "tonga", "samoa", "tuvalu"),
-                  ("new-zealand", "fiji", "tonga", "samoa", "tuvalu", "french-polynesia")),
+# Sub-frames with a fixed lon/lat box (west, south, east, north; east may pass 180°) and the cards drawn on them, for
+# regions no single frame suits: Oceania, too vast, and the Lesser Antilles, too fine for the Caribbean frame. The
+# boxes take in the anchors each island group is read against: eastern Australia and New Guinea for Melanesia, the
+# Philippines and New Guinea for Micronesia, New Guinea and Hawaii for Kiribati, New Zealand and eastern Australia for
+# Polynesia. Every other card in those regions keeps the region frame.
+SUB_FRAMES = {
+    "18-melanesia": ((128.0, -34.0, 182.0, 2.0),
+                     ("australia", "papua-new-guinea", "solomon-islands", "vanuatu", "new-caledonia")),
+    "18-micronesia": ((112.0, -12.0, 178.0, 26.0), ("palau", "micronesia", "guam", "marshall-islands", "nauru")),
+    "18-central-pacific": ((145.0, -25.0, 228.0, 28.0), ("kiribati",)),
+    "18-polynesia": ((148.0, -48.0, 228.0, -2.0),
+                     ("new-zealand", "fiji", "tonga", "samoa", "tuvalu", "french-polynesia")),
+    "21-lesser-antilles": ((-64.0, 9.8, -58.8, 18.3),
+                           ("antigua-and-barbuda", "saint-kitts-and-nevis", "dominica", "saint-lucia",
+                            "saint-vincent-and-the-grenadines", "grenada", "barbados", "trinidad-and-tobago",
+                            "guadeloupe", "martinique")),
 }
+MUST_SUB_FRAME = frozenset({18})  # every card in these regions must be on a sub-frame
 
 
 @cache
@@ -68,23 +75,31 @@ def _points(members: tuple[str, ...]) -> BaseGeometry:
     return MultiPoint([p for m, h in hulls.items() if len(hulls) < 4 or far[m] <= OUTLIER * typical for p in h])
 
 
+@cache
+def _box_points(west: float, south: float, east: float, north: float) -> BaseGeometry:
+    """Points along a lon/lat box's edges (east may pass 180°), wrapped into range."""
+    lons, lats = np.linspace(west, east, 25), np.linspace(south, north, 9)
+    edge = [(x, y) for x in lons for y in (south, north)] + [(x, y) for x in (west, east) for y in lats]
+    return MultiPoint([((x + 180) % 360 - 180, y) for x, y in edge])
+
+
 def region_of(id: str) -> tuple[str, tuple[str, ...]]:
-    """The frame a card is drawn on: its name, and the members it is fitted to."""
+    """The frame a card is drawn on: its name, and the members it is fitted to (none for a sub-frame's fixed box)."""
     entries = _entries()
     region = entries[id][0]
-    if region == OCEANIA:
-        found = [(n, f) for n, f in PACIFIC_FRAMES.items() if id in f[1]]
-        if not found:
-            raise ValueError(f"{id}: in Oceania but on none of framing.PACIFIC_FRAMES; add it to one")
-        name, (members, _) = found[0]
-        return f"{OCEANIA}-{name}", members
+    if found := [name for name, (_, cards) in SUB_FRAMES.items() if id in cards]:
+        return found[0], ()
+    if region in MUST_SUB_FRAME:
+        raise ValueError(f"{id}: region {region} is drawn on sub-frames only, and none of framing.SUB_FRAMES has it")
     return f"{region:02d}", tuple(sorted(i for i, (r, _) in entries.items() if r == region))
 
 
 def region(id: str) -> Framing:
-    """("region" or "pacific", the frame's member points) for a political card."""
+    """("region", the region's member points) or ("fixed", a sub-frame's box points) for a political card."""
     name, members = region_of(id)
-    return ("pacific" if name.startswith(f"{OCEANIA}-") else "region"), _points(members)
+    if name in SUB_FRAMES:
+        return "fixed", _box_points(*SUB_FRAMES[name][0])
+    return "region", _points(members)
 
 
 def city_region(country_id: str) -> Callable[[], Framing] | None:
