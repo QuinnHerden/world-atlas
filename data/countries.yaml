@@ -8,6 +8,8 @@
 #   crop for the card only: adjacency and region derivation use the full outline (countries_ne.py).
 # - expect: the card outline's bbox (lon_min > lon_max crosses 180°); a capital's is a box around its point.
 # - tier 3: microstates and small island states only.
+# - frame: the card's own exception to the framing rules: {inset: true|false} forces its detail inset on or off,
+#   inset_km sets the inset's width.
 # - note: the P2.7 blurbs, copied as written.
 
 - id: portugal
@@ -1031,6 +1033,7 @@
   name: Kuwait
   uids: {country: sJfBbIYrf3, capital: 4d0l1JxhP8}
   tier: 1
+  frame: {inset: true}  # just over the inset's size cut at the Arabian Peninsula's scale; the user asked for one
   note: >-
     Kuwait sits at the head of the Persian Gulf, wedged between Iraq and Saudi Arabia. It became independent from
     the UK in 1961, and Iraq invaded and overran it in 1990.

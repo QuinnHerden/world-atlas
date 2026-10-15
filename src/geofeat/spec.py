@@ -28,7 +28,10 @@ class RenderSpec(BaseModel):
     (territories and disputes); a state's overlay (`outline` unset) also clears the basemap's borders inside it.
 
     Framing: `world` puts the card on the world map whatever its size (continents); `close_dot` frames the dot
-    itself, tighter than the minimum frame, because another carded dot lies close by (ADR 0003's close-dot rule).
+    itself, tighter than the minimum frame, because another carded dot lies close by (ADR 0003's close-dot rule);
+    `framing` fits a political subject's frame to its curriculum region, with a detail inset when it is small; on a
+    capital or city card (framing.CITY_REGION_FRAMING) it frames the dot on its host's region, a close dot with an
+    inset round it in place of the 1,000 km close-dot frame.
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -42,6 +45,13 @@ class RenderSpec(BaseModel):
     outline: Literal["dashed"] | None = None
     world: bool = False
     close_dot: bool = False
+    # A country, territory or dispute subject: framed on its curriculum region, or on a fixed sub-frame (`fixed`)
+    framing: Literal["region", "fixed"] | None = None
+    # A political card's own framing exceptions (data `frame:`): force its detail inset on or off, set its width
+    inset: bool | None = None
+    inset_km: float | None = None
+    # A small regional locator (lon0, lon1, lat0, lat1, plate carrée) for a sub-frame too tight to place on its own
+    locator: tuple[float, float, float, float] | None = None
 
     @classmethod
     def from_feature(cls, feature: Feature) -> "RenderSpec":

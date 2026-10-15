@@ -43,11 +43,22 @@ class RenderRef(Frozen):
     spec: RenderSpec
     geometry: Callable[[], Geometry]
     dot: Callable[[], tuple[float, float]] | None = None  # a city's point, resolved with the geometry into spec.dot
+    # A political subject's region (geofeat.framing), resolved into spec.framing and the region's member points
+    region: Callable[[], tuple[str, BaseGeometry, tuple[float, float, float, float] | None]] | None = None
 
     def resolve(self) -> tuple[RenderSpec, BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None]:
         """What render() takes: the spec, with its dot filled in, and the geometry."""
         spec = self.spec.model_copy(update={"dot": self.dot()}) if self.dot else self.spec
         return spec, *self.geometry()
+
+    def resolve_framed(self) -> tuple[RenderSpec, BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None,
+                                      BaseGeometry | None]:
+        """resolve(), plus the region a political subject is framed on, with spec.framing filled in."""
+        spec, geometry, context, former = self.resolve()
+        if self.region is None:
+            return spec, geometry, context, former, None
+        framing, region, locator = self.region()
+        return spec.model_copy(update={"framing": framing, "locator": locator}), geometry, context, former, region
 
 
 class Card(Frozen):

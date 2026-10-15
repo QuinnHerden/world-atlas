@@ -17,7 +17,7 @@ from shapely import unary_union
 from shapely.geometry import LineString, Polygon, box
 from shapely.geometry.base import BaseGeometry
 
-from geofeat.frame import Frame, frame, project
+from geofeat.frame import DETAIL_SHARE, Frame, frame, project
 from geofeat.model import VENDOR
 from geofeat.ne import GEOD, flow_lines, layer
 from geofeat.spec import RELIEF, RenderSpec
@@ -25,7 +25,7 @@ from geofeat.style import (
     BORDER, BORDER_DASH_PX, BORDER_PX, CASING, CASING_PX, CLOSE_UP_BORDER_PX, COAST, COAST_PX, CONTEXT_EDGE,
     CONTEXT_EDGE_PX, CONTEXT_RIVER, CONTEXT_RIVER_PX, CONTEXT_TINT_ALPHA, CURRENT_HEAD_EVERY_PX, CURRENT_HEAD_PX,
     DOT_PX, FORMER_SHORE, FORMER_SHORE_PX, HIGHLIGHT, INSET_DOT_PX, INSET_FRAME, INSET_FRAME_MIN_PX,
-    INSET_FRAME_PX, INSET_LAND, INSET_OCEAN, LAND, OCEAN, OUTLINE_ALPHA, OUTLINE_DASH_PX, OUTLINE_PX, PARENT_RIVER_PX, RING_PX,
+    INSET_FRAME_PX, INSET_LAND, INSET_OCEAN, LAND, LINK_PX, OCEAN, OUTLINE_ALPHA, OUTLINE_DASH_PX, OUTLINE_PX, PARENT_RIVER_PX, RING_PX,
     STRAIT_OUTLINE_PX, STROKE_PX, WATER_AREA_ALPHA, WIND_CASING_PX, WIND_CHEVRON_ARM_PX, WIND_CHEVRON_PX, WIND_DASH_PX,
     WIND_GLYPH_PX,
 )
@@ -35,6 +35,9 @@ SCALE = 2  # stroke sizes below are specified for an 800 px wide card
 
 # px at 1600 wide: an area smaller than a disc ~16 px across on a phone, or under ~25 px long there, also gets a ring
 SMALL_HIGHLIGHT_PX, SHORT_HIGHLIGHT_PX = 66, 100
+# A country, territory or dispute's land is ringed only at microstate scale, per island group: smaller than a
+# COUNTRY_RING_DISC_PX disc (6 px on a phone). Slovenia, Montenegro and Uruguay read by their outline.
+COUNTRY_RING_DISC_PX = 24
 SMALL_RING_CLEAR_PX = 24
 # A polygon strait narrower than this on average (px at 1600 wide) is drawn as a channel line, a wider one as a sea
 CHANNEL_MAX_PX = 24
@@ -45,6 +48,7 @@ POLYGONAL = ("Polygon", "MultiPolygon")
 WORLD = (-180, 180, -90, 90)  # lon0, lon1, lat0, lat1
 INSET_PROJECTION = ccrs.PlateCarree()  # centred on 0° on every card
 INSET_W_PX = 160
+ASPECT_PX = WIDTH_PX / HEIGHT_PX
 # Lease and buffer-zone outlines (Baikonur, Guantánamo, the DMZ, UN zones) that would draw as stray rings and double lines
 NOT_BORDERS = ("Lease limit", "Overlay limit")
 # Recognised borders (ADR 0008). Land-boundary segments the outline composition makes disputed or internal, drawn
@@ -65,6 +69,18 @@ CLUSTER_GAP_PX = 160
 # A strait or line whose highlight is shorter than this (px at 1600 wide) also gets a locating ring.
 SMALL_STRAIT_PX, STRAIT_RING_MIN_PX, STRAIT_RING_CLEAR_PX = 123, 120, 24
 STRAIT_RING_STROKE_PX, STRAIT_RING_CASING_PX = 6, 2
+# A detail inset (frame.detail): this share of the card's width, DETAIL_MARGIN_PX in from a corner; bottom right
+# unless that comes near the subject or covers much land. Leader lines run to the subject (frame.mark); a subject
+# under DOT_BELOW_PX there also gets a red dot DOT_ON_BOX_PX across (px at 1600 wide).
+DETAIL_MARGIN_PX, DETAIL_CLEAR_PX = 24, 24
+RELIEF_MIN_M = 400_000  # narrower frames (detail insets) leave out the 50m relief, which blurs to blobs there
+DOT_BELOW_PX, DOT_ON_BOX_PX = 16, 24
+REGIONAL_LOCATOR_H_PX = 200  # a regional locator's height (px at 1600 wide); its width follows the region
+CITY_DOT_R_PX = 22  # a city dot's radius with its casing
+LEADER_GAP_PX = 8  # leader lines stop this short of the subject
+SKIP_RING_PX = 6  # the parts of a subject within this of frame.mark get no ring: the leader lines find them
+INSET_RING_BELOW_PX = 48  # in the detail inset, only a subject shorter than this keeps its ring (microstates)
+DETAIL_LAND_OK = 0.35  # the default corner may cover this share of land
 
 
 def pt(px: float) -> float:
@@ -141,9 +157,10 @@ def _basemap(ax, spec: RenderSpec, frame_: Frame, lonlat_bounds, clear: BaseGeom
     res = "50m" if world or span > LARGE_FRAME_M else "10m"
     land_rows = _clip(layer(f"{res}_land"), lonlat_bounds)
     _fill(ax, land_rows, lonlat_bounds, LAND, 1, world)
-    shadow, light, extent = _relief_layers(*lonlat_bounds)
-    for img in (shadow, light):
-        ax.imshow(img, extent=extent, transform=PLATE, origin="upper", regrid_shape=WIDTH_PX, zorder=1.1)
+    if world or span >= RELIEF_MIN_M:
+        shadow, light, extent = _relief_layers(*lonlat_bounds)
+        for img in (shadow, light):
+            ax.imshow(img, extent=extent, transform=PLATE, origin="upper", regrid_shape=WIDTH_PX, zorder=1.1)
     lakes = _clip(layer("50m_lakes"), lonlat_bounds)
     _fill(ax, _clip(layer(f"{res}_ocean"), lonlat_bounds), lonlat_bounds, OCEAN, 1.2, world)
     _fill(ax, lakes, lonlat_bounds, OCEAN, 1.2, world)
@@ -180,8 +197,9 @@ def _ring(ax, x: float, y: float, crs, size: float = pt(RING_PX), core: float = 
 
 
 def _metres_per_px(ax) -> float:
+    """At the axes' own width in the image: the full card, or a detail inset."""
     x0, x1 = ax.get_xlim()
-    return (x1 - x0) / WIDTH_PX
+    return (x1 - x0) / (ax.get_position().width * WIDTH_PX)
 
 
 def _arrows(ax, geometry: BaseGeometry, frame_: Frame, wind: bool) -> None:
@@ -274,21 +292,32 @@ def _small_ring(ax, shape: BaseGeometry, frame_: Frame) -> None:
         _ring_round(ax, shape, frame_)
 
 
-def _cluster_rings(ax, shape: BaseGeometry, frame_: Frame) -> None:
+def _cluster_rings(ax, shape: BaseGeometry, frame_: Frame, skip: BaseGeometry | None = None) -> None:
     """Ring a small subject, one ring per group of its parts within CLUSTER_GAP_PX of each other: a microstate gets
-    one ring, a state scattered across an ocean (Kiribati) one round each island group, and the frame shows them all."""
+    one ring, a state scattered across an ocean (Kiribati) one round each island group, and the frame shows them all.
+    A group inside `skip` (round a detail inset's subject, which the leader lines find) gets none. The bar is lower
+    than a feature's and is applied per group: only land under a COUNTRY_RING_DISC_PX disc, whose outline can't be
+    read on a phone, is ringed (a microstate, an atoll group); Slovenia, Montenegro and Uruguay are not."""
+    mpp = _metres_per_px(ax)
     if not _is_small(ax, shape):
         return
+    if skip is not None:
+        shape = shape.difference(skip)
+        if shape.is_empty:
+            return
     reach = CLUSTER_GAP_PX / 2 * _metres_per_px(ax)
     groups = shapely.get_parts(unary_union(shapely.buffer(shapely.get_parts(shape), reach, quad_segs=4)))
     for group in sorted(groups, key=lambda g: g.bounds):
-        _ring_round(ax, shape.intersection(group), frame_)
+        land = shape.intersection(group)
+        if 2 * math.sqrt(land.area / math.pi) / mpp < COUNTRY_RING_DISC_PX:
+            _ring_round(ax, land, frame_)
 
 
-def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) -> None:
+def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: bool = True,
+             skip: BaseGeometry | None = None) -> None:
     """A country, territory or disputed area. As the subject: a crisp red outline with a white casing over a faint
-    fill, dashed for a territory or dispute, ringed when small. As context for a city dot: washed lighter and edged in
-    a dark neutral, with nothing red."""
+    fill, dashed for a territory or dispute, ringed when small (unless `ring` is off), except for the groups inside
+    `skip`, round a detail inset's subject, which the leader lines find instead. As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
     fuse = 2 * _metres_per_px(ax)
     shape = project(geometry, frame_.projection).buffer(fuse).buffer(-fuse)
     crs = frame_.projection
@@ -302,7 +331,8 @@ def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) -> Non
     ax.add_geometries([shape], crs, facecolor="none", edgecolor=CASING, linewidth=pt(casing_px), zorder=4.05)
     ax.add_geometries([shape], crs, facecolor="none", edgecolor=HIGHLIGHT, linewidth=pt(OUTLINE_PX), zorder=4.1,
                       linestyle=_dashes(OUTLINE_DASH_PX, OUTLINE_PX) if dashed else "solid")
-    _cluster_rings(ax, shape, frame_)
+    if ring:
+        _cluster_rings(ax, shape, frame_, skip)
 
 
 def _dot(ax, lon: float, lat: float) -> None:
@@ -379,15 +409,145 @@ def _inset(fig, frame_: Frame, avoid_px: list[tuple[float, float, float, float]]
     ax.add_geometries([outline], frame_.projection, facecolor="none", edgecolor=INSET_FRAME, linewidth=pt(INSET_FRAME_PX), zorder=2.1)
 
 
+def _lonlat_bounds(ax) -> tuple[float, float, float, float]:
+    """A regional axes' extent in lon/lat, padded 2° so nothing is cut at its edge."""
+    lon0, lon1, lat0, lat1 = ax.get_extent(crs=PLATE)
+    return max(lon0 - 2, -180), min(lon1 + 2, 180), max(lat0 - 2, -90), min(lat1 + 2, 90)
+
+
+def _link_stroke(ax, geometry: BaseGeometry) -> None:
+    """The detail inset's link: its frame, its box on the main map and the leader lines between them, all one dark
+    stroke with a white halo, so they read as one thing without relying on colour."""
+    for colour, width, z in ((CASING, LINK_PX + 2 * CASING_PX, 7), (INSET_FRAME, LINK_PX, 7.1)):
+        for line in shapely.get_parts(geometry):
+            xs, ys = np.array(line.coords).T
+            ax.plot(xs, ys, color=colour, lw=pt(width), solid_capstyle="round", solid_joinstyle="round", zorder=z)
+
+
+def _detail_corner(w: float, h: float, target_px: BaseGeometry, land_px: BaseGeometry,
+                   taken: BaseGeometry | None = None) -> tuple[float, float]:
+    """Bottom right, unless it comes near the subject or covers much land; then the clear corner covering least
+    land, and if none is clear, the one farthest from the subject. Never a corner `taken` (a regional locator) holds."""
+    m = DETAIL_MARGIN_PX
+    corners = [(WIDTH_PX - w - m, m), (m, m), (WIDTH_PX - w - m, HEIGHT_PX - h - m), (m, HEIGHT_PX - h - m)]
+    if taken is not None:
+        corners = [c for c in corners if not box(c[0], c[1], c[0] + w, c[1] + h).intersects(taken)]
+    keep_clear = target_px.envelope.buffer(DETAIL_CLEAR_PX)
+
+    def rect(c):
+        return box(c[0], c[1], c[0] + w, c[1] + h)
+
+    def cover(c, shapes):
+        return rect(c).intersection(shapes).area / (w * h)
+
+    clear = [c for c in corners if not rect(c).intersects(keep_clear)]
+    if not clear:
+        return max(corners, key=lambda c: rect(c).distance(target_px))
+    if clear[0] == corners[0] and cover(corners[0], land_px) <= DETAIL_LAND_OK:
+        return corners[0]
+    return min(clear, key=lambda c: (round(cover(c, land_px), 2), -rect(c).distance(target_px)))
+
+
+def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, taken: BaseGeometry | None = None) -> None:
+    """Picture-in-picture for a small subject: a corner inset zoomed to frame.detail, and leader lines from the
+    subject (frame.mark, with its dot) to the inset. Nothing is drawn round the subject, so no neighbour is covered."""
+    x0, x1 = ax.get_xlim()
+    y0, y1 = ax.get_ylim()
+    scale = np.array([WIDTH_PX / (x1 - x0), HEIGHT_PX / (y1 - y0)])
+
+    def to_px(g: BaseGeometry) -> BaseGeometry:
+        return shapely.transform(g, lambda c: (c - [x0, y0]) * scale)
+
+    def projected(g: BaseGeometry) -> BaseGeometry:
+        return to_px(project(g, frame_.projection))
+
+    dx0, dx1, dy0, dy1 = frame_.detail
+    frame_px = box(0, 0, WIDTH_PX, HEIGHT_PX)
+    target_px = to_px(frame_.mark)  # the subject's hull, or its dot
+    if spec.dot:  # a city: its dot
+        target_px = to_px(shapely.Point(_to_map(frame_, *spec.dot))).buffer(CITY_DOT_R_PX)
+    elif max(target_px.bounds[2] - target_px.bounds[0], target_px.bounds[3] - target_px.bounds[1]) < DOT_BELOW_PX:
+        cx, cy = target_px.centroid.x / scale[0] + x0, target_px.centroid.y / scale[1] + y0
+        for size, colour in ((DOT_ON_BOX_PX + 2 * CASING_PX * SCALE, CASING), (DOT_ON_BOX_PX, HIGHLIGHT)):
+            ax.plot(cx, cy, transform=frame_.projection, marker="o", ms=pt_full(size), mfc=colour, mec="none", zorder=6)
+        target_px = target_px.centroid.buffer(DOT_ON_BOX_PX / 2 + CASING_PX * SCALE)
+    lon0, lon1, lat0, lat1 = _lonlat_bounds(ax)
+    land_px = projected(unary_union(list(_clip(layer("50m_land"), (lon0, lon1, lat0, lat1))))).intersection(frame_px)
+
+    w = DETAIL_SHARE * WIDTH_PX
+    h = w / ASPECT_PX
+    ix, iy = _detail_corner(w, h, target_px, land_px, taken)
+    inset_px = box(ix, iy, ix + w, iy + h)
+
+    inset = fig.add_axes([ix / WIDTH_PX, iy / HEIGHT_PX, w / WIDTH_PX, h / HEIGHT_PX], projection=frame_.projection)
+    inset.set_facecolor(OCEAN)
+    inset.spines["geo"].set_visible(False)
+    inset.set_extent(frame_.detail, crs=frame_.projection)
+    zoomed = Frame(frame_.projection, frame_.detail, inset=False)
+    _basemap(inset, spec, zoomed, _lonlat_bounds(inset), clear=geometry if spec.outline is None else None)
+    shown = project(geometry, frame_.projection).intersection(box(dx0, dy0, dx1, dy1))
+    sx0, sy0, sx1, sy1 = shown.bounds
+    _country(inset, spec, geometry, zoomed, ring=max(sx1 - sx0, sy1 - sy0) * w / (dx1 - dx0) < INSET_RING_BELOW_PX)
+    if spec.dot:
+        _dot(inset, *spec.dot)
+
+    overlay = fig.add_axes([0, 0, 1, 1])  # plain axes in px
+    overlay.set_xlim(0, WIDTH_PX)
+    overlay.set_ylim(0, HEIGHT_PX)
+    overlay.set_axis_off()
+    overlay.patch.set_alpha(0)
+    leaders = []
+    if not inset_px.intersects(target_px):  # the two tangents from the subject to the inset's far corners
+        corners = {tuple(p) for p in np.round(np.array(inset_px.exterior.coords), 6)}
+        pts = [tuple(p) for p in np.round(np.array(unary_union([target_px, inset_px]).convex_hull.exterior.coords), 6)]
+        leaders = [LineString([a, b]) for a, b in zip(pts, pts[1:]) if (a in corners) != (b in corners)]
+        gap = target_px.buffer(LEADER_GAP_PX)  # stop short of the subject, so the lines point at it
+        leaders = [line.difference(gap) for line in leaders]
+    _link_stroke(overlay, unary_union([inset_px.exterior, *leaders]))
+
+
+def _regional_locator(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame) -> BaseGeometry:
+    """A small plate carrée map of the sub-frame's region (spec.locator: the Caribbean basin for the Lesser Antilles),
+    styled as the world locator was, with the frame marked as a box: a sub-frame this tight can't be placed without
+    it. Top left unless that comes near the subject or its dot, then the next clear corner, else the one farthest from
+    it. Returns its rectangle in px."""
+    lon0, lon1, lat0, lat1 = spec.locator
+    h = REGIONAL_LOCATOR_H_PX
+    w = h * (lon1 - lon0) / (lat1 - lat0) / math.cos(math.radians((lat0 + lat1) / 2))
+    x0, x1 = ax.get_xlim()
+    y0, y1 = ax.get_ylim()
+    scale = np.array([WIDTH_PX / (x1 - x0), HEIGHT_PX / (y1 - y0)])
+    subject = project(geometry, frame_.projection)
+    if spec.dot:
+        subject = shapely.Point(_to_map(frame_, *spec.dot))
+    keep_clear = shapely.transform(subject, lambda c: (c - [x0, y0]) * scale).envelope.buffer(DETAIL_CLEAR_PX)
+    m = DETAIL_MARGIN_PX
+    corners = [(m, HEIGHT_PX - h - m), (WIDTH_PX - w - m, HEIGHT_PX - h - m), (m, m), (WIDTH_PX - w - m, m)]
+    clear = [c for c in corners if not box(c[0], c[1], c[0] + w, c[1] + h).intersects(keep_clear)]
+    cx, cy = clear[0] if clear else max(corners, key=lambda c: box(c[0], c[1], c[0] + w, c[1] + h).distance(keep_clear))
+    locator = fig.add_axes([cx / WIDTH_PX, cy / HEIGHT_PX, w / WIDTH_PX, h / HEIGHT_PX], projection=PLATE)
+    locator.set_extent((lon0, lon1, lat0, lat1), crs=PLATE)
+    locator.set_facecolor(INSET_OCEAN)
+    locator.spines["geo"].set_edgecolor(COAST)
+    locator.spines["geo"].set_linewidth(pt(1))
+    locator.add_geometries(_clip(layer("50m_land"), (lon0, lon1, lat0, lat1)), PLATE, facecolor=INSET_LAND, edgecolor="none")
+    fx0, fx1, fy0, fy1 = frame_.extent
+    outline = Polygon([(fx0, fy0), (fx1, fy0), (fx1, fy1), (fx0, fy1)]).segmentize((fx1 - fx0) / 50)
+    for colour, width in ((CASING, INSET_FRAME_PX + 2 * CASING_PX), (INSET_FRAME, INSET_FRAME_PX)):
+        locator.add_geometries([outline], frame_.projection, facecolor="none", edgecolor=colour, linewidth=pt(width), zorder=2)
+    return box(cx, cy, cx + w, cy + h)
+
+
 def _to_map(frame_: Frame, lon: float, lat: float) -> tuple[float, float]:
     return Transformer.from_crs("EPSG:4326", frame_.projection.proj4_init, always_xy=True).transform(lon, lat)
 
 
 def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry, ...] = (),
-           former: BaseGeometry | None = None) -> bytes:
+           former: BaseGeometry | None = None, region: BaseGeometry | None = None) -> bytes:
     """The card's map: `geometry` drawn as `spec` says over the basemap, with `context` lines drawn faintly underneath
-    and a `former` shoreline dashed in grey. Reads nothing but the basemap layers and relief."""
-    frame_ = frame(spec, geometry)
+    and a `former` shoreline dashed in grey. A political subject is framed on its curriculum `region` (member points).
+    Reads nothing but the basemap layers and relief."""
+    frame_ = frame(spec, geometry, region)
     fig = plt.figure(figsize=(WIDTH_PX / DPI, HEIGHT_PX / DPI), dpi=DPI, facecolor=OCEAN)
     ax = fig.add_axes([0, 0, 1, 1], projection=frame_.projection)
     ax.set_facecolor(OCEAN)
@@ -397,19 +557,24 @@ def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry
         bounds = WORLD
     else:
         ax.set_extent(frame_.extent, crs=frame_.projection)
-        lon0, lon1, lat0, lat1 = ax.get_extent(crs=PLATE)
-        bounds = (max(lon0 - 2, -180), min(lon1 + 2, 180), max(lat0 - 2, -90), min(lat1 + 2, 90))
+        bounds = _lonlat_bounds(ax)
     _basemap(ax, spec, frame_, bounds, clear=geometry if spec.country and spec.outline is None else None)
     _context(ax, context)
     if former is not None:
         ax.add_geometries([former], PLATE, facecolor="none", edgecolor=FORMER_SHORE,
                           linewidth=pt(FORMER_SHORE_PX), linestyle=(0, (4, 3)), zorder=1.45)
     if spec.country:
-        _country(ax, spec, geometry, frame_)
+        skip = None if frame_.mark is None else frame_.mark.buffer(SKIP_RING_PX * _metres_per_px(ax))
+        _country(ax, spec, geometry, frame_, skip=skip)
     else:
         _highlight(ax, spec, geometry, frame_)
     if spec.dot:
         _dot(ax, *spec.dot)
+    taken = None
+    if spec.locator and spec.framing and frame_.extent is not None:
+        taken = _regional_locator(fig, ax, spec, geometry, frame_)
+    if frame_.detail is not None:
+        _detail(fig, ax, spec, geometry, frame_, taken)
 
     if frame_.inset:
         x0, x1 = ax.get_xlim()
