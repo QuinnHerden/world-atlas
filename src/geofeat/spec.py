@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from geofeat.model import Feature, FrameOptions, Style
 from geofeat.style import AREA_ALPHA, WATER_AREA_ALPHA
@@ -16,6 +16,8 @@ BASEMAP_LAYERS = frozenset({
     "10m_admin_0_boundary_lines_land", "50m_admin_0_boundary_lines_land", "50m_admin_1_states_provinces_lines",
     "10m_admin_0_boundary_lines_disputed_areas",
 })
+# What a companion deck's map (`framing: country`, geofeat.country_map) reads besides; only its cards' keys hold them
+COUNTRY_MAP_LAYERS = frozenset({"10m_lakes"})
 RELIEF = "GRAY_50M_SR.tif"
 
 
@@ -46,9 +48,14 @@ class RenderSpec(BaseModel):
     world: bool = False
     close_dot: bool = False
     # A country, territory or dispute subject: framed on its curriculum region, or on a fixed sub-frame (`fixed`)
-    framing: Literal["region", "fixed"] | None = None
+    framing: Literal["region", "fixed", "country"] | None = None
+    # `framing: country` (a companion deck's subdivision): the countries.yaml id whose fixed frame it is drawn on
+    # (geofeat.country_map.FRAMES); the render job's context is the country's other subdivisions
+    country_frame: str | None = None
     # A region frame's own margin (curriculum.yaml `frame_margin`), in place of frame.REGION_MARGIN
     region_margin: float | None = None
+    # A region frame pinned in curriculum.yaml (`frame`): projection lon, lat, frame centre lon, lat, width in metres
+    region_frame: tuple[float, float, float, float, float] | None = None
     # A lon/lat box (west, south, east, north) the frame holds as it holds the subject: the bodies a card's frame
     # `include`s (data `frame: {include}`)
     hold: tuple[float, float, float, float] | None = None
@@ -59,6 +66,12 @@ class RenderSpec(BaseModel):
     ring: bool | Literal["oval"] = True  # False: no ring anywhere; "oval": one round all its parts, main map only
     # A small regional locator (lon0, lon1, lat0, lat1, plate carrée) for a sub-frame too tight to place on its own
     locator: tuple[float, float, float, float] | None = None
+
+    @model_validator(mode="after")
+    def _country_frame(self) -> "RenderSpec":
+        if (self.framing == "country") != (self.country_frame is not None):
+            raise ValueError("`framing: country` and `country_frame` go together")
+        return self
 
     @classmethod
     def from_feature(cls, feature: Feature) -> "RenderSpec":

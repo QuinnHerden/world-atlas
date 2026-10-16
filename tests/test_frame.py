@@ -242,7 +242,7 @@ class FrameIncludeTest(unittest.TestCase):
     def test_new_zealands_frame_holds_australia_and_its_capital_follows(self) -> None:
         from geofeat.framing import _included, city_region, region
 
-        kind, _, _, _, hold = region("new-zealand")
+        kind, _, _, _, hold, _ = region("new-zealand")
         self.assertEqual(kind, "fixed")
         self.assertEqual(hold, _included(("australia",)))
         self.assertEqual(city_region("new-zealand")()[4], hold)
@@ -253,7 +253,7 @@ class FrameIncludeTest(unittest.TestCase):
         from geofeat.framing import _entries, region
         from geofeat.spec import RenderSpec
 
-        kind, points, _, _, hold = region("new-zealand")
+        kind, points, _, _, hold, _ = region("new-zealand")
         f = frame(RenderSpec(style="area", country="subject", framing=kind, hold=hold), _entries()["new-zealand"][1],
                   points)
         x0, x1, y0, y1 = f.extent
@@ -282,3 +282,36 @@ class FrameIncludeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PinnedRegionFrameTest(unittest.TestCase):
+    """A region's shared frame pinned in curriculum.yaml (ADR 0010, amendment): members no longer shape it."""
+
+    PIN = (20.0, 45.0, 22.0, 46.0, 4_000_000.0)  # projection lon, lat, frame centre lon, lat, width (m)
+
+    def frame(self, subject, region):
+        from geofeat.spec import RenderSpec
+
+        spec = RenderSpec(style="area", country="subject", framing="region", region_frame=self.PIN)
+        return frame(spec, subject, region)
+
+    def test_the_pin_is_the_shared_frame_whatever_the_members(self) -> None:
+        from geofeat.frame import _to_map
+
+        subject = box(21, 45, 22, 46)
+        a = self.frame(subject, MultiPoint([(14, 42), (30, 52)]))
+        b = self.frame(subject, MultiPoint([(0, 0), (60, 70)]))
+        self.assertEqual(a.extent, b.extent)
+        x0, x1, y0, y1 = a.extent
+        cx, cy = _to_map(a.projection, 22.0, 46.0)
+        self.assertAlmostEqual(x1 - x0, 4_000_000.0)
+        self.assertAlmostEqual((x0 + x1) / 2, cx, places=3)
+        self.assertAlmostEqual((y0 + y1) / 2, cy, places=3)
+        self.assertEqual(a.projection.proj4_params["lon_0"], 20.0)
+
+    def test_every_region_off_the_sub_frames_is_pinned(self) -> None:
+        from geofeat import framing
+
+        for number, r in framing.curriculum_regions().items():
+            with self.subTest(region=number):
+                self.assertEqual(r.frame is None, number in framing.MUST_SUB_FRAME)

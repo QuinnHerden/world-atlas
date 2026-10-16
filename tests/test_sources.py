@@ -17,6 +17,7 @@ import geofeat.resolve as resolve
 import geofeat.sources as sources
 import geofeat.sources.cities as cities
 import geofeat.sources.political as political
+import geofeat.sources.subdivisions as subdivisions
 import geofeat.sources.features as features_source
 from geofeat.card import PASS_ORDER, Card, block_of, block_tag, study_pass
 from geofeat.model import Feature, load_features
@@ -563,7 +564,7 @@ class LazyDotTest(unittest.TestCase):
 
 class WiringTest(unittest.TestCase):
     def test_sources_registered(self) -> None:
-        self.assertEqual(sources.MODULES[1:], (political, cities))
+        self.assertEqual(sources.MODULES[1:], (political, cities, subdivisions))
 
     def test_missing_files_are_left_out_of_paths(self) -> None:
         with mock.patch.object(Path, "exists", lambda p: p.name == "features.yaml"):

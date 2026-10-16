@@ -188,11 +188,18 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
     """The region's shared frame (from its member or box points), moved or widened for a subject that doesn't fit it.
     None for a giant, which the caller frames as v2.0 did. A detail inset for a subject small at this scale, or
     CLOSE_DOT_DETAIL_M round a close dot (a city or capital card, whose subject is its host), with its box."""
-    projection = Equirectangular(*centre(points))
-    rx0, ry0, rx1, ry1 = project(points, projection).bounds
-    width = _long(rx0, ry0, rx1, ry1)
-    if feature.framing == "region":
-        width = max(width * (getattr(feature, "region_margin", None) or REGION_MARGIN), REGION_MIN_M)
+    pinned = getattr(feature, "region_frame", None) if feature.framing == "region" else None
+    if pinned:  # the region's frame as pinned in curriculum.yaml (ADR 0010)
+        plon, plat, clon, clat, width = pinned
+        projection = Equirectangular(plon, plat)
+        cx, cy = _to_map(projection, clon, clat)
+        rx0, ry0, rx1, ry1 = cx - width / 2, cy - width / ASPECT / 2, cx + width / 2, cy + width / ASPECT / 2
+    else:
+        projection = Equirectangular(*centre(points))
+        rx0, ry0, rx1, ry1 = project(points, projection).bounds
+        width = _long(rx0, ry0, rx1, ry1)
+        if feature.framing == "region":
+            width = max(width * (getattr(feature, "region_margin", None) or REGION_MARGIN), REGION_MIN_M)
     x0, y0 = (rx0 + rx1 - width) / 2, (ry0 + ry1 - width / ASPECT) / 2
 
     projected = project(geometry, projection)

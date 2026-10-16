@@ -7,6 +7,9 @@ Fresh import: every note lands in the World Atlas deck, new cards come up in dat
 filtered deck (`tag:region::05 is:new`, "Order due") gives that region's cards in lock order, and Check Database
 changes no due.
 
+Companion decks: each companion package imported after World Atlas lands in its own deck at its lock positions, shares
+World Atlas's note type without adding or renaming one, and leaves the World Atlas cards untouched.
+
 Upgrade from v1: the Geographic Features package of commit V1_COMMIT is imported first and a few cards are studied.
 Importing World Atlas then updates the feature notes in place (same note ids), keeps their scheduling and leaves them
 in their old decks, and Change Deck moves them into World Atlas with their scheduling intact. The v1 package is built
@@ -40,6 +43,7 @@ from anki.scheduler_pb2 import QueuedCards
 import geofeat.positions as positions
 from geofeat.ankc import ankc_command, ankc_version_text
 from geofeat.deckgen import NOTE_STYLE
+from geofeat.decks import COMPANIONS, WORLD, DeckInfo
 from geofeat.model import BUILD, ROOT, ROOT_DECK
 from geofeat.sources import all_cards
 
@@ -61,11 +65,11 @@ def check(ok: bool, what: str, detail: str = "") -> None:
         failures.append(what)
 
 
-def package() -> Path:
-    found = sorted((ROOT / "dist").glob("*.apkg"))
-    if len(found) != 1:
-        sys.exit(f"expected one package in dist/, found {[p.name for p in found]}; run `make all`")
-    return found[0]
+def package(deck: DeckInfo = WORLD) -> Path:
+    path = ROOT / "dist" / f"{deck.slug}.apkg"
+    if not path.exists():
+        sys.exit(f"no {path.relative_to(ROOT)}; run `make all`")
+    return path
 
 
 def build_v1() -> Path:
@@ -225,6 +229,31 @@ def fresh_import(apkg: Path, lock: dict[str, int], tmp: Path) -> None:
         col.close()
 
 
+def companion_imports(world: Path, lock: dict[str, int], tmp: Path) -> None:
+    """World Atlas, then each companion deck into the same collection: each package's notes land in its own deck at
+    their lock positions, they share World Atlas's note type (one note type, nothing re-mapped or duplicated), and the
+    World Atlas cards are untouched."""
+    print("companion decks imported after World Atlas")
+    col = Collection(str(tmp / "companions.anki2"))
+    try:
+        import_package(col, world)
+        before, notetypes = scheduling(col), col.models.all_names_and_ids()
+        for deck in COMPANIONS:
+            apkg = package(deck)
+            import_package(col, apkg)
+            mine = {c.uid for c in all_cards() if c.deck == deck.name}
+            cards = scheduling(col, mine)
+            check(set(cards) == mine, f"{apkg.name}: one note per {deck.name} card", f"{len(cards)} of {len(mine)}")
+            check(deck_names(col, mine) == {deck.name}, f'{apkg.name}: every card in "{deck.name}"', str(deck_names(col, mine)))
+            wrong = sorted(g for g, row in cards.items() if row[5] != lock.get(g))
+            check(not wrong, f"{apkg.name}: every due equals its lock position", f"{len(wrong)} differ")
+        check([(n.id, n.name) for n in col.models.all_names_and_ids()] == [(n.id, n.name) for n in notetypes],
+              "the companion decks share World Atlas's note type; no note type is added or renamed")
+        check(scheduling(col, before) == before, "World Atlas's notes and cards are untouched")
+    finally:
+        col.close()
+
+
 def upgrade(v1: Path, apkg: Path, lock: dict[str, int], tmp: Path) -> None:
     print(f"upgrade: {v1.name}, study {len(STUDIED)} cards, then {apkg.name}")
     col = Collection(str(tmp / "upgrade.anki2"))
@@ -283,11 +312,13 @@ def main() -> None:
     print(f"anki {anki_version}")
     apkg = package()
     v1 = args.v1 or build_v1()
-    active = {c.uid for c in all_cards()}
-    lock = {uid: p for uid, p in positions.read().positions.items() if uid in active}  # a frozen lock keeps retired uids
+    every = positions.read().positions
+    world = {c.uid for c in all_cards() if c.deck == WORLD.name}
+    lock = {uid: p for uid, p in every.items() if uid in world}  # a frozen lock keeps retired uids
     with tempfile.TemporaryDirectory() as tmp:
         fresh_import(apkg, lock, Path(tmp))
         upgrade(v1, apkg, lock, Path(tmp))
+        companion_imports(apkg, every, Path(tmp))
     if failures:
         sys.exit(f"{len(failures)} check(s) failed")
     print("import test: ok")

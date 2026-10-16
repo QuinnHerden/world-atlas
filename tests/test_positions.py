@@ -5,6 +5,7 @@ import unittest
 from unittest import mock
 
 import geofeat.positions as positions
+from geofeat.decks import BY_SLUG
 from geofeat.positions import (
     LIMIT, STRIDE, Entry, GapExhausted, Lock, dump, frozen_errors, locked_tags, moved, parse, place, regenerate,
     stale_draft, update,
@@ -15,9 +16,9 @@ def uid(n: int) -> str:
     return f"U{n:09d}"
 
 
-def at(*uids: str) -> list[tuple[str, object, int]]:
-    """Placements in the countries block, region 1, in this order."""
-    return [(u, "countries", 1) for u in uids]
+def at(*uids: str) -> list[tuple[str, object, int, str]]:
+    """Placements in World Atlas's countries block, region 1, in this order."""
+    return [(u, "countries", 1, "world-atlas") for u in uids]
 
 
 A, B = "aaaaaaaaaa", "bbbbbbbbbb"
@@ -27,8 +28,8 @@ class FormatTest(unittest.TestCase):
     def test_round_trip_sorted_by_uid(self) -> None:
         lock = Lock(True, {B: Entry(1000, "features", 21), A: Entry(500, "continents", None)}, 3)
         text = dump(lock)
-        self.assertEqual(text, f"draft: true\nseries: 3\n{A}: 500 block=continents region=-\n"
-                               f"{B}: 1000 block=features region=21\n")
+        self.assertEqual(text, f"draft: true\nseries: 3\n{A}: 500 block=continents region=- deck=world-atlas\n"
+                               f"{B}: 1000 block=features region=21 deck=world-atlas\n")
         self.assertEqual(parse(text), lock)
         self.assertEqual(lock.positions, {A: 500, B: 1000})
 
@@ -53,13 +54,13 @@ class FormatTest(unittest.TestCase):
 
 class PlaceTest(unittest.TestCase):
     def test_draft_regenerates_at_the_stride(self) -> None:
-        lock = update(Lock(True, {"a": Entry(7, "countries", 3), "gone": Entry(9, "countries", 1)}), [("b", "continents", None), ("a", "features", 4)])
+        lock = update(Lock(True, {"a": Entry(7, "countries", 3), "gone": Entry(9, "countries", 1)}), [("b", "continents", None, "world-atlas"), ("a", "features", 4, "world-atlas")])
         self.assertEqual(lock, Lock(True, {"b": Entry(500, "continents", None), "a": Entry(1000, "features", 4)}))
         self.assertEqual(regenerate([]), {})
 
     def test_frozen_update_adds_only_and_keeps_every_entry(self) -> None:
         old = Lock(False, {"a": Entry(500, "countries", 1), "gone": Entry(700, "countries", 1), "b": Entry(1000, "countries", 2)})
-        new = update(old, [("a", "countries", 3), ("x", "countries", 2), ("b", "countries", 2)])  # a's region changed: its entry still doesn't
+        new = update(old, [("a", "countries", 3, "world-atlas"), ("x", "countries", 2, "world-atlas"), ("b", "countries", 2, "world-atlas")])  # a's region changed: its entry still doesn't
         self.assertEqual(new, Lock(False, old.entries | {"x": Entry(600, "countries", 2)}))  # between a and the retired uid
 
     def test_stale_draft_is_one_the_current_order_would_rewrite(self) -> None:
@@ -67,13 +68,13 @@ class PlaceTest(unittest.TestCase):
         self.assertFalse(stale_draft(lock, at("a", "b")))
         self.assertTrue(stale_draft(lock, at("b", "a")))
         self.assertTrue(stale_draft(Lock(True, {"a": Entry(500, "countries", 1)}), at("a", "b")))
-        self.assertTrue(stale_draft(lock, [("a", 1, 1), ("b", 1, 2)]))  # same order, b's region changed
+        self.assertTrue(stale_draft(lock, [("a", "countries", 1, "world-atlas"), ("b", "countries", 2, "world-atlas")]))  # same order, b's region changed
         self.assertFalse(stale_draft(Lock(False, lock.entries), at("b", "a")))  # frozen: old slots by design
 
     def test_moved_names_frozen_cards_whose_block_or_region_changed(self) -> None:
         lock = Lock(False, {"a": Entry(500, "countries", 1), "b": Entry(1000, "countries", 1), "c": Entry(1500, "continents", None)})
-        self.assertEqual(moved(lock, [("a", "countries", 1), ("c", "continents", None), ("new", "features", 5)]), [])
-        self.assertEqual(len(moved(lock, [("a", "cities", 1), ("b", "countries", 7)])), 2)
+        self.assertEqual(moved(lock, [("a", "countries", 1, "world-atlas"), ("c", "continents", None, "world-atlas"), ("new", "features", 5, "world-atlas")]), [])
+        self.assertEqual(len(moved(lock, [("a", "cities", 1, "world-atlas"), ("b", "countries", 7, "world-atlas")])), 2)
 
 
     def test_after_pred_spread_evenly(self) -> None:
@@ -375,9 +376,66 @@ class LockTest(unittest.TestCase):
         self.assertEqual((lock.draft, lock.series), (False, 1))
         order = sorted(lock.entries, key=lambda u: lock.entries[u].position)
         blocks = [lock.entries[u].block for u in order]
-        self.assertEqual(blocks, sorted(blocks, key=["continents", "countries", "features", "cities"].index))
+        self.assertEqual(blocks, sorted(blocks, key=["continents", "countries", "features", "cities", "subdivisions"].index))
         self.assertEqual(order.index("24rdGoHY6W"), order.index("PJEhGX8mTx") + 1)  # Greenland after Iceland
         self.assertEqual(lock.entries["24rdGoHY6W"], Entry(11500, "countries", 2))
+
+    def test_every_deck_keeps_to_its_range(self) -> None:
+        lock = positions.read()
+        for uid, e in lock.entries.items():
+            deck = BY_SLUG[e.deck]
+            self.assertTrue(deck.base <= e.position < deck.limit, uid)
+        firsts = {slug: min(e.position for e in lock.entries.values() if e.deck == slug) for slug in BY_SLUG}
+        self.assertEqual(firsts, {"world-atlas": 500, "italian-regions": 600_500, "us-states": 650_500,
+                                  "brazilian-states": 700_500, "canadian-provinces": 750_500})
+
+
+class DeckTest(unittest.TestCase):
+    """Companion decks (ADR 0012): each deck's positions in its own range, and a card's deck frozen with them."""
+
+    US = "us-states"
+
+    def test_a_line_without_a_deck_is_world_atlas(self) -> None:
+        lock = parse(f"draft: false\nseries: 3\n{A}: 500 block=continents region=-\n"
+                     f"{B}: 650500 block=subdivisions region=- deck=us-states\n")
+        self.assertEqual(lock.entries[A].deck, "world-atlas")
+        self.assertEqual(lock.entries[B], Entry(650_500, "subdivisions", None, self.US))
+
+    def test_entries_must_fit_their_deck(self) -> None:
+        for args in ((650_500, "subdivisions", None, "world-atlas"), (500, "subdivisions", None, self.US),
+                     (650_500, "countries", 1, self.US), (650_500, "subdivisions", 1, self.US), (1, "countries", 1, "nope")):
+            with self.subTest(args), self.assertRaises(ValueError):
+                Entry(*args)
+
+    def test_new_uids_go_in_their_decks_range(self) -> None:
+        old = Lock(False, {A: Entry(500, "continents", None)}, 3)
+        placed = [(A, "continents", None, "world-atlas"), ("c" * 10, "subdivisions", None, self.US),
+                  ("d" * 10, "subdivisions", None, self.US), ("e" * 10, "countries", 1, "world-atlas")]
+        self.assertEqual(update(old, placed).positions, {A: 500, "c" * 10: 650_500, "d" * 10: 651_000, "e" * 10: 1000})
+        draft = update(Lock(True, {}, 3), placed)
+        self.assertEqual(draft.positions, {A: 500, "e" * 10: 1000, "c" * 10: 650_500, "d" * 10: 651_000})
+
+    def test_a_new_first_card_goes_below_the_decks_lowest(self) -> None:
+        deck = BY_SLUG[self.US]
+        placed = place({"x": 651_000}, ["new", "x"], deck)
+        self.assertTrue(deck.base <= placed["new"] < 651_000, placed)
+
+    def test_a_draft_past_its_range_fails(self) -> None:
+        deck = BY_SLUG[self.US]
+        with self.assertRaises(GapExhausted):
+            regenerate([f"u{i}" for i in range(100)], deck)
+
+    def test_a_deck_that_fills_its_range_stops(self) -> None:
+        deck = BY_SLUG[self.US]
+        with self.assertRaises(positions.GapExhausted):
+            place({"a": deck.limit - 600}, ["a", "b", "c"], deck)
+
+    def test_a_changed_deck_is_an_error(self) -> None:
+        lock = Lock(False, {A: Entry(650_500, "subdivisions", None, self.US)}, 3)
+        self.assertEqual(positions.deck_errors(lock, [(A, "subdivisions", None, self.US)]), [])
+        self.assertEqual(len(positions.deck_errors(lock, [(A, "subdivisions", None, "italian-regions")])), 1)
+        changed = Lock(False, {A: Entry(600_500, "subdivisions", None, "italian-regions")}, 3)
+        self.assertEqual(len(positions.frozen_errors(changed, dump(lock))), 1)  # the freeze guard holds the deck too
 
 if __name__ == "__main__":
     unittest.main()

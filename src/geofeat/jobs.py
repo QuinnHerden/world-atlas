@@ -19,38 +19,40 @@ from shapely.geometry.base import BaseGeometry
 import geofeat.ne as ne
 from geofeat.card import Card, load_media, match_keys
 from geofeat.model import BUILD, DECK, LOCK, MEDIA_INDEX, ROOT, VENDOR
+from geofeat.country_map import render_country
 from geofeat.render import render
 from geofeat.resolve import features_by_id
 from geofeat.sources import all_cards
-from geofeat.spec import BASEMAP_LAYERS, RELIEF, RenderSpec
+from geofeat.spec import BASEMAP_LAYERS, COUNTRY_MAP_LAYERS, RELIEF, RenderSpec
 
 CACHE = BUILD / "render-cache.json"  # cache key -> rendered PNG name
 JOBS = int(os.environ.get("JOBS", "1"))  # each worker loads its own copy of the basemap layers; ~1.5 GB per worker
 
 RENDERER = ("render.py", "frame.py", "ne.py", "style.py", "spec.py")  # what render() runs; hashed into every key
+COUNTRY_MAP = ("country_map.py",)  # what a companion card's map also runs; only its key holds it
 GEOMETRY_DECIMALS = 7  # degrees: ~1 cm, far below a pixel, and above float noise between runs
 CLOSE_DOT_KM = 150  # a dot with another carded dot this close gets a close-dot frame (ADR 0003)
 
 
 @cache
-def _code_hash(root: Path) -> str:
+def _code_hash(root: Path, names: tuple[str, ...] = RENDERER) -> str:
     h = hashlib.sha256()
-    for name in RENDERER:
+    for name in names:
         h.update(name.encode() + b"\0" + (root / "src/geofeat" / name).read_bytes())
     h.update((root / "uv.lock").read_bytes())
     return h.hexdigest()
 
 
-def _basemap_files() -> list[str]:
-    return sorted({f"ne_{name}.geojson" for name in BASEMAP_LAYERS} | {RELIEF})
+def _basemap_files(layers: frozenset[str] = BASEMAP_LAYERS) -> list[str]:
+    return sorted({f"ne_{name}.geojson" for name in layers} | {RELIEF})
 
 
 def _check_vendor() -> None:
     """The key trusts the lock's sha256 for the basemap files, so check the bytes in vendor/ match it (vendor/ may
     be shared with another checkout). Selector layers needn't be checked: what they resolve to is hashed."""
-    _basemap_hash(LOCK)  # fails clearly on a missing or duplicate entry
+    _basemap_hash(LOCK, BASEMAP_LAYERS | COUNTRY_MAP_LAYERS)  # fails clearly on a missing or duplicate entry
     pinned = {Path(e["path"]).name: e["sha256"] for e in json.loads(LOCK.read_text())}
-    for file in _basemap_files():
+    for file in _basemap_files(BASEMAP_LAYERS | COUNTRY_MAP_LAYERS):
         with open(VENDOR / file, "rb") as f:
             actual = hashlib.file_digest(f, "sha256").hexdigest()
         if actual != pinned[file]:
@@ -58,14 +60,14 @@ def _check_vendor() -> None:
 
 
 @cache
-def _basemap_hash(lock: Path) -> str:
+def _basemap_hash(lock: Path, layers: frozenset[str] = BASEMAP_LAYERS) -> str:
     """The pinned sha256 of every basemap layer and the relief raster. Only the content hash counts, so a relock
     that leaves a file's bytes unchanged doesn't re-render, and entries for other layers don't count at all."""
     entries = json.loads(lock.read_text())
     by_name = {Path(entry["path"]).name: entry["sha256"] for entry in entries}
     if len(by_name) != len(entries):
         raise ValueError(f"{lock.name}: two entries share a file name")
-    files = _basemap_files()
+    files = _basemap_files(layers)
     if missing := [f for f in files if f not in by_name]:
         raise ValueError(f"not in {lock.name}: {missing}")
     return hashlib.sha256(json.dumps({f: by_name[f] for f in files}, sort_keys=True).encode()).hexdigest()
@@ -94,12 +96,13 @@ class RenderJob:
         basemap's pinned data. Renaming, re-tiering or retyping a card, editing model.py or a selector, or pinning
         a layer the basemap doesn't draw changes nothing unless the geometry or spec changes."""
         h = hashlib.sha256()
+        country = self.spec.framing == "country"
         for part in (
-            _code_hash(ROOT),
-            _basemap_hash(LOCK),
+            _code_hash(ROOT, RENDERER + COUNTRY_MAP if country else RENDERER),
+            _basemap_hash(LOCK, BASEMAP_LAYERS | COUNTRY_MAP_LAYERS if country else BASEMAP_LAYERS),
             json.dumps(self.spec.model_dump(mode="json"), sort_keys=True),  # defaults included, so a new field counts
             geometry_hash(self.geometry, directed=self.spec.style.startswith("flow")),
-            *(f"context {geometry_hash(g)}" for g in self.context),
+            *sorted(f"context {geometry_hash(g)}" for g in self.context),  # drawn alike in any order
             f"former {geometry_hash(self.former)}" if self.former is not None else "former none",
             f"region {geometry_hash(self.region)}" if self.region is not None else "region none",
         ):
@@ -107,6 +110,8 @@ class RenderJob:
         return h.hexdigest()
 
     def render(self) -> bytes:
+        if self.spec.framing == "country":  # a companion deck's map; `context` is its country's other subdivisions
+            return render_country(self.spec, self.geometry, self.context)
         return render(self.spec, self.geometry, self.context, self.former, self.region)
 
 

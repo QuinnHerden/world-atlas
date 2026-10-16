@@ -5,6 +5,8 @@ from typing import Annotated, Literal
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
 from ruamel.yaml import YAML
 
+from geofeat.decks import WORLD
+
 ROOT = Path(__file__).resolve().parents[2]
 FEATURES = ROOT / "data/features.yaml"
 LOCK = ROOT / "data/sources.lock"
@@ -13,7 +15,7 @@ VENDOR = ROOT / "vendor"
 DECK = ROOT / "deck"
 BUILD = ROOT / "build"
 MEDIA_INDEX = BUILD / "media.json"  # card key (kind:id, e.g. feature:nile) -> rendered PNG name
-ROOT_DECK = "World Atlas"
+ROOT_DECK = WORLD.name
 
 Category = Literal[
     "Continents",

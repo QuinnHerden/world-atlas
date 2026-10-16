@@ -4,11 +4,11 @@ from collections import Counter
 from pathlib import Path
 
 from geofeat.card import Card
-from geofeat.sources import cities, features, political
+from geofeat.sources import cities, features, political, subdivisions
 
-MODULES = (features, political, cities)
+MODULES = (features, political, cities, subdivisions)
 # The YAML files `make ids` mints uids in and the uid check reads. The political ones join once they exist.
-PATHS: tuple[Path, ...] = (features.PATH, *(p for p in (*political.PATHS, cities.PATH) if p.exists()))
+PATHS: tuple[Path, ...] = (features.PATH, *(p for p in (*political.PATHS, cities.PATH, subdivisions.PATH) if p.exists()))
 
 
 def all_cards() -> list[Card]:

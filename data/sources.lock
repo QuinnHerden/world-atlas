@@ -159,5 +159,12 @@
     "path": "geojson/ne_10m_admin_0_boundary_lines_disputed_areas.geojson",
     "sha256": "69f19da764e6982b43aebae4b1a356ffe74c33f2a3cdb462637c0ba8e969c30b",
     "blob": "5ceb37949bab9b2be8745caf7c67c8111bb679b5"
+  },
+  {
+    "repo": "nvkelso/natural-earth-vector",
+    "commit": "f1890d9f152c896d250a77557a5751a93d494776",
+    "path": "geojson/ne_10m_admin_1_states_provinces.geojson",
+    "sha256": "22d0e3ad85eb3e27f17cabf8ba2d50e554fbc27a87796ff891d958185da62fb5",
+    "blob": "4a8438f98ac7dfec7dc1739b1eaf91398ad33f22"
   }
 ]

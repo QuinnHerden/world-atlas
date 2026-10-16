@@ -28,10 +28,12 @@ from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids, uids as entry_uids
 from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, Verify, active, load_features
 from geofeat.polities import read_countries, active_territory_file
-from geofeat.order import Siblings, load_siblings, save_siblings
+from geofeat import framing
+from geofeat.decks import COMPANIONS, DECKS
+from geofeat.order import Siblings, companions, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, UNCOMPARED_FAMILIES, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
-from geofeat.sources import PATHS, all_cards, cities, political
+from geofeat.sources import PATHS, all_cards, cities, political, subdivisions
 from geofeat.sources import features as features_source
 
 RIVER_GAP_M = 20_000
@@ -138,7 +140,7 @@ class Noted(NamedTuple):
 
 def noted() -> list[Noted]:
     """Every card that can carry a note, in file order: active features, countries and their capitals, territories
-    and disputes, cities."""
+    and disputes, cities, subdivisions."""
     rows = [Noted(features_source.key(f), f.note, f.verify) for f in active(load_features())]
     for c in read_countries():
         rows.append(Noted(card_key("country", c.id), c.note, c.verify))
@@ -146,6 +148,7 @@ def noted() -> list[Noted]:
             rows.append(Noted(card_key("capital", c.id), cap.note, cap.verify))
     rows += [Noted(card_key(e.kind, e.id), e.note, e.verify) for e in active_territory_file()]
     rows += [Noted(card_key("city", c.id), c.note, c.verify) for c in cities.load_cities()]
+    rows += [Noted(card_key("subdivision", s.id), s.note, s.verify) for s in subdivisions.active()]
     return rows
 
 
@@ -161,7 +164,8 @@ def open_verify(rows: list[Noted]) -> list[str]:
 def missing_card_notes(rows: list[Noted]) -> list[str]:
     """Every card's back shows its note, so the political and city cards need one too (`missing_notes` does features)."""
     return [f"{r.key}: no note (1-3 sentences on why it matters)" for r in rows
-            if not r.note and r.key.partition(":")[0] in ("country", "capital", "city", "subnational", "territory", "dispute")]
+            if not r.note and r.key.partition(":")[0] in ("country", "capital", "city", "subnational", "territory", "dispute",
+                                                          "subdivision")]
 
 
 def verify_errors(release: bool) -> list[str]:
@@ -235,7 +239,12 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
             notes.append(f"trim: {feature.id} keeps its largest piece, dropping {trimmed:,.0f} km²")
         notes += [f"override: {feature.id} ~ {o.id} may nest: {o.reason}" for o in feature.allow_nested]
     political_errors, outlines = political.check()  # no-ops until the political data files exist
-    errors += political_errors + cities.check(outlines)
+    subdivision_errors = subdivisions.check(set(outlines))
+    errors += political_errors + cities.check(outlines) + subdivision_errors
+    if not subdivision_errors:
+        errors += companions.errors()
+        notes += [f"{deck.name}: look-alikes {gap}" for deck in COMPANIONS
+                  for gap in companions.lookalike_gaps(deck, [s.id for s in subdivisions.of_country(deck.country)])]
     retired_errors, retired_notes = retired_references(all_features)
     errors += retired_errors
     notes += retired_notes
@@ -254,6 +263,9 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
             save_siblings(siblings)
         except ValueError as exc:
             errors.append(f"study order: {exc}")
+    if not errors:
+        for warning in framing.pin_drift():  # the user decides whether to re-pin (ADR 0010)
+            print(f"warning: {warning}")
     errors += lock_freeze_errors(release)
     errors += verify_errors(release)  # last, so that nothing it finds holds back the checks above
     notes.append(f"sibling pairs flagged or nested (within {NEAR_M // 1000} km or overlapping; `make pairs` lists all):")
@@ -317,20 +329,35 @@ def check_deck() -> list[str]:
         errors.append(error)
     if not lock.draft and not writes_pos():
         errors.append(f"{positions.LOCK_FILE.name} is frozen (draft: false), so ankc 0.6+ is required to write it")
-    command = [*ankc_command(), "check", "--deck", ROOT_DECK, "--path", str(DECK)]
-    result = subprocess.run(command, capture_output=True, text=True)
-    if result.returncode != 0:
-        errors.append(f"ankc check failed:\n{result.stdout}{result.stderr}")
+    for deck in DECKS:
+        command = [*ankc_command(), "check", "--deck", deck.name, "--path", str(DECK)]
+        result = subprocess.run(command, capture_output=True, text=True)
+        if result.returncode != 0:
+            errors.append(f"ankc check of {deck.name} failed:\n{result.stdout}{result.stderr}")
     return errors
 
 
 def check_package() -> list[str]:
-    packages = list((ROOT / "dist").glob("*.apkg"))
-    if len(packages) != 1:
-        return [f"expected exactly one package in dist/, found {len(packages)}"]
+    """One package per deck (geofeat.decks), dist/<slug>.apkg, each holding exactly its own deck's cards and maps."""
+    packages = sorted((ROOT / "dist").glob("*.apkg"))
+    expected_files = sorted(ROOT / "dist" / f"{d.slug}.apkg" for d in DECKS)
+    if packages != expected_files:
+        return [f"expected {', '.join(p.name for p in expected_files)} in dist/, found {', '.join(p.name for p in packages) or 'none'}"]
     cards = ideal_order()
-    expected = {c.uid for c in all_cards()}
-    with zipfile.ZipFile(packages[0]) as archive, tempfile.TemporaryDirectory() as tmp:
+    active = all_cards()
+    lock = positions.read()
+    media = load_media()
+    errors = []
+    for deck in DECKS:
+        errors += _check_one_package(ROOT / "dist" / f"{deck.slug}.apkg", deck,
+                                     [c for c in cards if c.deck == deck.name],
+                                     {c.uid for c in active if c.deck == deck.name}, lock, media)
+    return errors
+
+
+def _check_one_package(package: Path, deck, cards: list, expected: set[str], lock: positions.Lock,
+                       media: dict[str, str]) -> list[str]:
+    with zipfile.ZipFile(package) as archive, tempfile.TemporaryDirectory() as tmp:
         archive.extract("collection.anki2", tmp)
         packaged_media = set(json.loads(archive.read("media")).values())
         db = sqlite3.connect(Path(tmp) / "collection.anki2")
@@ -339,15 +366,15 @@ def check_package() -> list[str]:
         db.close()
     note_tags = {guid: set(tags.split()) for guid, tags, *_ in rows}
     guids = set(note_tags)
-    name = packages[0].name
-    lock = positions.read()
+    name = package.name
     errors = [f"{name}: note {c.uid} ({c.key}) lacks tags {sorted(missing)}" for c in cards if c.uid in note_tags
               and (missing := set(positions.locked_tags(c.tags, lock.entries.get(c.uid))) - note_tags[c.uid])]
-    if wrong := sorted({decks[str(did)]["name"] for _, _, did, *_ in rows} - {ROOT_DECK}):
-        errors.append(f"{name}: cards outside the {ROOT_DECK!r} deck: {wrong}")
+    if wrong := sorted({decks[str(did)]["name"] for _, _, did, *_ in rows} - {deck.name}):
+        errors.append(f"{name}: cards outside the {deck.name!r} deck: {wrong}")
+    if wrong := sorted(g for g, *_ in rows if (e := lock.entries.get(g)) is not None and e.deck != deck.slug):
+        errors.append(f"{name}: notes locked in another deck: {wrong}")
     if any((ctype, queue) != (0, 0) for *_, ctype, queue, _ in rows):
         errors.append(f"{name}: some cards aren't new")
-    media = load_media()
     if odd := packaged_media ^ {media.get(c.key) for c in cards}:  # nothing a card's text pulled in from elsewhere
         errors.append(f"{name}: packaged media differ from the rendered maps: {sorted(map(str, odd))}")
     for guid, tags, *_ in rows:  # the tags filtered decks search must name the block and region the lock placed it in
