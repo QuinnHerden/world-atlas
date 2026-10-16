@@ -78,13 +78,18 @@ class Card(Frozen):
     render: RenderRef
 
     @model_validator(mode="after")
-    def _pass_tag(self) -> "Card":
-        if [t for t in self.tags if t.startswith("pass::")] != [pass_tag(self.study_pass)]:
-            raise ValueError(f"{self.kind}:{self.id}: needs exactly the tag {pass_tag(self.study_pass)}")
+    def _block_tag(self) -> "Card":
+        if [t for t in self.tags if t.startswith(("block::", "pass::"))] != [block_tag(self.block)]:
+            raise ValueError(f"{self.kind}:{self.id}: needs exactly the tag {block_tag(self.block)}, and no pass:: tag")
         return self
 
     @property
+    def block(self) -> "Block":
+        return block_of(self.kind)
+
+    @property
     def study_pass(self) -> "Pass":
+        """The pass of the ring order the engine builds first (order.engine); the study blocks are cut from it."""
         return study_pass(self.kind, self.tier, self.orientation)
 
     @property
@@ -107,8 +112,20 @@ def study_pass(kind: Kind, tier: int, orientation: bool = False) -> Pass:
     return 1 if kind in ALWAYS_PASS_1 or tier <= 2 else 2
 
 
-def pass_tag(study: Pass) -> str:
-    return f"pass::{study}"
+# The study order's four blocks (ADR 0009): the continents, the political map (countries, territories and disputed
+# areas), the physical features, then the capitals and cities.
+Block = Literal["continents", "countries", "features", "cities"]
+BLOCKS: tuple[Block, ...] = ("continents", "countries", "features", "cities")
+_BLOCK_OF: dict[Kind, Block] = {"continent": "continents", "country": "countries", "territory": "countries",
+                                "dispute": "countries", "feature": "features", "capital": "cities", "city": "cities"}
+
+
+def block_of(kind: Kind) -> Block:
+    return _BLOCK_OF[kind]
+
+
+def block_tag(block: Block) -> str:
+    return f"block::{block}"
 
 
 def card_key(kind: Kind, id: str) -> str:

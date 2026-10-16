@@ -16,8 +16,8 @@ def uid(n: int) -> str:
 
 
 def at(*uids: str) -> list[tuple[str, object, int]]:
-    """Placements in pass 1, region 1, in this order."""
-    return [(u, 1, 1) for u in uids]
+    """Placements in the countries block, region 1, in this order."""
+    return [(u, "countries", 1) for u in uids]
 
 
 A, B = "aaaaaaaaaa", "bbbbbbbbbb"
@@ -25,47 +25,55 @@ A, B = "aaaaaaaaaa", "bbbbbbbbbb"
 
 class FormatTest(unittest.TestCase):
     def test_round_trip_sorted_by_uid(self) -> None:
-        lock = Lock(True, {B: Entry(1000, 2, 21), A: Entry(500, "orientation", None)})
+        lock = Lock(True, {B: Entry(1000, "features", 21), A: Entry(500, "continents", None)}, 3)
         text = dump(lock)
-        self.assertEqual(text, f"draft: true\n{A}: 500 pass=orientation region=-\n{B}: 1000 pass=2 region=21\n")
+        self.assertEqual(text, f"draft: true\nseries: 3\n{A}: 500 block=continents region=-\n"
+                               f"{B}: 1000 block=features region=21\n")
         self.assertEqual(parse(text), lock)
         self.assertEqual(lock.positions, {A: 500, B: 1000})
 
     def test_rejects_bad_input(self) -> None:
-        for text in (f"{A}: 500 pass=1 region=01\n", f"draft: true\n{A}: 500\n", f"draft: true\n{A}: x pass=1 region=01\n",
-                     f"draft: true\n{A}: 1 pass=1 region=01\n{A}: 2 pass=1 region=01\n",
-                     f"draft: true\n{A}: 1 pass=1 region=01\n{B}: 1 pass=1 region=01\n",
-                     f"draft: false\n{A}: {LIMIT} pass=1 region=01\n",
-                     f"draft: true\n{A}: 1 pass=orientation region=01\n", f"draft: true\n{A}: 1 pass=1 region=-\n",
-                     f"draft: true\n{A}: 1 pass=1 region=00\n", f"draft: true\n{A}: 1 pass=3 region=01\n",
-                     f"draft: true\n{A}: 1 pass=1 region=1\n"):
+        head = "draft: true\nseries: 3\n"
+        for text in (f"{A}: 500 block=countries region=01\n", f"draft: true\n{A}: 500 block=countries region=01\n",
+                     f"{head}{A}: 500\n", f"{head}{A}: x block=countries region=01\n",
+                     f"{head}{A}: 1 block=countries region=01\n{A}: 2 block=countries region=01\n",
+                     f"{head}{A}: 1 block=countries region=01\n{B}: 1 block=countries region=01\n",
+                     f"draft: false\nseries: 3\n{A}: {LIMIT} block=countries region=01\n",
+                     f"{head}{A}: 1 block=continents region=01\n", f"{head}{A}: 1 block=countries region=-\n",
+                     f"{head}{A}: 1 block=cities region=-\n", f"{head}{A}: 1 block=countries region=00\n",
+                     f"{head}{A}: 1 block=capitals region=01\n", f"{head}{A}: 1 pass=1 region=01\n",
+                     f"{head}{A}: 1 block=countries region=1\n", f"draft: true\nseries: 0\n"):
             with self.subTest(text), self.assertRaises(ValueError):
                 parse(text)
+
+    def test_a_feature_may_have_a_region_or_none(self) -> None:
+        self.assertEqual(Entry(1, "features", None).region, None)
+        self.assertEqual(Entry(1, "features", 4).region, 4)
 
 
 class PlaceTest(unittest.TestCase):
     def test_draft_regenerates_at_the_stride(self) -> None:
-        lock = update(Lock(True, {"a": Entry(7, 1, 3), "gone": Entry(9, 1, 1)}), [("b", "orientation", None), ("a", 2, 4)])
-        self.assertEqual(lock, Lock(True, {"b": Entry(500, "orientation", None), "a": Entry(1000, 2, 4)}))
+        lock = update(Lock(True, {"a": Entry(7, "countries", 3), "gone": Entry(9, "countries", 1)}), [("b", "continents", None), ("a", "features", 4)])
+        self.assertEqual(lock, Lock(True, {"b": Entry(500, "continents", None), "a": Entry(1000, "features", 4)}))
         self.assertEqual(regenerate([]), {})
 
     def test_frozen_update_adds_only_and_keeps_every_entry(self) -> None:
-        old = Lock(False, {"a": Entry(500, 1, 1), "gone": Entry(700, 1, 1), "b": Entry(1000, 1, 2)})
-        new = update(old, [("a", 1, 3), ("x", 1, 2), ("b", 1, 2)])  # a's region changed: its entry still doesn't
-        self.assertEqual(new, Lock(False, old.entries | {"x": Entry(600, 1, 2)}))  # between a and the retired uid
+        old = Lock(False, {"a": Entry(500, "countries", 1), "gone": Entry(700, "countries", 1), "b": Entry(1000, "countries", 2)})
+        new = update(old, [("a", "countries", 3), ("x", "countries", 2), ("b", "countries", 2)])  # a's region changed: its entry still doesn't
+        self.assertEqual(new, Lock(False, old.entries | {"x": Entry(600, "countries", 2)}))  # between a and the retired uid
 
     def test_stale_draft_is_one_the_current_order_would_rewrite(self) -> None:
-        lock = Lock(True, {"a": Entry(500, 1, 1), "b": Entry(1000, 1, 1)})
+        lock = Lock(True, {"a": Entry(500, "countries", 1), "b": Entry(1000, "countries", 1)})
         self.assertFalse(stale_draft(lock, at("a", "b")))
         self.assertTrue(stale_draft(lock, at("b", "a")))
-        self.assertTrue(stale_draft(Lock(True, {"a": Entry(500, 1, 1)}), at("a", "b")))
+        self.assertTrue(stale_draft(Lock(True, {"a": Entry(500, "countries", 1)}), at("a", "b")))
         self.assertTrue(stale_draft(lock, [("a", 1, 1), ("b", 1, 2)]))  # same order, b's region changed
         self.assertFalse(stale_draft(Lock(False, lock.entries), at("b", "a")))  # frozen: old slots by design
 
-    def test_moved_names_frozen_cards_whose_pass_or_region_changed(self) -> None:
-        lock = Lock(False, {"a": Entry(500, 1, 1), "b": Entry(1000, 1, 1), "c": Entry(1500, "orientation", None)})
-        self.assertEqual(moved(lock, [("a", 1, 1), ("c", "orientation", None), ("new", 2, 5)]), [])
-        self.assertEqual(len(moved(lock, [("a", 2, 1), ("b", 1, 7)])), 2)
+    def test_moved_names_frozen_cards_whose_block_or_region_changed(self) -> None:
+        lock = Lock(False, {"a": Entry(500, "countries", 1), "b": Entry(1000, "countries", 1), "c": Entry(1500, "continents", None)})
+        self.assertEqual(moved(lock, [("a", "countries", 1), ("c", "continents", None), ("new", "features", 5)]), [])
+        self.assertEqual(len(moved(lock, [("a", "cities", 1), ("b", "countries", 7)])), 2)
 
 
     def test_after_pred_spread_evenly(self) -> None:
@@ -126,102 +134,125 @@ class PlaceTest(unittest.TestCase):
 
 
 class FreezeGuardTest(unittest.TestCase):
-    BASE = Lock(False, {A: Entry(500, 1, 1), B: Entry(1000, 1, 2)})
+    BASE = Lock(False, {A: Entry(500, "countries", 1), B: Entry(1000, "countries", 2)}, 3)
+    V2 = "draft: false\naaaaaaaaaa: 500 pass=1 region=01\n"  # v2.0.0's lock: no series line, the old entry format
 
     def test_draft_or_missing_base_passes(self) -> None:
-        self.assertEqual(frozen_errors(Lock(True, {}), None), [])
-        self.assertEqual(frozen_errors(Lock(False, {}), f"draft: true\n{A}: 500\n"), [])  # the old format, unparsed
+        self.assertEqual(frozen_errors(Lock(True, {}, 3), None), [])
+        self.assertEqual(frozen_errors(Lock(False, {}, 3), f"draft: true\n{A}: 500\n"), [])  # the old format, unparsed
 
     def test_adding_uids_passes(self) -> None:
-        self.assertEqual(frozen_errors(Lock(False, self.BASE.entries | {"x" * 10: Entry(750, 1, 1)}), dump(self.BASE)), [])
+        extended = Lock(False, self.BASE.entries | {"x" * 10: Entry(750, "countries", 1)}, 3)
+        self.assertEqual(frozen_errors(extended, dump(self.BASE)), [])
 
-    def test_any_change_to_a_frozen_entry_fails(self) -> None:
-        for entries in ({A: Entry(500, 1, 1)}, {A: Entry(501, 1, 1), B: Entry(1000, 1, 2)},
-                        {A: Entry(500, 1, 1), B: Entry(1000, 1, 3)}, {A: Entry(500, 2, 1), B: Entry(1000, 1, 2)}):
+    def test_any_change_to_a_frozen_entry_in_the_series_fails(self) -> None:
+        for entries in ({A: Entry(500, "countries", 1)},
+                        {A: Entry(501, "countries", 1), B: Entry(1000, "countries", 2)},
+                        {A: Entry(500, "countries", 1), B: Entry(1000, "countries", 3)},
+                        {A: Entry(500, "cities", 1), B: Entry(1000, "countries", 2)}):
             with self.subTest(entries):
-                self.assertTrue(frozen_errors(Lock(False, entries), dump(self.BASE)))
+                self.assertTrue(frozen_errors(Lock(False, entries, 3), dump(self.BASE)))
 
     def test_unfreezing_fails(self) -> None:
-        self.assertTrue(frozen_errors(Lock(True, self.BASE.entries), dump(self.BASE)))
+        self.assertTrue(frozen_errors(Lock(True, self.BASE.entries, 3), dump(self.BASE)))
+
+    def test_a_new_series_is_a_fresh_freeze(self) -> None:
+        reordered = Lock(False, {A: Entry(9000, "countries", 4)}, 3)
+        self.assertEqual(frozen_errors(reordered, self.V2), [])  # series 2 (no series line) isn't compared with 3
+        self.assertEqual(frozen_errors(Lock(True, {}, 3), self.V2), [])  # a draft of the new series, too
+
+    def test_a_series_never_goes_back(self) -> None:
+        self.assertTrue(frozen_errors(Lock(False, self.BASE.entries, 2), dump(self.BASE)))
+
+    def test_series_against_the_release_tags(self) -> None:
+        from geofeat.positions import series_errors
+
+        lock = Lock(False, {}, 3)
+        self.assertEqual(series_errors(lock, "v2.0.0", None), [])  # the next major starts series 3
+        self.assertEqual(series_errors(lock, "v2.0.0", "v3.0.0"), [])  # and v3.0.0 releases it
+        self.assertEqual(series_errors(lock, "v3.1.0", None), [])
+        self.assertTrue(series_errors(Lock(False, {}, 2), "v3.0.0", None))  # backwards
+        self.assertTrue(series_errors(Lock(False, {}, 4), "v2.0.0", None))  # skips a major
+        self.assertTrue(series_errors(lock, "v2.0.0", "v2.1.0"))  # a new series without a major tag
+        self.assertEqual(series_errors(lock, None, None), [])
 
     def test_a_bad_base_is_an_error_not_a_pass(self) -> None:
-        for text in ("draft: false\r\n", "<<<<<<< HEAD\n", f"draft: false\n{A}: 500\n"):
+        for text in ("draft: false\r\n", "<<<<<<< HEAD\n", f"draft: false\nseries: 3\n{A}: 500\n"):
             with self.subTest(text):
                 self.assertTrue(frozen_errors(self.BASE, text))
 
-    def guard(self, lock: Lock, texts: dict[str, str | None], tag: str | None, strict: bool):
+    def guard(self, lock: Lock, texts: dict[str, str | None], tags: dict[str, str], strict: bool, head=None):
+        """`tags` maps a `--match` pattern to the newest tag it finds."""
         with mock.patch.object(positions, "base_text", lambda ref: texts.get(ref)), \
-                mock.patch.object(positions, "release_tag", lambda: tag), \
+                mock.patch.object(positions, "release_tag", lambda match="v*": tags.get(match)), \
+                mock.patch.object(positions, "head_tag", lambda: head), \
                 mock.patch.dict("os.environ", {"POSITIONS_BASE": ""}):
             return positions.guard(lock, strict)
 
-    def test_guard_checks_the_base_ref_and_the_release_tag(self) -> None:
-        moved_a = Lock(False, {A: Entry(501, 1, 1), B: Entry(1000, 1, 2)})
-        self.assertEqual(self.guard(self.BASE, {"origin/main": dump(self.BASE)}, None, True), ([], []))
-        self.assertTrue(self.guard(moved_a, {"origin/main": dump(moved_a), "v9.0.0": dump(self.BASE)}, "v9.0.0", True)[0])
+    def test_guard_checks_the_base_ref_and_the_newest_tag_of_the_series(self) -> None:
+        moved_a = Lock(False, {A: Entry(501, "countries", 1), B: Entry(1000, "countries", 2)}, 3)
+        self.assertEqual(self.guard(self.BASE, {"origin/main": dump(self.BASE)}, {}, True), ([], []))
+        tags = {"v*": "v3.1.0", "v3.*": "v3.1.0"}
+        self.assertTrue(self.guard(moved_a, {"origin/main": dump(moved_a), "v3.1.0": dump(self.BASE)}, tags, True)[0])
+
+    def test_guard_accepts_a_new_series_at_a_major_bump_only(self) -> None:
+        reordered = Lock(False, {A: Entry(9000, "countries", 4)}, 3)
+        texts = {"origin/main": self.V2, "v2.0.0": self.V2}
+        self.assertEqual(self.guard(reordered, texts, {"v*": "v2.0.0"}, True), ([], []))
+        self.assertEqual(self.guard(reordered, texts, {"v*": "v2.0.0"}, True, head="v3.0.0"), ([], []))
+        self.assertTrue(self.guard(reordered, texts, {"v*": "v2.0.0"}, True, head="v2.1.0")[0])
+        self.assertTrue(self.guard(Lock(False, {}, 4), texts, {"v*": "v2.0.0"}, True)[0])
 
     def test_an_unreadable_base_fails_strict_and_warns_otherwise(self) -> None:
-        self.assertTrue(self.guard(self.BASE, {}, None, True)[0])
-        errors, warnings = self.guard(self.BASE, {}, None, False)
+        self.assertTrue(self.guard(self.BASE, {}, {}, True)[0])
+        errors, warnings = self.guard(self.BASE, {}, {}, False)
         self.assertEqual((errors, len(warnings)), ([], 1))
-        self.assertEqual(self.guard(Lock(True, {}), {}, None, True), ([], []))  # a draft has nothing to guard
+        self.assertEqual(self.guard(Lock(True, {}, 3), {}, {}, True), ([], []))  # a draft has nothing to guard
 
     def test_an_option_like_ref_is_never_passed_to_git(self) -> None:
         self.assertIsNone(positions.base_text("--output=/tmp/x"))
 
 
 class LockedTagsTest(unittest.TestCase):
-    TAGS = ["kind::country", "pass::1", "region::04", "tier::1"]
+    TAGS = ["kind::country", "block::countries", "region::04", "tier::1"]
 
-    def test_pass_and_region_come_from_the_entry(self) -> None:
-        self.assertEqual(locked_tags(self.TAGS, Entry(5, 1, 7)), ["kind::country", "pass::1", "region::07", "tier::1"])
+    def test_block_and_region_come_from_the_entry(self) -> None:
+        self.assertEqual(locked_tags(self.TAGS, Entry(5, "countries", 7)),
+                         ["kind::country", "block::countries", "region::07", "tier::1"])
         self.assertEqual(locked_tags(self.TAGS, None), self.TAGS)
 
     def test_a_feature_gains_no_region_tag(self) -> None:
-        self.assertEqual(locked_tags(["kind::feature", "pass::2"], Entry(5, 1, 7)), ["kind::feature", "pass::1"])
+        self.assertEqual(locked_tags(["kind::feature", "block::features"], Entry(5, "features", 7)),
+                         ["kind::feature", "block::features"])
 
 
 class RetiredLockTest(unittest.TestCase):
-    """Retire and replace (ADR 0006): a retired uid keeps its frozen entry and must stay accounted for."""
+    """A frozen lock keeps retired uids (ADR 0006): each must stay accounted for by a retired entry."""
 
-    def lock(self, old_region: int = 19) -> Lock:
-        return Lock(False, {A: Entry(500, 1, old_region), B: Entry(250, 1, 2)})
+    LOCK = Lock(False, {A: Entry(500, "features", 1), B: Entry(250, "features", 2)}, 3)
 
-    def entries(self) -> list[dict]:
-        return [{"kind": "territory", "id": "isle", "uid": A, "retired": True},
-                {"kind": "territory", "id": "isle", "uid": B}]
-
-    def errors(self, lock: Lock, entries: list[dict]) -> list[str]:
+    def errors(self, entries: list[dict]) -> list[str]:
         from geofeat.check import retired_lock_errors
 
-        return retired_lock_errors(lock, {B}, entries)
+        return retired_lock_errors(self.LOCK, {B}, entries)
 
-    def test_a_replaced_card_in_another_region_passes(self) -> None:
-        self.assertEqual(self.errors(self.lock(), self.entries()), [])
-
-    def test_a_locked_uid_needs_its_retired_entry(self) -> None:
-        self.assertRegex(" ".join(self.errors(self.lock(), self.entries()[1:])), "no source entry has")
-        unmarked = self.entries()
-        del unmarked[0]["retired"]
-        self.assertRegex(" ".join(self.errors(self.lock(), unmarked)), "aren't `retired: true`")
-
-    def test_same_region_replacement_fails(self) -> None:
-        self.assertRegex(" ".join(self.errors(self.lock(old_region=2), self.entries())), "share region 02")
+    def test_a_retired_uid_needs_its_retired_entry(self) -> None:
+        self.assertEqual(self.errors([{"id": "x", "uid": A, "retired": True}, {"id": "y", "uid": B}]), [])
+        self.assertRegex(" ".join(self.errors([{"id": "y", "uid": B}])), "no source entry has")
+        self.assertRegex(" ".join(self.errors([{"id": "x", "uid": A}, {"id": "y", "uid": B}])), "aren't `retired: true`")
 
 
-class GreenlandTest(unittest.TestCase):
-    """v2.1.0 moved Greenland to region 02, right before the GIUK Gap, by retire and replace."""
+class LockTest(unittest.TestCase):
+    """The committed lock: series 3, frozen, in the four blocks (ADR 0009), Greenland right after Iceland."""
 
     def test_the_lock(self) -> None:
-        lock = positions.read().entries
-        iceland, old, new, giuk = (lock[u] for u in ("PJEhGX8mTx", "24rdGoHY6W", "zjAlvxD9jl", "M4Edjpe30k"))
-        self.assertEqual(old, Entry(250500, 1, 19))
-        self.assertEqual(new, Entry(21750, 1, 2))
-        self.assertLess(iceland.position, new.position)
-        self.assertLess(new.position, giuk.position)
-        self.assertEqual(sorted(e.position for e in lock.values() if iceland.position < e.position < giuk.position),
-                         [new.position])
-
+        lock = positions.read()
+        self.assertEqual((lock.draft, lock.series), (False, 3))
+        order = sorted(lock.entries, key=lambda u: lock.entries[u].position)
+        blocks = [lock.entries[u].block for u in order]
+        self.assertEqual(blocks, sorted(blocks, key=["continents", "countries", "features", "cities"].index))
+        self.assertEqual(order.index("24rdGoHY6W"), order.index("PJEhGX8mTx") + 1)  # Greenland after Iceland
+        self.assertEqual(lock.entries["24rdGoHY6W"], Entry(11500, "countries", 2))
 
 if __name__ == "__main__":
     unittest.main()

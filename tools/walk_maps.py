@@ -7,7 +7,8 @@ Each map outlines the region's countries and numbers the walk nodes in walk orde
 a leader line where the country is too small to hold the label). Steps between bordering countries are solid arrows,
 jumps (consecutive countries with no adjacency edge) dashed orange ones. Pockets (microstates, territories and
 disputes, which sit in a host's run) are markers. The side panel, and the .txt in full, lists every card of the
-region in study order, pass 1 then pass 2. Approve a walk, then freeze it with tools/freeze_walks.py.
+region in study order, block by block (countries, features, capitals and cities; ADR 0009). Approve a walk, then freeze
+it with tools/freeze_walks.py.
 """
 
 import math
@@ -30,7 +31,7 @@ from shapely.geometry.base import BaseGeometry  # noqa: E402
 from shapely.ops import polylabel  # noqa: E402
 
 from geofeat import adjacency  # noqa: E402
-from geofeat.card import Card  # noqa: E402
+from geofeat.card import BLOCKS, Card  # noqa: E402
 from geofeat.countries_ne import outline, state_ids  # noqa: E402
 from geofeat.curriculum import Region, load_curriculum  # noqa: E402
 from geofeat.model import BUILD  # noqa: E402
@@ -130,7 +131,7 @@ class Atlas:
     names: dict[str, str]
     disputes: set[str]
     touches: dict[str, tuple[str, ...]]  # feature id -> the countries that frame it, as the engine places it
-    segments: list[tuple[Card, object, int, bool]]  # card, pass, region, moved there by parent-first
+    segments: list[tuple[Card, str, int, bool]]  # card, block, region, moved there by parent-first
 
 
 def load() -> Atlas:
@@ -140,17 +141,17 @@ def load() -> Atlas:
     shapes = {i: outline(i) for i in names}
     facts = frames.load()
     curriculum = load_curriculum(state_ids())
-    natural = []
-    for c in o.cards:
-        if c.study_pass == "orientation":
-            natural.append(0)
-        else:
-            region = facts.features[c.id].region if c.kind == "feature" else int(c.region)
-            natural.append(c.study_pass * 100 + region)
-    # Segments run in order; a parent moved before its child (into an earlier region) is the only card out of
-    # place, and the cards after it say where it now sits.
-    actual = list(np.minimum.accumulate(natural[::-1])[::-1])
-    segments = [(c, "orientation" if a == 0 else a // 100, a % 100, a != n) for c, a, n in zip(o.cards, actual, natural)]
+    segments = []
+    for block in BLOCKS[1:]:  # continents and the orientation features have no region
+        cards = [c for c in o.cards if c.block == block and c.study_pass != "orientation"]
+        natural = [facts.features[c.id].region if c.kind == "feature" else int(c.region) for c in cards]
+        # Regions run in order within a block, round the ring once (twice for features: the tier-3 ones go round
+        # again); a parent feature moved before its child (into an earlier region) is the only card out of place,
+        # and the cards after it say where it now sits.
+        laps = [int(c.kind == "feature" and c.study_pass == 2) for c in cards]
+        keys = [lap * 100 + n for lap, n in zip(laps, natural)]
+        actual = list(np.minimum.accumulate(keys[::-1])[::-1]) if keys else []
+        segments += [(c, block, a % 100, a != k) for c, a, k in zip(cards, actual, keys)]
     disputes = {t.id for t in others if t.kind == "dispute"}
     return Atlas(o, adjacency.neighbours(adjacency.graph()), shapes, names, disputes,
                  {k.removeprefix("feature:"): f.countries for k, f in feature_frames(facts, curriculum).items()}, segments)
@@ -179,11 +180,11 @@ def card_line(c: Card, atlas: Atlas, region: Region, walk_no: dict[str, int], mo
     return text + (" (parent moved here)" if moved else "")
 
 
-def region_cards(atlas: Atlas, number: int) -> dict[object, list[tuple[Card, bool]]]:
-    out: dict[object, list[tuple[Card, bool]]] = {1: [], 2: []}
-    for c, study, region, moved in atlas.segments:
-        if region == number and study in out:
-            out[study].append((c, moved))
+def region_cards(atlas: Atlas, number: int) -> dict[str, list[tuple[Card, bool]]]:
+    out: dict[str, list[tuple[Card, bool]]] = {b: [] for b in BLOCKS[1:]}
+    for c, block, region, moved in atlas.segments:
+        if region == number:
+            out[block].append((c, moved))
     return out
 
 
@@ -198,11 +199,11 @@ def write_text(atlas: Atlas, region: Region, report: RegionReport) -> list[tuple
     jumps = {b for _, b in report.jumps}
     lines: list[tuple[str, str]] = []
     cards = region_cards(atlas, region.number)
-    for study in (1, 2):
-        if not cards[study]:
+    for block, title in (("countries", "Countries"), ("features", "Physical features"), ("cities", "Capitals and cities")):
+        if not cards[block]:
             continue
-        lines.append(("head", f"Pass {study}"))
-        for i, (c, moved) in enumerate(cards[study], 1):
+        lines.append(("head", title))
+        for i, (c, moved) in enumerate(cards[block], 1):
             mark = "  ⇢ jump" if c.kind == "country" and c.id in jumps else ""
             lines.append((c.kind, f"{i:3d}  {card_line(c, atlas, region, walk_no, moved)}{mark}"))
     head = [

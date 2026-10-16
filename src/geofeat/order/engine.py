@@ -1,4 +1,6 @@
-"""The curriculum order (ADR 0009): orientation, then pass 1 and pass 2 round the ring of regions.
+"""The curriculum order (ADR 0009). The engine first builds the ring order: orientation, then pass 1 and
+pass 2 round the ring of regions. The study order is cut from it in four blocks (`blocks`): continents, countries
+(with territories and disputed areas), physical features, then capitals and cities.
 
 Within a region the countries follow the neighbour walk, and every other card hangs off one already placed:
 
@@ -7,8 +9,7 @@ Within a region the countries follow the neighbour walk, and every other card ha
   the host's or country's capital;
 - a physical feature comes right after the last country of its region that frames it, or just before the first one
   when it opens the region (the Iberian Peninsula); one that no country frames closes the region;
-- a city with an `anchor` comes right after that feature, and a feature or territory with an `anchor` override right
-  after that card (Greenland after Iceland, the GIUK Gap after Greenland).
+- a city with an `anchor` comes right after that feature.
 
 In pass 2 the countries and capitals are already known, so they are placeholders: their cards aren't there, but the
 cards that hang off them keep the walk's order. Local repair then applies, in precedence order, parent before child,
@@ -60,9 +61,10 @@ class RegionReport:
 
 @dataclass(frozen=True)
 class Ordering:
-    cards: list[Card]
-    reports: list[RegionReport]
+    cards: list[Card]  # the study order: the four blocks (`blocks`)
+    reports: list[RegionReport]  # of the ring order
     waivers: list[str]  # those that belong to no one region: parents in a later pass, moved parents, seams
+    ring: list[Card] = field(default_factory=list)  # the interleaved ring order the blocks are cut from
 
 
 Frames = Mapping[str, Frame] | Callable[[Card], Frame | None]
@@ -162,7 +164,42 @@ def curriculum_order(cards: Iterable[Card], curriculum: Curriculum, adjacency: A
     segment = {c.key: seg for c, seg in entries}
     waivers += [f"{a.key} and {b.key} share an id and sit side by side" for a, b in zip(ordered, ordered[1:])
                 if a.id == b.id and (segment[a.key] != segment[b.key] or segment[a.key][0] == "orientation")]
-    return Ordering(ordered, reports, waivers)
+    return Ordering(blocks(ordered, curriculum, region_walks), reports, waivers, ordered)
+
+
+def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, Walk]) -> list[Card]:
+    """The study order (ADR 0009), cut from the ring order in four blocks:
+
+    1. continents, in ring order (CONTINENTS);
+    2. countries, territories and disputed areas, region by region round the ring: each walk node, then its pocket
+       countries (in member order), then the territories and disputes it hosts (in curriculum order);
+    3. physical features in their ring order: orientation (oceans, then planetary winds), pass 1 round the ring, then
+       pass 2, which keeps parent before child;
+    4. capitals and cities, region by region in the same country order: each country's capital, then its cities in
+       ring order (core before secondary).
+    """
+    by_key = {c.key: c for c in ring}
+    cities: dict[str, list[Card]] = {}
+    for c in ring:
+        if c.kind == "city":
+            country = next(p.removeprefix("country:") for p in c.parents if p.startswith("country:"))
+            cities.setdefault(country, []).append(c)
+    political: list[str] = []
+    towns: list[Card] = []
+    for r in sorted(curriculum.regions, key=lambda r: r.number):
+        for node in region_walks[r.number].nodes:
+            members = [node, *(p for p in r.countries if r.pockets.get(p) == node)]
+            political += [f"country:{m}" for m in members]
+            political += [f"{kind}:{i}" for kind, group in (("territory", r.territories), ("dispute", r.disputes))
+                          for i, host in group.items() if host == node]
+            for m in members:
+                towns += [by_key[k] for k in (f"capital:{m}",) if k in by_key] + cities.pop(m, [])
+    out = [c for c in ring if c.kind == "continent"]
+    out += [by_key[k] for k in political if k in by_key]
+    out += [c for c in ring if c.kind == "feature"] + towns
+    if missing := sorted({c.key for c in ring} - {c.key for c in out}):
+        raise OrderError(f"no block place for {missing}")
+    return out
 
 
 def region_of(card: Card, frame_of: Callable[[Card], Frame | None]) -> int:
@@ -233,17 +270,6 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
         children.setdefault(under, []).append(key)
         anchors[key] = under
 
-    def anchored(c: Card) -> bool:
-        """Hang a feature or territory with an `anchor` override right after that card, which must be in the
-        same region and pass (ADR 0009)."""
-        if c.anchor is None:
-            return False
-        if c.anchor not in present:
-            problems.append(f"{c.key}: anchor {c.anchor} is not a card of pass {c.study_pass} region {region.number}")
-        else:
-            hang(c.key, c.anchor)
-        return True
-
     for p in sorted(region.pockets, key=member_order.__getitem__):
         hang(f"country:{p}", f"capital:{region.pockets[p]}")
     for c in cards:
@@ -258,7 +284,7 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
                 problems.append(f"{c.key}: host {c.host} isn't its curriculum host in region {region.number}")
             elif host not in rank:
                 problems.append(f"{c.key}: host {c.host} is not a country of region {region.number}")
-            elif not anchored(c):
+            else:
                 hang(c.key, f"capital:{host}")
         elif c.kind == "city":
             country = next((p.removeprefix("country:") for p in c.parents if p.startswith("country:")), None)
@@ -272,9 +298,7 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
             frame = frame_of(c)
             assert frame is not None  # region_of checked
             framing = sorted((n for n in frame.countries if n in rank), key=lambda n: (rank[n], n))
-            if anchored(c):
-                pass
-            elif frame.opens:
+            if frame.opens:
                 before.setdefault(f"country:{framing[0] if framing else walk.nodes[0]}", []).append(c.key)
             elif framing:
                 hang(c.key, f"country:{framing[-1]}")

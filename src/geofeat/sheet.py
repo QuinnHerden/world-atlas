@@ -77,7 +77,7 @@ def pairs_sheet() -> None:
 
 
 def review_sheets() -> None:
-    """Every card at phone size, by region in study order: what the user signs off. Pass 2 cards follow pass 1."""
+    """Every card at phone size, by region in study order: what the user signs off."""
     from geofeat.curriculum import load_curriculum
     from geofeat.countries_ne import state_ids
     from geofeat.order import frames

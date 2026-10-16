@@ -116,7 +116,7 @@ class CardsTest(unittest.TestCase):
         cards = [c for c in features_source.cards() if c.kind == "continent"]
         self.assertEqual({c.id for c in cards}, set(CONTINENTS))
         for c in cards:
-            self.assertEqual((c.key, c.study_pass), (f"continent:{c.id}", "orientation"))
+            self.assertEqual((c.key, c.study_pass, c.block), (f"continent:{c.id}", "orientation", "continents"))
             self.assertLessEqual({f"id_continent_{c.id}", "kind::continent", "category::continents"}, set(c.tags))
 
 

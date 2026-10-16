@@ -8,9 +8,9 @@ from pathlib import Path
 from ruamel.yaml import YAML
 from shapely.geometry import box
 
-from geofeat.card import Card, RenderRef, Kind, card_key, pass_tag, study_pass
+from geofeat.card import Card, RenderRef, Kind, block_of, block_tag, card_key
 from geofeat.curriculum import Curriculum
-from geofeat.order import Frame, OrderError, curriculum_order, report
+from geofeat.order import Frame, curriculum_order, report
 from geofeat.order.walk import Walk, generate, region_walk
 from geofeat.spec import RenderSpec
 
@@ -22,7 +22,7 @@ REF = RenderRef(spec=RenderSpec(style="area"), geometry=lambda: (box(0, 0, 1, 1)
 
 def make(kind: Kind, id: str, tier: int = 1, region: int | None = None, orientation: bool = False, **extra) -> Card:
     return Card(uid=hashlib.sha256(card_key(kind, id).encode()).hexdigest()[:10], kind=kind, id=id, prompt=extra.pop("prompt", "X"),
-                answer_lines=(id,), tags=(pass_tag(study_pass(kind, tier, orientation)),), tier=tier,
+                answer_lines=(id,), tags=(block_tag(block_of(kind)),), tier=tier,
                 region=None if region is None else f"{region:02d}", orientation=orientation, render=REF, **extra)
 
 
@@ -82,11 +82,11 @@ class GoldenTest(unittest.TestCase):
 
 class PassTest(unittest.TestCase):
     def test_orientation_then_pass_1_then_pass_2(self) -> None:
-        passes = [{"orientation": 0, 1: 1, 2: 2}[c.study_pass] for c in order().cards]
+        passes = [{"orientation": 0, 1: 1, 2: 2}[c.study_pass] for c in order().ring]
         self.assertEqual(passes, sorted(passes))
 
     def test_orientation_is_continents_oceans_winds(self) -> None:
-        head = keys(order().cards)[:5]
+        head = keys(order().ring)[:5]
         self.assertEqual(head, ["feature:europe", "feature:atlantic-ocean", "feature:pacific-ocean",
                                 "feature:trade-winds", "feature:westerlies"])
 
@@ -103,7 +103,7 @@ class WalkTest(unittest.TestCase):
         self.assertEqual(walk.breaks(adjacency()), [])
 
     def test_countries_follow_the_walk(self) -> None:
-        countries = [c.id for c in order().cards if c.kind == "country" and c.host is None]
+        countries = [c.id for c in order().ring if c.kind == "country" and c.host is None]
         self.assertEqual(countries, ["alba", "bravo", "cerul", "delta", "echo", "fox", "golf", "hotel", "india",
                                      "juliet", "kilo"])
 
@@ -130,7 +130,7 @@ class WalkTest(unittest.TestCase):
     def test_frozen_walk_wins_and_is_checked(self) -> None:
         o = order(frozen={"west": ["alba", "cerul", "bravo", "delta", "echo"]})
         self.assertTrue(o.reports[0].walk.frozen)
-        self.assertEqual([c.id for c in o.cards if c.kind == "country" and c.region == "01" and c.host is None],
+        self.assertEqual([c.id for c in o.ring if c.kind == "country" and c.region == "01" and c.host is None],
                          ["alba", "cerul", "bravo", "delta", "echo"])
         with self.assertRaises(ValueError):
             region_walk(["a", "b"], "a", "b", {}, frozen=["b", "a"])
@@ -157,7 +157,7 @@ class WalkTest(unittest.TestCase):
 
 class AnchorTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.order = keys(order().cards)
+        self.order = keys(order().ring)
         self.at = {k: i for i, k in enumerate(self.order)}
 
     def test_capital_two_or_three_after_its_country(self) -> None:
@@ -190,27 +190,42 @@ class AnchorTest(unittest.TestCase):
         self.assertGreater(self.at["city:bravoburg"], self.at["capital:bravo"])
         self.assertEqual(self.at["city:hotelport"], self.at["feature:golf-strait"] + 1)
 
-    def test_anchor_override_for_a_territory_and_a_feature(self) -> None:
-        # As Greenland after Iceland and the GIUK Gap after Greenland: each right after its anchor, not its default.
-        moved = {"territory:isle": "country:delta", "feature:west-range": "territory:isle"}
-        cards = [c.model_copy(update={"anchor": moved[c.key]}) if c.key in moved else c for c in world_cards()]
-        o = keys(order(cards).cards)
-        start = o.index("country:delta")
-        self.assertEqual(o[start:start + 3], ["country:delta", "territory:isle", "feature:west-range"])
-
-    def test_anchor_outside_the_region_is_an_error(self) -> None:
-        cards = [c.model_copy(update={"anchor": "country:fox"}) if c.key == "territory:isle" else c for c in world_cards()]
-        with self.assertRaisesRegex(OrderError, "anchor country:fox is not a card"):
-            order(cards)
-
     def test_pass_2_follows_the_walk_without_its_countries(self) -> None:
         self.assertEqual(self.order[-3:], ["city:foxton", "feature:golf-strait", "city:hotelport"])
+
+
+class BlockTest(unittest.TestCase):
+    """The study order (ADR 0009): continents, countries (with territories and disputes), features, capitals and
+    cities, each cut from the ring order."""
+
+    def setUp(self) -> None:
+        self.o = order()
+        self.order = keys(self.o.cards)
+
+    def test_four_blocks_in_order(self) -> None:
+        rank = {"continent": 0, "country": 1, "territory": 1, "dispute": 1, "feature": 2, "capital": 3, "city": 3}
+        kinds = [rank[k.split(":")[0]] for k in self.order]
+        self.assertEqual(kinds, sorted(kinds))
+
+    def test_countries_walk_with_pockets_after_their_host(self) -> None:
+        political = [k for k in self.order if k.split(":")[0] in ("country", "territory", "dispute")]
+        self.assertEqual(political, ["country:alba", "country:bravo", "country:andor", "country:cerul", "country:delta",
+                                     "territory:isle", "country:echo", "country:fox", "country:golf", "dispute:fjord",
+                                     "country:hotel", "country:india", "country:juliet", "country:kilo"])
+
+    def test_features_keep_their_ring_order(self) -> None:
+        self.assertEqual([k for k in self.order if k.startswith("feature:")],
+                         [k for k in keys(self.o.ring) if k.startswith("feature:")])
+
+    def test_each_capital_then_its_cities(self) -> None:
+        towns = [k for k in self.order if k.split(":")[0] in ("capital", "city")]
+        self.assertEqual(towns[:4], ["capital:alba", "capital:bravo", "city:bravoburg", "capital:cerul"])
 
 
 class RepairTest(unittest.TestCase):
     def setUp(self) -> None:
         self.ordering = order()
-        self.order = keys(self.ordering.cards)
+        self.order = keys(self.ordering.ring)
         self.at = {k: i for i, k in enumerate(self.order)}
 
     def test_parent_moves_to_just_before_its_earliest_child(self) -> None:
@@ -221,7 +236,7 @@ class RepairTest(unittest.TestCase):
         self.assertLess(self.at["feature:long-river"], self.at["feature:long-river-delta"])
 
     def test_same_id_never_side_by_side(self) -> None:
-        cards = self.ordering.cards
+        cards = self.ordering.ring
         self.assertFalse([(a.key, b.key) for a, b in zip(cards, cards[1:]) if a.id == b.id])
 
     def test_lookalikes_three_to_ten_apart_within_a_region(self) -> None:
@@ -246,8 +261,8 @@ class RepairTest(unittest.TestCase):
         frames = FRAMES | {pp.key: Frame(2, ("hotel",)), child_2.key: Frame(1, ("alba",))}
         edges = EDGES + [(pp.key, child_2.key), (pp.key, "feature:north-sea")]
         o = order(world_cards() + [pp, child_2], frames=frames, edges=edges)
-        at = {k: i for i, k in enumerate(keys(o.cards))}
-        passes = [{"orientation": 0, 1: 1, 2: 2}[c.study_pass] for c in o.cards]
+        at = {k: i for i, k in enumerate(keys(o.ring))}
+        passes = [{"orientation": 0, 1: 1, 2: 2}[c.study_pass] for c in o.ring]
         self.assertEqual(passes, sorted(passes))
         self.assertEqual(at[pp.key], at[child_2.key] - 1)
         self.assertIn("feature:north-sea comes before its parent feature:pp, which is in a later pass", o.waivers)
@@ -299,7 +314,7 @@ class StabilityTest(unittest.TestCase):
                 self.assertEqual(keys(order(cards, adjacency=adj).cards), expected)
 
     def test_adding_one_card_moves_only_nearby_cards(self) -> None:
-        base = keys(order().cards)
+        base = keys(order().ring)
         extra = [
             (make("feature", "east-hills", prompt="Hills"), Frame(1, ("delta",))),
             (make("city", "kilotown", 2, 3, parents=("country:kilo", "capital:kilo")), None),
@@ -308,7 +323,7 @@ class StabilityTest(unittest.TestCase):
         for card, frame in extra:
             with self.subTest(card.key):
                 frames = FRAMES | ({card.key: frame} if frame else {})
-                grown = keys(order(world_cards() + [card], frames=frames).cards)
+                grown = keys(order(world_cards() + [card], frames=frames).ring)
                 at = grown.index(card.key)
                 rest = [k for k in grown if k != card.key]
                 moved = [i for i, (a, b) in enumerate(zip(base, rest)) if a != b]

@@ -1,6 +1,7 @@
 """Write the PDF guide: every active card in the new-card study order (data/positions.lock), so entry N is card N in
-Anki. Orientation first, then pass 1 and pass 2, each by region in ring order, with a linked contents page and PDF
-bookmarks. `python -m geofeat.guide --region NN` writes one region's pass 1 and pass 2 entries only."""
+Anki. Sectioned by the four blocks (continents, countries, physical features, capitals and cities), then by region in
+ring order, with a linked contents page and PDF bookmarks. `python -m geofeat.guide --region NN` writes one region's
+entries only."""
 
 import argparse
 import io
@@ -27,7 +28,7 @@ from reportlab.platypus import (
 from reportlab.platypus.tableofcontents import TableOfContents
 
 import geofeat.positions as positions
-from geofeat.card import Card, Pass, load_media
+from geofeat.card import BLOCKS, Block, Card, load_media
 from geofeat.model import BUILD, DECK, NOTE_MARKER, ROOT, ROOT_DECK
 
 TITLE = f"{ROOT_DECK} — Study Guide"
@@ -50,11 +51,23 @@ class Entry:
     card: Card
 
 
+# Where a card sits: its block, its lap (1 for the tier-3 features, which go round the ring again after the others;
+# else 0) and its region (None for continents, oceans and planetary winds).
+Place = tuple[Block, int, int | None]
+BLOCK_TITLES: dict[Block, str] = {"continents": "Continents", "countries": "Countries, territories and disputed areas",
+                                  "features": "Physical features", "cities": "Capitals and cities"}
+
+
 @dataclass
 class Section:
-    study_pass: Pass
-    region: int | None  # None for orientation
+    block: Block
+    lap: int
+    region: int | None
     entries: list[Entry]
+
+    @property
+    def place(self) -> Place:
+        return self.block, self.lap, self.region
 
 
 def entries(cards: list[Card], lock: dict[str, int]) -> list[Entry]:
@@ -64,18 +77,18 @@ def entries(cards: list[Card], lock: dict[str, int]) -> list[Entry]:
     return [Entry(n, c) for n, c in enumerate(sorted(cards, key=lambda c: lock[c.uid]), 1)]
 
 
-def sections(ordered: list[Entry], place_of: Callable[[Card], tuple[Pass, int | None]]) -> list[Section]:
-    """Runs of one pass and region (as the lock records them), in ring order. A card can sit outside its own region:
-    the order engine moves a parent to just before its earliest child (a waiver). So the sections are the heaviest
-    chain of runs (by card count) whose pass and region never go back in ring order, and every other run joins the
-    next section after it, where Anki shows it."""
+def sections(ordered: list[Entry], place_of: Callable[[Card], Place]) -> list[Section]:
+    """Runs of one block, lap and region (as the lock records them), in ring order. A card can sit outside its own
+    region: the order engine moves a parent feature to just before its earliest child (a waiver). So the sections are
+    the heaviest chain of runs (by card count) whose block, lap and region never go back, and every other run joins
+    the next section after it, where Anki shows it."""
     runs: list[Section] = []
     for entry in ordered:
-        study, region = place_of(entry.card)
-        if runs and (runs[-1].study_pass, runs[-1].region) == (study, region):
+        place = place_of(entry.card)
+        if runs and runs[-1].place == place:
             runs[-1].entries.append(entry)
         else:
-            runs.append(Section(study, region, [entry]))
+            runs.append(Section(*place, [entry]))
     # best[i]: the most cards a non-decreasing chain ending at run i holds; ties go to the later predecessor
     best, previous = [0] * len(runs), [-1] * len(runs)
     for i, run in enumerate(runs):
@@ -96,23 +109,19 @@ def sections(ordered: list[Entry], place_of: Callable[[Card], tuple[Pass, int | 
             out[-1].entries += stray + run.entries
             stray = []
         else:
-            out.append(Section(run.study_pass, run.region, stray + run.entries))
+            out.append(Section(*run.place, stray + run.entries))
             stray = []
     if stray:  # strays after the last section join it
         out[-1].entries += stray
     return out
 
 
-def _rank(section: Section) -> tuple[int, int]:
-    return (0, 0) if section.study_pass == "orientation" else (int(section.study_pass), section.region or 0)
+def _rank(section: Section) -> tuple[int, int, int]:
+    return BLOCKS.index(section.block), section.lap, section.region or 0
 
 
-def _place(study: Pass, region: int | None) -> str:
-    return pass_title(study) + ("" if region is None else f", region {region:02d}")
-
-
-def pass_title(study: Pass) -> str:
-    return "Orientation" if study == "orientation" else f"Pass {study}"
+def _place(block: Block, lap: int, region: int | None) -> str:
+    return BLOCK_TITLES[block] + (", tier 3" if lap else "") + ("" if region is None else f", region {region:02d}")
 
 
 def register_fonts() -> None:
@@ -227,7 +236,7 @@ def entry_block(entry: Entry, image: Path, width: float, level: int) -> KeepToge
 
 
 def section_key(section: Section) -> str:
-    return "orientation" if section.region is None else f"pass-{section.study_pass}-region-{section.region:02d}"
+    return f"{section.block}-{section.lap}-" + ("none" if section.region is None else f"{section.region:02d}")
 
 
 def story(parts: list[Section], names: dict[int, str], images: dict[str, Path], width: float,
@@ -243,21 +252,26 @@ def story(parts: list[Section], names: dict[int, str], images: dict[str, Path], 
     ]
     out: list[Flowable] = [*cover, NextPageTemplate("body"), PageBreak(), Paragraph("Contents", S["h1"]),
                            TableOfContents(levelStyles=[S["toc0"], S["toc1"]], dotsMinLevel=0)]
-    current_pass = None
+    current_block = None
     for section in parts:
         first, last = section.entries[0].number, section.entries[-1].number
         span = f"Card {first}" if first == last else f"Cards {first}–{last} · {len(section.entries)} cards"
-        if section.study_pass != current_pass or section.study_pass != 2:  # pass 2's few cards run on
+        if not section.lap:  # the tier-3 features' few cards run on
             out.append(PageBreak())
-        if section.study_pass != current_pass:
-            current_pass = section.study_pass
-            title = pass_title(current_pass)
-            out += [Bookmark(f"pass-{current_pass}", title, 0), Paragraph(escape(title), S["h1"])]
+        if section.block != current_block:
+            current_block = section.block
+            title = BLOCK_TITLES[current_block]
+            out += [Bookmark(f"block-{current_block}", title, 0), Paragraph(escape(title), S["h1"])]
+        title = None
         if section.region is not None:
-            title = f"{section.region:02d} · {names[section.region]}"
-            out += [Bookmark(section_key(section), title, 1), Paragraph(escape(f"Region {title}"), S["h2"])]
+            title = f"{section.region:02d} · {names[section.region]}" + (" · tier 3" if section.lap else "")
+        elif section.block == "features":
+            title = "Oceans and planetary winds"
+        if title:
+            out += [Bookmark(section_key(section), title, 1),
+                    Paragraph(escape(f"Region {title}" if section.region is not None else title), S["h2"])]
         out.append(Paragraph(span, S["range"]))
-        level = 1 if section.region is None else 2
+        level = 2 if title else 1
         out += [entry_block(e, images[e.card.key], width, level) for e in section.entries]
     return out
 
@@ -292,9 +306,9 @@ def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
         raise SystemExit(error)
     curriculum = load_curriculum(state_ids())
 
-    def place_of(card: Card) -> tuple[Pass, int | None]:  # the lock's record, as the pass::/region:: tags are
+    def place_of(card: Card) -> Place:  # the lock's record, as the block::/region:: tags are
         entry = lock.entries[card.uid]
-        return entry.study_pass, entry.region
+        return entry.block, int(entry.block == "features" and card.study_pass == 2), entry.region
 
     parts = sections(entries(cards, lock.positions), place_of)
     owned = set()
@@ -302,18 +316,18 @@ def load() -> tuple[list[Section], dict[int, str], dict[str, Path]]:
         for e in section.entries:
             own = place_of(e.card)
             owned.add(own)
-            if own != (section.study_pass, section.region):
+            if own != section.place:
                 print(f"card {e.number} ({e.card.key}, {_place(*own)}) sits in "
-                      f"{_place(section.study_pass, section.region)}; the guide shows it where Anki does")
-    for own in sorted(owned - {(s.study_pass, s.region) for s in parts}, key=lambda k: _rank(Section(*k, []))):
+                      f"{_place(*section.place)}; the guide shows it where Anki does")
+    for own in sorted(owned - {s.place for s in parts}, key=lambda k: _rank(Section(*k, []))):
         print(f"warning: {_place(*own)} has no section of its own; its cards are in the sections around it")
     return parts, {r.number: r.name for r in curriculum.regions}, {k: DECK / v for k, v in media.items()}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="geofeat.guide", description=__doc__)
-    parser.add_argument("--region", type=int, help="only the entries this ring region's sections hold, pass 1 and "
-                        "pass 2; a card the study order placed in another region is in that region's guide")
+    parser.add_argument("--region", type=int, help="only the entries this ring region's sections hold, in every "
+                        "block; a card the study order placed in another region is in that region's guide")
     args = parser.parse_args()
     parts, names, images = load()
     subtitle = None

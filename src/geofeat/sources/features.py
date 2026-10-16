@@ -2,7 +2,7 @@
 
 import re
 
-from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, pass_tag, study_pass
+from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, block_of, block_tag
 from geofeat.model import FEATURES, Feature, active, load_features, orientation
 from geofeat.resolve import custom, features_by_id, resolve
 from geofeat.spec import RenderSpec
@@ -25,7 +25,7 @@ def key(feature: Feature) -> str:
 def tags(feature: Feature) -> tuple[str, ...]:
     k = kind(feature)
     return (f"tier::{feature.tier}", f"category::{_slug(feature.category)}", id_tag(k, feature.id), f"kind::{k}",
-            pass_tag(study_pass(k, feature.tier, orientation(feature))))
+            block_tag(block_of(k)))
 
 
 def answer(feature: Feature) -> str:
@@ -55,7 +55,6 @@ def card(feature: Feature) -> Card:
         tier=feature.tier,
         note=feature.note,
         orientation=orientation(feature),
-        anchor=feature.anchor,
         render=RenderRef(spec=RenderSpec.from_feature(feature), geometry=lambda: geometry(feature)),
     )
 

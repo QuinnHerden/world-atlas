@@ -2102,11 +2102,8 @@
   tier: 2
   region: 2
   region_reason: >-
-    The plan puts it in 2, between Iceland and the UK. Greenland is in 2 as well since v2.1.0, so this matches the
+    The plan puts it in 2, between Iceland and the UK. Greenland is in 2 as well since v3.0.0, so this matches the
     later-shore rule; kept explicit.
-  anchor: territory:greenland
-  anchor_reason: >-
-    Right after Greenland, its west shore, so the gap is introduced once all three of its shores are on the map.
   note: >-
     In the Cold War it was the choke line for Soviet submarines leaving Kola, guarded by SOSUS hydrophones. Its
     importance is reviving with Arctic access.

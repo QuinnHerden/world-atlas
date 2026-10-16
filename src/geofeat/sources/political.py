@@ -6,7 +6,7 @@ from shapely.geometry import Point
 from shapely.geometry.base import BaseGeometry
 
 from geofeat import framing
-from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, pass_tag, study_pass
+from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, block_of, block_tag
 from geofeat.polities import (  # noqa: F401  re-exported for cities.py and the tests
     COUNTRIES, PATHS, PLACES, TERRITORIES, BBox, Capital, Country, Dispute, FrameOverride, Id, Territory, Uid,
     composition_errors,
@@ -37,7 +37,7 @@ def outline_spec(frame: FrameOverride = FrameOverride()) -> RenderSpec:
 
 def tags(kind: Kind, id: str, tier: int, category: str, region: int) -> tuple[str, ...]:
     return (f"tier::{tier}", f"category::{category}", id_tag(kind, id), f"kind::{kind}", f"region::{region:02d}",
-            pass_tag(study_pass(kind, tier)))
+            block_tag(block_of(kind)))
 
 
 def coordinates(point: Point) -> tuple[float, float]:
@@ -84,7 +84,7 @@ def territory_cards(territory: Territory) -> list[Card]:
         uid=require_uid(territory.id, territory.uid), kind="territory", id=territory.id, prompt="Territory",
         answer_lines=(answer(territory.name, territory.alt_names), territory.status_line),
         tags=tags("territory", territory.id, TERRITORY_TIER, "territories", territory.region), region=f"{territory.region:02d}",
-        tier=TERRITORY_TIER, host=host_key(territory.host), anchor=territory.anchor, note=territory.note,
+        tier=TERRITORY_TIER, host=host_key(territory.host), note=territory.note,
         render=RenderRef(spec=outline_spec(territory.frame), geometry=lambda: (territory.outline(), (), None),
                          region=lambda: framing.region(territory.id)),
     )]

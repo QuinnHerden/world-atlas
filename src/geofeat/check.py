@@ -275,25 +275,14 @@ def lock_freeze_errors(release: bool) -> list[str]:
 
 def retired_lock_errors(lock: positions.Lock, active: set[str], entries: list[dict]) -> list[str]:
     """A frozen lock keeps retired uids (ADR 0006), so every locked uid must belong to a source entry, active or
-    marked `retired: true`. A retired territory whose id its replacement reuses must have been locked in another
-    region: its `region::` tag is what tells the two notes apart in Browse (the README's search)."""
+    marked `retired: true`: deleting a retired entry would hide its uid from the duplicate-uid check."""
     known = {u for e in entries for u in entry_uids(e)}
     retired = {u for e in entries if e.get("retired") for u in entry_uids(e)}
     errors = []
     if orphans := sorted(set(lock.entries) - known):
         errors.append(f"{positions.LOCK_FILE.name} holds uids no source entry has (keep a retired entry): {orphans}")
-    if loose := sorted(set(lock.entries) & known - active - retired):
+    if loose := sorted(set(lock.entries) & (known - active - retired)):
         errors.append(f"{positions.LOCK_FILE.name} holds inactive uids whose entries aren't `retired: true`: {loose}")
-    by_id = {}
-    for e in entries:
-        if e.get("kind") == "territory" and not e.get("retired") and e.get("uid"):
-            by_id[e["id"]] = e["uid"]
-    for e in entries:
-        if e.get("kind") == "territory" and e.get("retired") and (new := by_id.get(e["id"])):
-            old_entry, new_entry = lock.entries.get(e.get("uid")), lock.entries.get(new)
-            if old_entry and new_entry and old_entry.region == new_entry.region:
-                errors.append(f"territory {e['id']}: the retired and the active card share region "
-                              f"{old_entry.region:02d}, so their tags can't tell them apart")
     return errors
 
 
@@ -357,11 +346,11 @@ def check_package() -> list[str]:
     media = load_media()
     if odd := packaged_media ^ {media.get(c.key) for c in cards}:  # nothing a card's text pulled in from elsewhere
         errors.append(f"{name}: packaged media differ from the rendered maps: {sorted(map(str, odd))}")
-    for guid, tags, *_ in rows:  # the tags filtered decks search must name the pass and region the lock placed it in
+    for guid, tags, *_ in rows:  # the tags filtered decks search must name the block and region the lock placed it in
         if (entry := lock.entries.get(guid)) is None:
             continue
-        placed = {t for t in tags.split() if t.startswith(("pass::", "region::"))}
-        if f"pass::{entry.study_pass}" not in placed or placed - set(positions.locked_tags(list(placed), entry)):
+        placed = {t for t in tags.split() if t.startswith(("block::", "pass::", "region::"))}
+        if f"block::{entry.block}" not in placed or placed - set(positions.locked_tags(list(placed), entry)):
             errors.append(f"{name}: note {guid}'s tags {sorted(placed)} differ from its lock entry {entry}")
     if writes_pos() or not lock.draft:
         if wrong := sorted(g for g, *_, due in rows if g in expected and due != lock.positions.get(g)):

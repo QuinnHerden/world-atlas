@@ -37,7 +37,7 @@ class FeatureCardTest(unittest.TestCase):
     def test_card_carries_its_tags(self) -> None:
         text = card(feature_card(feature()), "abc.png")
         self.assertIn("[^uid]: MAPQnshVtc\n[^tag]: tier::1\n[^tag]: category::straits-chokepoints\n"
-                      "[^tag]: id_bosporus\n[^tag]: kind::feature\n[^tag]: pass::1\n", text)
+                      "[^tag]: id_bosporus\n[^tag]: kind::feature\n[^tag]: block::features\n", text)
 
     def test_note_follows_the_answer_escaped_and_muted(self) -> None:
         f = feature(note='It joins the Black Sea & the *Marmara*, "the strait".')
@@ -49,19 +49,19 @@ class FeatureCardTest(unittest.TestCase):
     def test_pos_only_when_given(self) -> None:
         c = feature_card(feature())
         self.assertNotIn("[^pos]", card(c, "abc.png"))
-        self.assertTrue(card(c, "abc.png", 1500).endswith("[^tag]: kind::feature\n[^tag]: pass::1\n[^pos]: 1500\n"))
+        self.assertTrue(card(c, "abc.png", 1500).endswith("[^tag]: kind::feature\n[^tag]: block::features\n[^pos]: 1500\n"))
 
 
 class AnswerLinesTest(unittest.TestCase):
     def test_lines_are_escaped_then_joined(self) -> None:
         c = Card(uid="AAAAAAAAAA", kind="capital", id="paris", prompt="Capital", answer_lines=("Paris", "Capital of France & 'co'"),
-                 tags=("pass::1",), tier=1, render=RenderRef(spec=RenderSpec(style="point"), geometry=lambda: (box(0, 0, 1, 1), (), None)))
+                 tags=("block::cities",), tier=1, render=RenderRef(spec=RenderSpec(style="point"), geometry=lambda: (box(0, 0, 1, 1), (), None)))
         self.assertIn("::: Paris<br>Capital of France &amp; &#x27;co&#x27;\n", card(c, "abc.png"))
 
     def test_markdown_is_rejected(self) -> None:
         for text in ("Alps![](/etc/passwd)", "[x](javascript:alert(1))", "a ::: b", "*bold*", "line\nbreak"):
             with self.subTest(text), self.assertRaises(ValueError):
-                Card(uid="AAAAAAAAAA", kind="city", id="x", prompt="City", answer_lines=(text,), tags=("pass::1",), tier=1,
+                Card(uid="AAAAAAAAAA", kind="city", id="x", prompt="City", answer_lines=(text,), tags=("block::cities",), tier=1,
                      render=RenderRef(spec=RenderSpec(style="point"), geometry=lambda: (box(0, 0, 1, 1), (), None)))
 
 

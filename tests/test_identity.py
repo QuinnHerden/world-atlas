@@ -19,7 +19,7 @@ import geofeat.jobs as jobs
 import geofeat.sources as sources
 from geofeat.ankc import ankc_command, writes_pos
 import geofeat.card as card_module
-from geofeat.card import Card, RenderRef, id_tag, load_media, migrate_media
+from geofeat.card import Card, RenderRef, block_of, block_tag, id_tag, load_media, migrate_media
 from geofeat.check import ankc_supported
 from geofeat.deckgen import DECK_FILE, card
 from geofeat.model import ROOT_DECK, load_features
@@ -29,7 +29,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def make_card(kind: str, id: str, uid: str, shape=box(0, 0, 1, 1)) -> Card:
-    return Card(uid=uid, kind=kind, id=id, prompt=kind.title(), answer_lines=(id,), tags=(id_tag(kind, id), "pass::1"), tier=1,
+    return Card(uid=uid, kind=kind, id=id, prompt=kind.title(), answer_lines=(id,), tags=(id_tag(kind, id), block_tag(block_of(kind))), tier=1,
                 render=RenderRef(spec=RenderSpec(style="area"), geometry=lambda: (shape, (), None)))
 
 

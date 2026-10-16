@@ -8,7 +8,7 @@ from unittest import mock
 
 from shapely.geometry import box
 
-from geofeat.card import Card, Kind, RenderRef, pass_tag, study_pass
+from geofeat.card import Card, Kind, RenderRef, block_of, block_tag
 from geofeat.curriculum import Curriculum, Region
 import geofeat.deckgen as deckgen
 from geofeat.deckgen import require_rendered
@@ -23,7 +23,7 @@ REF = RenderRef(spec=RenderSpec(style="area"), geometry=lambda: (box(0, 0, 1, 1)
 
 def make(kind: Kind, id: str) -> Card:
     return Card(uid=(id + "0" * 10)[:10], kind=kind, id=id, prompt="X", answer_lines=(id,),
-                tags=(pass_tag(study_pass(kind, 1)),), tier=1, render=REF)
+                tags=(block_tag(block_of(kind)),), tier=1, render=REF)
 
 
 def region(number: int, opener: str | None = None) -> Region:

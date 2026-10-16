@@ -18,7 +18,7 @@ import geofeat.sources as sources
 import geofeat.sources.cities as cities
 import geofeat.sources.political as political
 import geofeat.sources.features as features_source
-from geofeat.card import PASS_ORDER, Card, pass_tag, study_pass
+from geofeat.card import PASS_ORDER, Card, block_of, block_tag, study_pass
 from geofeat.model import Feature, load_features
 from geofeat.model import Part
 from geofeat.polities import Country, Dispute, RingPlace, Territory, in_bbox, outline
@@ -117,13 +117,13 @@ class CardTextTest(unittest.TestCase):
 
     def test_tags(self) -> None:
         self.assertEqual(self.cards["country:alpha"].tags,
-                         ("tier::1", "category::countries", "id_country_alpha", "kind::country", "region::01", "pass::1"))
+                         ("tier::1", "category::countries", "id_country_alpha", "kind::country", "region::01", "block::countries"))
         self.assertEqual(self.cards["capital:alpha"].tags,
-                         ("tier::1", "category::cities", "id_capital_alpha", "kind::capital", "region::01", "pass::1"))
+                         ("tier::1", "category::cities", "id_capital_alpha", "kind::capital", "region::01", "block::cities"))
         self.assertEqual(self.cards["city:alpha-port"].tags,
-                         ("tier::2", "category::cities", "id_city_alpha-port", "kind::city", "region::01", "pass::1"))
-        self.assertEqual(self.cards["territory:gamma"].tags[2:], ("id_territory_gamma", "kind::territory", "region::03", "pass::1"))
-        self.assertEqual(self.cards["dispute:delta"].tags[2:], ("id_dispute_delta", "kind::dispute", "region::01", "pass::1"))
+                         ("tier::2", "category::cities", "id_city_alpha-port", "kind::city", "region::01", "block::cities"))
+        self.assertEqual(self.cards["territory:gamma"].tags[2:], ("id_territory_gamma", "kind::territory", "region::03", "block::countries"))
+        self.assertEqual(self.cards["dispute:delta"].tags[2:], ("id_dispute_delta", "kind::dispute", "region::01", "block::countries"))
 
     def test_passes(self) -> None:
         self.assertEqual({k: c.study_pass for k, c in self.cards.items()}, dict.fromkeys(self.cards, 1))
@@ -131,7 +131,7 @@ class CardTextTest(unittest.TestCase):
         secondary = cities_data()[0] | {"tier": "secondary"}
         with data(countries(), cities_=[secondary]):
             (city,) = cities.cards()
-        self.assertEqual((city.study_pass, city.tags[-1]), (2, "pass::2"))
+        self.assertEqual((city.study_pass, city.tags[-1]), (2, "block::cities"))
 
     def test_regions_notes_and_parents(self) -> None:
         self.assertEqual(self.cards["city:alpha-port"].region, "01")  # inherited from its country
@@ -283,43 +283,6 @@ class UniquenessTest(unittest.TestCase):
             self.assertEqual(ids.mint_missing([paths["countries"], paths["cities"]]), 2)
             self.assertEqual(political.load_countries()[0].uids["capital"], "MintedAAAA")
             self.assertEqual(cities.load_cities()[0].uid, "MintedBBBB")
-
-
-class RetiredTerritoryTest(unittest.TestCase):
-    """Retire and replace (ADR 0006): the retired entry keeps its uid and data but makes no card; its replacement may
-    reuse the id (Greenland, moved to region 02 in v2.1.0)."""
-
-    def entries(self) -> list[dict]:
-        old = territories()[0] | {"retired": True}
-        return [old, territories()[0] | {"uid": "TerritoryH", "anchor": "country:alpha",
-                                         "anchor_reason": "Right after Alpha, for the test."}, territories()[1]]
-
-    def test_retired_entry_makes_no_card(self) -> None:
-        with data(countries(), self.entries()):
-            cards = [c for c in political.cards() if c.kind == "territory"]
-            self.assertEqual([(c.key, c.uid) for c in cards], [("territory:gamma", "TerritoryH")])
-            self.assertEqual([t.uid for t in polities.load_territories()], ["TerritoryH"])
-
-    def test_retired_uid_still_counts_for_duplicates(self) -> None:
-        clash = self.entries()
-        clash[1]["uid"] = "TerritoryG"
-        with data(countries(), clash) as paths:
-            self.assertEqual(ids.duplicate_uids([paths["territories"]]), ["TerritoryG"])
-
-    def test_two_active_entries_still_clash(self) -> None:
-        clash = self.entries()
-        del clash[0]["retired"]
-        with data(countries(), clash), self.assertRaisesRegex(ValueError, "duplicate territory or dispute id"):
-            polities.load_territories()
-
-    def test_anchor_reaches_the_card_and_needs_a_reason(self) -> None:
-        with data(countries(), self.entries()):
-            (card,) = [c for c in political.cards() if c.kind == "territory"]
-        self.assertEqual(card.anchor, "country:alpha")
-        bad = self.entries()
-        del bad[1]["anchor_reason"]
-        with data(countries(), bad), self.assertRaisesRegex(ValueError, "go together"):
-            polities.load_territories()
 
 
 class CheckTest(unittest.TestCase):
@@ -489,11 +452,12 @@ class PassTest(unittest.TestCase):
                                        "africa", "antarctica", "asia", "europe", "north-america", "oceania", "south-america"})
         for c in cards.values():
             self.assertEqual(c.study_pass, "orientation" if c.id in orientation else 1 if c.tier <= 2 else 2)
-            self.assertIn(pass_tag(c.study_pass), c.tags)
+            self.assertIn(block_tag(block_of(c.kind)), c.tags)
+            self.assertFalse([t for t in c.tags if t.startswith("pass::")])
 
     def test_tag_must_match(self) -> None:
         card = by_key(features_source.cards())["feature:nile"]
-        with self.assertRaisesRegex(ValidationError, "needs exactly the tag pass::1"):
+        with self.assertRaisesRegex(ValidationError, "needs exactly the tag block::features"):
             Card(**dict(card) | {"tags": card.tags[:-1]})
 
 
