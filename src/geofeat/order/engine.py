@@ -201,11 +201,11 @@ def _block_lookalikes(cards: list[Card], segment: Mapping[str, tuple[Pass, int]]
 def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, Walk]) -> list[Card]:
     """The study order (ADR 0009), cut from the ring order in four blocks:
 
-    1. continents, in ring order (CONTINENTS);
+    1. continents, in ring order (CONTINENTS), then the oceans (OCEANS), which keep their `features` block;
     2. countries, territories and disputed areas, region by region round the ring: each walk node, then its pocket
        countries (in member order), then the subnationals, territories and disputes it hosts (in
        curriculum order);
-    3. physical features in their ring order: orientation (oceans, then planetary winds), pass 1 round the ring, then
+    3. the other physical features in their ring order: orientation (the planetary winds), pass 1 round the ring, then
        pass 2, which keeps parent before child;
     4. capitals and cities, region by region in the same country order: each country's capital, then its cities in
        ring order (core before secondary).
@@ -229,9 +229,10 @@ def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, 
                           for i, host in group.items() if host == node]
             for m in members:
                 towns += [by_key[k] for k in (f"capital:{m}",) if k in by_key] + cities.pop(m, [])
-    out = [c for c in ring if c.kind == "continent"]
+    oceans = [c for c in ring if c.kind == "feature" and c.study_pass == "orientation" and orientation_rank(c)[0] == 1]
+    out = [c for c in ring if c.kind == "continent"] + oceans
     out += [by_key[k] for k in political if k in by_key]
-    out += [c for c in ring if c.kind == "feature"] + towns
+    out += [c for c in ring if c.kind == "feature" and c not in oceans] + towns
     if missing := sorted({c.key for c in ring} - {c.key for c in out}):
         raise OrderError(f"no block place for {missing}")
     return out

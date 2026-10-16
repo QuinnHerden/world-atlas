@@ -291,6 +291,20 @@ class FreezeGuardTest(unittest.TestCase):
                          "changes entries frozen on archive/v3.0.0")
         self.assertTrue(self.guard(moved_a, self.restarted(), [], True, archived=self.ARCHIVED)[0])  # and on main
 
+    def test_the_restart_moves_only_the_listed_cards_to_their_listed_positions(self) -> None:
+        moved_a = Lock(False, {A: Entry(501, "countries", 1), B: Entry(1000, "countries", 2)}, 1)
+        with mock.patch.object(positions, "RESTART_MOVES", {A: 501}):
+            self.assertEqual(self.guard(moved_a, self.restarted(), [], True, archived=self.ARCHIVED), ([], []))
+            elsewhere = Lock(False, {A: Entry(502, "countries", 1), B: Entry(1000, "countries", 2)}, 1)
+            self.assertTrue(self.guard(elsewhere, self.restarted(), [], True, archived=self.ARCHIVED)[0])
+            texts = self.restarted() | {"origin/main": dump(moved_a), "v1.0.0": dump(moved_a)}
+            back = Lock(False, self.BASE.entries, 1)  # once v1.0.0 is out, its lock is held as released
+            self.assertRegex(" ".join(self.guard(back, texts, ["v1.0.0"], True, archived=self.ARCHIVED)[0]),
+                             "changes entries frozen on origin/main")
+
+    def test_the_real_restart_moves_put_the_oceans_after_the_continents(self) -> None:
+        self.assertEqual(sorted(positions.RESTART_MOVES.values()), [3600, 3700, 3800, 3900])
+
     def test_the_restart_is_no_way_back_once_v1_is_released(self) -> None:
         series_1 = Lock(False, self.BASE.entries, 1)
         texts = self.restarted() | {"v1.0.0": dump(series_1)}
@@ -369,13 +383,15 @@ class RetiredLockTest(unittest.TestCase):
 
 
 class LockTest(unittest.TestCase):
-    """The committed lock: series 1 (archived series 3's order, renumbered at the v1.0.0 restart), frozen, in the four blocks (ADR 0009), Greenland right after Iceland."""
+    """The committed lock: series 1 (archived series 3's order, renumbered at the v1.0.0 restart), frozen, in the four
+    blocks (ADR 0009) but for the oceans after the continents, Greenland right after Iceland."""
 
     def test_the_lock(self) -> None:
         lock = positions.read()
         self.assertEqual((lock.draft, lock.series), (False, 1))
         order = sorted(lock.entries, key=lambda u: lock.entries[u].position)
-        blocks = [lock.entries[u].block for u in order]
+        self.assertEqual(order[7:11], list(positions.RESTART_MOVES))  # the oceans, after the seven continents
+        blocks = [lock.entries[u].block for u in order if u not in positions.RESTART_MOVES]
         self.assertEqual(blocks, sorted(blocks, key=["continents", "countries", "features", "cities", "subdivisions"].index))
         self.assertEqual(order.index("24rdGoHY6W"), order.index("PJEhGX8mTx") + 1)  # Greenland after Iceland
         self.assertEqual(lock.entries["24rdGoHY6W"], Entry(11500, "countries", 2))

@@ -13,7 +13,7 @@ freeze, allowed only as the next major version. Versioning restarted at v1.0.0: 
 import os
 import re
 import subprocess
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from geofeat.card import BLOCKS, Block, Card
@@ -30,6 +30,10 @@ LEGACY_SERIES = 2  # a frozen lock with no `series:` line is v2's, the only one 
 FIRST_SERIES = 1  # versioning restarted at v1.0.0: the first release under the vX.Y.Z tags is series 1's
 RESTARTED_FROM = 3  # the archived series whose frozen order series 1 continues, entry for entry
 ARCHIVE_PREFIX = "archive/"  # archive/vX.Y.Z: a pre-1.0 release, archived when versioning restarted
+# The one reorder series 1 makes to the archived series-3 order, before its first release: the four oceans (Atlantic,
+# Indian, Pacific, Arctic) move from the head of the features block to just after the seven continents, new-card
+# positions 8-11. Re-importing never changes a card's due, so only fresh imports see it (ADR 0011's amendment).
+RESTART_MOVES: dict[str, int] = {"N3NGMxsbci": 3600, "KPgnUeNLWJ": 3700, "9dKZ99t54a": 3800, "wSxtLBdr0g": 3900}
 _HEADER = re.compile(r"draft: (true|false)")
 _SERIES = re.compile(r"series: ([1-9][0-9]*)", re.ASCII)
 _LEGACY_ENTRY = re.compile(r"[A-Za-z0-9]{10}: [0-9]+ pass=(orientation|1|2) region=(-|[0-9]{2})", re.ASCII)  # series 2's format
@@ -282,7 +286,8 @@ def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE, pr
     it frozen and hold every one of its entries unchanged (position, block and region). It may only add uids. A lock
     of a later series is a fresh freeze and isn't compared (`series_errors` decides whether it may exist); an earlier
     series is an error. A draft or missing base passes. `pre_release`: `ref` holds pre-1.0 history, so a series-1 lock
-    is held to its series-RESTARTED_FROM lock as if they were one series."""
+    is held to its series-RESTARTED_FROM lock as if they were one series, and a RESTART_MOVES card may be at its new
+    position."""
     if base_text is None:
         return []
     try:
@@ -308,7 +313,9 @@ def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE, pr
     errors = [f"{LOCK_FILE.name} is a draft again, but {ref}'s is frozen"] if lock.draft else []
     if dropped := sorted(set(base.entries) - set(lock.entries)):
         errors.append(f"{LOCK_FILE.name} drops uids frozen on {ref}: {dropped}")
-    if changed := sorted(u for u, e in base.entries.items() if u in lock.entries and lock.entries[u] != e):
+    excused = RESTART_MOVES if pre_release else {}
+    if changed := sorted(u for u, e in base.entries.items() if u in lock.entries and lock.entries[u] != e
+                         and (u not in excused or lock.entries[u] != replace(e, position=excused[u]))):
         errors.append(f"{LOCK_FILE.name} changes entries frozen on {ref}: {changed}")
     return errors
 

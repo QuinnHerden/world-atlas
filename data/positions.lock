@@ -104,7 +104,7 @@ series: 1
 9Whn1wQH4h: 102500 block=countries region=19 deck=world-atlas
 9XnYuJCtNV: 131500 block=features region=04 deck=world-atlas
 9ZBYfbZw8j: 182500 block=features region=03 deck=world-atlas
-9dKZ99t54a: 122500 block=features region=- deck=world-atlas
+9dKZ99t54a: 3800 block=features region=- deck=world-atlas
 9fwYnSfoQP: 69000 block=countries region=13 deck=world-atlas
 9l0dKEqCxv: 250500 block=cities region=13 deck=world-atlas
 9qL6AQ9nyY: 64500 block=countries region=13 deck=world-atlas
@@ -232,7 +232,7 @@ K5aQ3QCkLJ: 181000 block=features region=21 deck=world-atlas
 KEUAJhKg6c: 24500 block=countries region=04 deck=world-atlas
 KGAyklOQPC: 70500 block=countries region=14 deck=world-atlas
 KIBlvxoMSk: 113500 block=countries region=21 deck=world-atlas
-KPgnUeNLWJ: 122000 block=features region=- deck=world-atlas
+KPgnUeNLWJ: 3700 block=features region=- deck=world-atlas
 KSzflb6fF2: 169000 block=features region=16 deck=world-atlas
 KVCdXoUD1v: 103500 block=countries region=19 deck=world-atlas
 KVXqFsZRlv: 62000 block=countries region=12 deck=world-atlas
@@ -264,7 +264,7 @@ MqGOEFobaN: 255500 block=cities region=14 deck=world-atlas
 Msc25n8qOC: 266000 block=cities region=16 deck=world-atlas
 Mwg9eKbRgB: 236000 block=cities region=11 deck=world-atlas
 N0vWpOks93: 242000 block=cities region=12 deck=world-atlas
-N3NGMxsbci: 121500 block=features region=- deck=world-atlas
+N3NGMxsbci: 3600 block=features region=- deck=world-atlas
 N4LkoU6jYC: 111500 block=countries region=20 deck=world-atlas
 NCIAyqs6XI: 157500 block=features region=15 deck=world-atlas
 NIg2un15Ab: 84000 block=countries region=16 deck=world-atlas
@@ -673,7 +673,7 @@ w2aMwrVCPB: 229500 block=cities region=10 deck=world-atlas
 w5NtfRCzSA: 147000 block=features region=10 deck=world-atlas
 wLNcASZe18: 22000 block=countries region=03 deck=world-atlas
 wNf4h5RpW3: 191500 block=cities region=01 deck=world-atlas
-wSxtLBdr0g: 123000 block=features region=- deck=world-atlas
+wSxtLBdr0g: 3900 block=features region=- deck=world-atlas
 wVdA6IiArU: 112000 block=countries region=20 deck=world-atlas
 wWP2Cef0D7: 600500 block=subdivisions region=- deck=italian-regions
 wgE8ASIFMH: 203500 block=cities region=03 deck=world-atlas

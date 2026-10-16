@@ -195,8 +195,8 @@ class AnchorTest(unittest.TestCase):
 
 
 class BlockTest(unittest.TestCase):
-    """The study order (ADR 0009): continents, countries (with territories and disputes), features, capitals and
-    cities, each cut from the ring order."""
+    """The study order (ADR 0009): continents and the oceans, countries (with territories and disputes), features,
+    capitals and cities, each cut from the ring order."""
 
     def setUp(self) -> None:
         self.o = order()
@@ -204,8 +204,12 @@ class BlockTest(unittest.TestCase):
 
     def test_four_blocks_in_order(self) -> None:
         rank = {"continent": 0, "country": 1, "territory": 1, "dispute": 1, "feature": 2, "capital": 3, "city": 3}
-        kinds = [rank[k.split(":")[0]] for k in self.order]
+        kinds = [0.5 if k.endswith("-ocean") else rank[k.split(":")[0]] for k in self.order]
         self.assertEqual(kinds, sorted(kinds))
+
+    def test_the_oceans_follow_the_continents(self) -> None:
+        continents = sum(k.startswith("continent:") for k in self.order)
+        self.assertEqual(self.order[continents:continents + 2], ["feature:atlantic-ocean", "feature:pacific-ocean"])
 
     def test_countries_walk_with_pockets_after_their_host(self) -> None:
         political = [k for k in self.order if k.split(":")[0] in ("country", "territory", "dispute")]
