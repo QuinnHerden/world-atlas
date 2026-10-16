@@ -6,10 +6,9 @@ import geopandas as gpd
 from shapely.geometry import Point, box
 
 import geofeat.resolve as resolve
-from geofeat.check import (missing_notes, override_reason_errors, paired_reason_errors, provenance_errors,
-                           retired_references)
-from geofeat.model import (FAMILY, AllowNested, Expect, Feature, FeatureType, FrameOptions, Part, frame_reason_error,
-                           load_features)
+from geofeat.check import (frame_reason_error, missing_notes, override_reason_errors, paired_reason_errors,
+                           provenance_errors, retired_references)
+from geofeat.model import FAMILY, AllowNested, Expect, Feature, FeatureType, FrameOptions, Part, load_features
 from geofeat.polities import FrameOverride
 from geofeat.spec import RenderSpec
 from geofeat.pairs import Pair, compare, find_pairs
@@ -131,9 +130,6 @@ class ProvenanceTest(unittest.TestCase):
             self.assertTrue(provenance_errors("x.geojson", self.collection(refs=refs)), refs)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class OverrideReasonTest(unittest.TestCase):
     def test_a_frame_override_needs_a_reason(self) -> None:
@@ -201,3 +197,7 @@ class NoteTest(unittest.TestCase):
     def test_note_must_be_card_safe(self) -> None:
         with self.assertRaises(ValueError):
             feature("a", "Plain", note="one <b>bold</b> claim")
+
+
+if __name__ == "__main__":
+    unittest.main()

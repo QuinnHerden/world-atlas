@@ -2529,7 +2529,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320937}}
   mainland: [122.0, 24.0, 146.0, 46.0]
-  mainland_reason: "drops Minami-Torishima and Okinotorishima, remote Pacific outliers that would stretch the frame"
+  mainland_reason: "drops Minami-Torishima, a remote Pacific outlier that would stretch the frame"
   expect: [122.93, 24.21, 145.83, 45.53]
   capital:
     name: Tokyo

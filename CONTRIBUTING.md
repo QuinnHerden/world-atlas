@@ -103,14 +103,6 @@ To un-retire, remove `retired: true` and run `make check-data`.
 
 Feature frames are set by the entry's `frame:` in `data/features.yaml`: `min_span_km` (only widens), `centre: [lon, lat]` (siblings sharing a centre and span share a frame), `context: [ids]`, `admin1: true` and `former: <file>.geojson`.
 
-Every override carries a `reason:`, one line saying why the card is an exception, as `allow_nested` does. Start it with `user review:` when the user asked for it. `make check-data` fails on an override without a reason, and on a reason with no override:
-
-```yaml
-  frame:
-    include: [australia]
-    reason: "user review: show all of Australia for context, across the Tasman; the Polynesia box cuts it off"
-```
-
 Country, territory and dispute cards are drawn on their region's frame ([ADR 0010](docs/adr/0010-region-framing.md)). An entry in `countries.yaml` or `territories.yaml` can override it with `frame:`:
 
 | Key | Values | Does |
@@ -121,7 +113,17 @@ Country, territory and dispute cards are drawn on their region's frame ([ADR 001
 | `inset_km` | over 0, up to 5000 | The inset's width. |
 | `inset_centre` | `[lon, lat]` | Centres the inset on a point instead of the subject. |
 
-`ring`, `inset`, `inset_km` and `inset_centre` apply to the country card only, never its capital. City and subdivision entries take no `frame:`. These overrides need a `reason:` too, and so do the other overrides of a computed frame:
+`ring`, `inset`, `inset_km` and `inset_centre` apply to the country card only, never its capital. City and subdivision entries take no `frame:`.
+
+Every override, feature or political, carries a `reason:`: one line saying why the card is an exception, as `allow_nested` does. Start it with `user review:` when the user asked for it. `make check-data` fails on an override without a reason, and on a reason with no override:
+
+```yaml
+  frame:
+    include: [australia]
+    reason: "user review: show all of Australia for context, across the Tasman; the Polynesia box cuts it off"
+```
+
+The other overrides of a computed frame need one too:
 
 - a country's `mainland` crop, with `mainland_reason:` saying what it drops;
 - a region's pinned `frame` in `data/curriculum.yaml`, with `frame_reason:`;

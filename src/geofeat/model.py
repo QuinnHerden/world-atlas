@@ -156,18 +156,7 @@ class Expect(Strict):
 
 # Why a data override of a computed default exists: a per-card `frame:`, a country's `mainland` crop, a region's
 # `frame` pin or `frame_margin`. `make check-data` fails on an override without one (check.override_reason_errors).
-OverrideReason = Annotated[str, Field(min_length=10)]
-
-
-def frame_reason_error(owner: str, frame: BaseModel) -> str | None:
-    """A per-card `frame:` that sets any key needs a `reason`, and a reason needs a key to explain."""
-    keys = sorted(frame.model_fields_set - {"reason"})
-    reason = getattr(frame, "reason")
-    if keys and reason is None:
-        return f"{owner}: frame override ({', '.join(keys)}) needs a `reason`"
-    if reason is not None and not keys:
-        return f"{owner}: frame `reason` with no override to explain"
-    return None
+OverrideReason = Annotated[str, Field(min_length=10), AfterValidator(_one_line)]
 
 
 class FrameOptions(Strict):

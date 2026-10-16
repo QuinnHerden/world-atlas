@@ -26,10 +26,9 @@ from geofeat.card import card_key, load_media
 from geofeat.frame import laea, project
 from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids, uids as entry_uids
-from geofeat.model import (DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, Verify, active, frame_reason_error,
-                           load_features)
+from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, FrameOptions, Verify, active, load_features
 from geofeat.curriculum import CURRICULUM, Curriculum
-from geofeat.polities import read_countries, active_territory_file, read_territory_file
+from geofeat.polities import FrameOverride, read_countries, active_territory_file, read_territory_file
 from geofeat import framing
 from geofeat.decks import COMPANIONS, DECKS
 from geofeat.order import Siblings, companions, load_siblings, save_siblings
@@ -207,6 +206,16 @@ def retired_references(features: list[Feature]) -> tuple[list[str], list[str]]:
         errors += [f"{feature.id}: allow_nested names retired feature {o.id!r}; drop it"
                    for o in feature.allow_nested if o.id in retired]
     return errors, notes
+
+
+def frame_reason_error(owner: str, frame: FrameOptions | FrameOverride) -> str | None:
+    """A per-card `frame:` that sets any key needs a `reason`, and a reason needs a key to explain."""
+    keys = sorted(frame.model_fields_set - {"reason"})
+    if keys and frame.reason is None:
+        return f"{owner}: frame override ({', '.join(keys)}) needs a `reason`"
+    if frame.reason is not None and not keys:
+        return f"{owner}: frame `reason` with no override to explain"
+    return None
 
 
 def paired_reason_errors(owner: str, value: object, key: str, reason: str | None) -> list[str]:

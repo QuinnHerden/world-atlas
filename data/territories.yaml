@@ -533,7 +533,7 @@
   frame:
     inset: true
     inset_km: 900
-    reason: "framing review round 4: a sea area of reefs, zoomed in past the default inset so the island group reads"
+    reason: "user review: a sea area of reefs, zoomed in past the default inset so the island group reads"
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103863}}
   expect: [111.8, 7.1, 117.9, 12.1]
