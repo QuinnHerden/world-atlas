@@ -2,6 +2,12 @@
 
 All notable changes to this deck are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [3.0.1] - Unreleased
+
+### Changed
+
+- Card notes no longer refer to the deck or to other cards. Sentences that only pointed at other cards ("has no card of its own") are gone; where a sentence carried a real fact, such as which recognised borders include a disputed area, the fact stays as plain geography. The continent notes describe the usual Europe–Asia boundary and the usual extent of North America and Oceania without claiming them for the deck. Notes appear on card backs and in the study guide; re-importing the package updates them on existing cards and keeps scheduling.
+
 ## [3.0.0] - 2026-10-16
 
 A new study order in four blocks, political and city maps redrawn on their curriculum regions, and Greenland in Nordic & Baltic. The new order reaches fresh imports only; see the upgrade notes.
@@ -80,6 +86,7 @@ The **Geographic Features** deck. Tagged retrospectively at commit `b63bf0e`.
 - North-up framing with a 2,600 km minimum width, and a fixed world inset.
 - Built with ankc 0.4. Output: `geographic-features.apkg`.
 
+[3.0.1]: https://github.com/QuinnHerden/world-atlas/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/QuinnHerden/world-atlas/compare/v2.0.0...v3.0.0
 [2.0.0]: https://github.com/QuinnHerden/world-atlas/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/QuinnHerden/world-atlas/releases/tag/v1.0.0

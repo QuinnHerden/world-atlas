@@ -123,8 +123,7 @@
   tier: 3
   note: >-
     A landlocked grand duchy between Belgium, France and Germany. Its name probably means "little fortress", and it
-    was one of the six founders of the EEC, now the EU, in 1957. The capital shares the country's name and has no
-    card of its own.
+    was one of the six founders of the EEC, now the EU, in 1957. The capital shares the country's name.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321031}}
   expect: [5.71, 49.44, 6.51, 50.18]
@@ -467,7 +466,7 @@
   tier: 3
   note: >-
     A small enclave in central Italy, in the Apennines. It claims to be the world's oldest republic, founded by
-    tradition in 301. The capital shares the country's name and has no card of its own.
+    tradition in 301. The capital shares the country's name.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321255}}
   expect: [12.38, 43.89, 12.5, 43.99]
@@ -480,7 +479,7 @@
   note: >-
     The world's smallest state, an enclave in Rome. Popes ruled much of the Italian peninsula until Italy took the
     Papal States and then Rome (1870); the 1929 Lateran Treaties created the independent Vatican City. The capital
-    shares the state's name and has no card of its own.
+    shares the state's name.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321407}}
   expect: [12.45, 41.9, 12.46, 41.91]
@@ -743,7 +742,7 @@
   tier: 1
   note: >-
     Landlocked between Romania and Ukraine. Russian forces remain in the breakaway region of Transnistria, east of
-    the Nistru (Dniester); the card shows Moldova's internationally recognised borders, which include it.
+    the Nistru (Dniester); Moldova's internationally recognised borders include it.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321045}}
   expect: [26.61, 45.46, 30.14, 48.49]
@@ -761,7 +760,6 @@
   note: >-
     On the Black Sea, the second-largest country in Europe after Russia. It borders Russia, Belarus, Poland,
     Slovakia, Hungary, Romania and Moldova. Russia seized Crimea in 2014 and launched a full-scale invasion in 2022.
-    The card shows Ukraine's internationally recognised borders.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321345}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}}
@@ -800,7 +798,7 @@
   note: >-
     The world's largest country, stretching from Eastern Europe across northern Asia to the Pacific, with the
     exclave of Kaliningrad. Mount Elbrus is Europe's highest peak, and Lake Baikal is the world's deepest lake.
-    Crimea is shown in Ukraine, per the recognised-borders rule.
+    Crimea lies within Ukraine's internationally recognised borders.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321201}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}, subtract: true}
@@ -819,8 +817,8 @@
   note: >-
     On the Black Sea between Russia and Turkey, also bordering Armenia and Azerbaijan, and controlling routes
     through the Caucasus. It made Christianity its state religion in the 330s. After the 2008 war, Russia recognised
-    the breakaway regions of Abkhazia and South Ossetia and keeps forces there. The card shows Georgia's recognised
-    borders, which include both.
+    the breakaway regions of Abkhazia and South Ossetia and keeps forces there. Georgia's recognised borders include
+    both.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320779}}
   expect: [39.98, 41.04, 46.7, 43.58]
@@ -895,7 +893,7 @@
     The third-largest island in the Mediterranean, south of Turkey; it also contains two British sovereign base
     areas, Akrotiri and Dhekelia. Since 1974 a UN buffer zone has divided the island. The Turkish
     Cypriot-administered north declared itself the "Turkish Republic of Northern Cyprus", which only Turkey
-    recognises. The card shows the whole island as Cyprus.
+    recognises.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320533}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320531}}
@@ -916,8 +914,8 @@
   note: >-
     On the Mediterranean between Lebanon and Turkey, also bordering Iraq, Jordan and Israel; the Euphrates crosses
     it on its way from Turkey to Iraq, and it shares the Tigris. A French mandate until independence in 1946, it
-    fell into civil war from 2011. Israel has controlled the Golan Heights since 1967, and the card shows them in
-    Syria, per the recognised borders.
+    fell into civil war from 2011. Israel has controlled the Golan Heights since 1967, but internationally
+    recognised borders place them in Syria.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321295}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}}
@@ -955,8 +953,8 @@
   tier: 1
   note: >-
     On the Mediterranean between Egypt and Lebanon, also bordering Syria, Jordan, the West Bank and the Gaza Strip;
-    the Dead Sea lies on its eastern edge. The State of Israel was established in 1948. The card shows its
-    internationally recognised borders, without the Golan Heights or East Jerusalem.
+    the Dead Sea lies on its eastern edge. The State of Israel was established in 1948. Internationally recognised
+    borders do not place the Golan Heights or East Jerusalem in Israel.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320895}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}, subtract: true}
@@ -982,7 +980,7 @@
   note: >-
     Two separate areas: the West Bank, including East Jerusalem, between Israel and Jordan; and the Gaza Strip on
     the Mediterranean, between Israel and Egypt. The UN General Assembly granted Palestine non-member observer State
-    status in 2012. Under the deck's rules Palestine has no capital card.
+    status in 2012.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320899}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1746265961}}
@@ -1444,8 +1442,7 @@
   note: >-
     Morocco occupies Africa's north-west corner, on the Atlantic and the Mediterranean, and faces Spain across the
     Strait of Gibraltar. It borders Algeria and the Spanish cities of Ceuta and Melilla. A French protectorate from
-    1912, it became independent in 1956. Western Sahara, to the south, is a disputed territory with a card of its
-    own.
+    1912, it became independent in 1956. Western Sahara, to the south, is a disputed territory.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321035}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321037}, subtract: true}
@@ -2199,8 +2196,7 @@
   tier: 1
   note: >-
     It fills most of the South Asian subcontinent, a peninsula between the Arabian Sea and the Bay of Bengal, with
-    the Himalayas along its northern edge. Its outline follows the areas it administers in Kashmir; the disputed
-    areas have their own cards.
+    the Himalayas along its northern edge. It administers part of Kashmir.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320847}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320963}}
@@ -2273,8 +2269,8 @@
   tier: 1
   note: >-
     It runs from the Arabian Sea north to the high mountains, between India to the east and Iran and Afghanistan to
-    the west. It holds the Khyber and Bolan passes, old routes from Central Asia into India; its outline follows the
-    areas it administers in Kashmir, and the disputed areas have their own cards.
+    the west. It holds the Khyber and Bolan passes, old routes from Central Asia into India; it administers part of
+    Kashmir.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321153}}
   expect: [60.84, 23.69, 77.05, 37.06]
@@ -2401,7 +2397,7 @@
   tier: 1
   note: >-
     The world's largest landlocked country, a vast steppe between Russia and China with a small part west of the
-    Ural River in Europe. Russia leases the Baikonur Cosmodrome inside it; the card's outline includes Baikonur.
+    Ural River in Europe. Russia leases the Baikonur Cosmodrome inside it.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320967}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320965}}
@@ -2592,8 +2588,7 @@
   tier: 3
   note: >-
     A city-state on islands off the southern tip of the Malay Peninsula, between Malaysia and Indonesia, at the
-    focus of Southeast Asia's sea routes. The British founded the modern port. The city is the whole country, so it
-    has no separate capital card.
+    focus of Southeast Asia's sea routes. The British founded the modern port. The city is the whole country.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321247}}
   expect: [103.64, 1.26, 104.01, 1.45]
