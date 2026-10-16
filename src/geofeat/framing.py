@@ -18,7 +18,11 @@ from geofeat.polities import load_political
 from geofeat.regions import ring as curriculum_regions
 
 Box = tuple[float, float, float, float]
-Framing = tuple[str, BaseGeometry, Box | None, float | None, Box | None]
+Pinned = tuple[float, float, float, float, float]  # projection lon, lat, frame centre lon, lat, width in metres
+Framing = tuple[str, BaseGeometry, Box | None, float | None, Box | None, Pinned | None]
+# A computed frame this far from its pin is reported: its centre, its width, and its projection's centre (the members'
+# mean, which moves with any member; a shift this small barely changes the map)
+DRIFT_KM, DRIFT_SHARE, PROJECTION_DRIFT_KM = 1.0, 0.001, 50.0
 
 # Capitals and cities on their host's region frame (v2.1.0, ADR 0003). False reverts them to v2.0 framing
 # (their host country's frame, or the 1,000 km close-dot frame) without touching the political cards.
@@ -120,10 +124,68 @@ def region(id: str) -> Framing:
     name, members = region_of(id)
     hold = _included(include) if (include := _entries()[id][2]) else None
     if name in SUB_FRAMES:
-        return "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name), None, hold
-    return "region", _points(members), None, curriculum_regions()[int(name)].frame_margin, hold
+        return "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name), None, hold, None
+    r = curriculum_regions()[int(name)]
+    if r.frame is None:
+        return "region", _points(members), None, r.frame_margin, hold, None
+    # A pinned frame: only its centre travels as the region's points, so a member's change re-renders nothing
+    return "region", MultiPoint([r.frame.centre]), None, r.frame_margin, hold, (*r.frame.projection, *r.frame.centre,
+                                                                                r.frame.width_km * 1000)
+
+
+def computed(number: int) -> Pinned:
+    """A region's shared frame as computed from its members (frame.py's base frame, before a card shifts or widens
+    its own): what a pin records."""
+    from geofeat.frame import REGION_MARGIN, REGION_MIN_M, _long
+
+    r = curriculum_regions()[number]
+    points = _points(tuple(sorted(i for i, e in _entries().items() if e[0] == number)))
+    lon, lat = centre(points)
+    projection = Equirectangular(lon, lat)
+    rx0, ry0, rx1, ry1 = project(points, projection).bounds
+    width = max(_long(rx0, ry0, rx1, ry1) * (r.frame_margin or REGION_MARGIN), REGION_MIN_M)
+    clon, clat = Transformer.from_crs(projection.proj4_init, "EPSG:4326", always_xy=True).transform(
+        (rx0 + rx1) / 2, (ry0 + ry1) / 2)
+    return lon, lat, float(clon), float(clat), width
+
+
+def pin_drift() -> list[str]:
+    """Regions whose frame computed from their members has drifted from the pinned one by over DRIFT_KM at the
+    centre or DRIFT_SHARE of the width, and regions with no pin. A warning: the user decides whether to re-pin."""
+    out = []
+    for number, r in sorted(curriculum_regions().items()):
+        if number in MUST_SUB_FRAME:
+            continue
+        lon, lat, clon, clat, width = computed(number)
+        if r.frame is None:
+            out.append(f"region {number:02d} {r.slug}: no pinned frame; computed {frame_yaml(computed(number))}")
+            continue
+        moved = GEOD.inv(*r.frame.centre, clon, clat)[2] / 1000
+        turned = GEOD.inv(*r.frame.projection, lon, lat)[2] / 1000
+        if moved > DRIFT_KM or turned > PROJECTION_DRIFT_KM \
+                or abs(width / 1000 - r.frame.width_km) > DRIFT_SHARE * r.frame.width_km:
+            out.append(f"region {number:02d} {r.slug}: its members now give a frame {moved:,.0f} km from the pinned "
+                       f"centre, {width / 1000:,.0f} km wide (pinned {r.frame.width_km:,.0f} km), on a projection "
+                       f"centred {turned:,.0f} km from the pinned one; re-pin to accept it")
+    return out
+
+
+def frame_yaml(pin: Pinned) -> str:
+    lon, lat, clon, clat, width = pin
+    return f"{{projection: [{lon!r}, {lat!r}], centre: [{clon!r}, {clat!r}], width_km: {width / 1000!r}}}"
+
+
+def main() -> None:
+    """Print each region's frame computed from its members, as curriculum.yaml's `frame:`, to pin or re-pin it."""
+    for number, r in sorted(curriculum_regions().items()):
+        if number not in MUST_SUB_FRAME:
+            print(f"{number:02d} {r.slug}: frame: {frame_yaml(computed(number))}")
 
 
 def city_region(country_id: str) -> Callable[[], Framing] | None:
     """A capital's or city's region provider (its host's), or None while CITY_REGION_FRAMING is off."""
     return (lambda: region(country_id)) if CITY_REGION_FRAMING else None
+
+
+if __name__ == "__main__":
+    main()

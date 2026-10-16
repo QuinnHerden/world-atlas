@@ -54,6 +54,8 @@ class RenderSpec(BaseModel):
     country_frame: str | None = None
     # A region frame's own margin (curriculum.yaml `frame_margin`), in place of frame.REGION_MARGIN
     region_margin: float | None = None
+    # A region frame pinned in curriculum.yaml (`frame`): projection lon, lat, frame centre lon, lat, width in metres
+    region_frame: tuple[float, float, float, float, float] | None = None
     # A lon/lat box (west, south, east, north) the frame holds as it holds the subject: the bodies a card's frame
     # `include`s (data `frame: {include}`)
     hold: tuple[float, float, float, float] | None = None

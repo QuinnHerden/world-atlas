@@ -28,6 +28,7 @@ from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids, uids as entry_uids
 from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, Verify, active, load_features
 from geofeat.polities import read_countries, active_territory_file
+from geofeat import framing
 from geofeat.decks import COMPANIONS, DECKS
 from geofeat.order import Siblings, companions, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, UNCOMPARED_FAMILIES, find_pairs
@@ -262,6 +263,9 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
             save_siblings(siblings)
         except ValueError as exc:
             errors.append(f"study order: {exc}")
+    if not errors:
+        for warning in framing.pin_drift():  # the user decides whether to re-pin (ADR 0010)
+            print(f"warning: {warning}")
     errors += lock_freeze_errors(release)
     errors += verify_errors(release)  # last, so that nothing it finds holds back the checks above
     notes.append(f"sibling pairs flagged or nested (within {NEAR_M // 1000} km or overlapping; `make pairs` lists all):")

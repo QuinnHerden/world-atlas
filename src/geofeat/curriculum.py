@@ -24,6 +24,13 @@ class Pass(BaseModel):
     global_features: bool = False
 
 
+class RegionFrame(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    projection: tuple[float, float]  # lon, lat: the equirectangular projection's centre and standard parallel
+    centre: tuple[float, float]  # lon, lat: the frame's centre
+    width_km: float = Field(gt=0)
+
+
 class Region(BaseModel):
     model_config = ConfigDict(extra="forbid")
     number: int
@@ -42,6 +49,9 @@ class Region(BaseModel):
     # The region frame's margin round its members' box, in place of frame.REGION_MARGIN: a tall region whose 16:9
     # frame clips the neighbours north and south of it (ADR 0010)
     frame_margin: float | None = Field(None, ge=1.0, le=2.0)
+    # The shared frame, pinned at the extent the user approved (ADR 0010), so adding or retiring a member never moves
+    # it; framing.py checks the frame computed from the members against it
+    frame: RegionFrame | None = None
 
     def placed(self) -> dict[str, str]:
         return self.subnationals | self.territories | self.disputes
