@@ -352,7 +352,7 @@
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320865}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320963}}
   expect: [73.7, 32.2, 79.7, 35.7]
-  note: India administers the southern and eastern part of the former princely state of Kashmir, east and south of the 1972 Line of Control, and in 2019 reorganised it as two union territories, Jammu and Kashmir and Ladakh; this card includes the Siachen Glacier area. Pakistan claims the territory, China claims parts of Ladakh, and India and Pakistan have fought over Kashmir since partition in 1947.
+  note: India administers the southern and eastern part of the former princely state of Kashmir, east and south of the 1972 Line of Control, and in 2019 reorganised it as two union territories, Jammu and Kashmir and Ladakh; it includes the Siachen Glacier area. Pakistan claims the territory, China claims parts of Ladakh, and India and Pakistan have fought over Kashmir since partition in 1947.
 
 - kind: dispute
   id: kashmir-pakistani-administered
@@ -385,7 +385,7 @@
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320487}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320485}}
   expect: [75.8, 33.3, 80.4, 36.5]
-  note: Aksai Chin is the high eastern part of Kashmir that China administers and India claims as part of Ladakh, separated from Indian-held land by the Line of Actual Control; China has held it since the 1950s and kept it in the 1962 Sino-Indian War. This card also includes the Shaksgam tract north of the Karakoram, which Pakistan ceded to China in a 1963 boundary agreement that India does not recognise.
+  note: Aksai Chin is the high eastern part of Kashmir that China administers and India claims as part of Ladakh, separated from Indian-held land by the Line of Actual Control; China has held it since the 1950s and kept it in the 1962 Sino-Indian War. China also holds the Shaksgam tract north of the Karakoram, which Pakistan ceded to China in a 1963 boundary agreement that India does not recognise.
 
 - kind: dispute
   id: kuril-islands

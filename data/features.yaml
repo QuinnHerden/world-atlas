@@ -422,9 +422,9 @@
   category: Continents
   tier: 1
   note: >-
-    Asia is the most populous continent. Its boundary with Europe is a convention, not a coastline: this deck
-    follows the common line along the Ural Mountains, the Ural River, the Caspian Sea, the Caucasus, the Black Sea
-    and the Turkish Straits.
+    Asia is the most populous continent. Its boundary with Europe is a convention, not a coastline: the usual line
+    runs along the Ural Mountains, the Ural River, the Caspian Sea, the Caucasus, the Black Sea and the Turkish
+    Straits.
   style: area
   geometry:
   - {layer: continent, select: {id: asia}}
@@ -438,8 +438,9 @@
   tier: 1
   note: >-
     Europe is the western end of the Eurasian landmass, so its eastern boundary with Asia is a convention rather
-    than a coast. This deck uses the National Geographic line (Urals, Ural River, Caspian Sea, Caucasus, Black Sea,
-    Bosporus and Dardanelles); some geographers draw it further north, which moves the Caucasus into Asia.
+    than a coast. The usual boundary follows the Urals, the Ural River, the Caspian Sea, the Caucasus, the Black
+    Sea, the Bosporus and the Dardanelles; some geographers draw it further north, which moves the Caucasus into
+    Asia.
   style: area
   geometry:
   - {layer: continent, select: {id: europe}}
@@ -452,8 +453,8 @@
   category: Continents
   tier: 1
   note: >-
-    North America runs from the Arctic to the Isthmus of Panama, where it joins South America. On this deck's map it
-    includes Central America, the Caribbean islands and Greenland.
+    North America runs from the Arctic to the Isthmus of Panama, where it joins South America. It includes Central
+    America, the Caribbean islands and Greenland.
   style: area
   geometry:
   - {layer: continent, select: {id: north-america}}
@@ -466,9 +467,9 @@
   category: Continents
   tier: 1
   note: >-
-    In this deck, Oceania means Australia, New Zealand, Papua New Guinea and the Pacific islands of Melanesia,
-    Micronesia and Polynesia. Some atlases call the seventh continent "Australia" and treat Oceania as a wider region
-    around it. It is the least populous of the six inhabited continents.
+    Oceania comprises Australia, New Zealand, Papua New Guinea and the Pacific islands of Melanesia, Micronesia and
+    Polynesia. Some atlases call the seventh continent "Australia" and treat Oceania as a wider region around it. It
+    is the least populous of the six inhabited continents.
   style: area
   geometry:
   - {layer: continent, select: {id: oceania}}
