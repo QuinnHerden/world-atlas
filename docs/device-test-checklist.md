@@ -2,7 +2,7 @@
 
 Run this by hand before a release, once each on Anki desktop, AnkiDroid (Android) and AnkiMobile (iOS). `make import-test` already checks the same behaviour in the desktop engine; this confirms it on real devices, and the mobile apps must pass before we rely on the positions lock. Build `dist/world-atlas.apkg` with `make all`, then record pass or fail per app in the table at the end.
 
-The card names, counts and positions below come from the v1.0.0 data (554 cards) and its series-1 `positions.lock` (the v3.0.0 pre-release's entries, plus 9). If the data has changed since, take the current values from the output of `make import-test`, which prints the first 16 new cards, the region 05 list and the position range.
+The card names, counts and positions below come from the v1.0.0 data (554 cards) and its series-1 `positions.lock` (the v3.0.0 pre-release's entries, plus 9, with the four oceans moved to just after the continents). If the data has changed since, take the current values from the output of `make import-test`, which prints the first 16 new cards, the region 05 list and the position range.
 
 **Mobile differences.** Menu names vary between versions, so look for the nearest match.
 
@@ -15,7 +15,7 @@ The card names, counts and positions below come from the v1.0.0 data (554 cards)
 1. Use a profile with no World Atlas or Geographic Features deck.
 2. Import `world-atlas.apkg` with the default options. Expect one deck, `World Atlas`, with no subdecks and 554 cards, all new.
 3. Set **New cards/day** to 20 or more and start studying. A card's front shows a type word and a map; the back names it. Expect the first 16 new cards in this order:
-   1 Europe, 2 Africa, 3 Asia, 4 Oceania, 5 North America, 6 South America, 7 Antarctica, 8 Portugal, 9 Spain, 10 Andorra, 11 France, 12 Monaco, 13 Luxembourg, 14 Belgium, 15 Netherlands, 16 United Kingdom.
+   1 Europe, 2 Africa, 3 Asia, 4 Oceania, 5 North America, 6 South America, 7 Antarctica, 8 Atlantic Ocean, 9 Indian Ocean, 10 Pacific Ocean, 11 Arctic Ocean, 12 Portugal, 13 Spain, 14 Andorra, 15 France, 16 Monaco.
 
 To check the order without studying, open **Browse** and sort by Due.
 
@@ -28,7 +28,7 @@ New-card positions run from 500 to 303,500, below the 2,000,000 threshold at whi
 
 ## 3. Upgrade from Geographic Features
 
-Use a profile with the old v1 `Geographic Features` deck (physical features only, possibly in subdecks like `Geographic Features::<Category>::Tier <n>`) and some cards studied.
+Use a profile with the old `Geographic Features` deck (the `archive/v1.0.0` pre-release) (physical features only, possibly in subdecks like `Geographic Features::<Category>::Tier <n>`) and some cards studied.
 
 1. In **Browse**, search `deck:"Geographic Features"`. Note the card count, and the due date and interval of one studied card.
 2. Import `world-atlas.apkg` with the defaults (**Update notes: If newer**).
@@ -37,7 +37,7 @@ Use a profile with the old v1 `Geographic Features` deck (physical features only
 5. Follow the README steps: search `deck:"Geographic Features"`, select all, **Cards → Change Deck** → `World Atlas`. Expect the cards to move with their scheduling unchanged.
 6. Delete the empty old decks.
 
-The retired v1 notes (34 in the headless test) move along with the rest. This is expected; see [Retired cards](../README.md#retired-cards).
+The retired Geographic Features notes (34 in the headless test) move along with the rest. This is expected; see [Retired cards](../README.md#retired-cards).
 
 ## 4. Filtered deck by region
 
@@ -58,11 +58,11 @@ Do this on both phones; desktop is optional. Find each card in **Browse** by its
 
 | Card | Tag | Expect |
 |---|---|---|
-| Kaliningrad Oblast, exclave (37) | `id_subnational_kaliningrad` | A solid red outline between Poland and Lithuania, with the rest of Russia off to the east |
-| Crimea, dispute (64) | `id_dispute_crimea` | A dashed red outline on the peninsula in the Black Sea (dashed means disputed) |
+| Kaliningrad Oblast, exclave (41) | `id_subnational_kaliningrad` | A solid red outline between Poland and Lithuania, with the rest of Russia off to the east |
+| Crimea, dispute (68) | `id_dispute_crimea` | A dashed red outline on the peninsula in the Black Sea (dashed means disputed) |
 | Europe, continent (1) | `id_continent_europe` | Europe filled red on a world map, islands included |
-| Kyoto (510) | `id_city_kyoto` | On its region's frame with a detail inset round its dot (no close-dot frame since Osaka was retired); the dot reads against the coast and Lake Biwa |
-| Pretoria (479) and Cape Town (480) | `id_capital_south-africa`, `id_city_cape-town` | Each on its region's frame with a detail inset round its dot. Record whether the inland and the coastal dot read clearly |
+| Kyoto (503) | `id_city_kyoto` | On its region's frame with a detail inset round its dot (no close-dot frame since Osaka was retired); the dot reads against the coast and Lake Biwa |
+| Pretoria (472) and Cape Town (473) | `id_capital_south-africa`, `id_city_cape-town` | Each on its region's frame with a detail inset round its dot. Record whether the inland and the coastal dot read clearly |
 
 For every card: the dot or outline is visible without zooming, the answer text fits, the note under it wraps and reads at phone width, and nothing is cropped.
 

@@ -1,6 +1,6 @@
 # World Atlas
 
-An Anki deck of 554 map cards that teaches the political and physical map of the world together: 197 countries, 162 capitals, 25 other cities, 25 territories, 5 subnationals (England, Scotland, Wales, Northern Ireland and Kaliningrad), 9 disputed areas, the 7 continents and 131 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name, and under a thin rule, in smaller muted text, a short note on why it matters.
+An Anki deck of 554 map cards that teaches the political and physical map of the world together: 197 countries, 162 capitals, 25 other cities, 25 territories, 5 subnationals (England, Scotland, Wales, Northern Ireland and Kaliningrad), 9 disputed areas, the 7 continents and 124 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name, and under a thin rule, in smaller muted text, a short note on why it matters.
 
 World Atlas grew out of the **Geographic Features** deck, which held physical features alone. Its 124 active feature notes carry over, with their review history; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
 
@@ -17,13 +17,11 @@ Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. 
 
 ## Download and import
 
-Download `world-atlas.apkg` from the [latest release](https://github.com/QuinnHerden/world-atlas/releases/latest).
-
-The companion decks are separate downloads from the same release; see [Companion decks](#companion-decks).
+The [latest release](https://github.com/QuinnHerden/world-atlas/releases/latest) has five packages: `world-atlas.apkg` (554 cards) and the four companion decks (see [Companion decks](#companion-decks)). Download the ones you want. `SHA256SUMS` lists their checksums; `sha256sum -c --ignore-missing SHA256SUMS` in the download folder checks them.
 
 **New to the deck.** In Anki, choose **File → Import** and pick `world-atlas.apkg`. Every card lands in one deck, `World Atlas`, in the study order described under [Study](#study).
 
-**Upgrading from a World Atlas pre-release.** Import it the same way. Your cards are updated in place and keep their order; [Upgrading from a pre-release](#upgrading-from-a-pre-release) covers what changes and, for the v2.0.0 pre-release, how to switch to the new order.
+**Upgrading from a World Atlas pre-release.** Import it the same way. Your cards are updated in place and keep their review history and their place in the queue; [Upgrading from a pre-release](#upgrading-from-a-pre-release) covers what changes, how to move the oceans after the continents as in a fresh import, and, for the v2.0.0 pre-release, how to switch to the new order.
 
 **Upgrading from Geographic Features.** Follow [Upgrading from Geographic Features](#upgrading-from-geographic-features) instead. It covers keeping your review history and moving the old cards into `World Atlas`.
 
@@ -33,10 +31,10 @@ Each companion deck teaches one country's first-level subdivisions. Each is its 
 
 | Package | Deck | Cards |
 |---|---|---|
-| `italian-regions.apkg` | Italian Regions | 20 regions |
-| `us-states.apkg` | US States | 50 states and the District of Columbia |
-| `brazilian-states.apkg` | Brazilian States | 26 states and the Distrito Federal |
-| `canadian-provinces.apkg` | Canadian Provinces and Territories | 10 provinces and 3 territories |
+| `italian-regions.apkg` | Italian Regions | 20: the regions |
+| `us-states.apkg` | US States | 51: 50 states and the District of Columbia |
+| `brazilian-states.apkg` | Brazilian States | 27: 26 states and the Distrito Federal |
+| `canadian-provinces.apkg` | Canadian Provinces and Territories | 13: 10 provinces and 3 territories |
 
 **Importing.** In Anki, choose **File → Import** and pick the package. Its cards land in a new top-level deck named in the table, beside `World Atlas`. The decks use World Atlas's note type, so importing one into a collection that has World Atlas adds no note type and changes no World Atlas card.
 
@@ -75,9 +73,9 @@ Every card is in one deck, `World Atlas`, with no subdecks. Each card has these 
 
 New cards come up in a fixed order, in four blocks:
 
-1. **Continents** (7 cards, about half a day at 15 a day): Europe first, Antarctica last.
+1. **Continents and oceans** (11 cards, under a day at 15 a day): the 7 continents, Europe first and Antarctica last, then the 4 oceans (Atlantic, Indian, Pacific, Arctic). The oceans are tagged `block::features`, so a features filtered deck still finds them.
 2. **Countries, territories and disputed areas** (236 cards, about 16 days): once round a ring of 21 regions, starting in Western Europe with Portugal and ending in the Caribbean with the Bahamas. Within a region you go country by neighbouring country. Microstates and enclaves come right after a neighbour (Andorra after Spain, Monaco after France), and subnationals, territories and disputed areas after the country they are placed with (England and Gibraltar after the United Kingdom, Kaliningrad after Lithuania, Greenland after Iceland).
-3. **Physical features** (124 cards, about 8 days): the oceans and planetary winds first, then the rest round the ring, region by region. The 3 tier 3 features come last.
+3. **Physical features** (the other 120 cards, about 8 days): the planetary winds first, then the rest round the ring, region by region. The 3 tier 3 features come last.
 4. **Capitals and cities** (187 cards, about 12½ days): round the ring again, in the same country order. Each country's capital comes first, then its other cities. Microstates and small island states have no capital card.
 
 At 15 new cards a day that is just over 5 weeks. `data/curriculum.yaml` names the regions. [ADR 0009](docs/adr/0009-curriculum-order.md) explains the design.
@@ -93,16 +91,18 @@ To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) wit
 
 **Re-importing a new build** updates each note's text (every card's back, its note included), map and tags, but not its card's deck or new-card position, and it never deletes notes:
 
-- **New cards:** a later release of the same major version slots its new cards in between existing ones. No existing card moves, so a fresh import and an updated collection see the same order. A new major version may change the order itself, as the v3.0.0 pre-release did; existing cards then keep their old place (see [Upgrading from a pre-release](#upgrading-from-a-pre-release)).
+- **New cards:** a later release of the same major version slots its new cards in between existing ones. No existing card moves, so a fresh import and an updated collection see the same order. A new major version may change the order itself, as the v3.0.0 pre-release did, and v1.0.0 did for the oceans; existing cards then keep their old place (see [Upgrading from a pre-release](#upgrading-from-a-pre-release)).
 - **Moved tier or category:** the card keeps its place in the queue. To move it anyway, select it in **Browse** and use **Cards → Reposition**.
 - **Old maps:** a re-rendered map gets a new file name. Run **Tools → Check Media** to delete the old image.
 - **Older imports:** cards imported from a pre-release keep the positions they had then. If you haven't started studying, delete the deck and import the new package to get the full study order.
 
 ### Upgrading from a pre-release
 
-The builds published before v1.0.0 were pre-releases, now archived as `archive/*` tags. v1.0.0 keeps their notes: importing it with **File → Import**, keeping the default **Update notes: If newer**, updates your cards in place and keeps their review history.
+The builds published before v1.0.0 were pre-releases, now archived as `archive/*` tags. v1.0.0 keeps their notes: importing it with **File → Import**, keeping the default **Update notes: If newer**, updates each card's map, note and tags in place and keeps its scheduling and review history.
 
-**Since the v3.0.0 pre-release.** v1.0.0 has the same study order. It has 554 cards against v3.0.0's 607: it adds 9 cards and retires 62:
+**Since the v3.0.0 pre-release.** v1.0.0 keeps the study order but for one change: the 4 oceans now come straight after the continents, as cards 8 to 11, instead of opening the physical features. Re-importing never changes a card's place in the queue, so this only applies to a fresh import; an upgraded collection keeps the oceans at the head of its features. To move them anyway, in **Browse** sort by **Due**, search `deck:"World Atlas" is:new (tag:id_atlantic-ocean OR tag:id_indian-ocean OR tag:id_pacific-ocean OR tag:id_arctic-ocean)`, select all and use **Cards → Reposition** with **Start position** 3600, **Step** 1, and **Randomize order** and **Shift position of existing cards** off.
+
+v1.0.0 has 554 cards against v3.0.0's 607: it adds 9 cards and retires 62:
 
 - **New:** Kashmir, one disputed-area card for the whole former princely state (the Indian-, Pakistani- and Chinese-held parts); England, Scotland, Wales and Northern Ireland ("Constituent country") and Kaliningrad Oblast ("Exclave"), a new kind of card for part of a state; the Cook Islands and Akrotiri and Dhekelia, as territories; and Toronto.
 - **Retired disputed areas (7):** Kashmir (Indian-administered), Kashmir (Pakistani-administered) and Aksai Chin, merged into Kashmir; Arunachal Pradesh, the Golan Heights, the southern Kuril Islands and Essequibo, now covered in the notes of the countries involved.
@@ -144,6 +144,8 @@ Re-importing never changes a card's place in the new-card queue, so **an upgrade
      | `deck:"World Atlas" is:new tag:block::features` | 121500 |
      | `deck:"World Atlas" is:new tag:block::cities` | 187500 |
 
+  5. Repeat steps 2 and 3 once more for the oceans, with start position 3600: `deck:"World Atlas" is:new (tag:id_atlantic-ocean OR tag:id_indian-ocean OR tag:id_pacific-ocean OR tag:id_arctic-ocean)`. Do this last, because step 4 moves them with the features.
+
   This moves only cards you haven't studied. It puts the blocks in the current order, but within each block the cards keep their v2.0.0 order. That is close to the current order but not the same. For example, Greenland stays among the North American countries instead of coming after Iceland.
 
 **Old maps** stay in your media folder. Run **Tools → Check Media** to delete them.
@@ -164,7 +166,7 @@ World Atlas replaces the **Geographic Features** deck (the first pre-release, `a
 3. Choose **Cards → Change Deck** and pick `World Atlas`.
 4. Delete the empty `Geographic Features` deck and any subdecks under it.
 
-The moved cards keep their old queue positions (0 to 131), ahead of every new card, so any unstudied features come up before the first country. Only the new cards follow the new order. To move the unstudied feature cards into the features block, use the Reposition steps in [From the v2.0.0 pre-release](#from-the-v200-pre-release) for `tag:block::features`. To start the ring alongside them, use a region filtered deck (see **Pacing**). If you skip steps 2 to 4, you end up with two decks. The old cards still work under the old name.
+The moved cards keep their old queue positions (0 to 131), ahead of every new card, so any unstudied features come up before the first country. Only the new cards follow the new order. To move the unstudied feature cards into the features block, use the Reposition steps in [From the v2.0.0 pre-release](#from-the-v200-pre-release) for `tag:block::features`, then step 5 for the oceans. To start the ring alongside them, use a region filtered deck (see **Pacing**). If you skip steps 2 to 4, you end up with two decks. The old cards still work under the old name.
 
 **Retired cards.** Importing never deletes notes, so the 34 cards World Atlas retired from Geographic Features, and the Crimea peninsula card retired since the v3.0.0 pre-release, stay in your collection and keep coming up. The searches in [Retired cards](#retired-cards) find them in any deck.
 
