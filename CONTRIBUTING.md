@@ -93,7 +93,6 @@ Never delete an entry. Users hold the note, and the lock keeps its slot.
 1. Set `retired: true` on the entry: a feature in `data/features.yaml`, a territory, subnational or dispute in `data/territories.yaml`, a city in `data/cities.yaml`, or a country's `capital:` in `data/countries.yaml`. Keep every other field, the uid included.
 2. Remove a retired territory, subnational or dispute from its region's placement in `data/curriculum.yaml`; a retired entry has no placement.
 3. Leave `data/positions.lock` alone. `make check` fails on a locked uid that no entry holds, or one whose entry isn't `retired: true` (`retired_lock_errors` in `src/geofeat/check.py`).
-4. Add the card to the [Retired cards](README.md#retired-cards) section of the README: update the count and add its tag (`tag:id_<id>` for a feature, `tag:id_<kind>_<id>` otherwise) to the delete search.
 
 A country entry has no `retired` field: a country card can't be retired without a schema change. A tier-3 state's capital must be retired (`make check-data` enforces it).
 
@@ -202,7 +201,7 @@ Changing the order of existing cards needs a re-freeze: a new major version with
 
 ### Retired cards
 
-A retired card's entry and uid stay in the data, and its lock entry keeps its slot, so no position or uid is ever reused. The build drops it from the package, but importing never deletes notes: users who have it keep it, and it keeps coming up for review. The README's [Retired cards](README.md#retired-cards) section gives the searches users need to delete them by hand, so keep it in step with every retirement.
+A retired card's entry and uid stay in the data, and its lock entry keeps its slot, so no position or uid is ever reused. The build drops it from the package, but importing never deletes notes: users who have it keep it, and it keeps coming up for review.
 
 ### Companion decks
 

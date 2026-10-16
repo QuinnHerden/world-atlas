@@ -51,7 +51,7 @@ Greenland keeps its v2 card and uid (`24rdGoHY6W`) and is card 23, at 11,500, in
 ## Consequences
 
 - New users get the four-block order from a fresh import.
-- An upgraded v2 collection keeps v2's interleaved queue. Re-importing updates every note's maps and tags (`block::`, `region::`) in place and keeps review history, but no `due` changes. A user who wants the new order either deletes the deck and imports fresh (losing review history), or repositions the unstudied cards block by block in **Browse** ([README](../../README.md#upgrading-from-a-pre-release)). Repositioning puts the blocks in v3 order but keeps v2's relative order within each block, which is close to v3's but not the same.
+- An upgraded v2 collection keeps v2's interleaved queue. Re-importing updates every note's maps and tags (`block::`, `region::`) in place and keeps review history, but no `due` changes. A user who wants the new order either deletes the deck and imports fresh (losing review history), or repositions the unstudied cards block by block in **Browse**. Repositioning puts the blocks in v3 order but keeps v2's relative order within each block, which is close to v3's but not the same.
 - Within series 3, ADR 0006's promise holds again: adding a card never moves an existing one, and fresh and upgraded v3 collections see the same order.
 - The `pass::` tags are gone. A filtered deck that searched them must search `block::` instead. That is a breaking change, and part of why this is a major version.
 - Region numbers stay identifiers. A series-3 card's `region::` tag comes from its lock entry, as before.

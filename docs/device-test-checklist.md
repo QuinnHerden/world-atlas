@@ -34,10 +34,10 @@ Use a profile with the old `Geographic Features` deck (the `archive/v1.0.0` pre-
 2. Import `world-atlas.apkg` with the defaults (**Update notes: If newer**).
 3. Expect the feature notes updated in place, not duplicated: the same search gives the same count, with no duplicate notes. A feature card now has tags such as `kind::feature`, and its back shows the note under the answer.
 4. Expect the noted card to keep its due date and interval, and to stay in `Geographic Features`. The 430 new cards land in `World Atlas`.
-5. Follow the README steps: search `deck:"Geographic Features"`, select all, **Cards → Change Deck** → `World Atlas`. Expect the cards to move with their scheduling unchanged.
+5. Move the cards: search `deck:"Geographic Features"`, select all, **Cards → Change Deck** → `World Atlas`. Expect the cards to move with their scheduling unchanged.
 6. Delete the empty old decks.
 
-The retired Geographic Features notes (34 in the headless test) move along with the rest. This is expected; see [Retired cards](../README.md#retired-cards).
+The retired Geographic Features notes (34 in the headless test) move along with the rest. This is expected.
 
 ## 4. Filtered deck by region
 

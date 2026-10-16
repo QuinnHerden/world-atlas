@@ -6,7 +6,7 @@ Pre-release history: the builds before v1.0.0 (Geographic Features, then two Wor
 
 ## [1.0.0] - 2026-10-16
 
-The first release of **World Atlas**: 554 map cards for the political and physical map of the world, studied in four blocks (continents, then the oceans; countries, territories, subnationals and disputed areas; physical features; capitals and cities), each round a ring of 21 regions ([ADR 0009](docs/adr/0009-curriculum-order.md)). Versioning restarted here; a collection that imported a pre-release upgrades in place ([README](README.md#upgrading-from-a-pre-release)).
+The first release of **World Atlas**: 554 map cards for the political and physical map of the world, studied in four blocks (continents, then the oceans; countries, territories, subnationals and disputed areas; physical features; capitals and cities), each round a ring of 21 regions ([ADR 0009](docs/adr/0009-curriculum-order.md)). Versioning restarted here.
 
 Since the v3.0.0 pre-release (607 cards): 9 added and 62 retired. The disputed areas go from 15 to 9. A disputed area keeps a card only if it is a de facto separate entity or lies outside every recognised border or across several; a claim inside one state's recognised borders, or one a country note describes easily, moves into the country notes ([ADR 0008](docs/adr/0008-state-list-borders-adjacency.md#amendment-fewer-dispute-cards-v301)). Microstates and small island states lose their capital cards, the other cities go from 42 to 25, and a new kind of card covers part of a state.
 
@@ -34,11 +34,11 @@ Since the v3.0.0 pre-release (607 cards): 9 added and 62 retired. The disputed a
 - **The `tier::` tags.** No card carries one; the tier stays internal to the study order. Re-importing updates each note's tags, so existing notes lose theirs, and a filtered deck that searched `tier::` finds nothing.
 - The PDF study guide (`world-atlas-guide.pdf`, `make guide` and the optional `guide` dependency group). Notes are on the card backs; a release carries the five `.apkg` packages and `SHA256SUMS`.
 
-Each retired entry keeps its uid, and `positions.lock` keeps its slot. Upgraded collections keep the 62 cards until they are deleted; [Retired cards](README.md#retired-cards) gives the Browse search that finds exactly those 62.
+Each retired entry keeps its uid, and `positions.lock` keeps its slot.
 
 ### Changed
 
-- The four oceans (Atlantic, Indian, Pacific, Arctic) come straight after the seven continents, as new cards 8 to 11, instead of opening the physical features. They keep `block::features`. Only a fresh import sees this: an upgraded collection keeps the oceans at the head of its features unless it repositions them ([README](README.md#upgrading-from-a-pre-release), [ADR 0009](docs/adr/0009-curriculum-order.md)).
+- The four oceans (Atlantic, Indian, Pacific, Arctic) come straight after the seven continents, as new cards 8 to 11, instead of opening the physical features. They keep `block::features` ([ADR 0009](docs/adr/0009-curriculum-order.md)).
 - Country notes now carry the retired disputes: Syria and Israel the Golan; Russia and Japan the southern Kurils; India and China Arunachal Pradesh ("Zangnan"); India, Pakistan and China their parts of Kashmir; Guyana and Venezuela Essequibo. Three claims that never had a card are added too: Ukraine's note gives Russia's 2022 claim to annex four oblasts, rejected by UN General Assembly resolution ES-11/4, and the China and Japan notes give the Senkaku Islands.
 - The Spratly Islands note adds the Paracels and Scarborough Shoal as part of the same South China Sea dispute. The Crimea dispute note adds the Crimean War (1853–56), from the retired feature's note.
 - The British Indian Ocean Territory note: the 2025 treaty transferring sovereignty to Mauritius has not taken effect.

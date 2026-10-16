@@ -149,7 +149,7 @@ def card_key(kind: Kind, id: str) -> str:
 
 
 def id_tag(kind: Kind, id: str) -> str:
-    """Lets Anki find a card again once it is retired; see "Retired cards" in the README. Feature tags stay
+    """Lets Anki find a card again once it is retired. Feature tags stay
     id_<id>, because ankc before 0.5 cut a footnote tag at its first colon and imported cards carry that form.
     Other kinds are prefixed, since two kinds may share an id (Georgia the country, Georgia the feature)."""
     return f"id_{id}" if kind == "feature" else f"id_{kind}_{id}"

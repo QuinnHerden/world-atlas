@@ -1,5 +1,4 @@
 import contextlib
-import re
 import io
 import json
 import sqlite3
@@ -23,7 +22,7 @@ import geofeat.card as card_module
 from geofeat.card import Card, RenderRef, block_of, block_tag, id_tag, load_media, migrate_media
 from geofeat.check import ankc_supported
 from geofeat.deckgen import DECK_FILE, card
-from geofeat.model import ROOT, ROOT_DECK, load_features
+from geofeat.model import ROOT_DECK, load_features
 from geofeat.polities import read_countries, read_territory_file
 from geofeat.sources.cities import read_cities
 from geofeat.spec import RenderSpec
@@ -87,28 +86,17 @@ class DeckIdentityTest(unittest.TestCase):
         self.assertEqual({v["name"]: int(v["id"]) for v in decks.values() if v["name"] != "Default"}, {ROOT_DECK: self.DECK_ID})
 
 
-    def test_retired_card_search_misses_active_cards(self) -> None:
-        """The README's search for v1's retired passes, corridors and islands, which users bulk-delete, matches the type
-        word on the card front; no active card may carry one of those words."""
-        hits = [c.key for c in sources.all_cards() if re.search("island|pass|corridor", c.prompt, re.IGNORECASE)]
-        self.assertEqual(hits, [])
-
-
-    def test_retired_card_search_matches_the_data(self) -> None:
-        """The README's Browse search for the cards retired in v3.0.1 names exactly the retired dispute, city and
-        capital entries and the features retired since the series-3 lock (whose uids it keeps), by their id_ tags."""
-        readme = (ROOT / "README.md").read_text()
-        search = next(line for line in readme.splitlines() if line.startswith("tag:") and "id_dispute_" in line)
-        searched = re.findall(r"tag:(id_[a-z0-9_-]+)", search)
-        self.assertEqual(len(searched), len(set(searched)))
+    def test_retired_since_series_3(self) -> None:
+        """62 cards were retired since the series-3 lock (the v3.0.0 pre-release), as the CHANGELOG records: the retired
+        dispute, city and capital entries and the retired features whose uids that lock keeps. Their id_ tags are distinct."""
         locked = positions.read().entries
-        retired = (
-            {id_tag("dispute", e.id) for e in read_territory_file() if e.kind == "dispute" and e.retired}
-            | {id_tag("city", c.id) for c in read_cities() if c.retired}
-            | {id_tag("capital", c.id) for c in read_countries() if c.capital and c.capital.retired}
-            | {id_tag("feature", f.id) for f in load_features() if f.retired and f.uid in locked}
-        )
-        self.assertEqual(set(searched), retired)
+        retired = [
+            *(id_tag("dispute", e.id) for e in read_territory_file() if e.kind == "dispute" and e.retired),
+            *(id_tag("city", c.id) for c in read_cities() if c.retired),
+            *(id_tag("capital", c.id) for c in read_countries() if c.capital and c.capital.retired),
+            *(id_tag("feature", f.id) for f in load_features() if f.retired and f.uid in locked),
+        ]
+        self.assertEqual(len(retired), len(set(retired)))
         self.assertEqual(len(retired), 62)
 
     def test_no_tier_tag(self) -> None:
