@@ -21,7 +21,7 @@ import geofeat.sources.features as features_source
 from geofeat.card import PASS_ORDER, Card, block_of, block_tag, study_pass
 from geofeat.model import Feature, load_features
 from geofeat.model import Part
-from geofeat.polities import Country, Dispute, RingPlace, Territory, in_bbox, outline
+from geofeat.polities import Country, Dispute, FrameOverride, RingPlace, Territory, in_bbox, outline
 
 A0, DA = "10m_admin_0_countries", "10m_admin_0_disputed_areas"
 LAYERS = {
@@ -117,13 +117,13 @@ class CardTextTest(unittest.TestCase):
 
     def test_tags(self) -> None:
         self.assertEqual(self.cards["country:alpha"].tags,
-                         ("tier::1", "category::countries", "id_country_alpha", "kind::country", "region::01", "block::countries"))
+                         ("category::countries", "id_country_alpha", "kind::country", "region::01", "block::countries"))
         self.assertEqual(self.cards["capital:alpha"].tags,
-                         ("tier::1", "category::cities", "id_capital_alpha", "kind::capital", "region::01", "block::cities"))
+                         ("category::cities", "id_capital_alpha", "kind::capital", "region::01", "block::cities"))
         self.assertEqual(self.cards["city:alpha-port"].tags,
-                         ("tier::2", "category::cities", "id_city_alpha-port", "kind::city", "region::01", "block::cities"))
-        self.assertEqual(self.cards["territory:gamma"].tags[2:], ("id_territory_gamma", "kind::territory", "region::03", "block::countries"))
-        self.assertEqual(self.cards["dispute:delta"].tags[2:], ("id_dispute_delta", "kind::dispute", "region::01", "block::countries"))
+                         ("category::cities", "id_city_alpha-port", "kind::city", "region::01", "block::cities"))
+        self.assertEqual(self.cards["territory:gamma"].tags[1:], ("id_territory_gamma", "kind::territory", "region::03", "block::countries"))
+        self.assertEqual(self.cards["dispute:delta"].tags[1:], ("id_dispute_delta", "kind::dispute", "region::01", "block::countries"))
 
     def test_passes(self) -> None:
         self.assertEqual({k: c.study_pass for k, c in self.cards.items()}, dict.fromkeys(self.cards, 1))
@@ -190,8 +190,8 @@ class CardTextTest(unittest.TestCase):
             self.assertEqual(political.check()[0], ["gamma: a territory that curriculum.yaml places as a dispute"])
         with data(countries(), territories()[1:]), \
                 mock.patch.object(polities, "curriculum_placements", lambda states: PLACEMENTS):
-            self.assertEqual(political.check()[0],
-                             ["curriculum.yaml: places what territories.yaml has no entry for: gamma"])
+            self.assertEqual(len(errors := political.check()[0]), 1)
+            self.assertRegex(errors[0], r"^curriculum.yaml: places what territories.yaml has no active entry for .*: gamma$")
 
     def test_bbox_must_be_finite_and_in_range(self) -> None:
         for expect in ([float("-inf"), 0, 10, 10], [0, 0, 190, 10], [0, -91, 10, 10]):
@@ -266,7 +266,7 @@ class UniquenessTest(unittest.TestCase):
             political.load_countries()
         clash = territories()
         clash[1]["id"] = "gamma"
-        with data(territories=clash), self.assertRaisesRegex(ValueError, "duplicate territory or dispute id"):
+        with data(territories=clash), self.assertRaisesRegex(ValueError, "duplicate subnational, territory or dispute id"):
             polities.load_territories()
 
     def test_two_kinds_share_an_id(self) -> None:
@@ -406,7 +406,77 @@ class EdgeCaseTest(unittest.TestCase):
 
     def test_city_that_is_its_capital(self) -> None:
         with data(countries(), cities_=[cities_data()[0] | {"ne_id": 101, "expect": [4, 4, 6, 6]}]):
-            self.assertEqual(cities.check(political.check()[1]), ["alpha-port: is alpha's capital, which has a capital card"])
+            self.assertEqual(cities.check(political.check()[1]), ["alpha-port: is alpha's capital, which has (or had) a capital card"])
+
+    def test_retired_territory_or_dispute(self) -> None:
+        """A retired entry makes no card and needs no placement; the curriculum may not place it."""
+        entries = territories()
+        entries[1]["retired"] = True
+        with data(countries(), entries):
+            with self.assertRaisesRegex(ValueError, "no active entry for .*: delta"):
+                political.cards()
+            with mock.patch.object(polities, "curriculum_placements", lambda states: {
+                    k: v for k, v in PLACEMENTS.items() if k != "delta"}):
+                self.assertNotIn("dispute:delta", by_key(political.cards()))
+                self.assertEqual([e.id for e in polities.read_territory_file()], ["gamma", "delta"])
+                self.assertEqual([e.id for e in polities.active_territory_file()], ["gamma"])
+
+    def test_retired_capital_and_city(self) -> None:
+        """A retired capital or city makes no card; a city's parents drop the retired capital; a tier-3 state's
+        capital, and only one, is retired."""
+        entries = countries()
+        entries[0]["capital"]["retired"] = True
+        entries[0]["tier"] = 3
+        with data(entries, territories(), cities_data()):
+            cards = by_key(political.cards() + cities.cards())
+            self.assertNotIn("capital:alpha", cards)
+            self.assertEqual(cards["city:alpha-port"].parents, ("country:alpha",))
+            self.assertEqual(political.check()[0], [])
+        entries[0]["tier"] = 1
+        with data(entries, territories()):
+            self.assertIn("alpha capital: a tier-3 state's capital, and only one, is retired (`retired: true` under "
+                          "`capital`); tier 1, retired: True", political.check()[0])
+        with data(countries(), territories(), [cities_data()[0] | {"retired": True}]):
+            self.assertEqual(cities.cards(), [])
+            self.assertEqual([c.id for c in cities.read_cities()], ["alpha-port"])
+        entries = countries()
+        entries[0]["tier"] = 3
+        with data(entries, territories()):
+            self.assertIn("alpha capital: a tier-3 state's capital, and only one, is retired (`retired: true` under "
+                          "`capital`); tier 3, retired: False", political.check()[0])
+
+    def test_subnational(self) -> None:
+        entry = {"kind": "subnational", "type": "Constituent country", "id": "epsilon", "name": "Epsilon", "uid": "Constitu01", "state": "alpha",
+                 "status_line": "Country of Alpha", "geometry": [a0(1)], "expect": [0, 0, 10, 10]}
+        place = PLACEMENTS | {"epsilon": RingPlace(1, "alpha", "subnational")}
+        with data(countries(), [*territories(), entry]), \
+                mock.patch.object(polities, "curriculum_placements", lambda states: place):
+            card = by_key(political.cards())["subnational:epsilon"]
+            self.assertEqual((card.prompt, card.answer_lines), ("Constituent country", ("Epsilon", "Country of Alpha")))
+            self.assertEqual(card.tags[0], "category::subnational")
+            self.assertEqual(card.tags[1:], ("id_subnational_epsilon", "kind::subnational", "region::01", "block::countries"))
+            self.assertEqual((card.host, card.render.spec.outline), ("country:alpha", None))
+            with mock.patch.object(polities, "curriculum_placements", lambda states: PLACEMENTS | {
+                    "epsilon": RingPlace(1, "alpha", "territory")}), self.assertRaisesRegex(ValueError, "a subnational"):
+                political.cards()
+        with data(countries(), [*territories(), entry | {"state": "omega"}]), \
+                mock.patch.object(polities, "curriculum_placements", lambda states: place):
+            self.assertIn("epsilon: state 'omega' is not a country", political.check()[0])
+        with data(countries(), [*territories(), entry | {"state": "beta"}]), \
+                mock.patch.object(polities, "curriculum_placements", lambda states: place):
+            self.assertIn("epsilon: outline is not inside its state 'beta'", political.check()[0])
+        with data(countries(), [*territories(), entry]), \
+                mock.patch.object(polities, "curriculum_placements", lambda states: place):
+            self.assertEqual(political.check()[0], [])
+
+    def test_ring_override(self) -> None:
+        entries = territories()
+        entries[0]["frame"] = {"ring": False}
+        with data(countries(), entries):
+            cards = by_key(political.cards())
+        self.assertFalse(cards["territory:gamma"].render.spec.ring)
+        self.assertTrue(cards["dispute:delta"].render.spec.ring)
+        self.assertFalse(political.country_spec(FrameOverride(ring=False)).ring)
 
     def test_bad_yaml_and_kind(self) -> None:
         with data(territories=[{"kind": "colony", "id": "x"}]), self.assertRaisesRegex(ValueError, "`kind` must be"):

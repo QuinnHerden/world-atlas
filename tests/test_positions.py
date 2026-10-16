@@ -253,11 +253,11 @@ class FreezeGuardTest(unittest.TestCase):
 
 
 class LockedTagsTest(unittest.TestCase):
-    TAGS = ["kind::country", "block::countries", "region::04", "tier::1"]
+    TAGS = ["kind::country", "block::countries", "region::04", "category::countries"]
 
     def test_block_and_region_come_from_the_entry(self) -> None:
         self.assertEqual(locked_tags(self.TAGS, Entry(5, "countries", 7)),
-                         ["kind::country", "block::countries", "region::07", "tier::1"])
+                         ["kind::country", "block::countries", "region::07", "category::countries"])
         self.assertEqual(locked_tags(self.TAGS, None), self.TAGS)
 
     def test_a_feature_gains_no_region_tag(self) -> None:
@@ -279,6 +279,22 @@ class RetiredLockTest(unittest.TestCase):
         self.assertEqual(self.errors([{"id": "x", "uid": A, "retired": True}, {"id": "y", "uid": B}]), [])
         self.assertRegex(" ".join(self.errors([{"id": "y", "uid": B}])), "no source entry has")
         self.assertRegex(" ".join(self.errors([{"id": "x", "uid": A}, {"id": "y", "uid": B}])), "aren't `retired: true`")
+
+    def test_the_committed_lock_and_data(self) -> None:
+        """Every uid in the committed lock belongs to an active card or a retired entry (`make check` runs this only
+        on a rendered deck)."""
+        from geofeat.check import retired_lock_errors
+        from geofeat.sources import PATHS, all_cards
+        from ruamel.yaml import YAML
+
+        entries = [e for path in PATHS for e in (YAML(typ="safe").load(path) or [])]
+        self.assertEqual(retired_lock_errors(positions.read(), {c.uid for c in all_cards()}, entries), [])
+
+    def test_a_retired_capital_keeps_its_uid(self) -> None:
+        country = {"id": "y", "uids": {"country": B, "capital": A}, "capital": {"name": "Y", "retired": True}}
+        self.assertEqual(self.errors([country]), [])
+        country["capital"]["retired"] = False
+        self.assertRegex(" ".join(self.errors([country])), "aren't `retired: true`")
 
 
 class LockTest(unittest.TestCase):

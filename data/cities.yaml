@@ -23,6 +23,7 @@
 - id: rotterdam
   uid: wNf4h5RpW3
   name: Rotterdam
+  retired: true  # v3.0.1
   country: netherlands
   tier: core
   ne_id: 1159146435
@@ -35,6 +36,7 @@
 - id: seville
   uid: Npl2307CcB
   name: Seville
+  retired: true  # v3.0.1
   country: spain
   tier: core
   ne_id: 1159150601
@@ -47,6 +49,7 @@
 - id: hamburg
   uid: 5MoxVKUHcQ
   name: Hamburg
+  retired: true  # v3.0.1
   country: germany
   tier: core
   ne_id: 1159151353
@@ -59,6 +62,7 @@
 - id: frankfurt
   uid: kWz6WIXYtX
   name: Frankfurt
+  retired: true  # v3.0.1
   country: germany
   tier: core
   ne_id: 1159151351
@@ -107,6 +111,7 @@
 - id: volgograd
   uid: 5pBQq7j1c2
   name: Volgograd
+  retired: true  # v3.0.1
   alt_names: [Stalingrad]
   country: russia
   tier: core
@@ -135,6 +140,7 @@
 - id: aleppo
   uid: wuLYNY8lju
   name: Aleppo
+  retired: true  # v3.0.1
   country: syria
   tier: core
   ne_id: 1159151267
@@ -172,6 +178,7 @@
 - id: medina
   uid: CnB1ttBYj5
   name: Medina
+  retired: true  # v3.0.1
   country: saudi-arabia
   tier: core
   ne_id: 1159149443
@@ -184,6 +191,7 @@
 - id: zanzibar
   uid: sLtR1rUDSI
   name: Zanzibar
+  retired: true  # v3.0.1
   country: tanzania
   tier: core
   ne_id: 1159150789
@@ -223,6 +231,7 @@
 - id: johannesburg
   uid: 3cGDMrft6v
   name: Johannesburg
+  retired: true  # v3.0.1
   country: south-africa
   tier: core
   ne_id: 1159151515
@@ -273,6 +282,7 @@
 - id: samarkand
   uid: eJkUnuSzRI
   name: Samarkand
+  retired: true  # v3.0.1
   country: uzbekistan
   tier: core
   ne_id: 1159150569
@@ -285,6 +295,7 @@
 - id: isfahan
   uid: sWNjLomgK3
   name: Isfahan
+  retired: true  # v3.0.1
   alt_names: [Esfahan]
   country: iran
   tier: core
@@ -310,6 +321,7 @@
 - id: guangzhou
   uid: gOf9e6JRym
   name: Guangzhou
+  retired: true  # v3.0.1
   alt_names: [Canton]
   country: china
   tier: core
@@ -324,6 +336,7 @@
 - id: xian
   uid: ymWqEmN2Qp
   name: Xi'an
+  retired: true  # v3.0.1
   country: china
   tier: core
   ne_id: 1159151363
@@ -348,6 +361,7 @@
 - id: osaka
   uid: C5kDU0iNEl
   name: Osaka
+  retired: true  # v3.0.1
   country: japan
   tier: core
   ne_id: 1159151537
@@ -385,6 +399,7 @@
 - id: malacca
   uid: PzvECO25ua
   name: Malacca
+  retired: true  # v3.0.1
   alt_names: [Melaka]
   country: malaysia
   tier: core
@@ -450,6 +465,7 @@
 - id: new-orleans
   uid: FgxiyqXNVR
   name: New Orleans
+  retired: true  # v3.0.1
   country: united-states
   tier: core
   ne_id: 1159151233
@@ -471,9 +487,21 @@
     A sleepy port town until gold was found in the Sierra Nevada foothills in January 1848. The gold rush turned it
     almost overnight into a booming city.
 
+- id: toronto
+  uid: qLaExhetQB
+  name: Toronto
+  country: canada
+  tier: core
+  ne_id: 1159151557
+  expect: [-79.44, 43.61, -79.34, 43.71]
+  note: >-
+    On the north-western shore of Lake Ontario, Canada's largest city and its financial centre, home to the Toronto
+    Stock Exchange. It is the capital of Ontario.
+
 - id: montreal
   uid: xXnbXabL9G
   name: Montreal
+  retired: true  # v3.0.1
   country: canada
   tier: core
   ne_id: 1159151457
@@ -511,6 +539,7 @@
 - id: potosi
   uid: YFanVLe5BY
   name: Potosí
+  retired: true  # v3.0.1
   country: bolivia
   tier: core
   ne_id: 1159144841

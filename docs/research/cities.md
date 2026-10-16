@@ -26,32 +26,36 @@ A city qualifies if it meets at least one of these:
 
 **User decision (2026-10-14).** For now the deck keeps only the most important cities, with no per-region or per-country minimum. The 60 secondary cities were deferred, and the 55 core cities were re-checked on importance alone: 14 that were core mainly for regional coverage were demoted, and Osaka was restored. Four regions (2, 4, 12, 21) now have no city card; the capital cards still cover them.
 
+**User decision (2026-10-16, v3.0.1).** The user chose to keep the city set smaller still. 18 core cities were retired, each of lower salience than the cities kept (no reason was recorded for each), and Toronto was restored from the demoted list, leaving 25. Seven regions (2, 4, 7, 9, 12, 15, 21) now have no city card. The retired rows are under [Retired in v3.0.1](#retired-in-v301-revisit).
+
 ## Counts
 
-| # | Region | Core | Deferred |
-|---|---|---|---|
-| 1 | Western Europe | 3 | 2 |
-| 2 | Nordic & Baltic | 0 | 2 |
-| 3 | Central Europe & Italy | 4 | 6 |
-| 4 | Balkans | 0 | 2 |
-| 5 | Eastern Europe | 2 | 4 |
-| 6 | Caucasus & Anatolia | 1 | 1 |
-| 7 | Levant & Mesopotamia | 1 | 2 |
-| 8 | Arabian Peninsula | 3 | 1 |
-| 9 | Horn & East Africa | 1 | 2 |
-| 10 | North Africa | 1 | 3 |
-| 11 | West Africa | 1 | 4 |
-| 12 | Central Africa | 0 | 2 |
-| 13 | Southern Africa & Indian Ocean | 2 | 0 |
-| 14 | South Asia | 2 | 7 |
-| 15 | Iran & Central Asia | 2 | 4 |
-| 16 | East Asia | 6 | 7 |
-| 17 | Southeast Asia | 2 | 6 |
-| 18 | Oceania | 1 | 3 |
-| 19 | North & Central America | 6 | 9 |
-| 20 | South America | 4 | 5 |
-| 21 | Caribbean | 0 | 2 |
-| | **Total** | **42** | **74** |
+Core counts as of v3.0.1; the Deferred column is as of 2026-10-14, with Toronto moved back to core. The 18 cities retired in v3.0.1 are counted separately.
+
+| # | Region | Core | Deferred | Retired (v3.0.1) |
+|---|---|---|---|---|
+| 1 | Western Europe | 1 | 2 | 2 |
+| 2 | Nordic & Baltic | 0 | 2 | 0 |
+| 3 | Central Europe & Italy | 2 | 6 | 2 |
+| 4 | Balkans | 0 | 2 | 0 |
+| 5 | Eastern Europe | 1 | 4 | 1 |
+| 6 | Caucasus & Anatolia | 1 | 1 | 0 |
+| 7 | Levant & Mesopotamia | 0 | 2 | 1 |
+| 8 | Arabian Peninsula | 2 | 1 | 1 |
+| 9 | Horn & East Africa | 0 | 2 | 1 |
+| 10 | North Africa | 1 | 3 | 0 |
+| 11 | West Africa | 1 | 4 | 0 |
+| 12 | Central Africa | 0 | 2 | 0 |
+| 13 | Southern Africa & Indian Ocean | 1 | 0 | 1 |
+| 14 | South Asia | 2 | 7 | 0 |
+| 15 | Iran & Central Asia | 0 | 4 | 2 |
+| 16 | East Asia | 3 | 7 | 3 |
+| 17 | Southeast Asia | 1 | 6 | 1 |
+| 18 | Oceania | 1 | 3 | 0 |
+| 19 | North & Central America | 5 | 8 | 2 |
+| 20 | South America | 3 | 5 | 1 |
+| 21 | Caribbean | 0 | 2 | 0 |
+| | **Total** | **25** | **73** | **18** |
 
 **Final list (2026-10-14).** The first draft had 142 cities (55 core, 87 secondary). The final review cut 27 (26 secondary, 1 core) and moved 3 between tiers, leaving 55 core for pass 1, as the plan's pacing table assumed, and 60 secondary for pass 2. Every cut is listed with its reason under [Cut in the final review (revisit)](#cut-in-the-final-review-revisit).
 
@@ -116,8 +120,6 @@ All rows are core. The in-region order is set later by the walk and anchoring ru
 | City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
 |---|---|---|---|---|---|---|---|
 | Barcelona | Spain | core | Catalan Mediterranean port; medieval Crown of Aragon trading hub | 1159151261 | Q1492 | BRIT-BARCELONA [S]; BRIT-SPAIN-ARAGON [S] | P: Andorra la Vella (NE: Andorra) 136 km |
-| Rotterdam | Netherlands | core | Europe's largest port at the Rhine–Maas mouth | 1159146435 | Q34370 | PORT-ROTTERDAM [V]; BRIT-ROTTERDAM [S] | P: The Hague 23 km, Amsterdam 56 km, Brussels 121 km |
-| Seville | Spain | core | Held the Crown's monopoly on Americas trade | 1159150601 | Q8717 | BRIT-CASA-CONTRATACION [S]; BRIT-SEVILLA [S] | T (edge): Gibraltar 151 km |
 
 ### 2. Nordic & Baltic
 
@@ -127,8 +129,6 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 
 | City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
 |---|---|---|---|---|---|---|---|
-| Hamburg | Germany | core | Hanseatic port on the Elbe; Germany's largest port | 1159151353 | Q1055 | BRIT-HAMBURG [S] |  |
-| Frankfurt | Germany | core | Imperial coronation city; continental finance hub, ECB seat | 1159151351 | Q1794 | BRIT-FRANKFURT [S]; BRIT-ECB [S] |  |
 | Venice | Italy | core | Maritime republic that dominated Levant trade | 1159150277 | Q641 | BRIT-VENICE [S] |  |
 | Florence | Italy | core | Medici banking; cradle of the Renaissance | 1159149751 | Q2044 | UNESCO-FLORENCE [S]; BRIT-FLORENCE [S] | P: San Marino 97 km |
 
@@ -141,7 +141,6 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 | City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
 |---|---|---|---|---|---|---|---|
 | Saint Petersburg (NE: St. Petersburg) | Russia | core | Peter the Great's Baltic capital; 1917 revolutions | 1159151291 | Q656 | BRIT-STPETERSBURG [S] |  |
-| Volgograd | Russia | core | Stalingrad, WWII turning point on the Volga | 1159150697 | Q914 | BRIT-STALINGRAD [S] |  |
 
 ### 6. Caucasus & Anatolia
 
@@ -151,9 +150,7 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 
 ### 7. Levant & Mesopotamia
 
-| City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
-|---|---|---|---|---|---|---|---|
-| Aleppo | Syria | core | Ancient caravan-route trade city; Old City ruined in civil war | 1159151267 | Q41183 | UNESCO-ALEPPO [S]; BRIT-ALEPPO [S] |  |
+No core city since v3.0.1. See [Retired in v3.0.1](#retired-in-v301-revisit).
 
 ### 8. Arabian Peninsula
 
@@ -161,13 +158,10 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 |---|---|---|---|---|---|---|---|
 | Mecca (NE: Makkah) | Saudi Arabia | core | Islam's holiest city; Hajj destination | 1159151279 | Q5806 | BRIT-MECCA [S] |  |
 | Dubai | United Arab Emirates | core | Gulf trade, aviation and finance hub | 1159151497 | Q612 | BRIT-DUBAI [S] | P: Abu Dhabi 125 km |
-| Medina | Saudi Arabia | core | Muhammad's city after the Hijra; Islam's second holiest city | 1159149443 | Q35484 | BRIT-MEDINA [S] |  |
 
 ### 9. Horn & East Africa
 
-| City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
-|---|---|---|---|---|---|---|---|
-| Zanzibar | Tanzania | core | Omani sultanate's capital; slave and clove trade | 1159150789 | Q2222874 | BRIT-ZANZIBAR [S]; UNESCO-STONETOWN [S] | P: Dar es Salaam 71 km (NE ADM0CAP=1; Dodoma is the capital) |
+No core city since v3.0.1. See [Retired in v3.0.1](#retired-in-v301-revisit).
 
 ### 10. North Africa
 
@@ -189,7 +183,6 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 
 | City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
 |---|---|---|---|---|---|---|---|
-| Johannesburg | South Africa | core | Witwatersrand gold-rush city; South Africa's financial capital | 1159151515 | Q34647 | BRIT-JOHANNESBURG [S] | P: Pretoria 55 km; NE FEATURECLA "Admin-0 capital" |
 | Cape Town | South Africa | core | VOC Cape station; legislative capital of South Africa | 1159151583 | Q5465 | BRIT-CAPETOWN [S]; ZAGOV-CAPITALS [V] | Legislative capital: NE ADM0CAP=1; see note |
 
 ### 14. South Asia
@@ -201,20 +194,14 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 
 ### 15. Iran & Central Asia
 
-| City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
-|---|---|---|---|---|---|---|---|
-| Samarkand | Uzbekistan | core | Silk Road hub; Timur's capital | 1159150569 | Q5753 | UNESCO-SAMARKAND [S]; BRIT-SAMARKAND [S] |  |
-| Isfahan | Iran | core | Safavid capital: "Isfahan is half the world" | 1159150971 | Q42053 | BRIT-ISLAMIC-SAFAVIDS [S]; UNESCO-ISFAHAN [S] |  |
+No core city since v3.0.1. See [Retired in v3.0.1](#retired-in-v301-revisit).
 
 ### 16. East Asia
 
 | City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
 |---|---|---|---|---|---|---|---|
 | Shanghai | China | core | Treaty port at the Yangtze mouth; China's finance hub | 1159151605 | Q8686 | BRIT-SHANGHAI [S] |  |
-| Guangzhou | China | core | Canton; sole Western trade port 1757–1842 | 1159151331 | Q16572 | BRIT-CANTONSYS [S] | T: Macau 107 km, Hong Kong 128 km |
-| Xi'an (NE: Xian) | China | core | Chang'an, Tang capital; eastern Silk Road terminus | 1159151363 | Q5826 | BRIT-XIAN [S]; UNESCO-SILKROADS [S] |  |
 | Kyoto | Japan | core | Imperial capital for over a thousand years | 1159149967 | Q34600 | BRIT-KYOTO [S] | NE marks it "Admin-0 capital alt"; N: Osaka 44 km |
-| Osaka (NE: Ōsaka) | Japan | core | Japan's merchant city and Kansai hub | 1159151537 | Q35765 | BRIT-OSAKA [S] | N: Kyoto 44 km |
 | Hiroshima | Japan | core | First city destroyed by an atomic bomb, 1945 | 1159151389 | Q34664 | BRIT-HIROSHIMA [S]; UNESCO-HIROSHIMA [S] |  |
 
 ### 17. Southeast Asia
@@ -222,7 +209,6 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 | City | Country | Tier | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags |
 |---|---|---|---|---|---|---|---|
 | Ho Chi Minh City | Vietnam | core | Saigon; capital of South Vietnam until 1975 | 1159151253 | Q1854 | BRIT-HCMC [S] |  |
-| Malacca | Malaysia | core | Sultanate's Strait entrepôt; Portuguese conquest 1511 | 1159148319 | Q61089 | BRIT-MELAKA [S]; UNESCO-MELAKA-GEORGETOWN [S] | P: Putrajaya 99 km, Kuala Lumpur 123 km |
 
 ### 18. Oceania
 
@@ -237,9 +223,8 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 | New York | United States of America | core | Leading US financial centre; UN headquarters; immigrant gateway | 1159151575 | Q60 | BRIT-NYC [S]; BRIT-UN [S] |  |
 | Los Angeles | United States of America | core | Pacific port; Hollywood film industry | 1159151569 | Q65 | BRIT-LA [S] |  |
 | Chicago | United States of America | core | Rail and grain hub linking Great Lakes and Mississippi | 1159151491 | Q1297 | BRIT-CHICAGO [S] |  |
-| New Orleans | United States of America | core | Lower Mississippi port; key prize of 1803 Louisiana Purchase | 1159151233 | Q34404 | BRIT-NEWORLEANS [S]; BRIT-LAPURCHASE [S] |  |
 | San Francisco | United States of America | core | Port transformed by the 1849 California Gold Rush | 1159151479 | Q62 | BRIT-SF [S]; BRIT-GOLDRUSH [S] |  |
-| Montreal (NE: Montréal) | Canada | core | New France fur-trade hub on the St Lawrence | 1159151457 | Q340 | BRIT-MONTREAL [S] |  |
+| Toronto | Canada | core | Canada's largest city and financial centre; capital of Ontario | 1159151557 | Q172 | BRIT-TORONTO [S] |  |
 
 ### 20. South America
 
@@ -247,7 +232,6 @@ No core city. See [Deferred cities](#deferred-cities-revisit-list).
 |---|---|---|---|---|---|---|---|
 | São Paulo | Brazil | core | Coffee-boom city; Latin America's foremost industrial centre | 1159151621 | Q174 | BRIT-SAOPAULO [S] |  |
 | Rio de Janeiro | Brazil | core | Capital of Portugal's empire, then Brazil until 1960 | 1159151619 | Q8678 | BRIT-LISBON [S]; BRIT-BRAZILHIST [S] |  |
-| Potosí | Bolivia | core | Cerro Rico silver; once the world's largest industrial complex | 1159144841 | Q35045 | UNESCO-POTOSI [S] | P: Sucre 78 km |
 | Cusco | Peru | core | Inca imperial capital | 1159150611 | Q5582862 | UNESCO-CUSCO [S] |  |
 
 ### 21. Caribbean
@@ -327,7 +311,7 @@ All 60 former secondary (pass 2) cities. Reason for deferral: the deck keeps onl
 
 ### Deferred: demoted from core (revisit)
 
-Former core cities that were there mainly for regional or national coverage, which no longer applies.
+Former core cities that were there mainly for regional or national coverage, which no longer applies. Toronto was restored to core in v3.0.1.
 
 | City | Country | Region | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags | Reason for deferral |
 |---|---|---|---|---|---|---|---|---|
@@ -344,7 +328,6 @@ Former core cities that were there mainly for regional or national coverage, whi
 | Yangon | Myanmar | 17. Southeast Asia | Rangoon; former capital and main port | 1159151477 | Q37995 | BRIT-YANGON [S] | NE FEATURECLA "Admin-0 capital" (former); ADM0CAP=0 | National port and former capital; was core for Myanmar coverage |
 | Melbourne | Australia | 18. Oceania | Gold-rush city; seat of federal government 1901–27 | 1159151565 | Q3141 | BRIT-MELBOURNE [S] |  | Gold rush and 1901–27 federal seat are national stories; Sydney carries Australian settlement |
 | Auckland | New Zealand | 18. Oceania | Former capital; New Zealand's largest city | 1159151703 | Q37100 | BRIT-AUCKLAND [S] |  | National largest city and former capital; was core for Oceania coverage |
-| Toronto | Canada | 19. North & Central America | Canada's largest city and financial centre | 1159151557 | Q172 | BRIT-TORONTO [S] |  | National financial centre; Montreal carries Canada's settlement history |
 
 ### Cut in the final review (revisit)
 
@@ -378,6 +361,31 @@ These cities were cut in the final review on 2026-10-14 (Osaka has since been re
 | Monterrey | Mexico | 19. North & Central America | secondary | 1159151527 | Q81033 | Industrial city of national rather than world significance |
 | Guadalajara | Mexico | 19. North & Central America | secondary | 1159151293 | Q9022 | Mainly culturally and regionally famous (mariachi, tequila) |
 | Medellín | Colombia | 20. South America | secondary | 1159151343 | Q48278 | Industrial city of national significance; Colombia keeps Cartagena; its wording was also inference-only |
+### Retired in v3.0.1 (revisit)
+
+These core cities were carded until v3.0.1 and retired on 2026-10-16, when the user chose to keep the city set small. Each is of lower salience than the cities kept; no reason was recorded for each city. Their entries stay in `data/cities.yaml` with `retired: true`, so their uids are kept.
+
+| City | Country | Region | Why it matters | `NE_ID` | WIKIDATAID | Sources | Flags | Reason for retirement |
+|---|---|---|---|---|---|---|---|---|
+| Rotterdam | Netherlands | 1. Western Europe | Europe's largest port at the Rhine–Maas mouth | 1159146435 | Q34370 | PORT-ROTTERDAM [V]; BRIT-ROTTERDAM [S] | P: The Hague 23 km, Amsterdam 56 km, Brussels 121 km | Lower salience than the cities kept |
+| Seville | Spain | 1. Western Europe | Held the Crown's monopoly on Americas trade | 1159150601 | Q8717 | BRIT-CASA-CONTRATACION [S]; BRIT-SEVILLA [S] | T (edge): Gibraltar 151 km | Lower salience than the cities kept |
+| Hamburg | Germany | 3. Central Europe & Italy | Hanseatic port on the Elbe; Germany's largest port | 1159151353 | Q1055 | BRIT-HAMBURG [S] |  | Lower salience than the cities kept |
+| Frankfurt | Germany | 3. Central Europe & Italy | Imperial coronation city; continental finance hub, ECB seat | 1159151351 | Q1794 | BRIT-FRANKFURT [S]; BRIT-ECB [S] |  | Lower salience than the cities kept |
+| Volgograd | Russia | 5. Eastern Europe | Stalingrad, WWII turning point on the Volga | 1159150697 | Q914 | BRIT-STALINGRAD [S] |  | Lower salience than the cities kept |
+| Aleppo | Syria | 7. Levant & Mesopotamia | Ancient caravan-route trade city; Old City ruined in civil war | 1159151267 | Q41183 | UNESCO-ALEPPO [S]; BRIT-ALEPPO [S] |  | Lower salience than the cities kept |
+| Medina | Saudi Arabia | 8. Arabian Peninsula | Muhammad's city after the Hijra; Islam's second holiest city | 1159149443 | Q35484 | BRIT-MEDINA [S] |  | Lower salience than the cities kept |
+| Zanzibar | Tanzania | 9. Horn & East Africa | Omani sultanate's capital; slave and clove trade | 1159150789 | Q2222874 | BRIT-ZANZIBAR [S]; UNESCO-STONETOWN [S] | P: Dar es Salaam 71 km (NE ADM0CAP=1; Dodoma is the capital) | Lower salience than the cities kept |
+| Johannesburg | South Africa | 13. Southern Africa & Indian Ocean | Witwatersrand gold-rush city; South Africa's financial capital | 1159151515 | Q34647 | BRIT-JOHANNESBURG [S] | P: Pretoria 55 km; NE FEATURECLA "Admin-0 capital" | Lower salience than the cities kept |
+| Samarkand | Uzbekistan | 15. Iran & Central Asia | Silk Road hub; Timur's capital | 1159150569 | Q5753 | UNESCO-SAMARKAND [S]; BRIT-SAMARKAND [S] |  | Lower salience than the cities kept |
+| Isfahan | Iran | 15. Iran & Central Asia | Safavid capital: "Isfahan is half the world" | 1159150971 | Q42053 | BRIT-ISLAMIC-SAFAVIDS [S]; UNESCO-ISFAHAN [S] |  | Lower salience than the cities kept |
+| Guangzhou | China | 16. East Asia | Canton; sole Western trade port 1757–1842 | 1159151331 | Q16572 | BRIT-CANTONSYS [S] | T: Macau 107 km, Hong Kong 128 km | Lower salience than the cities kept |
+| Xi'an (NE: Xian) | China | 16. East Asia | Chang'an, Tang capital; eastern Silk Road terminus | 1159151363 | Q5826 | BRIT-XIAN [S]; UNESCO-SILKROADS [S] |  | Lower salience than the cities kept |
+| Osaka (NE: Ōsaka) | Japan | 16. East Asia | Japan's merchant city and Kansai hub | 1159151537 | Q35765 | BRIT-OSAKA [S] | N: Kyoto 44 km | Lower salience than the cities kept |
+| Malacca | Malaysia | 17. Southeast Asia | Sultanate's Strait entrepôt; Portuguese conquest 1511 | 1159148319 | Q61089 | BRIT-MELAKA [S]; UNESCO-MELAKA-GEORGETOWN [S] | P: Putrajaya 99 km, Kuala Lumpur 123 km | Lower salience than the cities kept |
+| New Orleans | United States of America | 19. North & Central America | Lower Mississippi port; key prize of 1803 Louisiana Purchase | 1159151233 | Q34404 | BRIT-NEWORLEANS [S]; BRIT-LAPURCHASE [S] |  | Lower salience than the cities kept |
+| Montreal (NE: Montréal) | Canada | 19. North & Central America | New France fur-trade hub on the St Lawrence | 1159151457 | Q340 | BRIT-MONTREAL [S] |  | Lower salience than the cities kept |
+| Potosí | Bolivia | 20. South America | Cerro Rico silver; once the world's largest industrial complex | 1159144841 | Q35045 | UNESCO-POTOSI [S] | P: Sucre 78 km | Lower salience than the cities kept |
+
 ## Verify before carding
 
 These rest on [S] text, on a source's description of itself, or on a judgement call:

@@ -79,6 +79,8 @@ The Lesser Antilles box is too tight to place on its own, so it gets a **regiona
 | New Zealand, Papua New Guinea | `include: [australia]` | Each is read against Australia, which the Polynesia and Melanesia boxes cut off. New Zealand's frame is 9,093 km wide, Papua New Guinea's 9,373 km. |
 | Micronesia, Kiribati, French Polynesia | `ring: oval` | A ring round each island group cluttered the map, and with none their atolls were specks: they are scattered, so they have no inset. A circle round all of them took in too much sea and too many neighbours. Micronesia's oval holds no other state; Kiribati's takes in Tuvalu and the southern Marshall Islands, and French Polynesia's touches Kiribati's southern Line Islands. |
 | Tonga | `ring: false` | Its inset shows it; the ring round the Niuas cluttered the map. |
+| Cook Islands (v3.0.1) | `ring: false` | Scattered across the Polynesia frame; its inset shows the southern group, and rings round each group crowded the map. |
+| Akrotiri and Dhekelia (v3.0.1) | `inset: true, inset_km: 300, ring: false` | An inset at the scale of Cyprus, so both base areas and the island read. |
 | Aruba, Curaçao | `inset_centre: [-69.12, 12.35], inset_km: 250` | One inset of the ABC islands (Aruba, Curaçao and Bonaire), so the two are told apart. |
 
 **Render cache.** The region's points travel in the render job and are in its cache key (`jobs.RenderJob.region`). A change to a region's membership re-renders that region's cards. An `include` box and a region's `frame_margin` travel in the spec (`RenderSpec.hold`, `region_margin`), so they are keyed too.

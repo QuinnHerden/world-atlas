@@ -25,19 +25,19 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Global features | Go in the **orientation block** at the start. |
 | Continents | **7 continent cards** in the orientation block. The seventh is named **"Oceania"**. They get a new `Continent` type word and family. Each continent is **composed from country outlines**; transcontinental states are split along NE's continent line. Oceania is complete (every Oceanian state and carded territory). |
 | State list | **197 country cards:** the 193 UN members plus Vatican, Palestine, Kosovo and Taiwan. Northern Cyprus, Somaliland and Western Sahara get **dispute cards only**. |
-| Borders | Internationally recognised borders. UN-assigned areas sit inside their sovereign: Crimea in Ukraine, Abkhazia and South Ossetia in Georgia, Transnistria in Moldova, Northern Cyprus in Cyprus, the Golan in Syria, Somaliland in Somalia. **Western Sahara is cut out of Morocco.** The Kashmir parts, Aksai Chin, Arunachal Pradesh and the Kurils follow the **administering power**. Disputed lines are drawn **dashed**. Disputed areas also get their own cards. **Israel/Golan area:** Shebaa Farms goes to Syria; East Jerusalem and the no-man's-land strips go to Palestine, and Mount Scopus goes with East Jerusalem. **Leases:** Baikonur goes to Kazakhstan, Guantánamo to Cuba. |
-| Capitals | **2–3 cards after their country.** A state with several capitals gets **one card, for the official/constitutional capital**: Porto-Novo, Dodoma, Sri Jayewardenepura Kotte (that spelling), Sucre, Pretoria, Yamoussoukro, Naypyidaw. The seat of government is named in the blurb. Stale NE names are fixed (Astana, not Nur-Sultan). **No capital card** where the capital shares the country's name and dot: Monaco, Vatican, Singapore, San Marino, Luxembourg. **No capital card** for Palestine, territories or disputed areas. |
+| Borders | Internationally recognised borders. UN-assigned areas sit inside their sovereign: Crimea in Ukraine, Abkhazia and South Ossetia in Georgia, Transnistria in Moldova, Northern Cyprus in Cyprus, the Golan in Syria, Somaliland in Somalia. **Western Sahara is cut out of Morocco.** The Kashmir parts, Aksai Chin, Arunachal Pradesh and the Kurils follow the **administering power**. Disputed lines are drawn **dashed**. Nine disputed areas also get their own cards ([Territories](#territories)). **Israel/Golan area:** Shebaa Farms goes to Syria; East Jerusalem and the no-man's-land strips go to Palestine, and Mount Scopus goes with East Jerusalem. **Leases:** Baikonur goes to Kazakhstan, Guantánamo to Cuba. |
+| Capitals | **2–3 cards after their country.** A state with several capitals gets **one card, for the official/constitutional capital**: Porto-Novo, Dodoma, Sri Jayewardenepura Kotte (that spelling), Sucre, Pretoria, Yamoussoukro, Naypyidaw. The seat of government is named in the blurb. Stale NE names are fixed (Astana, not Nur-Sultan). **No capital card** where the capital shares the country's name and dot: Monaco, Vatican, Singapore, San Marino, Luxembourg. **No capital card** for Palestine, territories or disputed areas. **From v3.0.1, no capital card for any tier-3 state** (microstates and small island states): 29 more capitals are retired, leaving 162. |
 | Capital picks | **Burundi: Gitega.** **Equatorial Guinea: Ciudad de la Paz** (decree of 2 January 2026; hand-placed point, Malabo named as the former capital). **Eswatini: Mbabane.** **Palau: Ngerulmud.** |
 | Nauru | Capital **Yaren, hand-placed** from reference coordinates; NE has no populated_places row for Nauru. Alt name **Naoero**. |
 | Names | **English exonyms** on every card. The **Gulf of Mexico** keeps that name. |
-| Country tiers | **Tier 3 is microstates and small island states only.** Kosovo, Palestine and Cyprus are tier 1. Tier sets the `tier::` tag only: every country is in pass 1. |
-| Cities | **42 core cities**, every one in pass 1. **No per-region minimum**: regions 2, 4, 12 and 21 have no city card. Every secondary city, Abidjan and Aden included, is deferred to the [revisit list](research/cities.md#deferred-cities-revisit-list) (user decision, 2026-10-14). **Cape Town stays a city card.** |
+| Country tiers | **Tier 3 is microstates and small island states only.** Kosovo, Palestine and Cyprus are tier 1. Tier is internal (the `tier::` tag was dropped in v3.0.1): every country is in pass 1. |
+| Cities | **25 core cities** (42 until v3.0.1, which retired 18 and added Toronto), every one in pass 1. **No per-region minimum**: regions 2, 4, 7, 9, 12, 15 and 21 have no city card. Every secondary city, Abidjan and Aden included, is deferred to the [revisit list](research/cities.md#deferred-cities-revisit-list) (user decision, 2026-10-14). **Cape Town stays a city card.** |
 | Capital and city cards | Front type word: **"City"**, for capitals and other cities alike. Back: the city name, then on a second line "Capital of &lt;Country&gt;" for a capital or "&lt;Country&gt;" for any other city. Marker: a **36 px dot with no ring**. |
 | Look-alikes | The **3–10 card window** plus a curated **confusable-country list**. |
 | Microstates | Sit **with their neighbours** in the order, as pockets. Their capital cards follow the Capitals rule. |
 | Country cards | Show the **mainland only**. Overseas territories are their own cards, per [Territories](#territories). Remote islands are cropped from the card by its `mainland` box: the Kermadecs, the Chathams and the NZ sub-Antarctic islands, Trindade, Minami-Torishima, Okinotorishima, the Prince Edward Islands and Macquarie. The crop is for the card only; adjacency and feature regions use the full outline. |
-| Region and host | **`curriculum.yaml` is the one source** of region and pocket host for countries, territories and disputed areas. The entries in `countries.yaml` and `territories.yaml` carry no region. Cities take their country's region. |
-| Territory placement | Geographic pockets (decision 5). **Greenland and Bermuda in region 19, the Kurils in 16, Aruba and Curaçao in 20.** `curriculum.yaml` records the alternatives, now decided, in a comment above `confusables`. v3.0.0 moved Greenland to region 02 (Nordic & Baltic), hosted by Iceland, so it comes right after Iceland ([ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300)). |
+| Region and host | **`curriculum.yaml` is the one source** of region and pocket host for countries, subnationals, territories and disputed areas. The entries in `countries.yaml` and `territories.yaml` carry no region. Cities take their country's region. |
+| Territory placement | Geographic pockets (decision 5). **Greenland and Bermuda in region 19, the Kurils in 16 (until their card was retired in v3.0.1), Aruba and Curaçao in 20.** `curriculum.yaml` records the alternatives, now decided, in a comment above `confusables`. v3.0.0 moved Greenland to region 02 (Nordic & Baltic), hosted by Iceland, so it comes right after Iceland ([ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300)). |
 | Dispute parties | **Claimants or administrators only.** A party that isn't one of the 197 states gets a **short label** (Transnistria, Northern Cyprus, Sahrawi Republic (Polisario Front)). |
 | Feature regions | Derived by the [rules below](#assigning-physical-features-to-regions), with **overrides in `features.yaml`** (`region` plus `region_reason`): Nile 10, Karakoram 14, Danish Straits 2, Caucasus 6, Tian Shan 15, Amur 16, GIUK gap 2, Typhoon alley 17, and the Gulf Stream and Atlantic hurricane belt 21. |
 | Climate | **6 active climate cards, 9 retired** (commit `41fdf95`): the pressure belts, the East Asian and West African monsoons, the Canary, Benguela, Humboldt and Kuroshio currents, and the Bay of Bengal cyclones. |
@@ -45,8 +45,9 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Companion PDF guide | Follows the **new-card study order**, sectioned by **pass, then region**. Every card has a 1–3 sentence blurb, stored as `note` in the data. |
 | Repo name | **Renamed to `world-atlas`** ([QuinnHerden/world-atlas](https://github.com/QuinnHerden/world-atlas)); the package stays `geofeat` (decision 11). |
 | Country design | **Split cards** (separate country outline and capital dot notes), as in the PoC on branch `poc/countries` (`f4a3503`). |
-| Dependencies | The 23 **include** territories in [List 1](#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards. The 29 **exclude** territories stay on the [revisit list](#intentionally-excluded-revisit-list). |
-| Disputed territories | The 15 **card** entries in [List 2](#appendix-c-list-2-disputed-and-occupied-territories) get cards. The 16 **no card** entries stay on the [revisit list](#intentionally-excluded-revisit-list). |
+| Dependencies | The 25 **include** territories in [List 1](#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards (23 until v3.0.1). The 27 **exclude** territories stay on the [revisit list](#intentionally-excluded-revisit-list). |
+| Disputed territories | The 9 **card** entries in [List 2](#appendix-c-list-2-disputed-and-occupied-territories) get cards (15 until v3.0.1). The 20 **no card** entries stay on the [revisit list](#intentionally-excluded-revisit-list). |
+| Subnationals | **5 cards from v3.0.1:** England, Scotland, Wales and Northern Ireland (front word "Constituent country") and Kaliningrad Oblast ("Exclave"). Solid outline, as a country; no capital card. Placed as pockets after the United Kingdom and after Lithuania. |
 
 **Earlier proposals these decisions overrode:**
 
@@ -56,7 +57,7 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 - **Name:** "World Atlas" replaces D6's deck name `Geography`, so every filtered-deck search below uses `deck:"World Atlas"`.
 - **Borders:** internationally recognised borders replace D8's default of NE's de facto admin_0 worldview. **The PoC's de facto border view is superseded.**
 
-**Knock-on effects of the climate retirement:** orientation keeps two planetary bands (trade winds, westerlies) rather than four, and the region assignments for the retired climate cards no longer apply. The feature count is 132 active cards (49 tier 1, 73 tier 2, 10 tier 3), not 141.
+**Knock-on effects of the climate retirement:** orientation keeps two planetary bands (trade winds, westerlies) rather than four, and the region assignments for the retired climate cards no longer apply. The feature count is 132 active cards (49 tier 1, 73 tier 2, 10 tier 3), not 141. v3.0.1 retired the tier-1 Crimea peninsula, a duplicate of the Crimea dispute card, leaving 131.
 
 ## Curriculum
 
@@ -85,7 +86,7 @@ Three structures were compared; (c) was chosen.
 | Contiguity of features and borders | Strong | Weak: the Pyrenees (tier 2) arrive weeks after France and Spain | Strong. The tier-2 features include most of the border-defining ones (Pyrenees, Carpathians, Urals, Zagros, Rio Grande, Amur), so they stay in pass 1. |
 | Cost | Simplest | Needs country tiers | One extra pass tag |
 
-(c) keeps complete neighbour chunks and holds back only the long tail. With every secondary city deferred, pass 2 is just the 10 tier-3 features, under 2% of the cards; its job is mainly to protect the early stopper. Going round the ring a second time also brings back each region's layout at a long interval.
+(c) keeps complete neighbour chunks and holds back only the long tail. With every secondary city deferred, pass 2 is just the tier-3 features (10 in v3.0.0, 3 since v3.0.1), under 2% of the cards; its job is mainly to protect the early stopper. Going round the ring a second time also brings back each region's layout at a long interval.
 
 ### The ring (default start: Western Europe)
 
@@ -115,7 +116,7 @@ Regions are listed in study order, with countries in walk order. Counts follow t
 | 20 | South America | Colombia, Ecuador, Peru, Chile, Bolivia, Argentina, Uruguay, Paraguay, Brazil, Suriname, Guyana, Venezuela | 12 | Panama → Colombia |
 | 21 | Caribbean | Trinidad and Tobago, Grenada, St Vincent, Barbados, St Lucia, Dominica, Antigua and Barbuda, St Kitts and Nevis, Dominican Rep., Haiti, Jamaica, Cuba, Bahamas | 13 | Venezuela → Trinidad. Exit: Bahamas → Atlantic → Iberia, closing the ring (the 1492 route in reverse). |
 
-That is 21 regions, one over the range originally asked for. Merging any two would break a seam or bury the Levant. Apart from those three dispute pockets, the table lists sovereign and partially recognised states only. Abkhazia, South Ossetia and Transnistria now get dispute cards ([Territories](#territories)), so they become pockets of Georgia and Moldova. The Cook Islands and Niue are on the revisit list; if added, they become pockets of New Zealand. Territory and dispute cards are placed as geographic pockets in `data/curriculum.yaml` (decision 5, now decided; see [Decisions so far](#decisions-so-far)).
+That is 21 regions, one over the range originally asked for. Merging any two would break a seam or bury the Levant. Apart from those three dispute pockets, the table lists sovereign and partially recognised states only. Abkhazia, South Ossetia and Transnistria now get dispute cards ([Territories](#territories)), so they become pockets of Georgia and Moldova. The Cook Islands get a territory card from v3.0.1, as a pocket of New Zealand; Niue stays on the revisit list. Territory and dispute cards are placed as geographic pockets in `data/curriculum.yaml` (decision 5, now decided; see [Decisions so far](#decisions-so-far)).
 
 **Why a ring.** Every crossing is a land border or a short sea, except the Pacific crossing into region 19. Because the loop is closed, a learner can start at **any region** and keep continuity everywhere except at the one cut. "Home region first" is therefore just a rotation, not a second design.
 
@@ -155,15 +156,15 @@ An override in `features.yaml` (`region` plus `region_reason`) handles the rest;
 | Country | Walk order | Route knowledge |
 | **Capital** | **2–3 cards after its country**, after the next country, never in a later cluster | Some lag (spacing) while staying contiguous. Country and capital are separate notes, so Anki won't bury one as the other's sibling. The order does the spacing. |
 | Physical feature | **Right after the country that completes its frame**, the last of its in-region countries to be introduced: Pyrenees after France, Danube after Romania, English Channel after the UK, Nile after Egypt | Contiguity: the border or valley is already on the map. |
-| Core city (pass 1) | At least 2 cards after its country's capital. If it is tied to a feature, right after that feature: Alexandria after the Nile Delta, Istanbul after the Bosporus, New Orleans after the Mississippi, Shanghai after the Yangtze. | It's a dot in a known outline, so it shouldn't be read as "the other dot". |
+| Core city (pass 1) | At least 2 cards after its country's capital. If it is tied to a feature, right after that feature: Alexandria after the Nile Delta, Istanbul after the Bosporus, Shanghai after the Yangtze. | It's a dot in a known outline, so it shouldn't be read as "the other dot". |
 | Tier-3 feature (and a secondary city, if one is carded later) | Pass 2, same ring, same within-region rules | Long tail |
 | Pockets | After the host's capital | See the walk rules above |
 
 A worked example, the start of region 1:
 
-> Iberian Peninsula · Portugal · Spain · *Lisbon* · Andorra · *Madrid* · France · *Andorra la Vella* · Pyrenees · *Paris* · Monaco · Barcelona · Belgium · …
+> Iberian Peninsula · Portugal · Spain · *Lisbon* · Andorra · *Madrid* · France · Pyrenees · *Paris* · Monaco · Barcelona · Belgium · …
 
-Capitals are in italics. Monaco has no capital card (the same-name rule under Capitals).
+Capitals are in italics. Andorra and Monaco have no capital card (the rules under Capitals).
 
 ### Look-alikes: from a minimum gap to a window
 
@@ -171,29 +172,29 @@ ADR 0004 spreads nearby features at least 3 cards apart, while contiguity packs 
 
 - **Mixing card kinds** (the old category alternation) now happens by itself: a cluster alternates countries, capitals, rivers, ranges and straits. Dropping deck-wide category alternation is the default awaiting confirmation (decision 8 under [Open decisions](#open-decisions)).
 - **Separating look-alikes** still matters. Two look-alikes back to back get learned as "the other one", which is ADR 0004's own reason. But the benefit of interleaving comes from *contrast*, and contrast needs them close. **Decided: a window, 3 ≤ gap ≤ 10,** which keeps the pair in the same cluster and usually on the same day.
-- **Who counts as look-alikes.** Features: the pair check's sibling pairs, as now (Bosporus/Dardanelles, Lombok/Sunda). Countries: a curated list of name or shape confusables: Niger/Nigeria, Guinea/Guinea-Bissau/Equatorial Guinea, Congo/DR Congo, Sudan/South Sudan, Slovakia/Slovenia, Rwanda/Burundi, Dominica/Dominican Rep., Somalia/Somaliland. A country and a feature with the same footprint, such as Italy and the Italian Peninsula, also count (the country × land-feature check below).
+- **Who counts as look-alikes.** Features: the pair check's sibling pairs, as now (Bosporus/Dardanelles). Countries: a curated list of name or shape confusables: Niger/Nigeria, Guinea/Guinea-Bissau/Equatorial Guinea, Congo/DR Congo, Sudan/South Sudan, Slovakia/Slovenia, Rwanda/Burundi, Dominica/Dominican Rep., Somalia/Somaliland. A country and a feature with the same footprint, such as Italy and the Italian Peninsula, also count (the country × land-feature check below).
 - **Precedence.** Frontier continuity, then parent before child, then the window. If a look-alike pair spans two regions (Guinea in 11, Equatorial Guinea in 12), the window is waived; region distance already separates them.
 
 ### Pacing
 
-About 607 cards:
+554 cards (607 in v3.0.0):
 
 | Block | Cards |
 |---|---|
 | Orientation | 13: 4 oceans, 2 planetary wind bands, 7 continents |
-| Pass 1 | 584: 197 countries, 191 capitals, 23 territories, 15 disputed areas, 116 tier 1–2 features, 42 core cities |
-| Pass 2 | 10 tier-3 features |
+| Pass 1 | 538: 197 countries, 162 capitals, 5 subnationals, 25 territories, 9 disputed areas, 115 tier 1–2 features, 25 core cities |
+| Pass 2 | 3 tier-3 features (10 in v3.0.0) |
 
-In v3.0.0 the blocks are continents (7), countries with territories and disputed areas (235), physical features (132) and capitals and cities (233); see [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300).
+Since v3.0.0 the blocks are continents (7), countries with subnationals, territories and disputed areas (236; 235 in v3.0.0), physical features (124; 132 in v3.0.0) and capitals and cities (187; 233 in v3.0.0); see [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300).
 
-Territories and disputed areas get no capital cards. The 132 active features split 6 orientation, 116 pass 1 and 10 pass 2.
+Subnationals, territories, disputed areas and tier-3 states get no capital cards. The 124 active features split 6 orientation, 115 pass 1 and 3 pass 2.
 
 | New cards a day | New cards finish | Notes |
 |---|---|---|
-| 10 | ~8½ weeks | About one cluster a day. Gentlest in the dense regions. |
-| **15 (suggested)** | **~6 weeks** | A cluster and a half a day. A typical region takes 2–3 days. |
-| 20 (Anki default) | ~4½ weeks | Fine for regions 1–10. Watch the load at West Africa and the Caribbean. |
-| 30 | ~3 weeks | Dense regions put about 30 look-alike outlines into learning at once. Only for someone with prior map knowledge. |
+| 10 | ~8 weeks | About one cluster a day. Gentlest in the dense regions. |
+| **15 (suggested)** | **~5½ weeks** | A cluster and a half a day. A typical region takes 2–3 days. |
+| 20 (Anki default) | ~4 weeks | Fine for regions 1–10. Watch the load at West Africa and the Caribbean. |
+| 30 | ~2½ weeks | Dense regions put about 30 look-alike outlines into learning at once. Only for someone with prior map knowledge. |
 
 Pass 2 is 10 cards, so pass 1 ends within a day of the last new card at every rate. Review load grows with the rate and keeps running after the last new card, so the program doesn't end when the new cards do. The README should say: *raise the rate while your daily reviews fit your time; lower it before West Africa (11) and the Caribbean (21).*
 
@@ -221,7 +222,7 @@ Pass 2 is 10 cards, so pass 1 ends within a day of the last new card at every ra
 
 **Finishing a region** is the natural progress milestone. A count such as "region 7 of 21" in the README's study notes costs nothing.
 
-**Existing users.** Re-import keeps each card's new-card position. Builds since the flat deck numbered the feature cards from 0 (141 cards, now 132); the earlier subdeck builds gave every card position 0. Either way, an existing user's unstudied features come before every country. No repositioning tool is planned. These users aren't total beginners, and they finish the features they started before going round the ring. The README should say:
+**Existing users.** Re-import keeps each card's new-card position. Builds since the flat deck numbered the feature cards from 0 (141 cards, now 131); the earlier subdeck builds gave every card position 0. Either way, an existing user's unstudied features come before every country. No repositioning tool is planned. These users aren't total beginners, and they finish the features they started before going round the ring. The README should say:
 
 - **Studied little or nothing:** delete the deck and import fresh to get the full program order.
 - **Mid-way:** keep going. The ring starts once your earlier features are done, or run region filtered decks in parallel.
@@ -238,7 +239,7 @@ Pass 2 is 10 cards, so pass 1 ends within a day of the last new card at every ra
 | One note or two | **Two notes**, `uids: {country, capital}`, as the PoC has (decided: split cards). | ankc "reversed" swaps one front/back pair. Country (outline → name) and capital (dot → capital) differ on both sides, so reversed can't express them. Cloze can't hide one image per card. Two notes also give independent tags, tiers, positions and retirement (for example, dropping the capital card for city-states). The cost is that Anki won't bury them as siblings, so the order engine has to space them. |
 | Id namespace | **Kind-prefixed id tags for new kinds**: `id_country_niger`, `id_capital_niger`, `id_city_istanbul`. Existing feature tags stay `id_<id>`. | Real collisions exist: the rivers Niger, Congo and Jordan, and retired island ids such as cyprus and taiwan. A check enforces global uniqueness across sources. |
 | New tags | `kind::<k>`, `region::NN`, `pass::<p>`. Keep `tier::` and `category::`; countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. | Filtered decks keep working. |
-| Region membership | **Countries, territories and disputed areas: placed by `data/curriculum.yaml`**, the one source of region and pocket host; their own yaml entries carry neither. Cities inherit their country's region. **Features: derived** by `regions.py` from the region with the largest share (a region's outline is the union of its members' full outlines, before any `mainland` crop). A `region` override with a `region_reason` in `features.yaml` covers the exceptions, and the orientation features go to the orientation block. | Region membership is curricular, not geometric (Egypt, Turkey, Russia, Kazakhstan). For 132 features, derivation is cheap and the override handles the exceptions. |
+| Region membership | **Countries, subnationals, territories and disputed areas: placed by `data/curriculum.yaml`**, the one source of region and pocket host; their own yaml entries carry neither. Cities inherit their country's region. **Features: derived** by `regions.py` from the region with the largest share (a region's outline is the union of its members' full outlines, before any `mainland` crop). A `region` override with a `region_reason` in `features.yaml` covers the exceptions, and the orientation features go to the orientation block. | Region membership is curricular, not geometric (Egypt, Turkey, Russia, Kazakhstan). For 132 features, derivation is cheap and the override handles the exceptions. |
 | Adjacency | **Computed at build time** (`make adjacency`) from the recognised-border outlines composed from the `geometry` in `countries.yaml`, uncropped. Touching is `intersects` after a 1 km buffer, to absorb 10m slivers. Sea edges link countries within 200 km, so island states aren't isolated (UK–France, Japan–Korea, Sri Lanka–India). Hand edits go in `data/adjacency.yaml` (`add`/`remove`, each with a `reason`). Results are cached in `build/adjacency.json`, keyed by an inputs hash, as `siblings.json` is. | Deterministic and reviewable. ~200 outlines with an STRtree index takes seconds. |
 
 ### Ordering engine
@@ -301,13 +302,13 @@ cards ─▶ passes (from curriculum.yaml)
 
 Country cards use internationally recognised borders and show the mainland only. Overseas territories and disputed areas get their own cards with their own outlines. The full tables are in [Appendix B](#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) and [Appendix C](#appendix-c-list-2-disputed-and-occupied-territories); sources and method are in [Appendix A](#appendix-a-territories-sources-and-method).
 
-**Summary** (checked 2026-10-14)
+**Summary** (checked 2026-10-14; revised for v3.0.1 on 2026-10-16, see [ADR 0008](adr/0008-state-list-borders-adjacency.md#amendment-fewer-dispute-cards-v301))
 
-1. **Counts:** List 1 has 52 inhabited dependent or autonomous territories: **23 include**, 29 exclude. 13 of the 52 are integral parts of their state. A further 9 uninhabited entries (US Minor Outlying Islands counted as one) are listed in one line. List 2 has 31 disputed or occupied areas: **15 card**, 16 no card.
-2. **Include (23):** Greenland, Faroe Islands, Svalbard, Hong Kong, Macau, Puerto Rico, Guam, Gibraltar, Falkland Islands, Bermuda, Cayman Islands, British Indian Ocean Territory, Isle of Man, Jersey, Guernsey, New Caledonia, French Polynesia, French Guiana, Réunion, Guadeloupe, Martinique, Aruba, Curaçao.
-3. **Card (15):** Crimea, Kashmir (Indian-administered), Kashmir (Pakistani-administered), Aksai Chin (Chinese-administered, with Shaksgam), Arunachal Pradesh, Western Sahara, Golan Heights, Abkhazia, South Ossetia, Transnistria, Northern Cyprus, Somaliland, Kuril Islands (southern four), Spratly Islands, Essequibo.
+1. **Counts:** List 1 has 52 inhabited dependent or autonomous territories: **25 include**, 27 exclude. 13 of the 52 are integral parts of their state. A further 9 uninhabited entries (US Minor Outlying Islands counted as one) are listed in one line. List 2 has 29 disputed or occupied areas: **9 card**, 20 no card (the three Kashmir parts are now one row).
+2. **Include (25):** Akrotiri and Dhekelia, Cook Islands, Greenland, Faroe Islands, Svalbard, Hong Kong, Macau, Puerto Rico, Guam, Gibraltar, Falkland Islands, Bermuda, Cayman Islands, British Indian Ocean Territory, Isle of Man, Jersey, Guernsey, New Caledonia, French Polynesia, French Guiana, Réunion, Guadeloupe, Martinique, Aruba, Curaçao.
+3. **Card (9):** Crimea, Kashmir (the whole former princely state), Western Sahara, Abkhazia, South Ossetia, Transnistria, Northern Cyprus, Somaliland, Spratly Islands. Retired in v3.0.1: Kashmir (Indian-administered), Kashmir (Pakistani-administered) and Aksai Chin, merged into Kashmir; and the Golan Heights, Arunachal Pradesh, the Kuril Islands (southern four) and Essequibo, carried by the Syria, Israel, India, China, Japan, Russia, Guyana and Venezuela notes.
 4. **NE polygon gaps:** The French overseas departments, Caribbean Netherlands, Svalbard, Åland, Tokelau, Christmas Island and Cocos have no row of their own in `admin_0_countries`; they need `ne_10m_admin_0_map_units` (vendored in P1, WS4). The Canary Islands have no polygon in either layer. Every List 2 card except Northern Cyprus, Somaliland and Spratly needs `ne_10m_admin_0_disputed_areas` (vendored in P1, WS4). NE has no polygon at all for the post-2022 occupation of Ukraine. Its Donetsk and Luhansk shapes are the 2014–22 lines, its Artsakh shape is stale since 2023, and its Hans Island note has been stale since 2022.
-5. **Verify (time-sensitive):** the Chagos handover (the treaty was not ratified and shelved as of May 2026), New Caledonia's Bougival status, US–Greenland talks, Somaliland recognition (only Israel so far), the Ukraine front and any deal, the ICJ Essequibo judgment (expected Nov 2026 to Jan 2027), Western Sahara after UNSC resolution 2797 (Oct 2025), and Israel's post-2024 zone beyond the Golan.
+5. **Verify (time-sensitive):** the Chagos handover (the 2025 treaty is not ratified; the implementing bill fell at prorogation on 29 April 2026), New Caledonia's Bougival status, US–Greenland talks, Somaliland recognition (only Israel so far), the Ukraine front and any deal, the ICJ Essequibo judgment (expected Nov 2026 to Jan 2027), Western Sahara after UNSC resolution 2797 (Oct 2025), and Israel's post-2024 zone beyond the Golan. Essequibo and the Golan are now checked in the country notes (Guyana and Venezuela; Syria and Israel), not on dispute cards.
 
 ### Integral parts, and whether they still get a card
 
@@ -326,7 +327,7 @@ Country cards use internationally recognised borders and show the mainland only.
 
 Taiwan, Kosovo and Palestine (including Gaza, the West Bank and East Jerusalem) get country cards. Western Sahara, Northern Cyprus and Somaliland get dispute cards only ([ADR 0008](adr/0008-state-list-borders-adjacency.md)).
 
-### Data gaps for the 15 dispute cards
+### Data gaps for the dispute cards (as planned for v2, 15 cards)
 
 - **Disputed-areas layer:** 12 cards need `ne_10m_admin_0_disputed_areas.geojson` (701 KB at commit `f1890d9f`), vendored in P1 (WS4). Northern Cyprus, Somaliland and Spratly need it too only if you use the disputed-areas shapes rather than their admin_0 rows.
 - **Somaliland:** NE's polygon includes the Las Anod / SSC-Khatumo area that Somaliland lost in 2023. Flag this on the back or trim the shape.
@@ -335,20 +336,21 @@ Taiwan, Kosovo and Palestine (including Gaza, the West Bank and East Jerusalem) 
 
 ### Intentionally excluded (revisit list)
 
-Excluded by decision on 2026-10-14 and kept on file to revisit: 29 dependencies (List 1 "exclude"), 16 disputed areas (List 2 "no card") and 9 uninhabited territories. Reasons for dependencies and disputed areas are as given in Appendices B and C; the uninhabited entries are not tabled there. Ceuta and Melilla appear twice: as integral Spanish cities in List 1 and as Morocco's claim in List 2.
+Excluded by decision on 2026-10-14, revised for v3.0.1 on 2026-10-16, and kept on file to revisit: 27 dependencies (List 1 "exclude"), 20 disputed areas (List 2 "no card") and 9 uninhabited territories, and, since v3.0.1, 18 retired cities, the capitals of 29 tier-3 states and 1 retired physical feature. v3.0.1 rule for disputes: a card only if the area is a de facto separate entity or lies outside every recognised border or across several; claims inside one state's recognised borders, or easily told in a country note, go in the country notes. Borderline cards to revisit first if the set shrinks again: Crimea, then Somaliland. Reasons for dependencies and disputed areas are as given in Appendices B and C; the uninhabited entries are not tabled there. Ceuta and Melilla appear twice: as integral Spanish cities in List 1 and as Morocco's claim in List 2.
 
-| Territory | Source | Sovereign / parties | Reason |
+| Entry | Source | Sovereign / parties | Reason |
 |---|---|---|---|
-| Abyei | Disputed (List 2) | Sudan vs South Sudan | Small, low salience |
-| Akrotiri and Dhekelia | Dependency (List 1) | UK | Military base areas; too small to read on map |
-| Åland | Dependency (List 1) | Finland | Small autonomous region; low learner salience |
+| Abyei | Disputed (List 2) | Sudan vs South Sudan | Low salience; the closest call |
+| Aleppo | City (retired v3.0.1) | Syria | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | American Samoa | Dependency (List 1) | USA | Small, remote; low salience |
 | Anguilla | Dependency (List 1) | UK | Small, obscure |
+| Arunachal Pradesh | Disputed (List 2) | India vs China | Retired v3.0.1: inside India's recognised borders; told in the India and China notes |
 | Ashmore and Cartier Islands | Uninhabited | Australia | Uninhabited; no permanent population (staff at most) |
 | Azores | Dependency (List 1) | Portugal | Integral Portuguese region; no M49 code |
 | Bouvet Island | Uninhabited | Norway | Uninhabited; no permanent population (staff at most) |
 | British Virgin Islands | Dependency (List 1) | UK | Small; confusable with US Virgin Islands |
 | Canary Islands | Dependency (List 1) | Spain | Integral Spanish region; no M49 code or NE unit |
+| Capitals of the 29 tier-3 states (Andorra la Vella, Vaduz, Valletta, Manama, Praia, São Tomé, Moroni, Port Louis, Victoria, Malé, Bandar Seri Begawan, Port Vila, Suva, Nuku'alofa, Apia, Funafuti, Tarawa, Yaren, Majuro, Palikir, Ngerulmud, Port of Spain, Saint George's, Kingstown, Bridgetown, Castries, Roseau, Saint John's, Basseterre) | Capital (retired v3.0.1) | 29 tier-3 states | Tier-3 state: microstate or small island state, capital not carded |
 | Caribbean Netherlands (Bonaire, Sint Eustatius, Saba) | Dependency (List 1) | Netherlands | Three scattered small islands; municipalities of Netherlands |
 | Ceuta | Dependency (List 1) | Spain | Integral Spanish city; Moroccan claim; tiny |
 | Ceuta and Melilla claim | Disputed (List 2) | Spain vs Morocco | Dormant claim; tiny |
@@ -356,43 +358,71 @@ Excluded by decision on 2026-10-14 and kept on file to revisit: 29 dependencies 
 | Christmas Island | Dependency (List 1) | Australia | Tiny; NE merges it with Cocos |
 | Clipperton Island | Uninhabited | France | Uninhabited; no permanent population (staff at most) |
 | Cocos (Keeling) Islands | Dependency (List 1) | Australia | Tiny atolls |
-| Cook Islands | Dependency (List 1) | New Zealand | Small; association status nuanced for a card |
 | Coral Sea Islands | Uninhabited | Australia | Uninhabited; no permanent population (staff at most) |
-| Dokdo / Takeshima | Disputed (List 2) | South Korea vs Japan | Too small to map |
+| Crimea (Peninsula) | Feature (retired v3.0.1) | — | Merged into the Crimea dispute card: same outline and answer. Its Crimean War clause moved to the dispute note |
+| Pearl River (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Mongolian Plateau (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Isthmus of Kra (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Lake Titicaca (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Lake Chad (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Lombok Strait (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Sunda Strait (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Dokdo / Takeshima (Liancourt Rocks) | Disputed (List 2) | South Korea vs Japan | A speck; low salience |
+| Essequibo | Disputed (List 2) | Guyana vs Venezuela | Retired v3.0.1: inside Guyana's recognised borders; told in the Guyana and Venezuela notes |
 | Falkland Islands claim | Disputed (List 2) | Argentina vs UK | Covered by Falklands territory card (List 1) |
+| Frankfurt | City (retired v3.0.1) | Germany | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | French Southern and Antarctic Lands | Uninhabited | France | Uninhabited; no permanent population (staff at most) |
 | Gibraltar claim | Disputed (List 2) | Spain vs UK | Covered by Gibraltar territory card |
+| Golan Heights | Disputed (List 2) | Syria vs Israel | Retired v3.0.1: inside Syria's recognised borders; told in the Syria and Israel notes |
+| Guangzhou | City (retired v3.0.1) | China | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Hala'ib Triangle | Disputed (List 2) | Egypt vs Sudan | Low salience |
+| Hamburg | City (retired v3.0.1) | Germany | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Hans Island | Disputed (List 2) | Canada and Denmark | Dispute resolved June 2022 |
 | Heard Island and McDonald Islands | Uninhabited | Australia | Uninhabited; no permanent population (staff at most) |
 | Ilemi Triangle | Disputed (List 2) | Kenya vs South Sudan | Low salience |
+| Isfahan | City (retired v3.0.1) | Iran | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Jan Mayen | Uninhabited | Norway | Uninhabited; no permanent population (staff at most) |
+| Johannesburg | City (retired v3.0.1) | South Africa | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Kalapani–Lipulekh | Disputed (List 2) | Nepal vs India | Small, minor |
+| Kuril Islands (southern four) | Disputed (List 2) | Japan vs Russia | Retired v3.0.1: inside Russia's recognised borders as drawn; told in the Japan and Russia notes |
 | Madeira | Dependency (List 1) | Portugal | Integral Portuguese region; no M49 code |
+| Malacca | City (retired v3.0.1) | Malaysia | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Mayotte | Dependency (List 1) | France | Small; low learner salience; Comoros claim |
+| Medina | City (retired v3.0.1) | Saudi Arabia | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Melilla | Dependency (List 1) | Spain | Integral Spanish city; Moroccan claim; tiny |
+| Montreal | City (retired v3.0.1) | Canada | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Montserrat | Dependency (List 1) | UK | Small; tricky capital adds noise |
 | Nagorno-Karabakh | Disputed (List 2) | Azerbaijan vs Armenian separatists | Dispute resolved by force; no longer contested territory |
-| Niue | Dependency (List 1) | New Zealand | Tiny population |
+| New Orleans | City (retired v3.0.1) | United States | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Niue | Dependency (List 1) | New Zealand (free association) | About 1,800 people; low salience |
 | Norfolk Island | Dependency (List 1) | Australia | Tiny, remote |
 | Northern Mariana Islands | Dependency (List 1) | USA | Small; overshadowed by neighbouring Guam |
-| Paracel Islands | Disputed (List 2) | China vs Vietnam, Taiwan | Tiny; Spratlys card covers the theme |
+| Osaka | City (retired v3.0.1) | Japan | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Paracel Islands | Disputed (List 2) | China vs Vietnam, Taiwan | Merged into the Spratly Islands note (same South China Sea dispute) |
 | Pitcairn Islands | Dependency (List 1) | UK | ~50 people; Bounty trivia only |
-| Russian-occupied Donetsk, Luhansk, Zaporizhzhia, Kherson | Disputed (List 2) | Ukraine vs Russia | Control line unstable and NE lacks it; revisit if a line freezes |
+| Potosí | City (retired v3.0.1) | Bolivia | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Rotterdam | City (retired v3.0.1) | Netherlands | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Russian-occupied Donetsk, Luhansk, Zaporizhzhia, Kherson | Disputed (List 2) | Ukraine vs Russia | No common name for the area, partly held by Ukraine, and NE lacks the line; the 2022 annexation claim is told in the Ukraine note |
 | Saint Barthélemy | Dependency (List 1) | France | Tiny; unreadable at country scale |
 | Saint Helena, Ascension and Tristan da Cunha | Dependency (List 1) | UK | Remote, tiny population; three scattered island groups |
 | Saint Martin (French part) | Dependency (List 1) | France | Half an island; tiny |
 | Saint Pierre and Miquelon | Dependency (List 1) | France | Tiny; curiosity only |
-| Scarborough Shoal | Disputed (List 2) | China vs Philippines, Taiwan | Reef, no land outline |
-| Senkaku / Diaoyu Islands | Disputed (List 2) | Japan vs China, Taiwan | Specks too small to outline; mention on Japan/China backs |
-| Siachen Glacier | Disputed (List 2) | India vs Pakistan | Fold into Indian-administered Kashmir card |
+| Samarkand | City (retired v3.0.1) | Uzbekistan | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Scarborough Shoal | Disputed (List 2) | China vs Philippines, Taiwan | Merged into the Spratly Islands note (same South China Sea dispute) |
+| Senkaku / Diaoyu Islands | Disputed (List 2) | Japan vs China, Taiwan | A speck; told in the Japan and China notes |
+| Seville | City (retired v3.0.1) | Spain | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Siachen Glacier | Disputed (List 2) | India vs Pakistan | Merged into the Kashmir card |
 | Sint Maarten | Dependency (List 1) | Netherlands | Half an island; tiny |
 | South Georgia and the South Sandwich Islands | Uninhabited | UK | Uninhabited; no permanent population (staff at most) |
 | Tokelau | Dependency (List 1) | New Zealand | Tiny atolls; no capital |
 | Turks and Caicos Islands | Dependency (List 1) | UK | Small Caribbean territory; low salience |
 | US Minor Outlying Islands (Wake, Midway, Johnston, Baker, Howland, Jarvis, Kingman Reef, Palmyra, Navassa) | Uninhabited | USA | Uninhabited; no permanent population (staff at most) |
 | US Virgin Islands | Dependency (List 1) | USA | Small Caribbean islands; low geographic weight |
+| Volgograd | City (retired v3.0.1) | Russia | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
 | Wallis and Futuna | Dependency (List 1) | France | Small, obscure |
+| Xi'an | City (retired v3.0.1) | China | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Zanzibar | City (retired v3.0.1) | Tanzania | Lower salience than the cities kept ([cities research](research/cities.md#retired-in-v301-revisit)) |
+| Åland | Dependency (List 1) | Finland | Small autonomous region; low learner salience |
 
 ## Open decisions
 
@@ -481,7 +511,7 @@ Summary of the 2026-10-14 build plan. Each workstream runs in its own git worktr
 | Saint Helena, Ascension and Tristan da Cunha | UK | Jamestown | 394 | 7,900 | `A0:Dependency` (one row, all three) | exclude | Remote, tiny population; three scattered island groups |
 | Pitcairn Islands | UK | Adamstown | 47 | 50 | `A0:Dependency` | exclude | ~50 people; Bounty trivia only |
 | British Indian Ocean Territory | UK | — (Diego Garcia base) | 60 | ~3,000 military/contractors; no permanent residents | `A0:Disputed` (Mauritius claim); `DA` has Diego Garcia overlay | **include** | Diego Garcia base; Chagos sovereignty transfer pending (verify) |
-| Akrotiri and Dhekelia | UK | Episkopi Cantonment | 254 | ~18,000 incl. Cypriots (2020) | `A0:Dependency` (two rows) | exclude | Military base areas; too small to read on map |
+| Akrotiri and Dhekelia | UK | Episkopi Cantonment | 254 | ~18,000 incl. Cypriots (2020) | `A0:Dependency` (two rows) | **include** (v3.0.1) | UK bases retained in 1960; inset at Cyprus scale reads |
 | Isle of Man | UK (Crown dependency) | Douglas | 572 | 92,700 | `A0:Country` (SOV UK) | **include** | Crown dependency; central Irish Sea; commonly mapped |
 | Jersey | UK (Crown dependency) | Saint Helier | 116 | 103,900 | `A0:Country` (SOV UK) | **include** | Largest Channel Island; crown dependency; finance |
 | Guernsey | UK (Crown dependency) | Saint Peter Port | 78 | 67,900 | `A0:Country` (SOV UK) | **include** | Pairs with Jersey; Channel Islands set |
@@ -503,8 +533,8 @@ Summary of the 2026-10-14 build plan. Each workstream runs in its own git worktr
 | Norfolk Island | Australia | Kingston | 36 | 1,700 | `A0:Dependency` | exclude | Tiny, remote |
 | Christmas Island | Australia | Flying Fish Cove | 135 | 1,700 | `A0:Dependency` "Indian Ocean Ter." (merged with Cocos); `MU:Geo unit` | exclude | Tiny; NE merges it with Cocos |
 | Cocos (Keeling) Islands | Australia | West Island | 14 | 600 | as Christmas Island | exclude | Tiny atolls |
-| Cook Islands | New Zealand (free association) | Avarua | 236 | 7,600 | `A0:Dependency` | exclude | Small; association status nuanced for a card |
-| Niue | New Zealand (free association) | Alofi | 260 | 1,800 | `A0:Dependency` | exclude | Tiny population |
+| Cook Islands | New Zealand (free association) | Avarua | 236 | 7,600 | `A0:Dependency` | **include** (v3.0.1) | Free association with New Zealand; detail inset makes it readable |
+| Niue | New Zealand (free association) | Alofi | 260 | 1,800 | `A0:Dependency` | exclude | About 1,800 people; low salience |
 | Tokelau | New Zealand | — (rotates among Atafu, Nukunonu, Fakaofo) | 12 | 2,500 | `in New Zealand`; `MU:Geo unit` | exclude | Tiny atolls; no capital |
 | Canary Islands ‡ | Spain | Santa Cruz de Tenerife / Las Palmas (shared) | 7,447 † | ~2,250,000 † | `in Spain`; not in MU | exclude | Integral Spanish region; no M49 code or NE unit |
 | Ceuta ‡ | Spain | Ceuta | 18.5 † | ~83,000 † | `in Spain`; `DA:Geo subunit` | exclude | Integral Spanish city; Moroccan claim; tiny |
@@ -516,7 +546,7 @@ Summary of the 2026-10-14 build plan. Each workstream runs in its own git worktr
 
 † Not in the Factbook; approximate, **verify**.
 
-**Counts:** 52 rows, **23 include**, 29 exclude.
+**Counts:** 52 rows, **25 include**, 27 exclude.
 
 ## Appendix C: List 2: disputed and occupied territories
 
@@ -526,28 +556,26 @@ Country cards use internationally recognised borders. NE's default admin_0 layer
 |---|---|---|---|---|---|
 | Crimea | Ukraine vs Russia | Russia since 2014 (annexed; not recognised) | `in Russia`; `DA:Disputed` "Crimea" (~27,100 km²) | High | **card**: largest annexation in Europe since 1945; stable outline |
 | Russian-occupied Donetsk, Luhansk, Zaporizhzhia, Kherson | Ukraine vs Russia | Mostly Russia since 2022; front still moving (**verify**) | `in Ukraine`; `DA:Breakaway` DPR (~9,450 km²) and LPR (~8,300 km²) at **2014–22 lines only**; nothing for Zaporizhzhia or Kherson | High | **no card**: control line unstable and NE lacks it. Revisit if a line freezes, or use oblast outlines from admin_1 (not vendored) |
-| Kashmir: Indian-administered (J&K + Ladakh) | India vs Pakistan (China claims parts of Ladakh) | India | `in India`; `DA:Disputed` "Jammu and Kashmir" (~104,500 km², includes Ladakh); Siachen separate `A0:Indeterminate` | High | **card**: core of an enduring nuclear-armed dispute |
-| Kashmir: Pakistani-administered (Azad Kashmir + Gilgit-Baltistan) | Pakistan vs India | Pakistan | `in Pakistan`; `DA:Disputed` "Azad Kashmir" (~12,000) + "Gilgit-Baltistan" (~65,200) | High | **card**: other half of the LoC; merge both polygons |
-| Aksai Chin (Chinese-administered Kashmir, with Shaksgam) | China vs India | China since 1950s; 1962 war | `in China`; `DA:Disputed` "Aksai Chin" (~31,000) + "Shaksam Valley" (~5,300) | High | **card**: third Kashmir part; LAC flashpoint (2020 clashes) |
-| Arunachal Pradesh | India vs China ("Zangnan") | India | `in India`; `DA:Disputed` (~68,000 km²) | High | **card**: large, enduring Chinese claim; mappable state outline |
+| Kashmir (the former princely state) | India vs Pakistan vs China | Split: India (Jammu and Kashmir, Ladakh, Siachen), Pakistan (Azad Kashmir, Gilgit-Baltistan), China (Aksai Chin, Shaksgam) | `DA:Disputed` "Jammu and Kashmir" (~104,500 km², includes Ladakh), "Azad Kashmir" (~12,000), "Gilgit-Baltistan" (~65,200), "Aksai Chin" (~31,000), "Shaksam Valley" (~5,300), Demchok, Siachen (`A0:Indeterminate`) | High | **card** (v3.0.1): one card for the whole dispute; replaces the three v2/v3.0.0 part cards |
+| Arunachal Pradesh | India vs China ("Zangnan") | India | `in India`; `DA:Disputed` (~68,000 km²) | High | **no card** (retired v3.0.1): inside India's recognised borders; told in the India and China notes |
 | Western Sahara | Morocco vs Polisario/SADR | Morocco ~2/3 west of berm; Polisario east | `A0:Indeterminate` ESH = **only east of berm** (~90,500); `DA` has both parts (Morocco-administered ~177,800 + SADR ~90,500) | High | **card**: whole-territory outline from both DA parts. UNSC 2797 (Oct 2025) backs autonomy plan (**verify**) |
-| Golan Heights | Syria vs Israel | Israel since 1967 (annexed 1981; US recognised 2019) | `in Israel`; `DA:Indeterminate` (~1,200 km²) + UNDOF Zone overlay | High | **card**: enduring; Israeli presence beyond line since Dec 2024 (**verify**) |
+| Golan Heights | Syria vs Israel | Israel since 1967 (annexed 1981; US recognised 2019) | `in Israel`; `DA:Indeterminate` (~1,200 km²) + UNDOF Zone overlay | High | **no card** (retired v3.0.1): inside Syria's recognised borders; told in the Syria and Israel notes |
 | Abkhazia | Georgia vs Abkhaz authorities / Russia | Russian-backed separatists since 1993 | `in Georgia`; `DA:Breakaway` (~8,600 km²) | Medium-high | **card**: 2008 war; recognised by Russia; stable outline |
 | South Ossetia | Georgia vs separatists / Russia | Russian-backed separatists | `in Georgia`; `DA:Breakaway` (~4,500 km²) | Medium-high | **card**: 2008 war trigger; stable outline |
 | Transnistria | Moldova vs separatists | Separatists; Russian troops present | `in Moldova`; `DA:Breakaway` (~3,050 km²) | Medium | **card**: frozen conflict; Russian troops; stable outline |
 | Northern Cyprus | Cyprus vs TRNC / Turkey | TRNC since 1974 (recognised only by Turkey) | `A0:Sovereign country` (own row) + `DA:Disputed` (~3,300 km²); UN buffer zone `A0:Indeterminate` | High | **card**: divides an EU member; enduring since 1974 |
 | Somaliland | Somalia vs Somaliland | Somaliland (Hargeisa); SSC-Khatumo holds Las Anod area since 2023 | `A0:Sovereign country` (own row, ~167,400 km², **includes Las Anod**) | Medium-high | **card**: de facto state since 1991; recognised by Israel Dec 2025 only (**verify**) |
-| Kuril Islands (Iturup, Kunashir, Shikotan, Habomai) | Japan vs Russia | Russia since 1945 | `in Russia`; `DA:Disputed` "Kuril Is." (~5,000 km²) | Medium-high | **card**: blocks a Japan–Russia peace treaty; clear outline |
-| Spratly Islands | China, Taiwan, Vietnam, Philippines, Malaysia, Brunei | Split; features held by five claimants | `A0:Indeterminate` own row (~13 km² of features) | High | **card**: centre of South China Sea dispute; ring-highlighted |
-| Essequibo (Guayana Esequiba) | Venezuela vs Guyana | Guyana | `in Guyana`; `DA:Disputed` "West of Essequibo River" (~142,400 km²) | High | **card**: ~2/3 of Guyana; ICJ judgment pending (**verify**) |
-| Senkaku / Diaoyu Islands | Japan vs China, Taiwan | Japan | `in Japan`; `DA:Disputed` "Pinnacle Is." (~5 km²) | Medium-high | **no card**: specks too small to outline; mention on Japan/China backs |
-| Paracel Islands | China vs Vietnam, Taiwan | China since 1974 | `in China`; `DA:Geo unit` (~6 km²) | Medium | **no card**: tiny; Spratlys card covers the theme |
-| Scarborough Shoal | China vs Philippines, Taiwan | China (de facto since 2012) | `A0:Indeterminate` own row | Medium | **no card**: reef, no land outline |
+| Kuril Islands (Iturup, Kunashir, Shikotan, Habomai) | Japan vs Russia | Russia since 1945 | `in Russia`; `DA:Disputed` "Kuril Is." (~5,000 km²) | Medium-high | **no card** (retired v3.0.1): a claim on Russian-held islands; told in the Japan and Russia notes |
+| Spratly Islands | China, Taiwan, Vietnam, Philippines, Malaysia, Brunei | Split; features held by five claimants | `A0:Indeterminate` own row (~13 km² of features) | High | **card**: centre of South China Sea dispute; ring-highlighted; the note also covers the Paracels and Scarborough Shoal |
+| Essequibo (Guayana Esequiba) | Venezuela vs Guyana | Guyana | `in Guyana`; `DA:Disputed` "West of Essequibo River" (~142,400 km²) | High | **no card** (retired v3.0.1): inside Guyana's recognised borders; told in the Guyana and Venezuela notes |
+| Senkaku / Diaoyu Islands | Japan vs China, Taiwan | Japan | `in Japan`; `DA:Disputed` "Pinnacle Is." (~5 km²) | Medium-high | **no card**: a speck; told in the Japan and China notes |
+| Paracel Islands | China vs Vietnam, Taiwan | China since 1974 | `in China`; `DA:Geo unit` (~6 km²) | Medium | **no card**: merged into the Spratly Islands note |
+| Scarborough Shoal | China vs Philippines, Taiwan | China (de facto since 2012) | `A0:Indeterminate` own row | Medium | **no card**: merged into the Spratly Islands note |
 | Falkland Islands claim | Argentina vs UK | UK | `A0:Disputed` | Medium | **no card**: covered by Falklands territory card (List 1) |
 | Gibraltar claim | Spain vs UK | UK | `A0:Disputed` | Low-medium | **no card**: covered by Gibraltar territory card |
 | Chagos Archipelago (BIOT) | Mauritius vs UK | UK; treaty signed May 2025, ratification shelved (**verify**) | `A0:Disputed`; `DA:Disputed` | Medium | **no card**: covered by BIOT territory card; status in flux |
 | Nagorno-Karabakh | Azerbaijan vs Armenian separatists | Azerbaijan since Sept 2023 offensive; the de facto republic formally dissolved 1 Jan 2024 | `in Azerbaijan`; `DA:Breakaway` "Artsakh" (~3,100 km², **stale**) | Historical | **no card**: dispute resolved by force; no longer contested territory |
-| Siachen Glacier | India vs Pakistan | India since 1984 | `A0:Indeterminate` own row (~2,100 km²) | Medium | **no card**: fold into Indian-administered Kashmir card |
+| Siachen Glacier | India vs Pakistan | India since 1984 | `A0:Indeterminate` own row (~2,100 km²) | Medium | **no card**: merged into the Kashmir card |
 | Kalapani–Lipulekh | Nepal vs India | India | `in India`; `DA:Disputed` "Near Om Parvat" | Low | **no card**: small, minor |
 | Abyei | Sudan vs South Sudan | Joint/UN (UNISFA) | `in Sudan`; `DA:Disputed` | Low-medium | **no card**: small, low salience |
 | Hala'ib Triangle | Egypt vs Sudan | Egypt | `in Egypt`; `DA:Disputed` | Low | **no card**: low salience |
@@ -556,4 +584,4 @@ Country cards use internationally recognised borders. NE's default admin_0 layer
 | Ceuta and Melilla | Spain vs Morocco claim | Spain | `DA:Geo subunit` (no claim note in NE) | Low | **no card**: dormant claim; tiny |
 | Hans Island | Canada and Denmark | Split by 2022 agreement | `DA:Disputed` "claimed by Canada" (**stale**) | Resolved | **no card**: dispute resolved June 2022 |
 
-**Counts:** 31 rows, **15 card**, 16 no card.
+**Counts:** 29 rows, **9 card**, 20 no card. v3.0.0 had 31 rows and 15 cards; v3.0.1 merged the three Kashmir rows and retired 4 more ([ADR 0008](adr/0008-state-list-borders-adjacency.md#amendment-fewer-dispute-cards-v301)).

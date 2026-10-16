@@ -63,6 +63,7 @@
   expect: [1.4, 42.42, 1.77, 42.65]
   capital:
     name: Andorra la Vella
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149089
     expect: [1.48, 42.46, 1.58, 42.56]
     note: >-
@@ -437,6 +438,7 @@
   expect: [9.47, 47.05, 9.62, 47.27]
   capital:
     name: Vaduz
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159146061
     expect: [9.47, 47.08, 9.57, 47.18]
     note: >-
@@ -499,6 +501,7 @@
   expect: [14.18, 35.8, 14.57, 36.08]
   capital:
     name: Valletta
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151199
     expect: [14.46, 35.85, 14.56, 35.95]
     note: >-
@@ -761,7 +764,9 @@
   tier: 1
   note: >-
     On the Black Sea, the second-largest country in Europe after Russia. It borders Russia, Belarus, Poland,
-    Slovakia, Hungary, Romania and Moldova. Russia seized Crimea in 2014 and launched a full-scale invasion in 2022.
+    Slovakia, Hungary, Romania and Moldova. Russia seized Crimea in 2014 and launched a full-scale invasion in 2022;
+    that September it claimed to annex the Donetsk, Luhansk, Zaporizhzhia and Kherson oblasts, which UN General
+    Assembly resolution ES-11/4 rejected.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321345}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}}
@@ -800,7 +805,8 @@
   note: >-
     The world's largest country, stretching from Eastern Europe across northern Asia to the Pacific, with the
     exclave of Kaliningrad. Mount Elbrus is Europe's highest peak, and Lake Baikal is the world's deepest lake.
-    Crimea lies within Ukraine's internationally recognised borders.
+    Crimea lies within Ukraine's internationally recognised borders. Russia holds the southern Kuril Islands, which
+    the Soviet Union took in 1945 and Japan claims.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321201}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}, subtract: true}
@@ -916,8 +922,9 @@
   note: >-
     On the Mediterranean between Lebanon and Turkey, also bordering Iraq, Jordan and Israel; the Euphrates crosses
     it on its way from Turkey to Iraq, and it shares the Tigris. A French mandate until independence in 1946, it
-    fell into civil war from 2011. Israel has controlled the Golan Heights since 1967, but internationally
-    recognised borders place them in Syria.
+    fell into civil war from 2011. Israel captured the Golan Heights from it in 1967 and in 1981 extended its law
+    there, a step the UN Security Council declared null and void; internationally recognised borders place the Golan
+    in Syria.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321295}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}}
@@ -955,8 +962,9 @@
   tier: 1
   note: >-
     On the Mediterranean between Egypt and Lebanon, also bordering Syria, Jordan, the West Bank and the Gaza Strip;
-    the Dead Sea lies on its eastern edge. The State of Israel was established in 1948. Internationally recognised
-    borders do not place the Golan Heights or East Jerusalem in Israel.
+    the Dead Sea lies on its eastern edge. The State of Israel was established in 1948. It has held the Golan
+    Heights since capturing them from Syria in 1967, but internationally recognised borders do not place them or
+    East Jerusalem in Israel.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320895}}
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}, subtract: true}
@@ -1079,6 +1087,7 @@
   expect: [50.38, 25.57, 50.82, 26.29]
   capital:
     name: Manama
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150451
     expect: [50.53, 26.19, 50.63, 26.29]
     note: >-
@@ -1524,6 +1533,7 @@
   expect: [-25.37, 14.8, -22.66, 17.2]
   capital:
     name: Praia
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151205
     expect: [-23.57, 14.87, -23.47, 14.97]
     note: >-
@@ -1833,6 +1843,7 @@
   expect: [6.46, 0.02, 7.47, 1.7]
   capital:
     name: São Tomé
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151195
     expect: [6.68, 0.29, 6.78, 0.39]
     note: >-
@@ -2114,6 +2125,7 @@
   expect: [43.21, -12.39, 44.53, -11.36]
   capital:
     name: Moroni
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149083
     expect: [43.19, -11.75, 43.29, -11.65]
     note: >-
@@ -2133,6 +2145,7 @@
   expect: [56.52, -20.52, 63.5, -10.32]
   capital:
     name: Port Louis
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150443
     expect: [57.45, -20.22, 57.55, -20.12]
     note: >-
@@ -2152,6 +2165,7 @@
   expect: [46.2, -9.76, 56.29, -3.79]
   capital:
     name: Victoria
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151191
     expect: [55.4, -4.67, 55.5, -4.57]
     note: >-
@@ -2169,6 +2183,7 @@
   expect: [72.68, -0.69, 73.76, 7.11]
   capital:
     name: Malé
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151201
     expect: [73.46, 4.12, 73.56, 4.22]
     note: >-
@@ -2200,7 +2215,8 @@
   tier: 1
   note: >-
     It fills most of the South Asian subcontinent, a peninsula between the Arabian Sea and the Bay of Bengal, with
-    the Himalayas along its northern edge. It administers part of Kashmir.
+    the Himalayas along its northern edge. It holds the largest part of disputed Kashmir, and administers Arunachal
+    Pradesh in the far north-east, which China claims as "Zangnan".
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320847}}
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320963}}
@@ -2273,8 +2289,8 @@
   tier: 1
   note: >-
     It runs from the Arabian Sea north to the high mountains, between India to the east and Iran and Afghanistan to
-    the west. It holds the Khyber and Bolan passes, old routes from Central Asia into India; it administers part of
-    Kashmir.
+    the west. It holds the Khyber and Bolan passes, old routes from Central Asia into India, and the north-west of
+    disputed Kashmir, Azad Kashmir and Gilgit-Baltistan, which India claims.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321153}}
   expect: [60.84, 23.69, 77.05, 37.06]
@@ -2419,10 +2435,10 @@
   uids: {country: yxl6uywlbi, capital: ugWAv0E8uH}
   tier: 1
   note: >-
-    China fills much of eastern Asia, with coasts on the Yellow, East China and South China seas and, with Russia,
-    it borders more countries than any other. Its great rivers, the Yangtze and the Huang He (Yellow River), run
-    east to the Pacific, and Mount Everest stands on its border with Nepal. Recorded Chinese civilisation reaches
-    back to the Shang dynasty, and emperors ruled until the Republic of China replaced them.
+    China fills much of eastern Asia, with coasts on the Yellow, East China and South China seas, and with Russia it
+    borders more countries than any other. The Yangtze and the Huang He (Yellow River) run east to the Pacific.
+    Recorded Chinese civilisation reaches back to the Shang dynasty. China holds Aksai Chin, in Kashmir, which India
+    claims, and claims India's Arunachal Pradesh and the Japanese-administered Senkaku Islands.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320471}}
   expect: [73.6, 15.77, 134.78, 53.57]
@@ -2494,9 +2510,10 @@
   uids: {country: kHWZMNI4KE, capital: XP8UpFlhnG}
   tier: 1
   note: >-
-    An island chain off the east coast of mainland Asia, between the Sea of Japan and the Pacific Ocean. Its four
-    main islands, from north to south, are Hokkaido, Honshu, Shikoku and Kyushu, and the country is mostly rugged
-    mountains. It sits on the Pacific Ring of Fire and has frequent earthquakes.
+    An island chain off the east coast of mainland Asia; its four main islands, from north to south, are Hokkaido,
+    Honshu, Shikoku and Kyushu, on the earthquake-prone Pacific Ring of Fire. Russia holds the southern Kuril
+    Islands, which the Soviet Union took in 1945 and Japan claims, and the dispute has kept the two from signing a
+    Second World War peace treaty. Japan administers the Senkaku Islands, which China and Taiwan claim.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320937}}
   mainland: [122.0, 24.0, 146.0, 46.0]
@@ -2580,6 +2597,7 @@
   expect: [113.99, 4.01, 115.37, 5.06]
   capital:
     name: Bandar Seri Begawan
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151083
     expect: [114.88, 4.83, 114.98, 4.93]
     note: >-
@@ -2800,6 +2818,7 @@
   expect: [166.52, -20.26, 169.9, -13.06]
   capital:
     name: Port Vila
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150579
     expect: [168.27, -17.78, 168.37, -17.68]
     note: >-
@@ -2838,6 +2857,7 @@
   expect: [174.58, -21.72, -178.21, -12.47]
   capital:
     name: Suva
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150917
     expect: [178.39, -18.18, 178.49, -18.08]
     note: >-
@@ -2857,6 +2877,7 @@
   expect: [-176.22, -22.34, -173.91, -15.55]
   capital:
     name: Nuku'alofa
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151187
     expect: [-175.27, -21.19, -175.17, -21.09]
     note: >-
@@ -2875,6 +2896,7 @@
   expect: [-172.79, -14.06, -171.43, -13.46]
   capital:
     name: Apia
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159151197
     expect: [-171.82, -13.89, -171.72, -13.79]
     note: >-
@@ -2892,6 +2914,7 @@
   expect: [176.12, -9.43, 179.91, -5.67]
   capital:
     name: Funafuti
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149071
     expect: [179.17, -8.57, 179.27, -8.47]
     note: >-
@@ -2911,6 +2934,7 @@
   expect: [169.52, -11.47, -151.78, 4.73]
   capital:
     name: Tarawa
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149079
     expect: [172.97, 1.29, 173.07, 1.39]
     note: >-
@@ -2931,6 +2955,7 @@
   expect: [166.9, -0.56, 166.96, -0.49]
   capital:
     name: Yaren
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     file: yaren.geojson
     expect: [166.87, -0.58, 166.97, -0.48]
     note: >-
@@ -2949,6 +2974,7 @@
   expect: [165.28, 4.57, 172.03, 14.62]
   capital:
     name: Majuro
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149063
     expect: [171.33, 7.05, 171.43, 7.15]
     note: >-
@@ -2968,6 +2994,7 @@
   expect: [138.06, 0.91, 163.05, 9.78]
   capital:
     name: Palikir
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149061
     expect: [158.1, 6.87, 158.2, 6.97]
     note: >-
@@ -2986,6 +3013,7 @@
   expect: [131.13, 2.94, 134.73, 8.1]
   capital:
     name: Ngerulmud
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149073
     expect: [134.58, 7.44, 134.68, 7.54]
     note: >-
@@ -3398,8 +3426,8 @@
   note: >-
     Guyana lies on the Atlantic coast between Venezuela and Suriname; most people live on the low coastal plain, and
     the interior is largely rainforest and highland. A Dutch and then British colony, independent since 1966, it has
-    English as its official language. Venezuela claims the region west of the Essequibo River, which Guyana
-    administers, and in 2018 Guyana took the dispute to the International Court of Justice.
+    English as its official language. Venezuela claims the region west of the Essequibo River, about two-thirds of
+    Guyana, which Guyana administers; Guyana took the dispute to the International Court of Justice in 2018.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320817}}
   expect: [-61.4, 1.18, -56.48, 8.56]
@@ -3419,7 +3447,7 @@
     Venezuela faces the Caribbean across the top of South America, with the Andes in the north-west, the Llanos
     plains along the Orinoco River in the centre, and the Guiana Highlands in the south-east. Its name means "Little
     Venice", after the stilt houses explorers saw on Lake Maracaibo in 1499. It claims the region west of the
-    Essequibo River that Guyana administers, a dispute Guyana took to the International Court of Justice in 2018.
+    Essequibo River, about two-thirds of Guyana, a dispute before the International Court of Justice.
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321411}}
   expect: [-73.4, 0.64, -59.81, 15.71]
@@ -3444,6 +3472,7 @@
   expect: [-61.93, 10.04, -60.52, 11.36]
   capital:
     name: Port of Spain
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149307
     expect: [-61.57, 10.6, -61.47, 10.7]
     note: >-
@@ -3463,6 +3492,7 @@
   expect: [-61.8, 12.0, -61.42, 12.53]
   capital:
     name: Saint George's
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150447
     expect: [-61.79, 12.0, -61.69, 12.1]
     note: >-
@@ -3482,6 +3512,7 @@
   expect: [-61.46, 12.58, -61.12, 13.39]
   capital:
     name: Kingstown
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150431
     expect: [-61.27, 13.11, -61.17, 13.21]
     note: >-
@@ -3501,6 +3532,7 @@
   expect: [-59.66, 13.05, -59.42, 13.35]
   capital:
     name: Bridgetown
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150339
     expect: [-59.67, 13.05, -59.57, 13.15]
     note: >-
@@ -3520,6 +3552,7 @@
   expect: [-61.08, 13.71, -60.88, 14.12]
   capital:
     name: Castries
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150433
     expect: [-61.04, 13.96, -60.94, 14.06]
     note: >-
@@ -3539,6 +3572,7 @@
   expect: [-61.49, 15.2, -61.24, 15.64]
   capital:
     name: Roseau
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159149847
     expect: [-61.44, 15.25, -61.34, 15.35]
     note: >-
@@ -3557,6 +3591,7 @@
   expect: [-62.35, 16.93, -61.66, 17.73]
   capital:
     name: Saint John's
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150457
     expect: [-61.9, 17.07, -61.8, 17.17]
     note: >-
@@ -3576,6 +3611,7 @@
   expect: [-62.87, 17.1, -62.53, 17.42]
   capital:
     name: Basseterre
+    retired: true  # v3.0.1: no capital card for a tier-3 state
     ne_id: 1159150435
     expect: [-62.77, 17.25, -62.67, 17.35]
     note: >-

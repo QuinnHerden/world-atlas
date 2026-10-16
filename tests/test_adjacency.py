@@ -154,7 +154,8 @@ class CurriculumTest(unittest.TestCase):
         self.assertEqual(len(country_ids()), 197)
         territories = [t for r in curriculum.regions for t in r.territories]
         disputes = [d for r in curriculum.regions for d in r.disputes]
-        self.assertEqual((len(territories), len(disputes)), (23, 15))
+        subnationals = [c for r in curriculum.regions for c in r.subnationals]
+        self.assertEqual((len(subnationals), len(territories), len(disputes)), (5, 25, 9))
 
     def small(self, **region) -> list[str]:
         base = {"number": 1, "slug": "r", "name": "R", "entry": "a", "exit": "b", "countries": ["a", "b", "c"]}

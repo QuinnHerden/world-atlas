@@ -1,6 +1,6 @@
 # 5. Card sources and the Card DTO
 
-Status: proposed, 2026-10-14. Implements the [World Atlas plan](../world-atlas-plan.md#data-model)'s data model. Built in P1 (WS2 `RenderSpec`, WS3 `Card`) and P2 (the new sources and the continents).
+Status: proposed, 2026-10-14. Implements the [World Atlas plan](../world-atlas-plan.md#data-model)'s data model. Built in P1 (WS2 `RenderSpec`, WS3 `Card`) and P2 (the new sources and the continents). Amended 2026-10-16 for v3.0.1: a `subnational` kind, and no capital card for a tier-3 state (see [the amendment](#amendment-subnationals-and-tier-3-capitals-v301)).
 
 ## Context
 
@@ -33,7 +33,7 @@ Source modules live in `src/geofeat/sources/`: `features.py`, `political.py` (co
 - **`answer_lines`** is a tuple of plain-text lines. deckgen escapes each one and joins them with `<br>`, so a capital's back reads "Paris", then "Capital of France". A city's second line is its country; a territory's is its status; a dispute's is `Disputed: <parties>`.
 - **`host`** is the key of the country whose run a pocket sits in, after its capital. **`anchor`** is the key of the card a card comes right after in the ring order: a city's feature (Alexandria after the Nile Delta). Since v3.0.0 features take no anchor. **`parents`** must come first: a capital's country, a city's country and capital.
 - **`render`** is a `RenderRef`: the `RenderSpec`, plus a `geometry` provider (and a `dot` provider for capitals and cities) that resolves only when called, so building cards doesn't load Natural Earth.
-- **Tags:** every card gets `kind::<kind>` and a `block::` tag (`pass::` until v3.0.0), which must match `card.block` (derived from its kind). Political and city cards also get `region::NN`. Countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. `tier::` and `category::` stay.
+- **Tags:** every card gets `kind::<kind>` and a `block::` tag (`pass::` until v3.0.0), which must match `card.block` (derived from its kind). Political and city cards also get `region::NN`. Countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. `category::` stays; `tier::` was dropped in v3.0.1 (the tier is internal to the study order).
 
 **Two notes per state.** A country and its capital are separate notes with separate uids (`uids: {country, capital}`). The PoC's split cards showed why: the two cards differ on both sides, so ankc's reversed cards can't express them, and cloze can't hide one image per card. Two notes also give each card its own tags, position and retirement. That is how a same-name microstate drops its capital card.
 
@@ -48,3 +48,11 @@ Source modules live in `src/geofeat/sources/`: `features.py`, `political.py` (co
 - Anki won't bury a country and its capital as siblings, because they're different notes. The order engine spaces them instead ([ADR 0009](0009-curriculum-order.md)).
 - The 166 feature uids and the note model id don't change. Existing notes update in place on re-import ([ADR 0007](0007-rename-and-migration.md)).
 - WS2's exit check is that the 132 feature PNG names are identical before and after the extraction.
+
+## Amendment: subnationals and tier-3 capitals (v3.0.1)
+
+2026-10-16. The table above gives the counts at the time: v3.0.1 has 5 subnationals, 25 dependent territories and 9 disputed areas in `data/territories.yaml`, 162 capitals and 25 cities.
+
+- **New kind, `subnational`:** a part of a state, `Subnational` in `polities.py`, an entry in `data/territories.yaml` with `kind: subnational`. Its `prompt` is its own `type` ("Constituent country" for England, Scotland, Wales and Northern Ireland; "Exclave" for Kaliningrad Oblast), and its `answer_lines` are its name and `status_line` ("Country of the United Kingdom"). It is drawn with a solid outline, as a country, takes `category::subnational` and `block::countries`, and has no capital card. Its tag is `id_subnational_<id>`.
+- **Capitals:** the same-name rule now extends to every tier-3 state (microstates and small island states): its capital has no card. The capital stays in `countries.yaml` with `retired: true`, so its uid is kept, as the two-notes design allows.
+- **Retirement** reaches every source: subnational, territory, dispute and city entries, and a country's `capital`, take `retired: true`.

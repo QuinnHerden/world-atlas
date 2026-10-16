@@ -1,10 +1,73 @@
-# Territory and dispute cards (docs/world-atlas-plan.md#territories, ADR 0008). Outlines from
+# Subnational, territory and dispute cards (docs/world-atlas-plan.md#territories, ADR 0008). Outlines from
 # docs/research/ne-political-layers.md (b); notes verbatim from docs/research/blurbs/d-americas-continents-territories-disputes.md (ws/blurbs-d).
-# Region and host are not stored here: they come from data/curriculum.yaml's territories and disputes maps, and every id
-# must be placed there. The adjacency graph and the region outlines read `geometry` too (countries_ne.py). parties:
+# Region and host are not stored here: they come from data/curriculum.yaml's subnationals, territories and disputes
+# maps, and every active id must be placed there. A subnational (v3.0.1) is part of `state`: a constituent country or
+# an exclave, its front word in `type`; it draws a solid outline, as a country's, and `within` keeps the parts inside
+# a box. The adjacency graph and the region outlines read `geometry` too (countries_ne.py). parties:
 # states or authorities that claim or administer the area, not backers or recognisers; a self-declared entity is
 # labelled by its short common name.
 # frame: the card's own exception to the framing rules, as in countries.yaml.
+
+- kind: subnational
+  type: Constituent country
+  id: england
+  uid: gqL3vt2o13
+  name: England
+  state: united-kingdom
+  status_line: Country of the United Kingdom
+  geometry:  # the 4 map units tile the United Kingdom's admin_0 row exactly
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320743}}
+  expect: [-6.4, 49.8, 1.8, 55.9]
+  note: England is the largest of the United Kingdom's four countries, home to about 85% of its people, and its capital, London, is also the UK's.
+
+- kind: subnational
+  type: Constituent country
+  id: scotland
+  uid: k1g6CtgDY4
+  name: Scotland
+  state: united-kingdom
+  status_line: Country of the United Kingdom
+  geometry:  # the 4 map units tile the United Kingdom's admin_0 row exactly
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320747}}
+  expect: [-13.7, 54.6, -0.7, 60.9]
+  note: Scotland, the northern part of Great Britain, joined England in the Kingdom of Great Britain under the Acts of Union of 1707. It has had its own devolved parliament since 1999, and in a 2014 referendum voted 55% to 45% against independence.
+
+- kind: subnational
+  type: Constituent country
+  id: wales
+  uid: y9j8OdBWUL
+  name: Wales
+  state: united-kingdom
+  status_line: Country of the United Kingdom
+  geometry:  # the 4 map units tile the United Kingdom's admin_0 row exactly
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320749}}
+  expect: [-5.4, 51.3, -2.6, 53.5]
+  note: Wales, in the west of Great Britain, has had its own devolved legislature since 1999, renamed the Senedd in 2020. Welsh is an official language there alongside English, and 18% of people could speak it in the 2021 census.
+
+- kind: subnational
+  type: Constituent country
+  id: northern-ireland
+  uid: Nq5SbpihjQ
+  name: Northern Ireland
+  state: united-kingdom
+  status_line: Country of the United Kingdom
+  geometry:  # the 4 map units tile the United Kingdom's admin_0 row exactly
+  - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320745}}
+  expect: [-8.2, 54, -5.4, 55.4]
+  note: Northern Ireland, in the north-east of the island of Ireland, was created by the partition of Ireland in 1921. The Troubles, a conflict from the late 1960s that killed about 3,500 people, largely ended with the 1998 Good Friday Agreement, which set up power-sharing government; its border with Ireland is the UK's only land border.
+
+- kind: subnational
+  type: Exclave
+  id: kaliningrad
+  uid: avOKNkxBLq
+  name: Kaliningrad Oblast
+  state: russia
+  status_line: Exclave of Russia
+  geometry:  # Russia's row; `within` keeps its one polygon between Poland and Lithuania
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321201}}
+  within: [19, 54, 23.5, 56]
+  expect: [19.5, 54.3, 22.9, 55.3]
+  note: Kaliningrad Oblast is Russia's exclave on the Baltic Sea, between Poland and Lithuania, both members of the EU and NATO. Its capital was the German city of Königsberg, in East Prussia, until the Soviet Union took the area after the Second World War; since 1991 Lithuania and Belarus have separated it from the rest of Russia. It hosts the headquarters of Russia's Baltic Fleet.
 
 - kind: territory
   id: gibraltar
@@ -92,7 +155,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320723}}
   expect: [71.2, -7.5, 72.6, -5.2]
-  note: The British Indian Ocean Territory, a British Overseas Territory, is the Chagos Archipelago in the central Indian Ocean; its only inhabited island, Diego Garcia, hosts a joint UK–US military base, and the islanders were removed between 1967 and 1973. Mauritius long claimed it, and a treaty signed on 22 May 2025 provides for transferring sovereignty to Mauritius while the UK keeps rights over the Diego Garcia base for an initial 99 years.
+  note: The British Indian Ocean Territory, a British Overseas Territory, is the Chagos Archipelago in the central Indian Ocean; its only inhabited island, Diego Garcia, hosts a joint UK–US military base, and the islanders were removed between 1967 and 1973. Mauritius long claimed it, and a 2025 treaty would transfer sovereignty to Mauritius, with the UK leasing the Diego Garcia base for 99 years, but it has not taken effect.
 
 - kind: territory
   id: hong-kong
@@ -138,6 +201,18 @@
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320641}}
   expect: [163.5, -22.7, 171.4, -19.6]
   note: 'New Caledonia is a French "sui generis" collectivity, a status of its own between an overseas department and an independent country, on islands in the South Pacific east of Australia; nickel mining has shaped it since the 1860s. Under the 1998 Nouméa Accord it voted against independence in 2018, 2020 and 2021, the last vote boycotted by key Kanak groups. In April 2026 the French National Assembly rejected the constitutional bill implementing the 2025 Bougival and 2026 Élysée-Oudinot accords, which would have created a "State of New Caledonia" within France, and long-delayed provincial elections were held in June 2026.'
+
+- kind: territory
+  id: cook-islands
+  uid: uKcMTeYtkN
+  name: Cook Islands
+  sovereign: new-zealand  # in free association: the Realm of New Zealand, not a New Zealand dependency
+  status_line: Self-governing in free association with New Zealand
+  frame: {ring: false}  # islands scattered across the frame: rings round each group would crowd it
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159321129}}
+  expect: [-165.9, -22, -157.2, -8.9]
+  note: The Cook Islands are 15 islands in a northern and a southern group, scattered across the South Pacific between Samoa and Tonga to the west and French Polynesia to the east; most people live on Rarotonga. Self-governing in free association with New Zealand since 1965, they run their own foreign relations, and Cook Islanders are New Zealand citizens. In 2025 New Zealand paused funding after the islands signed agreements with China without consulting it, and agreed to resume it after a joint defence and security declaration in April 2026.
 
 - kind: territory
   id: french-polynesia
@@ -264,6 +339,19 @@
   expect: [-61.3, 14.3, -60.7, 14.9]
   note: Martinique is a French overseas region in the eastern Caribbean, north of Trinidad and Tobago, run by a single territorial collectivity with the powers of both an overseas department and region, and an outermost region of the EU. In 1902 an eruption of its volcano, Montagne Pelée, destroyed the city of Saint-Pierre.
 
+- kind: territory
+  id: akrotiri-and-dhekelia
+  uid: yhmPfRQT4B
+  name: Akrotiri and Dhekelia
+  sovereign: united-kingdom
+  status_line: British Overseas Territory
+  frame: {inset: true, inset_km: 300, ring: false}  # inset at the scale of Cyprus, so both areas and the island read
+  geometry:
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320741}}  # Akrotiri
+  - {layer: 10m_admin_0_countries, select: {ne_id: 1159320709}}  # Dhekelia
+  expect: [32.7, 34.5, 34, 35.2]
+  note: Akrotiri and Dhekelia are the two British Sovereign Base Areas in southern Cyprus, Akrotiri south-west of Limassol and Dhekelia on Larnaca Bay, which the UK retained when Cyprus became independent in 1960. RAF Akrotiri is a key base for UK air operations in the Middle East, used for strikes in Iraq and Syria since 2014, and Dhekelia reaches inland to the UN buffer zone and the Turkish Cypriot-administered north.
+
 - kind: dispute
   id: crimea
   uid: WA5m7QzQAO
@@ -272,7 +360,7 @@
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321217}}
   expect: [32.4, 44.3, 36.7, 46.3]
-  note: Crimea is a peninsula on the north coast of the Black Sea, internationally recognised as part of Ukraine. Russia seized it in 2014 and claims to have annexed it; a UN General Assembly resolution that March reaffirmed Ukraine's territorial integrity and said the March 2014 referendum there had no validity.
+  note: Crimea is a peninsula on the north coast of the Black Sea, the scene of the Crimean War (1853–56), internationally recognised as part of Ukraine. Russia seized it in 2014 and claims to have annexed it; a UN General Assembly resolution that March reaffirmed Ukraine's territorial integrity and said the March 2014 referendum there had no validity.
 
 - kind: dispute
   id: transnistria
@@ -318,6 +406,7 @@
   id: golan-heights
   uid: oYzEn5WYqO
   name: Golan Heights
+  retired: true  # v3.0.1: folded into country notes
   parties: [syria, israel]
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320905}}
@@ -346,9 +435,26 @@
   note: Western Sahara, on Africa's Atlantic coast between Morocco and Mauritania, is a former Spanish territory that the UN lists as non-self-governing; Morocco claims it, and the Polisario Front seeks its independence. Since Spain withdrew in 1976, Morocco has controlled most of it, west of a sand berm, and the Polisario the strip to the east; a 1991 ceasefire monitored by the UN mission MINURSO, set up that year, broke down in late 2020, and low-level hostilities followed. In October 2025 Security Council resolution 2797 took Morocco's autonomy proposal as the basis for talks, while the Polisario held to self-determination.
 
 - kind: dispute
+  id: kashmir
+  uid: LkpDqNGUZb
+  name: Kashmir
+  parties: [india, pakistan, china]
+  geometry:  # the former princely state; NE's Samdu, Tirpani and Bara Hotii slivers, outside it, are left out
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320869}}  # Jammu and Kashmir, with Ladakh (India)
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320963}}  # Siachen Glacier (India)
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320865}}  # Demchok (India)
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321157}}  # Azad Kashmir (Pakistan)
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321155}}  # Gilgit-Baltistan (Pakistan)
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320487}}  # Aksai Chin (China)
+  - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320485}}  # Shaksgam tract (China)
+  expect: [72.4, 32.2, 80.4, 37.1]
+  note: Kashmir, the former princely state in the far north of the Indian subcontinent, is split three ways. India holds Jammu and Kashmir and Ladakh, including the Siachen Glacier; Pakistan holds Azad Kashmir and Gilgit-Baltistan, beyond the 1972 Line of Control; China holds Aksai Chin and the Shaksgam tract, which Pakistan ceded to it in 1963. India claims all of it, Pakistan the Indian-held part, and China parts of Ladakh; India and Pakistan fought over Kashmir in 1947–48, 1965 and 1999, and China kept Aksai Chin in the 1962 war.
+
+- kind: dispute
   id: kashmir-indian-administered
   uid: qYWz011b5J
   name: Kashmir (Indian-administered)
+  retired: true  # v3.0.1: folded into country notes and the kashmir card
   parties: [india, pakistan, china]
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320869}}
@@ -361,6 +467,7 @@
   id: kashmir-pakistani-administered
   uid: uCmlTrHFie
   name: Kashmir (Pakistani-administered)
+  retired: true  # v3.0.1: folded into country notes and the kashmir card
   parties: [pakistan, india]
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321157}}
@@ -373,6 +480,7 @@
   uid: ui8TE2cLP7
   name: Arunachal Pradesh
   alt_names: [Zangnan]
+  retired: true  # v3.0.1: folded into country notes
   parties: [india, china]
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320857}}
@@ -383,6 +491,7 @@
   id: aksai-chin
   uid: Gu38h3G7An
   name: Aksai Chin
+  retired: true  # v3.0.1: folded into country notes and the kashmir card
   parties: [china, india]
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320487}}
@@ -395,6 +504,7 @@
   uid: USOI1bRyvb
   name: Southern Kuril Islands
   alt_names: [Northern Territories]
+  retired: true  # v3.0.1: folded into country notes
   parties: [russia, japan]
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159321213}}
@@ -410,13 +520,14 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103863}}
   expect: [111.8, 7.1, 117.9, 12.1]
-  note: The Spratly Islands are a scatter of small islands, reefs and shoals in the southern South China Sea, amid rich fishing grounds and possible oil and gas. China, Taiwan and Vietnam claim them all, Malaysia and the Philippines claim parts, and all five occupy some features; Brunei claims an overlapping maritime zone. In 2016 an arbitral tribunal in a case brought by the Philippines found no legal basis for China's claimed historic rights inside its "nine-dash line"; China rejects the ruling, and control is still split among the claimants.
+  note: The Spratly Islands are a scatter of small islands, reefs and shoals in the southern South China Sea, amid rich fishing grounds and possible oil and gas. China, Taiwan and Vietnam claim them all, Malaysia and the Philippines claim parts, and all five occupy some features; Brunei claims an overlapping maritime zone. In 2016 an arbitral tribunal in a case brought by the Philippines found no legal basis for China's claimed historic rights inside its "nine-dash line"; China rejects the ruling, and control is still split among the claimants. The Paracel Islands and Scarborough Shoal, farther north, are part of the same South China Sea dispute.
 
 - kind: dispute
   id: essequibo
   uid: xTEP7LSmy5
   name: Essequibo
   alt_names: [Guayana Esequiba]
+  retired: true  # v3.0.1: folded into country notes
   parties: [guyana, venezuela]
   geometry:
   - {layer: 10m_admin_0_disputed_areas, select: {ne_id: 1159320821}}

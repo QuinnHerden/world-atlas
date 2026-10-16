@@ -124,6 +124,7 @@ class Capital(Strict):
     expect: BBox
     note: Note | None = None
     verify: list[Verify] = []
+    retired: bool = False  # no capital card (a tier-3 state's, v3.0.1); the uid stays under the country's `uids`
 
     @model_validator(mode="after")
     def _one_source(self) -> "Capital":
@@ -135,7 +136,7 @@ class Capital(Strict):
 class RingPlace(NamedTuple):
     region: int  # ring order, as numbered in data/curriculum.yaml
     host: str | None  # the walk node a pocket sits beside (P3), never a statement of sovereignty
-    kind: Literal["country", "territory", "dispute"]  # the curriculum map that places it
+    kind: Literal["country", "subnational", "territory", "dispute"]  # the curriculum map that places it
 
 
 class FrameOverride(Strict):
@@ -202,6 +203,11 @@ class Country(Placed):
                              + (" (capital is null)" if not self.capital else "; add `capital: null` under uids and run `make ids`"))
         return self
 
+    @property
+    def carded_capital(self) -> Capital | None:
+        """The capital, if it has a card: not null and not retired."""
+        return self.capital if self.capital and not self.capital.retired else None
+
     def outline(self) -> BaseGeometry:
         return outline(self.id, self.geometry, self.expect, self.mainland)
 
@@ -221,9 +227,34 @@ class Territory(Placed):
     expect: BBox
     note: Note | None = None
     verify: list[Verify] = []
+    retired: bool = False
 
     def outline(self) -> BaseGeometry:
         return outline(self.id, self.geometry, self.expect)
+
+
+class Subnational(Placed):
+    """A part of a state carded on its own: a constituent country (England, Scotland, Wales and Northern Ireland in
+    the United Kingdom) or an exclave (Kaliningrad). Neither sovereign, so not a country card, nor a dependent
+    territory. `type` is the card's front word; `within` keeps only the composed outline's parts wholly inside a box
+    (Kaliningrad from Russia's row)."""
+
+    kind: Literal["subnational"]
+    type: Literal["Constituent country", "Exclave"]
+    name: Text
+    alt_names: list[Text] = []
+    uid: Uid | None = None
+    state: Id  # the country id it is part of
+    status_line: Text  # back line 2, e.g. "Country of the United Kingdom"
+    geometry: Annotated[list[Part], Field(min_length=1)]
+    within: BBox | None = None
+    expect: BBox
+    note: Note | None = None
+    verify: list[Verify] = []
+    retired: bool = False
+
+    def outline(self) -> BaseGeometry:
+        return outline(self.id, self.geometry, self.expect, self.within)
 
 
 def _alphabetical(name: str) -> str:
@@ -249,6 +280,7 @@ class Dispute(Placed):
     expect: BBox
     note: Note | None = None
     verify: list[Verify] = []
+    retired: bool = False
 
     @model_validator(mode="after")
     def _distinct_parties(self) -> "Dispute":
@@ -294,6 +326,7 @@ def curriculum_placements(states: list[str]) -> dict[str, RingPlace]:
     placements = {}
     for r in load_curriculum(states).regions:
         placements |= {c: RingPlace(r.number, r.pockets.get(c), "country") for c in r.countries}
+        placements |= {c: RingPlace(r.number, host, "subnational") for c, host in r.subnationals.items()}
         placements |= {c: RingPlace(r.number, host, "territory") for c, host in r.territories.items()}
         placements |= {c: RingPlace(r.number, host, "dispute") for c, host in r.disputes.items()}
     return placements
@@ -315,16 +348,22 @@ def read_countries() -> list[Country]:
     return countries
 
 
-def read_territory_file() -> list[Territory | Dispute]:
-    """data/territories.yaml's entries in file order, unplaced."""
-    models = {"territory": Territory, "dispute": Dispute}
+def read_territory_file() -> list[Subnational | Territory | Dispute]:
+    """data/territories.yaml's entries in file order, unplaced, retired ones included."""
+    models = {"subnational": Subnational, "territory": Territory, "dispute": Dispute}
     entries = read_entries(TERRITORIES)
     for i, entry in enumerate(entries):
         if not isinstance(entry, dict) or entry.get("kind") not in models:
-            raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be territory or dispute")
+            raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be subnational, territory or dispute")
     loaded = [models[e["kind"]].model_validate(e) for e in entries]
-    unique(loaded, "territory or dispute")
+    unique(loaded, "subnational, territory or dispute")
     return loaded
+
+
+def active_territory_file() -> list[Subnational | Territory | Dispute]:
+    """data/territories.yaml's active entries: a retired one (`retired: true`) is archived, kept only so its uid is
+    never reused. It is validated against the schema, but makes no card, has no placement and no outline."""
+    return [e for e in read_territory_file() if not e.retired]
 
 
 def load_countries() -> list[Country]:
@@ -333,16 +372,17 @@ def load_countries() -> list[Country]:
     return placed(countries, COUNTRIES, curriculum_placements([c.id for c in countries])) if countries else countries
 
 
-def load_political() -> tuple[list[Country], list[Territory | Dispute]]:
+def load_political() -> tuple[list[Country], list[Subnational | Territory | Dispute]]:
     """The countries, and the territories and disputes in file order, each placed by data/curriculum.yaml. A territory
-    or dispute the curriculum places must have an entry."""
-    countries, others = read_countries(), read_territory_file()
+    or dispute the curriculum places must have an active entry: a retired one has no placement."""
+    countries, others = read_countries(), active_territory_file()
     if not countries and not others:
         return [], []
     placements = curriculum_placements([c.id for c in countries])
     known = {o.id for o in others}
     if orphans := sorted(i for i, p in placements.items() if p.kind != "country" and i not in known):
-        raise ValueError(f"{CURRICULUM.name}: places what {TERRITORIES.name} has no entry for: {', '.join(orphans)}")
+        raise ValueError(f"{CURRICULUM.name}: places what {TERRITORIES.name} has no active entry for (a retired entry "
+                         f"has no placement): {', '.join(orphans)}")
     return placed(countries, COUNTRIES, placements), placed(others, TERRITORIES, placements)
 
 

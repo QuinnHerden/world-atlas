@@ -31,6 +31,7 @@ class City(Strict):
     anchor: Id | None = None  # an active feature it comes right after: Alexandria after the Nile Delta (P3)
     note: Note | None = None
     verify: list[Verify] = []
+    retired: bool = False
 
     def point(self) -> Point:
         return place(self.id, self.ne_id, None, self.expect)
@@ -42,11 +43,11 @@ class City(Strict):
         def geometry() -> Geometry:
             return country.outline(), (), None
 
-        parents = (card_key("country", country.id), *((card_key("capital", country.id),) if country.capital else ()))
+        parents = (card_key("country", country.id), *((card_key("capital", country.id),) if country.carded_capital else ()))
         return [Card(
             uid=require_uid(self.id, self.uid), kind="city", id=self.id, prompt="City",
             answer_lines=(answer(self.name, self.alt_names), country.name),
-            tags=tags("city", self.id, TIER[self.tier], "cities", country.region), region=f"{country.region:02d}",
+            tags=tags("city", self.id, "cities", country.region), region=f"{country.region:02d}",
             tier=TIER[self.tier], anchor=card_key("feature", self.anchor) if self.anchor else None, parents=parents,
             note=self.note, render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(self.point()),
                                                        region=framing.city_region(country.id)),
@@ -54,6 +55,13 @@ class City(Strict):
 
 
 def load_cities() -> list[City]:
+    """The active cities. A retired one (`retired: true`) is validated against the schema, its id and uid kept, but it
+    makes no card and isn't checked."""
+    return [c for c in read_cities() if not c.retired]
+
+
+def read_cities() -> list[City]:
+    """Every entry in data/cities.yaml, retired ones included."""
     cities = [City.model_validate(e) for e in read_entries(PATH)]
     unique(cities, "city")
     return cities
@@ -116,7 +124,7 @@ def check(outlines: dict[str, BaseGeometry]) -> list[str]:
         return [str(exc)]
     errors = unknown_countries(cities, set(countries))
     errors += anchor_errors(cities, countries if outlines else {})  # no outlines: political failed, and said so
-    errors += [f"{c.id}: is {c.country}'s capital, which has a capital card" for c in cities
+    errors += [f"{c.id}: is {c.country}'s capital, which has (or had) a capital card" for c in cities
                if c.country in countries and (cap := countries[c.country].capital) and cap.ne_id == c.ne_id]
     for city in cities:
         try:

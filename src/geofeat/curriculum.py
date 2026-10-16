@@ -18,7 +18,7 @@ class Pass(BaseModel):
     id: str
     name: str
     ring: bool
-    kinds: list[Literal["feature", "continent", "country", "capital", "territory", "dispute", "city"]]
+    kinds: list[Literal["feature", "continent", "country", "capital", "subnational", "territory", "dispute", "city"]]
     feature_tiers: list[int] = []
     city_tiers: list[Literal["core", "secondary"]] = []
     global_features: bool = False
@@ -34,6 +34,7 @@ class Region(BaseModel):
     way_in: str = ""
     countries: list[str]
     pockets: dict[str, str] = {}
+    subnationals: dict[str, str] = {}  # parts of a state with their own card (England, Kaliningrad): card: host
     territories: dict[str, str] = {}
     disputes: dict[str, str] = {}
     walk: list[str] = []  # the frozen neighbour walk over the walk nodes (P3); empty: the order engine generates one
@@ -43,7 +44,7 @@ class Region(BaseModel):
     frame_margin: float | None = Field(None, ge=1.0, le=2.0)
 
     def placed(self) -> dict[str, str]:
-        return self.territories | self.disputes
+        return self.subnationals | self.territories | self.disputes
 
 
 class Curriculum(BaseModel):

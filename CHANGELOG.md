@@ -4,13 +4,36 @@ All notable changes to this deck are recorded here. The format follows [Keep a C
 
 ## [3.0.1] - Unreleased
 
+554 cards, against 607 in v3.0.0: 9 added and 62 retired. The disputed areas go from 15 to 9. A disputed area keeps a card only if it is a de facto separate entity or lies outside every recognised border or across several; a claim inside one state's recognised borders, or one a country note describes easily, moves into the country notes ([ADR 0008](docs/adr/0008-state-list-borders-adjacency.md#amendment-fewer-dispute-cards-v301)). Microstates and small island states lose their capital cards, the other cities go from 42 to 25, and a new kind of card covers part of a state.
+
 ### Added
 
+- Kashmir: one dispute card for the whole former princely state, the Indian-, Pakistani- and Chinese-held parts together (India, Pakistan and China as parties). It replaces three cards; Natural Earth's Samdu, Tirpani and Bara Hotii slivers, outside the former state, are left out.
+- Territory cards for the Cook Islands, self-governing in free association with New Zealand, placed after New Zealand on the Polynesia frame; and for Akrotiri and Dhekelia, the British base areas on Cyprus, placed after Cyprus with an inset at the island's scale.
+- Subnational cards (`kind::subnational`), a new kind for part of a state: England, Scotland, Wales and Northern Ireland (front word "Constituent country", placed after the United Kingdom) and Kaliningrad Oblast ("Exclave", placed after Lithuania). They are in the `countries` block and their own category, `category::subnational`, drawn with a solid outline like a country, and have no capital cards. In `territories.yaml` they are `kind: subnational` entries with `type`, `state`, `status_line` and an optional `within` box that keeps only the outline's parts inside it; `curriculum.yaml` places them with `subnationals:` maps.
+- Toronto, after Ottawa.
 - A region can set its own frame margin, `frame_margin` in `curriculum.yaml` ([ADR 0010](docs/adr/0010-region-framing.md#decision)).
-- Per-card `frame:` overrides `include` (the frame also holds other bodies), `ring: false` or `ring: oval`, and `inset_centre`.
+- Per-card `frame:` overrides `include` (the frame also holds other bodies), `ring: false` or `ring: oval`, and `inset_centre`. The Cook Islands and Akrotiri and Dhekelia use `ring: false`.
+- `retired: true` on territory, subnational and dispute entries, on cities and on a country's `capital:`, as on features: the entry and its uid stay, but it makes no card and has no curriculum placement. `make check-data` fails if a tier-3 state's capital isn't retired.
+
+### Removed
+
+- 7 dispute cards: Kashmir (Indian-administered), Kashmir (Pakistani-administered) and Aksai Chin, merged into Kashmir; Arunachal Pradesh, the Golan Heights, the southern Kuril Islands and Essequibo, now in the country notes.
+- 29 capital cards. A tier-3 state (a microstate or small island state) no longer gets a capital card, extending the rule for capitals that share their country's name and dot: Andorra la Vella, Vaduz, Valletta, Manama, Praia, São Tomé, Moroni, Port Louis, Victoria, Malé, Bandar Seri Begawan, Port Vila, Suva, Nuku'alofa, Apia, Funafuti, Tarawa, Yaren, Majuro, Palikir, Ngerulmud, Port of Spain, Saint George's, Kingstown, Bridgetown, Castries, Roseau, Saint John's and Basseterre. The country notes are unchanged.
+- 18 city cards, of lower salience than the cities kept (no reason is recorded for each): Rotterdam, Seville, Hamburg, Frankfurt, Volgograd, Aleppo, Medina, Zanzibar, Johannesburg, Samarkand, Isfahan, Guangzhou, Xi'an, Osaka, Malacca, New Orleans, Potosí and Montreal. No facts from their notes moved to other notes.
+- The Crimea feature card (Peninsula), which had the same outline and answer as the Crimea dispute card.
+- 7 tier-3 feature cards: Pearl River, Mongolian Plateau, Isthmus of Kra, Lake Titicaca, Lake Chad, Lombok Strait and Sunda Strait.
+- **The `tier::` tags.** No card carries one; the tier stays internal to the study order. Re-importing updates each note's tags, so existing notes lose theirs, and a filtered deck that searched `tier::` finds nothing.
+
+Each retired entry keeps its uid, and `positions.lock` keeps its slot. Upgraded collections keep the 62 cards until they are deleted; [Retired cards](README.md#retired-cards) gives the Browse search that finds exactly those 62.
 
 ### Changed
 
+- Country notes now carry the retired disputes: Syria and Israel the Golan; Russia and Japan the southern Kurils; India and China Arunachal Pradesh ("Zangnan"); India, Pakistan and China their parts of Kashmir; Guyana and Venezuela Essequibo. Three claims that never had a card are added too: Ukraine's note gives Russia's 2022 claim to annex four oblasts, rejected by UN General Assembly resolution ES-11/4, and the China and Japan notes give the Senkaku Islands.
+- The Spratly Islands note adds the Paracels and Scarborough Shoal as part of the same South China Sea dispute. The Crimea dispute note adds the Crimean War (1853–56), from the retired feature's note.
+- The British Indian Ocean Territory note: the 2025 treaty transferring sovereignty to Mauritius has not taken effect.
+- Brussels, Amsterdam, Pretoria, Sucre, Kuala Lumpur, Doha, Barcelona and Kyoto lose their close-dot frame, because the nearby dot that caused it was retired; they are framed on their region with an inset. Retired disputes no longer count as region members, so the frames of regions 06 (slightly), 14 (South Asia, narrower in the east) and 16 (East Asia, narrower) change, for 47 cards.
+- `positions.lock` (series 3) appends 9 uids and keeps every retired uid's slot: 616 uids for 554 cards.
 - Card notes no longer refer to the deck or to other cards. Sentences that only pointed at other cards ("has no card of its own") are gone; where a sentence carried a real fact, such as which recognised borders include a disputed area, the fact stays as plain geography. The continent notes describe the usual Europe–Asia boundary and the usual extent of North America and Oceania without claiming them for the deck. Notes appear on card backs and in the study guide; re-importing the package updates them on existing cards and keeps scheduling.
 - Horn & East Africa is framed wider (`frame_margin: 1.4`, 9,398 km, was 7,384 km), so Egypt, Libya, Malawi, Zambia and Mozambique show round it. Somalia now shares the region frame. Tanzania's frame and its cities' move south to take in Malawi, Zambia and Mozambique, and Sudan's move north to the Mediterranean, at the same width.
 - New Zealand's and Papua New Guinea's maps, and their capitals', take in the whole of Australia.
