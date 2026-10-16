@@ -144,6 +144,37 @@ class PoliticalFrameTest(unittest.TestCase):
         f = self.frame(hungary, inset=True, inset_km=400.0)
         self.assertAlmostEqual(f.detail[1] - f.detail[0], 400_000)
 
+    def test_a_region_frame_margin_widens_the_shared_frame(self) -> None:
+        from geofeat.frame import REGION_MARGIN
+
+        subject, region = box(19, 46, 22, 48), MultiPoint([(0, 30), (40, 30), (0, 60), (40, 60)])  # over the minimum
+        default, wider = self.frame(subject, region), self.frame(subject, region, region_margin=1.4)
+        self.assertAlmostEqual((wider.extent[1] - wider.extent[0]) / (default.extent[1] - default.extent[0]),
+                               1.4 / REGION_MARGIN)
+
+    def test_inset_centre_moves_the_inset_but_not_its_mark(self) -> None:
+        from geofeat.frame import _to_map
+
+        kosovo = box(20.3, 42.3, 21.5, 43.1)
+        plain, moved = self.frame(kosovo), self.frame(kosovo, inset_centre=(22.0, 42.5), inset_km=300.0)
+        dx0, dx1, dy0, dy1 = moved.detail
+        x, y = _to_map(moved.projection, 22.0, 42.5)
+        self.assertAlmostEqual((dx0 + dx1) / 2, x, delta=1)
+        self.assertAlmostEqual((dy0 + dy1) / 2, y, delta=1)
+        self.assertEqual(moved.mark, plain.mark)
+
+    def test_a_held_box_moves_the_frame_before_widening_it(self) -> None:
+        from geofeat.frame import _to_map
+
+        region = MultiPoint([(0, 30), (40, 30), (0, 60), (40, 60)])
+        subject, hold = box(19, 46, 22, 48), (15.0, 61.0, 25.0, 64.0)  # just north of the shared frame
+        shared, held = self.frame(subject, region), self.frame(subject, region, hold=hold)
+        self.assertAlmostEqual(held.extent[1] - held.extent[0], shared.extent[1] - shared.extent[0])
+        x0, x1, y0, y1 = held.extent
+        for lon, lat in ((15, 61), (25, 64)):
+            x, y = _to_map(held.projection, lon, lat)
+            self.assertTrue(x0 < x < x1 and y0 < y < y1)
+
     def test_close_dot_city_gets_a_detail_inset_round_its_dot(self) -> None:
         from geofeat.frame import CLOSE_DOT_DETAIL_M, DETAIL_SHARE, DETAIL_ZOOM, project
 
@@ -205,6 +236,48 @@ class SubFramesTest(unittest.TestCase):
 
         counts = Counter(id for _, cards in SUB_FRAMES.values() for id in cards)
         self.assertEqual([id for id, n in counts.items() if n > 1], [])
+
+
+class FrameIncludeTest(unittest.TestCase):
+    def test_new_zealands_frame_holds_australia_and_its_capital_follows(self) -> None:
+        from geofeat.framing import _included, city_region, region
+
+        kind, _, _, _, hold = region("new-zealand")
+        self.assertEqual(kind, "fixed")
+        self.assertEqual(hold, _included(("australia",)))
+        self.assertEqual(city_region("new-zealand")()[4], hold)
+        self.assertIsNone(region("tonga")[4])  # the rest of Polynesia keeps its box
+
+    def test_new_zealands_frame_holds_australias_corners_across_180(self) -> None:
+        from geofeat.frame import _to_map
+        from geofeat.framing import _entries, region
+        from geofeat.spec import RenderSpec
+
+        kind, points, _, _, hold = region("new-zealand")
+        f = frame(RenderSpec(style="area", country="subject", framing=kind, hold=hold), _entries()["new-zealand"][1],
+                  points)
+        x0, x1, y0, y1 = f.extent
+        for lon in hold[::2]:
+            for lat in hold[1::2]:
+                x, y = _to_map(f.projection, lon, lat)
+                self.assertTrue(x0 < x < x1 and y0 < y < y1)
+
+    def test_an_unknown_include_fails(self) -> None:
+        from geofeat.framing import _included
+
+        with self.assertRaises(ValueError):
+            _included(("atlantis",))
+        with self.assertRaises(ValueError):
+            _included(("fiji",))  # across 180°
+
+    def test_every_include_names_a_known_body(self) -> None:
+        from geofeat.framing import _entries, _included
+
+        for id, (_, _, include) in _entries().items():
+            if include:
+                with self.subTest(id):
+                    self.assertNotIn(id, include)
+                    _included(include)
 
 
 if __name__ == "__main__":

@@ -26,12 +26,12 @@ INSET_BELOW_M = 8_000_000  # wider frames show whole continents, and their box o
 CLOSE_DOT_FRAME_M = 1_000_000
 
 # Country, territory and dispute subjects (spec.framing) are framed on their curriculum region: the box round its
-# members' main bodies, REGION_MARGIN larger and at least REGION_MIN_M wide ("region"), or a sub-frame's fixed box
-# ("fixed"), shared by every card on it whose subject fits SUBJECT_MARGIN in from the edges (others shift or widen
-# theirs). A subject that would still fill more than REGION_FILL_MAX of it widens its frame to that fill, unless it is
-# a giant, whose v2.0 frame was over GIANT_FRAME_M wide: those keep their v2.0 frames (Russia, Canada, the United
-# States, Greenland, China, India, Japan, Myanmar, Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru;
-# Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant, nor is a subject
+# members' main bodies, REGION_MARGIN larger (or the region's own `frame_margin`, spec.region_margin) and at least
+# REGION_MIN_M wide ("region"), or a sub-frame's fixed box ("fixed"), shared by every card on it whose subject fits
+# SUBJECT_MARGIN in from the edges (others shift or widen theirs). A subject that would still fill more than
+# REGION_FILL_MAX of it widens its frame to that fill, unless it is a giant, whose v2.0 frame was over GIANT_FRAME_M
+# wide: those keep their v2.0 frames (Russia, Canada, the United States, Greenland, China, India, Japan, Myanmar,
+# Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru; Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant, nor is a subject
 # inside its sub-frame's box. No political card has the world locator.
 REGION_MARGIN = 1.1
 REGION_FILL_MAX = 0.35
@@ -192,7 +192,7 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
     rx0, ry0, rx1, ry1 = project(points, projection).bounds
     width = _long(rx0, ry0, rx1, ry1)
     if feature.framing == "region":
-        width = max(width * REGION_MARGIN, REGION_MIN_M)
+        width = max(width * (getattr(feature, "region_margin", None) or REGION_MARGIN), REGION_MIN_M)
     x0, y0 = (rx0 + rx1 - width) / 2, (ry0 + ry1 - width / ASPECT) / 2
 
     projected = project(geometry, projection)
@@ -200,9 +200,13 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         return None
     main, share = main_group(projected)
     sx0, sy0, sx1, sy1 = projected.bounds
+    hx0, hy0, hx1, hy1 = sx0, sy0, sx1, sy1  # what the frame must hold: the subject, and any box it `include`s
+    if hold := getattr(feature, "hold", None):
+        xs, ys = zip(*(_to_map(projection, lon, lat) for lon in hold[::2] for lat in hold[1::2]))
+        hx0, hy0, hx1, hy1 = min(hx0, *xs), min(hy0, *ys), max(hx1, *xs), max(hy1, *ys)
     margin = SUBJECT_MARGIN * width
-    x0, w = _fit_axis(x0, width, sx0, sx1, margin)
-    y0, h = _fit_axis(y0, width / ASPECT, sy0, sy1, margin)
+    x0, w = _fit_axis(x0, width, hx0, hx1, margin)
+    y0, h = _fit_axis(y0, width / ASPECT, hy0, hy1, margin)
     if w > width or h * ASPECT > width:  # widened: keep 16:9 round the widened box
         cx, cy = x0 + w / 2, y0 + h / 2
         width = max(w, h * ASPECT)
@@ -216,8 +220,8 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         return None
     if size / width > REGION_FILL_MAX:  # widen round the subject's side of the frame
         grown = size / REGION_FILL_MAX
-        x0 = min(max(x0 - (grown - width) / 2, sx1 + margin - grown), sx0 - margin)
-        y0 = min(max(y0 - (grown - width) / ASPECT / 2, sy1 + margin - grown / ASPECT), sy0 - margin)
+        x0 = min(max(x0 - (grown - width) / 2, hx1 + margin - grown), hx0 - margin)
+        y0 = min(max(y0 - (grown - width) / ASPECT / 2, hy1 + margin - grown / ASPECT), hy0 - margin)
         width = grown
     pole_y = projection.y_limits[1]
     y0 = min(max(y0, -pole_y), pole_y - width / ASPECT)
@@ -236,7 +240,9 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         wanted = disc < DETAIL_DISC_PX * width / 1600 and width / dw * DETAIL_SHARE >= DETAIL_ZOOM
     if not wanted:
         return Frame(projection, extent, inset=False)
-    detail = _window(projection, (tx0 + tx1) / 2, (ty0 + ty1) / 2, dw)
+    centre_at = getattr(feature, "inset_centre", None)
+    cx, cy = _to_map(projection, *centre_at) if centre_at else ((tx0 + tx1) / 2, (ty0 + ty1) / 2)
+    detail = _window(projection, cx, cy, dw)
     return Frame(projection, extent, inset=False, detail=detail, mark=main.convex_hull)
 
 

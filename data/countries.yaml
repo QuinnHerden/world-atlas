@@ -8,8 +8,10 @@
 #   crop for the card only: adjacency and region derivation use the full outline (countries_ne.py).
 # - expect: the card outline's bbox (lon_min > lon_max crosses 180°); a capital's is a box around its point.
 # - tier 3: microstates and small island states only.
-# - frame: the card's own exception to the framing rules: {inset: true|false} forces its detail inset on or off,
-#   inset_km sets the inset's width.
+# - frame: the card's own exception to the framing rules (ADR 0010): {inset: true|false} forces its detail inset on or
+#   off, inset_km sets the inset's width and inset_centre [lon, lat] its centre; ring: false draws no ring round the
+#   subject (ring: oval, one oval round all its parts); include: [ids] makes the frame hold those countries' main bodies
+#   too, moving before it widens (its capital and cities follow).
 # - note: the P2.7 blurbs, copied as written.
 
 - id: portugal
@@ -1254,6 +1256,7 @@
   name: Tanzania
   uids: {country: qP2785r9Ls, capital: Ip28VMelrK}
   tier: 1
+  frame: {include: [malawi, zambia, mozambique]}  # its southern neighbours, which the region frame cuts off
   note: >-
     Tanzania lies on the Indian Ocean between Kenya and Mozambique, framed by Lake Victoria to the north, Lake
     Tanganyika to the west and Lake Nyasa (Lake Malawi) to the south-west. It holds Kilimanjaro, Africa's highest
@@ -1347,6 +1350,7 @@
   name: Sudan
   uids: {country: BXuf2N7ee1, capital: zoDniv5XVW}
   tier: 1
+  frame: {include: [egypt, libya]}  # its northern neighbours to the Mediterranean, which the region frame cuts off
   note: >-
     Sudan lies south of Egypt on the Red Sea, and the Blue Nile and White Nile meet within it to form the Nile.
     Independent from Egypt and the UK since 1956, it lost its south when South Sudan became independent in 2011. In
@@ -2749,6 +2753,7 @@
   name: Papua New Guinea
   uids: {country: C0ToaF44FZ, capital: s5EbQGCXDx}
   tier: 1
+  frame: {include: [australia]}  # read against Australia across the Torres Strait, which the Melanesia box cuts off
   note: >-
     Occupies the eastern half of the island of New Guinea, plus many smaller islands, between the Coral Sea and the
     South Pacific. Its only land border is with Indonesia, which holds the western half of the island. It is part of
@@ -2804,6 +2809,7 @@
   name: New Zealand
   uids: {country: oQeHFXOis8, capital: iow7ThgbZG}
   tier: 1
+  frame: {include: [australia]}  # read against Australia across the Tasman, which the Polynesia box cuts off
   note: >-
     Two main islands, North Island and South Island, in the South Pacific, southeast of Australia. Polynesians
     settled it in the late Middle Ages and called it Aotearoa. It is a parliamentary democracy and a Commonwealth
@@ -2842,6 +2848,7 @@
   name: Tonga
   uids: {country: VcDu4Y1307, capital: 03PdnXGsco}
   tier: 3
+  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
   note: >-
     A Polynesian archipelago in the South Pacific, east of Fiji. It is a kingdom: it was a British protected state
     for a time but never lost its own monarchy.
@@ -2895,6 +2902,7 @@
   name: Kiribati
   uids: {country: O8qHQXEAd0, capital: vQukswE5eJ}
   tier: 3
+  frame: {ring: oval}  # one oval round all its island groups: a ring round each cluttered the map
   note: >-
     Coral atolls scattered across the central Pacific, straddling the Equator, in three groups: the Gilbert, Phoenix
     and Line Islands. Its people are mostly Micronesian.
@@ -2951,6 +2959,7 @@
   name: Micronesia
   uids: {country: xnIrAUmkCK, capital: AEj39lKwe8}
   tier: 3
+  frame: {ring: oval}  # one oval round all its island groups: a ring round each cluttered the map
   note: >-
     The Federated States of Micronesia: four island states (Yap, Chuuk, Pohnpei and Kosrae) spread across the
     Caroline Islands in the North Pacific, north of New Guinea. It is in free association with the United States.

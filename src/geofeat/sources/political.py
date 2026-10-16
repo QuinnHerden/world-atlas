@@ -21,8 +21,12 @@ def answer(name: str, alt_names: list[str]) -> str:
     return f"{name} ({', '.join(alt_names)})" if alt_names else name
 
 
+def _overrides(frame: FrameOverride) -> dict:
+    return {"inset": frame.inset, "inset_km": frame.inset_km, "inset_centre": frame.inset_centre, "ring": frame.ring}
+
+
 def country_spec(frame: FrameOverride = FrameOverride()) -> RenderSpec:
-    return RenderSpec(style="area", country="subject", inset=frame.inset, inset_km=frame.inset_km)
+    return RenderSpec(style="area", country="subject", **_overrides(frame))
 
 
 def dot_spec() -> RenderSpec:
@@ -32,7 +36,7 @@ def dot_spec() -> RenderSpec:
 
 def outline_spec(frame: FrameOverride = FrameOverride()) -> RenderSpec:
     """Territories and disputes: the subject outline, dashed."""
-    return RenderSpec(style="area", country="subject", outline="dashed", inset=frame.inset, inset_km=frame.inset_km)
+    return RenderSpec(style="area", country="subject", outline="dashed", **_overrides(frame))
 
 
 def tags(kind: Kind, id: str, tier: int, category: str, region: int) -> tuple[str, ...]:

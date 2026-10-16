@@ -3,6 +3,7 @@
 import io
 import math
 from functools import cache
+from typing import Literal
 
 import cartopy.crs as ccrs
 import matplotlib
@@ -286,6 +287,40 @@ def _ring_round(ax, shape: BaseGeometry, frame_: Frame) -> None:
     _ring(ax, (px0 + px1) / 2, (py0 + py1) / 2, frame_.projection, size=size)
 
 
+def enclosing_ellipse(points: np.ndarray, eps: float = 1e-3, max_iter: int = 100_000
+                      ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """The minimum-area ellipse round 2-D points (Khachiyan's algorithm, stopped at a duality gap of `eps`): its
+    centre, semi-axes and their unit directions (columns). Rescaled at the end so the farthest point lies on it."""
+    mean, scale = points.mean(axis=0), np.ptp(points, axis=0).max()
+    p = ((points - mean) / scale).T
+    q = np.vstack([p, np.ones(p.shape[1])])
+    u = np.full(p.shape[1], 1 / p.shape[1])
+    for _ in range(max_iter):
+        m = np.einsum("ij,ji->i", q.T @ np.linalg.inv(q * u @ q.T), q)
+        j = int(np.argmax(m))
+        if m[j] <= 3 * (1 + eps):
+            break
+        step = (m[j] - 3) / (3 * (m[j] - 1))
+        u = (1 - step) * u
+        u[j] += step
+    c = p @ u
+    a = np.linalg.inv(p * u @ p.T - np.outer(c, c)) / 2
+    a /= np.einsum("ij,jk,ki->i", (p.T - c), a, (p.T - c).T).max()
+    values, vectors = np.linalg.eigh(a)
+    return c * scale + mean, scale / np.sqrt(values), vectors
+
+
+def _oval_ring(ax, shape: BaseGeometry, frame_: Frame) -> None:
+    """One ring round all of a projected subject's parts (`ring: oval`): their minimum-area enclosing ellipse, which
+    may be rotated, padded SMALL_RING_CLEAR_PX out, in the rings' line style."""
+    centre, radii, axes = enclosing_ellipse(shapely.get_coordinates(shape.convex_hull))
+    radii = np.maximum(radii + SMALL_RING_CLEAR_PX * _metres_per_px(ax), RING_PX * SCALE / 2 * _metres_per_px(ax))
+    t = np.linspace(0, 2 * np.pi, 241)
+    xs, ys = (centre[:, None] + axes @ (radii[:, None] * np.vstack([np.cos(t), np.sin(t)])))
+    for width, colour, z in ((pt(4) + 2 * pt(1.5), CASING, 5), (pt(4), HIGHLIGHT, 5.1)):
+        ax.plot(xs, ys, transform=frame_.projection, color=colour, lw=width, solid_capstyle="round", zorder=z)
+
+
 def _small_ring(ax, shape: BaseGeometry, frame_: Frame) -> None:
     """Ring a projected area too small or short to find on a phone."""
     if _is_small(ax, shape):
@@ -313,11 +348,12 @@ def _cluster_rings(ax, shape: BaseGeometry, frame_: Frame, skip: BaseGeometry | 
             _ring_round(ax, land, frame_)
 
 
-def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: bool = True,
+def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: bool | Literal["oval"] = True,
              skip: BaseGeometry | None = None) -> None:
     """A country, territory or disputed area. As the subject: a crisp red outline with a white casing over a faint
-    fill, dashed for a territory or dispute, ringed when small (unless `ring` is off), except for the groups inside
-    `skip`, round a detail inset's subject, which the leader lines find instead. As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
+    fill, dashed for a territory or dispute. Ringed when small (unless `ring` is off; "oval" draws one oval round all
+    of it), except for the groups inside `skip`, round a detail inset's subject, which the leader lines find instead.
+    As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
     fuse = 2 * _metres_per_px(ax)
     shape = project(geometry, frame_.projection).buffer(fuse).buffer(-fuse)
     crs = frame_.projection
@@ -331,7 +367,9 @@ def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: 
     ax.add_geometries([shape], crs, facecolor="none", edgecolor=CASING, linewidth=pt(casing_px), zorder=4.05)
     ax.add_geometries([shape], crs, facecolor="none", edgecolor=HIGHLIGHT, linewidth=pt(OUTLINE_PX), zorder=4.1,
                       linestyle=_dashes(OUTLINE_DASH_PX, OUTLINE_PX) if dashed else "solid")
-    if ring:
+    if ring == "oval":
+        _oval_ring(ax, shape, frame_)
+    elif ring:
         _cluster_rings(ax, shape, frame_, skip)
 
 
@@ -487,7 +525,8 @@ def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ta
     _basemap(inset, spec, zoomed, _lonlat_bounds(inset), clear=geometry if spec.outline is None else None)
     shown = project(geometry, frame_.projection).intersection(box(dx0, dy0, dx1, dy1))
     sx0, sy0, sx1, sy1 = shown.bounds
-    _country(inset, spec, geometry, zoomed, ring=max(sx1 - sx0, sy1 - sy0) * w / (dx1 - dx0) < INSET_RING_BELOW_PX)
+    _country(inset, spec, geometry, zoomed,
+             ring=spec.ring is True and max(sx1 - sx0, sy1 - sy0) * w / (dx1 - dx0) < INSET_RING_BELOW_PX)
     if spec.dot:
         _dot(inset, *spec.dot)
 
@@ -565,7 +604,7 @@ def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry
                           linewidth=pt(FORMER_SHORE_PX), linestyle=(0, (4, 3)), zorder=1.45)
     if spec.country:
         skip = None if frame_.mark is None else frame_.mark.buffer(SKIP_RING_PX * _metres_per_px(ax))
-        _country(ax, spec, geometry, frame_, skip=skip)
+        _country(ax, spec, geometry, frame_, ring=spec.ring, skip=skip)
     else:
         _highlight(ax, spec, geometry, frame_)
     if spec.dot:

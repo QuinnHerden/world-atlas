@@ -136,3 +136,74 @@ class FilteredRenderTest(unittest.TestCase):
                 jobs.render_cards([], only=["country:beta"])
             self.assertEqual(json.loads(media.read_text()), {"country:alpha": "old.png", "country:beta": "new.png"})
             self.assertTrue((deck / "old.png").exists())
+
+
+class RingOverrideTest(unittest.TestCase):
+    def test_ring_false_reaches_the_spec_and_draws_no_ring(self) -> None:
+        from unittest import mock
+
+        from geofeat.polities import FrameOverride
+        from geofeat.sources.political import country_spec, outline_spec
+
+        self.assertFalse(country_spec(FrameOverride(ring=False)).ring)
+        self.assertFalse(outline_spec(FrameOverride(ring=False)).ring)
+        self.assertTrue(country_spec().ring)
+        spec = country_spec(FrameOverride(ring=False))
+        f = frame(spec, box(0, 0, 0.01, 0.01))
+        with mock.patch.object(render, "_metres_per_px", return_value=1.0), \
+                mock.patch.object(render, "_cluster_rings") as rings:
+            render._country(mock.MagicMock(), spec, box(0, 0, 0.01, 0.01), f, ring=spec.ring)
+            rings.assert_not_called()
+            render._country(mock.MagicMock(), country_spec(), box(0, 0, 0.01, 0.01), f)
+            rings.assert_called_once()
+
+    def test_ring_oval_draws_one_oval_round_all_the_parts(self) -> None:
+        from unittest import mock
+
+        from shapely.geometry import MultiPolygon
+
+        from geofeat.polities import FrameOverride
+        from geofeat.sources.political import country_spec
+
+        spec = country_spec(FrameOverride(ring="oval"))
+        islands = MultiPolygon([box(0, 0, 0.01, 0.01), box(5, 0, 5.01, 0.01), box(10, 3, 10.01, 3.01)])
+        f = frame(spec, islands)
+        with mock.patch.object(render, "_metres_per_px", return_value=1.0), \
+                mock.patch.object(render, "_cluster_rings") as clusters, mock.patch.object(render, "_oval_ring") as oval:
+            render._country(mock.MagicMock(), spec, islands, f, ring=spec.ring)
+            clusters.assert_not_called()
+            oval.assert_called_once()
+
+
+class EnclosingEllipseTest(unittest.TestCase):
+    def test_hugs_a_rotated_chain_and_holds_every_point(self) -> None:
+        import numpy as np
+
+        rng = np.random.default_rng(0)
+        along = rng.uniform(-1000, 1000, 200)
+        chain = np.column_stack([along, rng.uniform(-50, 50, 200)])
+        turn = np.radians(30)
+        points = chain @ np.array([[np.cos(turn), np.sin(turn)], [-np.sin(turn), np.cos(turn)]]) + [5e6, -2e6]
+        centre, radii, axes = render.enclosing_ellipse(points)
+        local = (points - centre) @ axes
+        self.assertLessEqual(((local / radii) ** 2).sum(axis=1).max(), 1 + 1e-9)
+        self.assertLess(radii.min() / radii.max(), 0.1)  # an oval along the chain, not a circle
+        long_axis = axes[:, int(np.argmax(radii))]
+        self.assertAlmostEqual(abs(long_axis @ [np.cos(turn), np.sin(turn)]), 1, places=2)
+        self.assertLess(np.pi * radii.prod(), 0.5 * np.pi * 1000 ** 2)  # well under the bounding circle's area
+
+    def test_converges_fast_on_scattered_island_groups(self) -> None:
+        import time
+
+        import numpy as np
+        import shapely
+        from shapely.geometry import MultiPolygon
+
+        groups = MultiPolygon([box(0, 0, 1e4, 1e4), box(2e6, 3e5, 2.01e6, 3.1e5), box(4e6, -2e5, 4.01e6, -1.9e5),
+                               box(1e6, 9e5, 1.01e6, 9.1e5)])
+        hull = shapely.get_coordinates(groups.convex_hull)
+        start = time.perf_counter()
+        centre, radii, axes = render.enclosing_ellipse(hull)
+        self.assertLess(time.perf_counter() - start, 1.0)
+        local = (hull - centre) @ axes
+        self.assertLessEqual(((local / radii) ** 2).sum(axis=1).max(), 1 + 1e-9)
