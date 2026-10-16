@@ -1,0 +1,1394 @@
+- id: it-aosta-valley
+  uid: wWP2Cef0D7
+  name: Aosta Valley
+  alt_names: [Valle d'Aosta]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Valle d'Aosta}}
+  expect: [6.78, 45.46, 7.92, 45.99]
+  note: >-
+    Italy's smallest region, a northwestern Alpine valley bordering France and Switzerland, ringed by Mont Blanc,
+    the Matterhorn, Monte Rosa and Gran Paradiso. Italian and French are both official, and the Mont Blanc Tunnel
+    links it to Chamonix.
+
+- id: it-piedmont
+  uid: MlkNxMhI4s
+  name: Piedmont
+  alt_names: [Piemonte]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Piemonte}, rows: 8}
+  expect: [6.6, 44.09, 9.21, 46.46]
+  note: >-
+    Northwestern Italy, ringed on three sides by the Alps on the French and Swiss borders, with the Po rising on
+    Monviso. Its name means at the foot of the mountains, and Turin was Italy's first capital, 1861 to 1865.
+
+- id: it-liguria
+  uid: x7n4cScJdS
+  name: Liguria
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Liguria}, rows: 4}
+  expect: [7.47, 43.78, 10.06, 44.69]
+  note: >-
+    A narrow arc of coast on the Ligurian Sea, backed by the Alps and Apennines between France and Tuscany. It
+    roughly matches the former Republic of Genoa, the maritime power whose sailors included Christopher Columbus.
+
+- id: it-lombardy
+  uid: Q26kuxZJlq
+  name: Lombardy
+  alt_names: [Lombardia]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Lombardia}, rows: 12}
+  expect: [8.49, 44.67, 11.43, 46.63]
+  note: >-
+    Northern Italy between the Alps and the Po, bordering Switzerland, with Lake Maggiore on its western edge and
+    Lake Garda on its eastern. Named after the Lombards, Germanic invaders of 568 who made Pavia their capital.
+
+- id: it-trentino-alto-adige
+  uid: hqwtvAEBcj
+  name: Trentino-Alto Adige
+  alt_names: [Trentino-South Tyrol]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Trentino-Alto Adige}, rows: 2}
+  expect: [10.36, 45.68, 12.47, 47.09]
+  note: >-
+    Italy's Alpine far north, from the Brenner Pass on the Austrian border down the Adige valley to the tip of Lake
+    Garda. Part of Austrian Tyrol until 1919, its northern province, South Tyrol, is mostly German-speaking.
+
+- id: it-veneto
+  uid: zafUGtS6eg
+  name: Veneto
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Veneto}, rows: 7}
+  expect: [10.64, 44.79, 13.1, 46.68]
+  note: >-
+    Northeastern Italy between Lake Garda, the Dolomites and the Adriatic, touching Austria at its northern tip.
+    Venice, built on islands in a lagoon, ruled from here one of the great maritime trading republics until 1797.
+
+- id: it-friuli-venezia-giulia
+  uid: xVImwS2r9I
+  name: Friuli-Venezia Giulia
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Friuli-Venezia Giulia}, rows: 4}
+  expect: [12.33, 45.58, 13.9, 46.65]
+  note: >-
+    Italy's far northeast, bordering Austria and Slovenia, between the Carnic and Julian Alps and the Adriatic.
+    Trieste, on its narrow eastern coast, was the Habsburg empire's main port before passing to Italy after the
+    First World War.
+
+- id: it-emilia-romagna
+  uid: rjUhFNaj5q
+  name: Emilia-Romagna
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Emilia-Romagna}, rows: 9}
+  expect: [9.2, 43.74, 12.76, 45.14]
+  note: >-
+    Spans northern Italy from the Apennines to the Adriatic, with the Po along much of its northern border. Named
+    after the Via Aemilia, the Roman road from Piacenza to Rimini completed in 187 BC.
+
+- id: it-tuscany
+  uid: mQqaUYuhlQ
+  name: Tuscany
+  alt_names: [Toscana]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Toscana}, rows: 10}
+  expect: [9.68, 42.31, 12.36, 44.49]
+  note: >-
+    A roughly triangular region of central Italy on the Ligurian and Tyrrhenian seas, including the island of Elba.
+    Regarded as the birthplace of the Renaissance, its Tuscan speech, through Dante and Petrarch, became the basis
+    of literary Italian.
+
+- id: it-umbria
+  uid: kdqMRLLViZ
+  name: Umbria
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Umbria}, rows: 2}
+  expect: [11.88, 42.36, 13.26, 43.64]
+  note: >-
+    Hilly central Italy, crossed by the Tiber and holding Lake Trasimeno, where Hannibal fought Rome in the Second
+    Punic War. The only Italian region with neither coastline nor foreign border, it includes Assisi, home of St
+    Francis.
+
+- id: it-lazio
+  uid: 4Y9oFGzcve
+  name: Lazio
+  alt_names: [Latium]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Lazio}, rows: 5}
+  expect: [11.45, 40.78, 14.02, 42.86]
+  note: >-
+    On the Tyrrhenian coast of central Italy, crossed by the lower Tiber and centred on Rome. Named after ancient
+    Latium, land of the Latins, it was the heart of the Roman Empire and later the Papal States.
+
+- id: it-abruzzo
+  uid: Ku0Uiku8Xq
+  name: Abruzzo
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Abruzzo}, rows: 4}
+  expect: [13.01, 41.68, 14.77, 42.91]
+  note: >-
+    On the Adriatic coast of south-central Italy, between Marche and Molise, with Lazio to the west. Its mountains
+    hold the Gran Sasso, at 2,912 m the highest peak of the Apennines, and half its land is protected parkland.
+
+- id: it-marche
+  uid: l81Z2l8cLf
+  name: Marche
+  alt_names: [The Marches]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Marche}, rows: 5}
+  expect: [12.19, 42.68, 13.91, 43.98]
+  note: >-
+    On Italy's central Adriatic coast, running from the Apennines to the sea between Emilia-Romagna and Abruzzo,
+    with San Marino on its northern edge. Mostly hilly, it includes Urbino, a Renaissance centre and birthplace of
+    the painter Raphael.
+
+- id: it-campania
+  uid: VcObeEnpR3
+  name: Campania
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Campania}, rows: 5}
+  expect: [13.74, 39.99, 15.8, 41.5]
+  note: >-
+    On the Tyrrhenian coast of southern Italy around Naples, including the islands of Capri and Ischia. Mount
+    Vesuvius rises above the city, and its eruption in AD 79 buried the Roman towns of Pompeii and Herculaneum.
+
+- id: it-basilicata
+  uid: KlNaYJjN5Q
+  name: Basilicata
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Basilicata}, rows: 2}
+  expect: [15.34, 39.9, 16.87, 41.14]
+  note: >-
+    The arch of the Italian boot, between Campania, Apulia and Calabria, with short Tyrrhenian and Ionian coasts.
+    Known in antiquity as Lucania, it holds the Sassi cave dwellings of Matera, a UNESCO World Heritage Site since
+    1993.
+
+- id: it-calabria
+  uid: lm4JR7x45d
+  name: Calabria
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Calabria}, rows: 5}
+  expect: [15.62, 37.91, 17.21, 40.14]
+  note: >-
+    The toe of the Italian boot, a long peninsula between the Tyrrhenian and Ionian seas, across the Strait of
+    Messina from Sicily. Ancient Greeks first applied the name Italy to this land, the heart of Magna Graecia.
+
+- id: it-apulia
+  uid: mLDl8zg9ro
+  name: Apulia
+  alt_names: [Puglia]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Apulia}, rows: 6}
+  expect: [14.93, 39.79, 18.52, 41.95]
+  note: >-
+    The heel of the Italian boot, from the Gargano promontory, its spur, down the Adriatic to the Salento peninsula.
+    Settled by Greeks in the 8th century BC, it has the longest coastline of any mainland Italian region.
+
+- id: it-molise
+  uid: MVVEcLiRCX
+  name: Molise
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Molise}, rows: 2}
+  expect: [13.94, 41.37, 15.16, 42.08]
+  note: >-
+    A small, mountainous region of southern Italy between Abruzzo, Lazio, Campania and Apulia, with a short sandy
+    Adriatic coast facing the Tremiti Islands. Second smallest after Aosta Valley, it was separated from Abruzzo in
+    1963.
+
+- id: it-sicily
+  uid: mNJklpywiW
+  name: Sicily
+  alt_names: [Sicilia]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Sicily}, rows: 9}
+  expect: [11.92, 35.48, 15.66, 38.82]
+  note: >-
+    The largest island in the Mediterranean, off the toe of Italy across the Strait of Messina, called Trinacria in
+    antiquity for its triangular shape. Mount Etna, near its east coast, is the tallest active volcano in Europe.
+
+- id: it-sardinia
+  uid: Zu2hqMdIRl
+  name: Sardinia
+  alt_names: [Sardegna]
+  country: italy
+  type: Region
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Sardegna}, rows: 8}
+  expect: [8.13, 38.86, 9.83, 41.27]
+  note: >-
+    The second largest island in the Mediterranean, west of the Italian peninsula and just south of Corsica. Some
+    7,000 nuraghi, stone tower-fortresses built by the Nuragic civilization from about 1500 BC, still dot its
+    landscape.
+
+- id: us-maine
+  uid: UbhOwlYV3j
+  name: Maine
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-ME}}
+  expect: [-71.09, 43.08, -66.97, 47.46]
+  note: >-
+    The northeasternmost state, bordering only one other state, New Hampshire, with Quebec and New Brunswick wrapped
+    around its north. Part of Massachusetts until 1820, it entered the Union that year under the Missouri
+    Compromise.
+
+- id: us-new-hampshire
+  uid: ZBTqWZWodZ
+  name: New Hampshire
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-NH}}
+  expect: [-72.56, 42.7, -70.7, 45.31]
+  note: >-
+    A New England state between Vermont and Maine, reaching north to Quebec, crowned by the White Mountains and
+    Mount Washington. Nicknamed the Granite State, it has the shortest ocean coastline of any US state.
+
+- id: us-massachusetts
+  uid: Zpy9ngQumd
+  name: Massachusetts
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-MA}}
+  expect: [-73.51, 41.23, -69.92, 42.89]
+  note: >-
+    A New England state stretching from Boston and Cape Cod on the Atlantic west to the Berkshires. The Pilgrims
+    founded Plymouth Colony here in 1620, and the battles of Lexington and Concord began the Revolutionary War in
+    1775.
+
+- id: us-rhode-island
+  uid: 411ScBCSPL
+  name: Rhode Island
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-RI}}
+  expect: [-71.88, 41.14, -71.12, 42.02]
+  note: >-
+    The smallest state, built around Narragansett Bay between Connecticut and Massachusetts. Roger Williams founded
+    Providence in 1636 as a haven for religious liberty, and in May 1776 it was the first colony to renounce British
+    rule.
+
+- id: us-connecticut
+  uid: dWAdGJqO78
+  name: Connecticut
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-CT}}
+  expect: [-73.73, 41.0, -71.79, 42.06]
+  note: >-
+    A small New England state on Long Island Sound, bisected by the Connecticut River, the longest in New England.
+    Its Fundamental Orders of 1639, considered by some the first written constitution, give it the nickname
+    Constitution State.
+
+- id: us-new-york
+  uid: BjEATM1Ucr
+  name: New York
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-NY}}
+  expect: [-79.77, 40.49, -71.85, 45.02]
+  note: >-
+    Reaches from New York City and Long Island on the Atlantic to Lakes Erie and Ontario, with the Hudson flowing
+    south through it. First colonised by the Dutch, it boomed after the Erie Canal opened in 1825.
+
+- id: us-vermont
+  uid: DLtIHUbBjm
+  name: Vermont
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-VT}}
+  expect: [-73.44, 42.72, -71.5, 45.02]
+  note: >-
+    A landlocked New England state between New York and New Hampshire, with the Green Mountains down its middle and
+    Lake Champlain on its west. An independent republic from 1777, it became the 14th state in 1791.
+
+- id: us-new-jersey
+  uid: QHSdyqDkO6
+  name: New Jersey
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-NJ}}
+  expect: [-75.56, 38.92, -73.9, 41.36]
+  note: >-
+    Lies between the Hudson and Delaware rivers, with New York to the north and east and a long Atlantic shore.
+    First settled by the Dutch and Swedes, it is named after the Channel Island of Jersey.
+
+- id: us-pennsylvania
+  uid: pFApO9lKfS
+  name: Pennsylvania
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-PA}}
+  expect: [-80.53, 39.72, -74.69, 42.54]
+  note: >-
+    Crossed by the Appalachians, with the Delaware River on its east, a short Lake Erie shore in the northwest and
+    the Mason-Dixon line on its south. Founded in 1681 on a royal grant to William Penn.
+
+- id: us-delaware
+  uid: SumTpIWA68
+  name: Delaware
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-DE}}
+  expect: [-75.79, 38.45, -75.04, 39.84]
+  note: >-
+    Occupies the northeastern part of the Delmarva Peninsula, between Maryland and the Atlantic, with Delaware Bay
+    to its east. Known as the First State, it was the first to ratify the US Constitution, on December 7, 1787.
+
+- id: us-maryland
+  uid: m8CPw4kHU6
+  name: Maryland
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-MD}}
+  expect: [-79.49, 37.93, -75.04, 39.73]
+  note: >-
+    A Mid-Atlantic state wrapped around Chesapeake Bay, with its western portion reaching into the Appalachians and
+    the Mason-Dixon line along its north. Settled in 1634 under the Calvert family as a refuge for English
+    Catholics.
+
+- id: us-district-of-columbia
+  uid: 14u1lCKYby
+  name: District of Columbia
+  alt_names: ['Washington, D.C.']
+  country: united-states
+  type: Federal district
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-DC}}
+  expect: [-77.12, 38.8, -76.9, 39.0]
+  note: >-
+    The federal district on the northeast bank of the Potomac, facing Virginia and otherwise surrounded by Maryland.
+    Created under the Residence Act of 1790, it belongs to no state and is named after Columbia, a personification
+    of America.
+
+- id: us-virginia
+  uid: YYsaTymb2p
+  name: Virginia
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-VA}}
+  expect: [-83.67, 36.53, -75.24, 39.46]
+  note: >-
+    Lies between the Atlantic and the Appalachians, with Chesapeake Bay on its east and the Blue Ridge and
+    Shenandoah Valley in the west. Jamestown, founded in 1607, was the first permanent English colony in the New
+    World.
+
+- id: us-west-virginia
+  uid: xrLzB81igh
+  name: West Virginia
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-WV}}
+  expect: [-82.64, 37.2, -77.73, 40.65]
+  note: >-
+    A landlocked, almost wholly mountainous Appalachian state with northern and eastern panhandles. Formed from
+    Virginia's western counties during the Civil War, it was admitted in 1863, the only state created by splitting
+    from a Confederate state.
+
+- id: us-ohio
+  uid: Gqt5Ltk2J6
+  name: Ohio
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-OH}}
+  expect: [-84.83, 38.4, -80.52, 42.33]
+  note: >-
+    A Midwest state between Lake Erie and the Ohio River, whose name comes from a Seneca word for great or good
+    river. It was the first state admitted under the Northwest Ordinance, in 1803.
+
+- id: us-indiana
+  uid: bG5i0whHMx
+  name: Indiana
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-IN}}
+  expect: [-88.12, 37.78, -84.78, 41.76]
+  note: >-
+    A Midwest state between Illinois and Ohio, with a short Lake Michigan shore and dunes in the northwest and the
+    Ohio River as its southern border. Nicknamed the Hoosier State, its name means land of the Indians.
+
+- id: us-kentucky
+  uid: hhVxWhGW7E
+  name: Kentucky
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-KY}}
+  expect: [-89.58, 36.49, -81.96, 39.15]
+  note: >-
+    A landlocked state whose northern border follows the Ohio River, first settled by pioneers like Daniel Boone
+    through the Cumberland Gap. It holds Mammoth Cave, the world's longest known cave system, and its Bluegrass
+    region breeds thoroughbred horses.
+
+- id: us-illinois
+  uid: LQkPWNcYOa
+  name: Illinois
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-IL}}
+  expect: [-91.52, 36.97, -87.01, 42.52]
+  note: >-
+    Reaches from Chicago on Lake Michigan south between the Mississippi on the west and the Wabash and Ohio rivers
+    on the east and south. Abraham Lincoln was elected president while living here, hence its slogan Land of
+    Lincoln.
+
+- id: us-michigan
+  uid: rhyVojKsVQ
+  name: Michigan
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-MI}}
+  expect: [-90.42, 41.69, -82.14, 48.31]
+  note: >-
+    Made of two peninsulas, the Lower and the forested Upper, joined by the Mackinac Bridge across the Straits of
+    Mackinac. Touching four of the five Great Lakes, it has the longest freshwater coastline of any US state.
+
+- id: us-wisconsin
+  uid: j1sFaE9014
+  name: Wisconsin
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-WI}}
+  expect: [-92.91, 42.49, -86.25, 47.31]
+  note: >-
+    An Upper Midwest state between Lake Superior to the north and Lake Michigan to the east, with Minnesota and Iowa
+    to the west. Named after the Wisconsin River, it is known as America's Dairyland, famous for its cheese.
+
+- id: us-minnesota
+  uid: Otw9OKyx6e
+  name: Minnesota
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-MN}}
+  expect: [-97.23, 43.5, -89.49, 49.37]
+  note: >-
+    An Upper Midwest state on the Canadian border, with Lake Superior at its northeastern corner. Called the Land of
+    10,000 Lakes, it holds Lake Itasca, the source of the Mississippi River.
+
+- id: us-north-dakota
+  uid: TedCKuVZdv
+  name: North Dakota
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-ND}}
+  expect: [-104.05, 45.94, -96.55, 49.0]
+  note: >-
+    A Great Plains state on the Canadian border, with the Red River of the North along its Minnesota side and the
+    Missouri crossing its west. Named after the Dakota Sioux, it was admitted in 1889 alongside South Dakota.
+
+- id: us-montana
+  uid: o8sCALaPnI
+  name: Montana
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-MT}}
+  expect: [-116.05, 44.37, -104.03, 49.0]
+  note: >-
+    A large landlocked state on the Canadian border, with the Rocky Mountains in the west and prairie and badlands
+    in the east. Known as Big Sky Country, it saw the Battle of the Little Bighorn in 1876.
+
+- id: us-idaho
+  uid: z77IsySgZt
+  name: Idaho
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-ID}}
+  expect: [-117.22, 41.99, -111.05, 49.0]
+  note: >-
+    A landlocked northwestern state whose narrow panhandle reaches Canada, with Washington and Oregon to the west
+    and Montana and Wyoming to the east. The Snake River carves Hells Canyon, the deepest gorge in the United
+    States.
+
+- id: us-washington
+  uid: L8x22ROPJN
+  name: Washington
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-WA}}
+  expect: [-124.74, 45.56, -116.87, 49.0]
+  note: >-
+    On the Pacific coast between Oregon and British Columbia, with Puget Sound cutting deep inland. The Cascade
+    Range divides its rainy west from its dry interior, and the volcano Mount Rainier is its highest point.
+
+- id: us-oregon
+  uid: RZM5C7NxKp
+  name: Oregon
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-OR}}
+  expect: [-124.57, 41.99, -116.45, 46.26]
+  note: >-
+    On the Pacific between Washington, across the Columbia River, and California. Settlers arrived by the Oregon
+    Trail from the early 1840s, and Crater Lake, in its Cascade Range, is the deepest lake in the United States.
+
+- id: us-california
+  uid: kg4hkEg2h1
+  name: California
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-CA}}
+  expect: [-124.41, 32.53, -114.11, 42.0]
+  note: >-
+    On the Pacific between Oregon and Mexico, with the Sierra Nevada along its east and the fertile Central Valley
+    at its heart. Ceded by Mexico in 1848, it was transformed by the gold rush that began that year.
+
+- id: us-nevada
+  uid: dg1yvA5Iih
+  name: Nevada
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-NV}}
+  expect: [-120.01, 35.0, -114.04, 42.01]
+  note: >-
+    Covers most of the Great Basin, between California and Utah, with the Mojave Desert in the south. The 1859
+    Comstock Lode silver strike drove its settlement, and it became a state in 1864, during the Civil War.
+
+- id: us-arizona
+  uid: yznFS6sgSC
+  name: Arizona
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-AZ}}
+  expect: [-114.83, 31.32, -109.04, 37.01]
+  note: >-
+    A landlocked southwestern state on the Mexican border, meeting Utah, Colorado and New Mexico at the Four
+    Corners. Home to the Grand Canyon, it was the last contiguous state admitted, on February 14, 1912.
+
+- id: us-utah
+  uid: atQ78EMrMu
+  name: Utah
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-UT}}
+  expect: [-114.05, 36.99, -109.04, 42.01]
+  note: >-
+    A Four Corners state with the Great Salt Lake in the north and much of its west in the Great Basin. Mormon
+    pioneers arrived in 1847, and statehood followed in 1896 after polygamy was outlawed.
+
+- id: us-wyoming
+  uid: z4LUVfvCQy
+  name: Wyoming
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-WY}}
+  expect: [-111.06, 40.99, -104.05, 45.01]
+  note: >-
+    A Mountain West state of Rocky Mountain ranges and High Plains, home to Yellowstone, created in 1872 as the
+    world's first national park. As a territory it gave women the vote in 1869, earning the name Equality State.
+
+- id: us-south-dakota
+  uid: vRp5tG0Yr5
+  name: South Dakota
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-SD}}
+  expect: [-104.06, 42.51, -96.45, 45.95]
+  note: >-
+    Split by the Missouri River into East River and West River, with the pine-covered Black Hills in the southwest.
+    Sacred to the Sioux, the hills drew settlers after gold was found in 1874, and hold Mount Rushmore.
+
+- id: us-iowa
+  uid: UKnKPvUlqx
+  name: Iowa
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-IA}}
+  expect: [-96.64, 40.37, -90.14, 43.51]
+  note: >-
+    A Midwest farm state in the heart of the Corn Belt, and the only state whose eastern and western borders are
+    almost entirely rivers: the Mississippi on the east, the Missouri and Big Sioux on the west.
+
+- id: us-nebraska
+  uid: juWdc9uubp
+  name: Nebraska
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-NE}}
+  expect: [-104.06, 40.0, -95.31, 43.01]
+  note: >-
+    A Great Plains state with the Missouri River on its eastern border, crossed by the Platte. Its name comes from
+    Otoe and Omaha words for flat water, meaning the Platte, and its legislature is uniquely unicameral.
+
+- id: us-colorado
+  uid: QPaqdmYeVW
+  name: Colorado
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-CO}}
+  expect: [-109.05, 36.99, -102.03, 41.0]
+  note: >-
+    A Mountain West state sharing the Four Corners, spanning the Southern Rocky Mountains and the western edge of
+    the Great Plains. Admitted on August 1, 1876, weeks after the national centennial, it is nicknamed the
+    Centennial State.
+
+- id: us-new-mexico
+  uid: kWxYiYBYjX
+  name: New Mexico
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-NM}}
+  expect: [-109.05, 31.32, -103.0, 37.0]
+  note: >-
+    A Four Corners state on the Mexican border, with the Rio Grande running south through its centre. Santa Fe,
+    founded in 1610 as the seat of Spanish Nuevo México, is the oldest state capital in the US.
+
+- id: us-texas
+  uid: RnD8GEbAbA
+  name: Texas
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-TX}}
+  expect: [-106.67, 25.84, -93.51, 36.51]
+  note: >-
+    A vast south-central state on the Gulf of Mexico, with the Rio Grande as its border with Mexico. Independent
+    after the 1836 Texas Revolution, which included the Battle of the Alamo, it joined the Union in 1845.
+
+- id: us-louisiana
+  uid: l1WvVgTKZo
+  name: Louisiana
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-LA}}
+  expect: [-94.05, 28.92, -88.81, 33.02]
+  note: >-
+    On the Gulf of Mexico, with the Mississippi along part of its eastern edge and the river's delta forming a coast
+    of marsh and swamp. Named after Louis XIV of France, it is divided into parishes, not counties.
+
+- id: us-mississippi
+  uid: E3NjCPH9hr
+  name: Mississippi
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-MS}}
+  expect: [-91.66, 30.18, -88.08, 35.01]
+  note: >-
+    A Deep South state between Louisiana and Alabama, with the Mississippi River along its western edge and a short
+    Gulf of Mexico coast. It is named after the river, from an Ojibwe word meaning great river.
+
+- id: us-arkansas
+  uid: gwkSPsSYWF
+  name: Arkansas
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-AR}}
+  expect: [-94.62, 33.01, -89.66, 36.5]
+  note: >-
+    A landlocked southern state on the west bank of the Mississippi, with the Ozark and Ouachita mountains in the
+    west. Its name refers to the Quapaw people, and it has the world's only diamond field open to public digging.
+
+- id: us-oklahoma
+  uid: SKQouCezjG
+  name: Oklahoma
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-OK}}
+  expect: [-103.01, 33.64, -94.43, 37.0]
+  note: >-
+    A south-central state between Kansas and Texas, with a narrow panhandle reaching west. Its name is Choctaw for
+    red people, and once Indian Territory, where removed tribes were resettled, it became a state in 1907.
+
+- id: us-kansas
+  uid: BZBiJAZ1n2
+  name: Kansas
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-KS}}
+  expect: [-102.06, 36.99, -94.61, 40.01]
+  note: >-
+    A landlocked Great Plains state between Nebraska and Oklahoma, containing the geographic centre of the
+    contiguous United States, near Lebanon. Bleeding Kansas, the 1850s conflict over slavery, preceded its admission
+    as a free state in 1861.
+
+- id: us-missouri
+  uid: wrKXx0Disg
+  name: Missouri
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-MO}}
+  expect: [-95.78, 35.98, -89.11, 40.62]
+  note: >-
+    A landlocked Midwest state on the west bank of the Mississippi, bordered by eight states. Part of the Louisiana
+    Purchase and called the Gateway to the West, it joined the Union as a slave state under the Missouri Compromise.
+
+- id: us-tennessee
+  uid: EPnN2NzvPh
+  name: Tennessee
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-TN}}
+  expect: [-90.32, 34.98, -81.65, 36.69]
+  note: >-
+    Stretches from the Great Smoky Mountains in the east to the Mississippi River, its western border, touching
+    eight other states. It is divided into three Grand Divisions, East, Middle and West Tennessee, each with a
+    distinct landscape.
+
+- id: us-north-carolina
+  uid: HHfn0Ev7wJ
+  name: North Carolina
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-NC}}
+  expect: [-84.33, 33.84, -75.45, 36.61]
+  note: >-
+    On the Atlantic between Virginia and South Carolina, stretching from the barrier islands of the Outer Banks to
+    the Appalachians. The Wright brothers made the first controlled powered flight near Kitty Hawk, on the Outer
+    Banks, in 1903.
+
+- id: us-alabama
+  uid: vwjB3ORI1V
+  name: Alabama
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-AL}}
+  expect: [-88.49, 30.22, -84.89, 35.01]
+  note: >-
+    A Deep South state between Mississippi and Georgia, with a short Gulf coast at Mobile Bay and the Tennessee
+    Valley in its north. The Selma to Montgomery marches made it a focal point of the civil rights movement.
+
+- id: us-florida
+  uid: Z5WpL9widf
+  name: Florida
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-FL}}
+  expect: [-87.63, 24.54, -80.03, 31.01]
+  note: >-
+    A long peninsula between the Gulf of Mexico and the Atlantic, with the Everglades and the Keys at its southern
+    tip. Spain founded St. Augustine in 1565, the oldest continuously inhabited European settlement in the
+    contiguous US.
+
+- id: us-georgia
+  uid: xF6OhguvVA
+  name: Georgia
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-GA}}
+  expect: [-85.61, 30.36, -80.83, 35.01]
+  note: >-
+    A southeastern state on the Atlantic, with the Savannah River along its South Carolina border and the Blue Ridge
+    in the north. Founded in 1732 and named for George II, it was the last of the Thirteen Colonies.
+
+- id: us-south-carolina
+  uid: PvQN6XyjEE
+  name: South Carolina
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-SC}}
+  expect: [-83.36, 32.03, -78.57, 35.22]
+  note: >-
+    On the Atlantic between North Carolina and Georgia, rising from the coastal Lowcountry to the Blue Ridge. The
+    first state to secede from the Union, it saw the Civil War's opening shots at Fort Sumter in 1861.
+
+- id: us-alaska
+  uid: zxyuuJmcDJ
+  name: Alaska
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-AK}}
+  expect: [172.47, 51.21, -129.98, 71.42]
+  note: >-
+    The largest state, separated from the rest of the country by Canada and facing Russia across the Bering Strait,
+    between the Arctic and Pacific. Bought from Russia in 1867, it became a state in 1959.
+
+- id: us-hawaii
+  uid: 581S24scHe
+  name: Hawaii
+  country: united-states
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: US-HI}}
+  expect: [-178.31, 18.9, -154.81, 28.41]
+  note: >-
+    A chain of 137 volcanic islands about 2,000 miles southwest of the mainland, the only state that is an
+    archipelago. An independent kingdom until 1893, it was annexed in 1898 and became the 50th state in 1959.
+
+- id: br-roraima
+  uid: nYlzjpM87c
+  name: Roraima
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-RR}}
+  expect: [-64.82, -1.42, -58.87, 5.27]
+  note: >-
+    Brazil's northernmost state, wedged between Venezuela and Guyana and drained by the Branco River. Mount Roraima
+    rises at the tripoint of the three countries, and Boa Vista is the only Brazilian state capital entirely in the
+    Northern Hemisphere.
+
+- id: br-amazonas
+  uid: eInCVQPDe4
+  name: Amazonas
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-AM}}
+  expect: [-73.82, -9.84, -56.31, 2.24]
+  note: >-
+    Brazil's largest state, covering the northwest of the Amazon basin and bordering Peru, Colombia and Venezuela.
+    Named after the Amazon River, it has its capital, Manaus, deep in the rainforest some 1,500 km upstream from the
+    Atlantic.
+
+- id: br-acre
+  uid: aOhcGvBvGz
+  name: Acre
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-AC}}
+  expect: [-74.02, -11.15, -66.64, -7.11]
+  note: >-
+    Brazil's westernmost state, deep in the Amazon, bordering Peru and Bolivia. The rubber boom drew settlers from
+    across Brazil, and in the 1903 Treaty of Petrópolis, Bolivia ceded the region to Brazil.
+
+- id: br-para
+  uid: brn0ZGJrDB
+  name: Pará
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-PA}}
+  expect: [-58.98, -9.85, -46.06, 2.61]
+  note: >-
+    A huge northern state traversed by the lower Amazon, reaching the Atlantic at the estuary, where Belém lies near
+    the vast island of Marajó. Second in area only to Amazonas, it borders Guyana and Suriname to the northwest.
+
+- id: br-amapa
+  uid: JBxaYT98Fi
+  name: Amapá
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-AP}}
+  expect: [-54.8, -1.22, -49.87, 4.45]
+  note: >-
+    On the Atlantic in Brazil's far north, bordering French Guiana and Suriname, with the Oiapoque River marking the
+    northern end of Brazil's coast. Split from Pará as a territory in 1943, it became a state in 1988.
+
+- id: br-rondonia
+  uid: 7r894Z58AT
+  name: Rondônia
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-RO}}
+  expect: [-66.84, -13.67, -59.82, -8.0]
+  note: >-
+    An Amazon state between Acre, Amazonas and Mato Grosso, with Bolivia along its southern edge. It is named after
+    Cândido Rondon, who explored the region in the 1910s, and its capital, Porto Velho, stands on the Madeira River.
+
+- id: br-mato-grosso
+  uid: BTlz8pLIxm
+  name: Mato Grosso
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-MT}}
+  expect: [-61.62, -18.04, -50.23, -7.33]
+  note: >-
+    A vast Center-West state bordering Bolivia, whose flat landscape spans three ecosystems: the Amazon rainforest,
+    the Cerrado savanna and, in the south, the Pantanal wetland. Its name means thick bush, and it contains the
+    Xingu Indigenous Park.
+
+- id: br-goias
+  uid: INJAwH7C0J
+  name: Goiás
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-GO}}
+  expect: [-53.25, -19.49, -45.91, -12.39]
+  note: >-
+    A Center-West state on a high plateau that divides three great river systems, the Paraná, São Francisco and
+    Araguaia-Tocantins, and wraps around the Federal District. Pioneers from São Paulo began settling it in the
+    early 18th century.
+
+- id: br-federal-district
+  uid: CcqZE8y19B
+  name: Federal District
+  alt_names: [Distrito Federal]
+  country: brazil
+  type: Federal district
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-DF}}
+  expect: [-48.28, -16.05, -47.3, -15.48]
+  note: >-
+    Brazil's smallest federal unit, surrounded by Goiás apart from a short border with Minas Gerais. Carved from
+    Goiás for Brasília, planned by Lúcio Costa and Oscar Niemeyer, it became the seat of government on 21 April
+    1960.
+
+- id: br-mato-grosso-do-sul
+  uid: bpXUvGRwri
+  name: Mato Grosso do Sul
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-MS}}
+  expect: [-58.17, -24.06, -50.93, -17.18]
+  note: >-
+    A Center-West state bordering Paraguay and Bolivia, with the Pantanal lowlands and tributaries of the Paraná
+    River draining its east. Its name means southern thick bush, and it was split from Mato Grosso between 1977 and
+    1979.
+
+- id: br-parana
+  uid: rvo9vtVtzp
+  name: Paraná
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-PR}}
+  expect: [-54.62, -26.71, -48.03, -22.52]
+  note: >-
+    A southern state between São Paulo and Santa Catarina, reaching from the Atlantic west to the Paraná River and
+    Paraguay. Iguaçu National Park lies on its border with Argentina, and the Itaipu Dam on its border with
+    Paraguay.
+
+- id: br-santa-catarina
+  uid: 38Sco3exVE
+  name: Santa Catarina
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-SC}}
+  expect: [-53.85, -29.36, -48.37, -25.97]
+  note: >-
+    A southern state between Paraná and Rio Grande do Sul, with the Atlantic to the east and Argentina to the west.
+    Its capital, Florianópolis, lies on Santa Catarina Island, and it drew many Azorean, German and Italian
+    immigrants.
+
+- id: br-rio-grande-do-sul
+  uid: azcQuchQv6
+  name: Rio Grande do Sul
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-RS}}
+  expect: [-57.62, -33.75, -49.69, -27.07]
+  note: >-
+    Brazil's southernmost state, bordering Uruguay and Argentina, with the great coastal lagoons Lagoa dos Patos and
+    Lagoa Mirim behind its Atlantic shore. It shares a gaucho ranching culture with its neighbours and saw the
+    19th-century Ragamuffin War.
+
+- id: br-sao-paulo
+  uid: tkZcgstRtQ
+  name: São Paulo
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-SP}}
+  expect: [-53.17, -25.31, -44.16, -19.78]
+  note: >-
+    A southeastern state between Minas Gerais and Paraná, with an Atlantic coast near Santos, where the first
+    Portuguese colonial expedition landed in 1532. Its 17th-century bandeirantes pushed Portugal's frontier deep
+    inland, and coffee later made it rich.
+
+- id: br-rio-de-janeiro
+  uid: 9UDrU0ErDH
+  name: Rio de Janeiro
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-RJ}}
+  expect: [-44.87, -23.36, -40.95, -20.77]
+  note: >-
+    A southeastern state on the Atlantic between São Paulo and Espírito Santo, around Guanabara Bay. Its namesake
+    city was Brazil's capital until 1960, then became the separate state of Guanabara, which merged into Rio de
+    Janeiro in 1975.
+
+- id: br-minas-gerais
+  uid: mSxsuz30lr
+  name: Minas Gerais
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-MG}}
+  expect: [-51.03, -22.9, -39.86, -14.23]
+  note: >-
+    A large landlocked southeastern state of rugged highlands, where the São Francisco and other major rivers rise.
+    Its name means general mines: a gold rush from the 1690s built colonial towns such as Ouro Preto and Diamantina.
+
+- id: br-espirito-santo
+  uid: y7saLkDMyK
+  name: Espírito Santo
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-ES}}
+  expect: [-41.89, -21.28, -28.87, -17.87]
+  note: >-
+    A small southeastern state on the Atlantic, between Minas Gerais and the sea, north of Rio de Janeiro. Its name
+    means Holy Spirit, and its capital, Vitória, stands on an island beside some of Brazil's main ports.
+
+- id: br-bahia
+  uid: uE3QChc6kZ
+  name: Bahia
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-BA}}
+  expect: [-46.58, -18.33, -37.36, -8.52]
+  note: >-
+    A large northeastern state with a long Atlantic coast, crossed by the São Francisco River and divided by the
+    Chapada Diamantina uplands. Salvador, founded in 1549 on the Bay of All Saints, was the first capital of Brazil.
+
+- id: br-sergipe
+  uid: 9UtPyOtwql
+  name: Sergipe
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-SE}}
+  expect: [-38.25, -11.57, -36.4, -9.52]
+  note: >-
+    Brazil's smallest state, on the Atlantic between Bahia and Alagoas, with the São Francisco River forming its
+    northern boundary. Once part of the Captaincy of Bahia, it rises from coastal forest to the drier agreste
+    inland.
+
+- id: br-tocantins
+  uid: ftXvZhqbwQ
+  name: Tocantins
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-TO}}
+  expect: [-50.75, -13.39, -45.75, -5.16]
+  note: >-
+    Brazil's newest state, created in 1988 from northern Goiás and drained by the Araguaia and Tocantins rivers.
+    Bananal Island, in its southwest, is one of the world's largest river islands, and its capital, Palmas, was
+    begun in 1989.
+
+- id: br-maranhao
+  uid: nNlmazgOMG
+  name: Maranhão
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-MA}}
+  expect: [-48.75, -10.32, -41.81, -1.05]
+  note: >-
+    On the northeastern Atlantic between Pará and Piauí, with the Lençóis Maranhenses dune fields on its coast. The
+    French founded Equinoctial France on São Luís Island in 1612, but the Portuguese expelled them in 1615.
+
+- id: br-piaui
+  uid: EebXD1yp4v
+  name: Piauí
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-PI}}
+  expect: [-45.99, -10.9, -40.41, -2.74]
+  note: >-
+    A northeastern state between Maranhão and Ceará, separated from Maranhão by the Parnaíba River, with the
+    shortest coastline of any coastal Brazilian state, just 66 km. Unusually, it was colonised from the interior
+    toward the sea.
+
+- id: br-ceara
+  uid: 34CjOGBzXY
+  name: Ceará
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-CE}}
+  expect: [-41.45, -7.86, -37.23, -2.78]
+  note: >-
+    On the northeastern Atlantic coast between Piauí and Rio Grande do Norte, known for some 600 km of sandy coast.
+    In 1884 it became the first Brazilian province to abolish slavery, four years before the national law.
+
+- id: br-rio-grande-do-norte
+  uid: DC3oskL3gO
+  name: Rio Grande do Norte
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-RN}}
+  expect: [-38.61, -6.98, -29.34, 0.9]
+  note: >-
+    Forms the northeastern tip of South America, with long sandy beaches around Natal. Its name, great northern
+    river, refers to the mouth of the Potenji, and it includes Rocas Atoll, the only atoll in the South Atlantic.
+
+- id: br-pernambuco
+  uid: YtLHo3rjLB
+  name: Pernambuco
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-PE}}
+  expect: [-41.38, -9.49, -34.8, -7.26]
+  note: >-
+    A northeastern state reaching from a narrow Atlantic coastal zone around Recife and Olinda to a high inland
+    plateau, plus the Fernando de Noronha archipelago. A colonial sugarcane centre, it was under Dutch rule from
+    1630 to 1654.
+
+- id: br-alagoas
+  uid: kvAn6Sp24x
+  name: Alagoas
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-AL}}
+  expect: [-38.24, -10.51, -35.14, -8.83]
+  note: >-
+    A small northeastern state on the Atlantic between Pernambuco and Sergipe, with the São Francisco River on its
+    southern border. Its interior held Palmares, the most important quilombo of escaped slaves, destroyed in the
+    late 17th century.
+
+- id: br-paraiba
+  uid: xNnuylakM5
+  name: Paraíba
+  country: brazil
+  type: State
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: BR-PB}}
+  expect: [-38.75, -8.29, -34.79, -6.02]
+  note: >-
+    A northeastern state between Rio Grande do Norte and Pernambuco, rising from the Atlantic coast to the Borborema
+    Plateau. Named after the Paraíba River, its coast includes Ponta do Seixas, the easternmost point of the
+    mainland Americas.
+
+- id: ca-british-columbia
+  uid: PQhxmpKUKa
+  name: British Columbia
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-BC}}
+  expect: [-139.07, 48.3, -114.03, 60.01]
+  note: >-
+    Canada's westernmost province, between the Pacific and the Rocky Mountains, with Alaska to the northwest. It
+    joined Confederation in 1871 as the sixth province, and its capital, Victoria, sits at the southeastern tip of
+    Vancouver Island.
+
+- id: ca-alberta
+  uid: nbuBZLZNy1
+  name: Alberta
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-AB}}
+  expect: [-120.01, 48.99, -109.99, 60.01]
+  note: >-
+    A landlocked prairie province between British Columbia and Saskatchewan, with the Great Plains in the east and
+    the Rocky Mountains, including Banff and Jasper national parks, along its western edge. It became a province in
+    1905.
+
+- id: ca-yukon
+  uid: cpyRnVfo8z
+  name: Yukon
+  country: canada
+  type: Territory
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-YT}}
+  expect: [-141.01, 60.0, -123.81, 69.66]
+  note: >-
+    Canada's westernmost territory, between Alaska and the Northwest Territories, reaching north from British
+    Columbia to the Beaufort Sea. Split from the Northwest Territories in 1898, it holds Mount Logan, at 5,959 m the
+    highest mountain in Canada.
+
+- id: ca-saskatchewan
+  uid: 20Uy4H0FFK
+  name: Saskatchewan
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-SK}}
+  expect: [-110.0, 48.99, -101.36, 60.01]
+  note: >-
+    A landlocked prairie province between Alberta and Manitoba, with farmland across its southern half and forest in
+    the north. Carved from the North-West Territories in 1905, it has fresh water covering nearly a tenth of its
+    area.
+
+- id: ca-northwest-territories
+  uid: B3KssJiu3d
+  name: Northwest Territories
+  country: canada
+  type: Territory
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-NT}}
+  expect: [-136.45, 60.0, -101.98, 78.77]
+  note: >-
+    A vast northern territory between Yukon and Nunavut, drained by the Mackenzie River. It holds Great Bear Lake,
+    the largest lake entirely within Canada, and Great Slave Lake, the deepest in North America.
+
+- id: ca-nunavut
+  uid: cIyL0KQMtf
+  name: Nunavut
+  country: canada
+  type: Territory
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-NU}}
+  expect: [-120.69, 51.91, -61.08, 83.12]
+  note: >-
+    Canada's largest and northernmost territory, covering most of the Arctic Archipelago, including Baffin and
+    Ellesmere islands, and every island in Hudson Bay. It was split from the Northwest Territories in 1999 as a
+    self-governing territory for the Inuit.
+
+- id: ca-manitoba
+  uid: hCUwSHMWC6
+  name: Manitoba
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-MB}}
+  expect: [-102.01, 48.99, -88.94, 60.01]
+  note: >-
+    A prairie province at the longitudinal centre of Canada, reaching from farmland on the US border to tundra on
+    Hudson Bay. It joined Confederation in 1870 after the Red River Rebellion led by the Métis leader Louis Riel.
+
+- id: ca-ontario
+  uid: qhL8pDV0Ky
+  name: Ontario
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-ON}}
+  expect: [-95.17, 41.66, -74.34, 56.87]
+  note: >-
+    Canada's southernmost province, between Manitoba and Quebec, with Hudson Bay to the north and the Great Lakes
+    along its US border. The Canadian Shield covers over half its land, and it holds Ottawa, the national capital.
+
+- id: ca-quebec
+  uid: YZdwCBH55M
+  name: Quebec
+  alt_names: [Québec]
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-QC}}
+  expect: [-79.77, 44.99, -57.1, 62.6]
+  note: >-
+    Canada's largest province, spanning the Saint Lawrence valley and a vast northern interior between Ontario and
+    Labrador. The only French-majority province, it grew from New France, whose capital, Quebec City, Samuel de
+    Champlain founded in 1608.
+
+- id: ca-new-brunswick
+  uid: 4rgEusmHN2
+  name: New Brunswick
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-NB}}
+  expect: [-69.07, 44.6, -63.77, 48.08]
+  note: >-
+    A Maritime province between Quebec, Maine and Nova Scotia, with the Gulf of Saint Lawrence to the northeast and
+    the Bay of Fundy to the south. Canada's only officially bilingual province, it is home to most Acadians.
+
+- id: ca-prince-edward-island
+  uid: eN08nlrQhi
+  name: Prince Edward Island
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-PE}}
+  expect: [-64.42, 45.95, -61.97, 47.07]
+  note: >-
+    Canada's smallest province, an island in the Gulf of Saint Lawrence across the Northumberland Strait from Nova
+    Scotia and New Brunswick. Called the Birthplace of Confederation, it hosted the 1864 Charlottetown Conference
+    that led to Canadian union.
+
+- id: ca-newfoundland-and-labrador
+  uid: nRfILR0kmY
+  name: Newfoundland and Labrador
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-NL}}
+  expect: [-67.81, 46.61, -52.61, 60.38]
+  note: >-
+    Canada's easternmost province, made up of the island of Newfoundland and mainland Labrador, which borders
+    Quebec. A separate British dominion until it joined Canada in 1949, it holds L'Anse aux Meadows, a Norse
+    settlement site.
+
+- id: ca-nova-scotia
+  uid: 3TyFDsTK1D
+  name: Nova Scotia
+  country: canada
+  type: Province
+  geometry:
+  - {layer: 10m_admin_1_states_provinces, select: {iso_3166_2: CA-NS}}
+  expect: [-66.33, 43.42, -59.68, 47.04]
+  note: >-
+    A peninsula on the Atlantic joined to New Brunswick by the Isthmus of Chignecto, plus Cape Breton Island and
+    thousands of smaller islands. Its Latin name means New Scotland, and the British deported its French-speaking
+    Acadians en masse.
