@@ -16,7 +16,7 @@ from shapely.geometry.base import BaseGeometry
 
 from geofeat.card import Text
 from geofeat.curriculum import CURRICULUM, load_curriculum
-from geofeat.model import ROOT, Note, Part, Strict, Verify
+from geofeat.model import ROOT, Note, OverrideReason, Part, Strict, Verify
 from geofeat.resolve import area_km2, custom, features_by_id, layer, resolve, select_rows
 
 COUNTRIES = ROOT / "data/countries.yaml"
@@ -147,13 +147,15 @@ class FrameOverride(Strict):
     draws one oval on the main map round all its parts (a state scattered over an ocean), and none in the inset. On a country
     these apply to the country card only; its capital card always has an inset by the city rule, and no ring.
     `include` names countries or territories whose main bodies the frame holds too, moving before it widens (Australia,
-    for New Zealand). It moves the frame itself, so the capital and city cards drawn on it follow."""
+    for New Zealand). It moves the frame itself, so the capital and city cards drawn on it follow. Any of these needs a
+    `reason`, saying why the card is an exception."""
 
     inset: bool | None = None
     inset_km: Annotated[float, Field(gt=0, le=5000)] | None = None
     inset_centre: tuple[Lon, Lat] | None = None
     ring: bool | Literal["oval"] = True
     include: list[Id] = []
+    reason: OverrideReason | None = None
 
 
 class Placed(Strict):
@@ -192,6 +194,7 @@ class Country(Placed):
     verify: list[Verify] = []
     geometry: Annotated[list[Part], Field(min_length=1)]
     mainland: BBox | None = None  # keep only the outline's parts inside this box (drops overseas parts)
+    mainland_reason: OverrideReason | None = None  # what the crop drops, and why
     expect: BBox
     capital: Capital | None  # null: no capital card (same-name microstates, Palestine)
 

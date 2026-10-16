@@ -6,8 +6,12 @@ import geopandas as gpd
 from shapely.geometry import Point, box
 
 import geofeat.resolve as resolve
-from geofeat.check import missing_notes, provenance_errors, retired_references
-from geofeat.model import FAMILY, AllowNested, Expect, Feature, FeatureType, FrameOptions, Part
+from geofeat.check import (missing_notes, override_reason_errors, paired_reason_errors, provenance_errors,
+                           retired_references)
+from geofeat.model import (FAMILY, AllowNested, Expect, Feature, FeatureType, FrameOptions, Part, frame_reason_error,
+                           load_features)
+from geofeat.polities import FrameOverride
+from geofeat.spec import RenderSpec
 from geofeat.pairs import Pair, compare, find_pairs
 from geofeat.resolve import area_km2, _drop_slivers, clip_to_land
 
@@ -129,6 +133,33 @@ class ProvenanceTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OverrideReasonTest(unittest.TestCase):
+    def test_a_frame_override_needs_a_reason(self) -> None:
+        self.assertIn("needs a `reason`", frame_reason_error("x", FrameOverride(include=["australia"])))
+        self.assertIn("needs a `reason`", frame_reason_error("x", FrameOptions(centre=(1, 2))))
+        self.assertIn("needs a `reason`", frame_reason_error("x", FrameOverride(ring=True)))  # set, even to the default
+
+    def test_a_reasoned_override_or_none_passes(self) -> None:
+        self.assertIsNone(frame_reason_error("x", FrameOverride(inset=True, reason="user review: needs an inset")))
+        self.assertIsNone(frame_reason_error("x", FrameOverride()))
+
+    def test_a_reason_needs_an_override(self) -> None:
+        self.assertIn("no override", frame_reason_error("x", FrameOptions(reason="nothing to explain here")))
+
+    def test_mainland_and_region_reasons_pair(self) -> None:
+        self.assertEqual(paired_reason_errors("x", None, "mainland", None), [])
+        self.assertEqual(paired_reason_errors("x", (0, 0, 1, 1), "mainland", "drops the outliers"), [])
+        self.assertTrue(paired_reason_errors("x", 1.4, "frame_margin", None))
+        self.assertTrue(paired_reason_errors("x", None, "frame", "a pin with no frame"))
+
+    def test_the_reason_stays_out_of_the_render_spec(self) -> None:
+        spec = RenderSpec.from_feature(feature("a", "Plain", frame=FrameOptions(centre=(1, 2), reason="a shared frame")))
+        self.assertNotIn("reason", spec.model_dump()["frame"])
+
+    def test_every_override_in_the_data_has_a_reason(self) -> None:
+        self.assertEqual(override_reason_errors(load_features()), [])
 
 
 class RetiredReferenceTest(unittest.TestCase):

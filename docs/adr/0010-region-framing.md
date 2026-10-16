@@ -68,7 +68,7 @@ The Lesser Antilles box is too tight to place on its own, so it gets a **regiona
 - `ring: false` draws no ring round the subject, on the main map or in the inset. `ring: oval` draws one ring on the main map round all the subject's parts: their minimum-area enclosing ellipse (Khachiyan's algorithm), which may be rotated, computed in the frame's projection and padded 24 px (`SMALL_RING_CLEAR_PX`), in the rings' line style. None is drawn in the inset.
 - `include: [ids]` makes the frame also hold the lon/lat box round those countries' or territories' main bodies (giants included; not across 180°). The frame holds the box as it holds the subject, `SUBJECT_MARGIN` in from its edges: it moves first, and widens only if the box doesn't fit. The box travels in the spec (`RenderSpec.hold`).
 
-`inset`, `inset_km`, `inset_centre` and `ring` apply to the country card only. The capital card follows the city rule, and a city's host is never ringed. `include` changes the host's frame, so its capital and city cards follow it. Each override has a comment giving its reason. These are in use:
+`inset`, `inset_km`, `inset_centre` and `ring` apply to the country card only. The capital card follows the city rule, and a city's host is never ringed. `include` changes the host's frame, so its capital and city cards follow it. Each override carries a `reason:` saying why it exists, and `make check-data` fails without one (see the amendment below). These are in use:
 
 | Card | Override | Why |
 |---|---|---|
@@ -122,6 +122,16 @@ The Lesser Antilles box is too tight to place on its own, so it gets a **regiona
 **Check.** Every country, territory, dispute, subnational, capital and city card that exists both at `4c05b09` and now has the same main frame to within 1 cm (414 cards). The renders of the 28 such cards in regions 06, 14 and 16, plus the capitals of China, India and Georgia and the city of Shanghai, are pixel-identical. Eight capital and city detail insets differ because of city cuts, which changed which dots count as close dots, not because of region frames.
 
 **Consequences.** A region's map changes only when its pin is changed on purpose. A new member that falls outside the pin shifts or widens only its own frame, as an outlier always did.
+
+## Amendment: every override gives its reason (2026-10-16)
+
+An override of a computed frame used to explain itself, if at all, in a YAML comment that nothing checked. Each now carries a reason in the data, like `allow_nested`'s, and `make check-data` fails on an override without one or a reason without an override (`check.override_reason_errors`, retired entries included):
+
+- a per-card `frame:` in `countries.yaml`, `territories.yaml` or `features.yaml`: `reason:` inside it, required when any other key is set;
+- a country's `mainland` crop: `mainland_reason:`;
+- a region's pinned `frame` and its `frame_margin` in `curriculum.yaml`: `frame_reason:` and `frame_margin_reason:`.
+
+A reason starts with `user review:` when the user asked for the override. Reasons stay out of the render spec, so adding or editing one re-renders nothing.
 
 ## Consequences
 

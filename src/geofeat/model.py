@@ -154,6 +154,22 @@ class Expect(Strict):
     mouth: Literal["sea", "lake", "none"] = "sea"  # where a river must end; "none" for inland sinks like the Okavango
 
 
+# Why a data override of a computed default exists: a per-card `frame:`, a country's `mainland` crop, a region's
+# `frame` pin or `frame_margin`. `make check-data` fails on an override without one (check.override_reason_errors).
+OverrideReason = Annotated[str, Field(min_length=10)]
+
+
+def frame_reason_error(owner: str, frame: BaseModel) -> str | None:
+    """A per-card `frame:` that sets any key needs a `reason`, and a reason needs a key to explain."""
+    keys = sorted(frame.model_fields_set - {"reason"})
+    reason = getattr(frame, "reason")
+    if keys and reason is None:
+        return f"{owner}: frame override ({', '.join(keys)}) needs a `reason`"
+    if reason is not None and not keys:
+        return f"{owner}: frame `reason` with no override to explain"
+    return None
+
+
 class FrameOptions(Strict):
     min_span_km: float | None = None
     centre: tuple[float, float] | None = None  # lon, lat; siblings sharing a centre and span share a frame
@@ -161,6 +177,7 @@ class FrameOptions(Strict):
     admin1: bool = False  # draw first-level (state/province) borders, where one locates the feature
     # a geometry/ file outlining a past extent, drawn as a dashed grey line (the Aral Sea's 1960 shore)
     former: Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*\.geojson$")] | None = None
+    reason: OverrideReason | None = Field(None, exclude=True)  # out of the render spec's cache key
 
 
 class AllowNested(Strict):

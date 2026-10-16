@@ -8,7 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 from ruamel.yaml import YAML
 
-from geofeat.model import ROOT
+from geofeat.model import ROOT, OverrideReason
 
 CURRICULUM = ROOT / "data/curriculum.yaml"
 
@@ -52,6 +52,9 @@ class Region(BaseModel):
     # The shared frame, pinned at the extent the user approved (ADR 0010), so adding or retiring a member never moves
     # it; framing.py checks the frame computed from the members against it
     frame: RegionFrame | None = None
+    # Why each exists: a pinned frame records the extent the user approved; a margin, what 1.1 cut off
+    frame_reason: OverrideReason | None = None
+    frame_margin_reason: OverrideReason | None = None
 
     def placed(self) -> dict[str, str]:
         return self.subnationals | self.territories | self.disputes
