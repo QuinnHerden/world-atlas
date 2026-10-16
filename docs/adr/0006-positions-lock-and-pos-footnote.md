@@ -2,7 +2,9 @@
 
 Status: accepted, 2026-10-14; amended in P7 (lock format, freeze). Supersedes the drift consequence of [ADR 0004](0004-flat-deck-and-study-order.md). Built in P1 (WS1 in ankcompiler, WS3 here); the lock was frozen in P7 for v2.0.0.
 
-Amended on 2026-10-16 (v3.0.0) by [ADR 0011](0011-refreezing-at-a-major-version.md): the lock declares its major-version series and records each card's block instead of its pass, and the freeze guard works per series (see [Amendment: series](#amendment-series-v300)).
+Amended on 2026-10-16 (v3.0.0) by [ADR 0011](0011-refreezing-at-a-major-version.md): the lock declares its major-version series and records each card's block instead of its pass, and the freeze guard works per series (see [Amendment: series](#amendment-series-v300)). Versioning later restarted at v1.0.0, and the guard also reads the archived pre-1.0 release tags ([ADR 0011, Amendment: versioning restarted at v1.0.0](0011-refreezing-at-a-major-version.md#amendment-versioning-restarted-at-v100)).
+
+Superseded in part: the PDF guide was removed before v1.0.0 (notes are on the card backs only), so what this ADR says about the guide's sections no longer applies.
 
 ## Context
 

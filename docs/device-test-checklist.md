@@ -2,7 +2,7 @@
 
 Run this by hand before a release, once each on Anki desktop, AnkiDroid (Android) and AnkiMobile (iOS). `make import-test` already checks the same behaviour in the desktop engine; this confirms it on real devices, and the mobile apps must pass before we rely on the positions lock. Build `dist/world-atlas.apkg` with `make all`, then record pass or fail per app in the table at the end.
 
-The card names, counts and positions below come from the v3.0.1 data (554 cards) and its series-3 `positions.lock`. If the data has changed since, take the current values from the output of `make import-test`, which prints the first 16 new cards, the region 05 list and the position range.
+The card names, counts and positions below come from the v1.0.0 data (554 cards) and its series-1 `positions.lock` (the v3.0.0 pre-release's entries, plus 9). If the data has changed since, take the current values from the output of `make import-test`, which prints the first 16 new cards, the region 05 list and the position range.
 
 **Mobile differences.** Menu names vary between versions, so look for the nearest match.
 

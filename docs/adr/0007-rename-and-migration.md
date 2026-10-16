@@ -2,6 +2,8 @@
 
 Status: accepted for the deck rename, built in P5 (2026-10-14); device-tested in P6. The repo was renamed to `world-atlas` after the P5 merge (decision 11). GitHub-only distribution (decision 12) is a default waiting for the user's confirmation ([open decisions](../world-atlas-plan.md#open-decisions)).
 
+Superseded in part: the PDF guide was removed before v1.0.0 (notes are on the card backs only), so the guide PDF as a release asset no longer applies. A release carries the `.apkg` alone. The release numbers here (v1.0.0, v2.0.0) are pre-1.0 history, archived as `archive/v*` tags ([ADR 0011](0011-refreezing-at-a-major-version.md#amendment-versioning-restarted-at-v100)).
+
 ## Context
 
 The deck is called **Geographic Features**, and it becomes **World Atlas** (decided 2026-10-14). Renaming has three costs in Anki:

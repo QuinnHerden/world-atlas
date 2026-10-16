@@ -2,6 +2,8 @@
 
 Status: released as v2.0.0, 2026-10-14. P0–P7 are done, except the P6 device tests, which are open and non-blocking (see [Build phases](#build-phases)). What is built is described in [architecture.md](architecture.md). This plan extends the current deck (described in [architecture.md](architecture.md)) with countries, capitals, cities and territories. This file merges three earlier planning documents (the curriculum proposal, the program architecture and the territories list); where they disagreed, the [Decisions so far](#decisions-so-far) table is the source of truth.
 
+> **Since then:** versioning restarted at v1.0.0, so the v2.0.0 and v3.0.0 named here are pre-releases, archived as `archive/v2.0.0` and `archive/v3.0.0` ([ADR 0011](adr/0011-refreezing-at-a-major-version.md#amendment-versioning-restarted-at-v100)). The PDF guide was removed before v1.0.0: notes are on the card backs only, and a release carries the `.apkg` alone.
+
 The design of the country cards comes from the 9-card proof of concept on branch `poc/countries` (`f4a3503`, documented in `docs/poc-countries.md` on that branch). **The PoC's de facto border view is superseded** by internationally recognised borders ([ADR 0008](adr/0008-state-list-borders-adjacency.md)); the rest of its card design stands.
 
 ## Vision
@@ -42,7 +44,7 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Feature regions | Derived by the [rules below](#assigning-physical-features-to-regions), with **overrides in `features.yaml`** (`region` plus `region_reason`): Nile 10, Karakoram 14, Danish Straits 2, Caucasus 6, Tian Shan 15, Amur 16, GIUK gap 2, Typhoon alley 17, and the Gulf Stream and Atlantic hurricane belt 21. |
 | Climate | **6 active climate cards, 9 retired** (commit `41fdf95`): the pressure belts, the East Asian and West African monsoons, the Canary, Benguela, Humboldt and Kuroshio currents, and the Bay of Bengal cyclones. |
 | Verify markers | Move out of the blurbs into a **structured verify field** (done in P2). Release is gated on them. |
-| Companion PDF guide | Follows the **new-card study order**, sectioned by **pass, then region**. Every card has a 1–3 sentence blurb, stored as `note` in the data. |
+| Companion PDF guide | Follows the **new-card study order**, sectioned by **pass, then region**. Every card has a 1–3 sentence blurb, stored as `note` in the data. *Superseded: the PDF guide was removed; the note is on the card back.* |
 | Repo name | **Renamed to `world-atlas`** ([QuinnHerden/world-atlas](https://github.com/QuinnHerden/world-atlas)); the package stays `geofeat` (decision 11). |
 | Country design | **Split cards** (separate country outline and capital dot notes), as in the PoC on branch `poc/countries` (`f4a3503`). |
 | Dependencies | The 25 **include** territories in [List 1](#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards (23 until v3.0.1). The 27 **exclude** territories stay on the [revisit list](#intentionally-excluded-revisit-list). |
@@ -218,7 +220,7 @@ Pass 2 is 10 cards, so pass 1 ends within a day of the last new card at every ra
 | Learn one region now | Make a filtered deck: `deck:"World Atlas" tag:region::14 is:new`, order **"Order due"** (for new cards, due is the position; *verify on AnkiDroid and AnkiMobile*). Cards studied there go back to the main deck as reviews. Unstudied cards go back to their old positions. |
 | Home region first | The same filtered deck, for your home region, on day 1. Then continue the main deck. That costs one break in continuity and needs no special build. It also stays compatible with `positions.lock`, which a rotated build would not be. |
 | Revise a region | `deck:"World Atlas" tag:region::04 -is:new`, ordered by due or at random. |
-| See the map | The PDF guide, in new-card study order, sectioned by pass and then by region in ring order. It's an atlas to keep beside the deck. |
+| See the map | The PDF guide, in new-card study order, sectioned by pass and then by region in ring order. It's an atlas to keep beside the deck. *Superseded: the PDF guide was removed.* |
 
 **Finishing a region** is the natural progress milestone. A count such as "region 7 of 21" in the README's study notes costs nothing.
 
@@ -281,7 +283,7 @@ cards ─▶ passes (from curriculum.yaml)
 | Render cache | Keyed by the resolved geometry, the dumped `RenderSpec`, the source of render/frame/ne/style/spec, `uv.lock` and the basemap layers' pinned sha256s ([architecture](architecture.md)). Edits to `model.py`, `resolve.py` or selectors don't re-render unless the geometry changes. Lives in gitignored `build/`. | Any edit to the renderer modules (including a country style in `style.py`) invalidates everything. | Split the code hash so changing a country style doesn't re-render features. Optional: restore the cache in CI with `actions/cache`. |
 | Pair check | ~40 s; bbox prefilter, then a full comparison on near pairs | Don't add countries or cities to it. Country outlines don't overlap and capitals are distinct points. | Keep the pair check to features. Add two cheap checks: **country × land-family features** with an STRtree, report-only, because "Country: Italy" against "Peninsula: Italian" differ only in the prompt word; and **dot spacing**, which fails when two city/capital rings in the same frame overlap. |
 | `.apkg` | about 150 KB a card | ~100 MB | Acceptable for import. Verify AnkiWeb's sync and shared-deck limits if the deck will be distributed. Levers: 1200 px renders, or WebP (check AnkiMobile and AnkiDroid support first). |
-| Guide PDF | 12 MB | ~60 MB | Downsample the embedded images (62% of the page width doesn't need 1600 px) and section it by pass and region. Optionally `make guide REGION=…`. Done in P5. |
+| Guide PDF | 12 MB | ~60 MB | Downsample the embedded images (62% of the page width doesn't need 1600 px) and section it by pass and region. Optionally `make guide REGION=…`. Done in P5. *Superseded: the PDF guide was removed.* |
 
 ### Repo and naming
 
@@ -435,7 +437,7 @@ These defaults are waiting for the user's confirmation. Numbers follow the build
 | 8 | Curriculum defaults | **21 regions** (check Turkey with the Caucasus, Sudan in East Africa, Mexico with Central America, Iran with Central Asia). **Pass 1** = tiers 1–2 plus the 42 core cities; pass 2 = tier 3 (the secondary cities are deferred). **Drop deck-wide category alternation.** **15 new cards a day**, stated in the README with a warning before regions 11 and 21. **No repositioning tool** for existing users. | P3 order engine |
 | 9 | Scattered states (Kiribati, Micronesia, Tuvalu) | **The whole spread, plus a ring.** | P4 rendering |
 | 10 | Somaliland's outline | **NE's outline as is,** with the Las Anod area mentioned in the blurb. | P2 blurbs, P4 rendering |
-| 12 | Distribution | **GitHub release only:** the `.apkg` (about 100 MB) and the guide PDF. | P7 release |
+| 12 | Distribution | **GitHub release only:** the `.apkg` (about 100 MB) and the guide PDF. *Superseded: the `.apkg` only; the PDF guide was removed.* | P7 release |
 
 **Where the earlier open items went.** The curriculum items (region list, pass 1 features, city tiers, category alternation, rate, existing users) are all in decision 8; orientation contents is decided (Continents). Architecture defaults D2–D5 and D9 are now the build plan and are proposed in ADRs [0005](adr/0005-card-sources-and-card-dto.md), [0006](adr/0006-positions-lock-and-pos-footnote.md) and [0009](adr/0009-curriculum-order.md). D7 is decision 11, now decided, and D8 is decided. Of the territory items, Western Sahara, territory capitals, multiple capitals and Palestine's capital are decided; placement (decision 5) is now decided too; scattered states are decision 9 and Somaliland 10. The NE layers are vendored in P1 (WS4).
 

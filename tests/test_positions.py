@@ -191,9 +191,10 @@ class FreezeGuardTest(unittest.TestCase):
                 self.assertTrue(frozen_errors(self.BASE, text))
 
     def guard(self, lock: Lock, texts: dict[str, str | None], tags: list[str] | None, strict: bool, head=(),
-              release=None, require=False, shallow=False):
+              release=None, require=False, shallow=False, archived=()):
         with mock.patch.object(positions, "base_text", lambda ref: texts.get(ref)), \
                 mock.patch.object(positions, "release_tags", lambda: tags), \
+                mock.patch.object(positions, "archive_tags", lambda: list(archived)), \
                 mock.patch.object(positions, "head_tags", lambda: list(head)), \
                 mock.patch.object(positions, "shallow", lambda: shallow), \
                 mock.patch.dict("os.environ", {"POSITIONS_BASE": ""}):
@@ -201,7 +202,7 @@ class FreezeGuardTest(unittest.TestCase):
 
     def test_guard_checks_the_base_ref_and_the_newest_tag_of_the_series(self) -> None:
         moved_a = Lock(False, {A: Entry(501, "countries", 1), B: Entry(1000, "countries", 2)}, 3)
-        self.assertEqual(self.guard(self.BASE, {"origin/main": dump(self.BASE)}, [], True), ([], []))
+        self.assertEqual(self.guard(self.BASE, {"origin/main": dump(self.BASE)}, ["v3.0.0"], True), ([], []))
         tags = ["v2.0.0", "v3.1.0", "v3.0.0"]
         self.assertTrue(self.guard(moved_a, {"origin/main": dump(moved_a), "v3.1.0": dump(self.BASE)}, tags, True)[0])
 
@@ -243,10 +244,79 @@ class FreezeGuardTest(unittest.TestCase):
         self.assertEqual(len(self.guard(self.BASE, texts, None, False)[1]), 1)
 
     def test_an_unreadable_base_fails_strict_and_warns_otherwise(self) -> None:
-        self.assertTrue(self.guard(self.BASE, {}, [], True)[0])
-        errors, warnings = self.guard(self.BASE, {}, [], False)
+        self.assertTrue(self.guard(self.BASE, {}, ["v3.0.0"], True)[0])
+        errors, warnings = self.guard(self.BASE, {}, ["v3.0.0"], False)
         self.assertEqual((errors, len(warnings)), ([], 1))
         self.assertEqual(self.guard(Lock(True, {}, 3), {}, [], True), ([], []))  # a draft has nothing to guard
+
+    # Versioning restarted at v1.0.0: v1-v3 are archive/vX.Y.Z tags, and series 1 continues archived series 3's order.
+    ARCHIVED = ["archive/v1.0.0", "archive/v2.0.0", "archive/v3.0.0"]
+
+    def restarted(self, lock_v3: Lock | None = None) -> dict[str, str]:
+        v3 = dump(lock_v3 or self.BASE)
+        return {"origin/main": v3, "archive/v2.0.0": self.V2, "archive/v3.0.0": v3}
+
+    def test_a_v1_release_of_series_1_is_accepted_with_no_release_tags(self) -> None:
+        series_1 = Lock(False, self.BASE.entries, 1)
+        texts = self.restarted()
+        self.assertEqual(self.guard(series_1, texts, [], True, archived=self.ARCHIVED), ([], []))
+        self.assertEqual(self.guard(series_1, texts, [], True, release="v1.0.0", require=True, archived=self.ARCHIVED),
+                         ([], []))
+        added = Lock(False, self.BASE.entries | {"x" * 10: Entry(750, "countries", 1)}, 1)
+        self.assertEqual(self.guard(added, texts, [], True, release="v1.1.0", require=True, archived=self.ARCHIVED),
+                         ([], []))
+
+    def test_the_first_release_is_v1(self) -> None:
+        texts = self.restarted()
+        for lock, release in ((self.BASE, "v3.0.0"), (Lock(False, self.BASE.entries, 4), "v4.0.0")):
+            with self.subTest(release):
+                self.assertTrue(self.guard(lock, texts, [], True, release=release, require=True,
+                                           archived=self.ARCHIVED)[0])
+        self.assertTrue(self.guard(Lock(False, self.BASE.entries, 1), texts, [], True, release="v3.0.0", require=True,
+                                   archived=self.ARCHIVED)[0])
+
+    def test_archive_tags_are_honoured_for_dropped_uids(self) -> None:
+        texts = self.restarted(Lock(False, {B: Entry(1000, "countries", 2)}, 3))  # A was only ever in v2
+        dropping = Lock(False, {B: Entry(1000, "countries", 2)}, 1)
+        errors = self.guard(dropping, texts, [], True, archived=self.ARCHIVED)[0]
+        self.assertRegex(" ".join(errors), "drops uids released in archive/v2.0.0")
+        self.assertTrue(self.guard(Lock(False, {A: Entry(1, "countries", 1)}, 2), texts, ["v1.0.0"], True,
+                                   archived=self.ARCHIVED)[0])  # a later fresh freeze keeps them too
+
+    def test_series_1_extends_the_archived_series_3_lock(self) -> None:
+        moved_a = Lock(False, {A: Entry(501, "countries", 1), B: Entry(1000, "countries", 2)}, 1)
+        texts = self.restarted() | {"origin/main": dump(moved_a)}
+        self.assertRegex(" ".join(self.guard(moved_a, texts, [], True, archived=self.ARCHIVED)[0]),
+                         "changes entries frozen on archive/v3.0.0")
+        self.assertTrue(self.guard(moved_a, self.restarted(), [], True, archived=self.ARCHIVED)[0])  # and on main
+
+    def test_the_restart_is_no_way_back_once_v1_is_released(self) -> None:
+        series_1 = Lock(False, self.BASE.entries, 1)
+        texts = self.restarted() | {"v1.0.0": dump(series_1)}
+        self.assertRegex(" ".join(self.guard(series_1, texts, ["v1.0.0"], True, archived=self.ARCHIVED)[0]),
+                         "never goes back")  # origin/main holding series 3 after v1.0.0
+        self.assertTrue(frozen_errors(Lock(False, self.BASE.entries, 2), dump(self.BASE), pre_release=True))
+
+    def test_before_v1_any_other_series_fails(self) -> None:
+        for lock in (self.BASE, Lock(False, self.BASE.entries, 2), Lock(True, {}, 3)):
+            with self.subTest(lock.series):
+                self.assertTrue(self.guard(lock, self.restarted(), [], False, archived=self.ARCHIVED)[0])
+
+    def test_a_tag_on_head_does_not_skip_the_first_release_rule(self) -> None:
+        reshuffled = Lock(False, {A: Entry(1000, "countries", 1), B: Entry(500, "countries", 2)}, 2)
+        texts = self.restarted() | {"origin/main": dump(Lock(False, self.BASE.entries, 1))}
+        self.assertTrue(self.guard(reshuffled, texts, ["v2.0.0"], True, head=["v2.0.0"], require=True,
+                                   archived=self.ARCHIVED)[0])
+
+    def test_a_draft_series_1_lock_is_held_to_the_archived_frozen_lock(self) -> None:
+        self.assertRegex(" ".join(self.guard(Lock(True, {}, 1), self.restarted(), [], False,
+                                             archived=self.ARCHIVED)[0]), "draft again")
+
+    def test_series_1_needs_the_archive_tags(self) -> None:
+        series_1 = Lock(False, self.BASE.entries, 1)
+        self.assertTrue(self.guard(series_1, self.restarted(), [], True)[0])
+        self.assertEqual(len(self.guard(series_1, self.restarted(), [], False)[1]), 1)
+        self.assertTrue(self.guard(Lock(False, {}, 2), self.restarted(), [], True, release="v2.0.0", require=True)[0])
 
     def test_an_option_like_ref_is_never_passed_to_git(self) -> None:
         self.assertIsNone(positions.base_text("--output=/tmp/x"))
@@ -298,11 +368,11 @@ class RetiredLockTest(unittest.TestCase):
 
 
 class LockTest(unittest.TestCase):
-    """The committed lock: series 3, frozen, in the four blocks (ADR 0009), Greenland right after Iceland."""
+    """The committed lock: series 1 (archived series 3's order, renumbered at the v1.0.0 restart), frozen, in the four blocks (ADR 0009), Greenland right after Iceland."""
 
     def test_the_lock(self) -> None:
         lock = positions.read()
-        self.assertEqual((lock.draft, lock.series), (False, 3))
+        self.assertEqual((lock.draft, lock.series), (False, 1))
         order = sorted(lock.entries, key=lambda u: lock.entries[u].position)
         blocks = [lock.entries[u].block for u in order]
         self.assertEqual(blocks, sorted(blocks, key=["continents", "countries", "features", "cities"].index))

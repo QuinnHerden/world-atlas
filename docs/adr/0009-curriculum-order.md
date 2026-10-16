@@ -4,6 +4,8 @@ Status: proposed, 2026-10-14. When accepted, supersedes rules 1 (tier first) and
 
 Amended on 2026-10-16 (v3.0.0): the study order is cut from the ring order in four blocks, and Greenland moves to region 02 (see [Amendment: four blocks](#amendment-four-blocks-v300) and [ADR 0011](0011-refreezing-at-a-major-version.md)).
 
+Superseded in part: the PDF guide was removed before v1.0.0 (notes are on the card backs only), so the PDF guide in **Output** no longer applies.
+
 ## Context
 
 ADR 0004 orders new cards tier first: all of tier 1, then 2, then 3. Countries have no tiers, so a tier-first order either puts every country in tier 1 or leaves holes in the political map. World Atlas is for a total beginner, who learns a map best as landmarks, then routes between them, then the whole.

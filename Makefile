@@ -20,7 +20,7 @@ $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone review pairs cvd guide verify-report import-test clean
+.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone review pairs cvd verify-report import-test clean
 
 all: build
 
@@ -85,10 +85,6 @@ pairs: render
 
 cvd: render
 	$(PY).cvd $(if $(OUT),--out $(call quote,$(OUT))) $(QIDS)
-
-# The PDF guide in study order (build/<deck>-guide.pdf); REGION=NN writes one ring region's (build/<deck>-guide-NN.pdf).
-guide: render
-	uv run --group guide python -m geofeat.guide $(if $(REGION),--region $(call quote,$(REGION)))
 
 # Import dist/world-atlas.apkg into fresh collections with the official Anki library: study order, a region filtered
 # deck, Check Database, and the upgrade from the v1 Geographic Features package (tools/import_test.py).

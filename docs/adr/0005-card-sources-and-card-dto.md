@@ -2,6 +2,8 @@
 
 Status: proposed, 2026-10-14. Implements the [World Atlas plan](../world-atlas-plan.md#data-model)'s data model. Built in P1 (WS2 `RenderSpec`, WS3 `Card`) and P2 (the new sources and the continents). Amended 2026-10-16 for v3.0.1: a `subnational` kind, and no capital card for a tier-3 state (see [the amendment](#amendment-subnationals-and-tier-3-capitals-v301)).
 
+Superseded in part: the PDF guide was removed before v1.0.0 (notes are on the card backs only), so the guide is no longer one of the `Card` consumers named here.
+
 ## Context
 
 Every card today comes from `data/features.yaml` through one pydantic model, `Feature`. That model carries policy that only fits physical features: the type vocabulary and families ([ADR 0001](0001-type-vocabulary.md)), the land clip, `expect` size ranges, `allow_nested` and the pair check.

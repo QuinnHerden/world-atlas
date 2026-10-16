@@ -72,7 +72,7 @@ Style = Literal["area", "line", "point", "strait", "flow-current", "flow-wind", 
 # text, here and in card.py.
 NOT_ONE_LINE = r"[\x00-\x1f\x7f-\x9f\u200b-\u200f\u2028-\u202e\u2060-\u2069\ufeff]|\{\{"
 _UNSAFE_TEXT = re.compile(NOT_ONE_LINE + r"|[<>]|:::|\[\^|^-{3}")
-# A note goes to the PDF guide and, escaped, under the answer on the card back, so keep it as inert as card text:
+# A note goes, escaped, under the answer on the card back, so keep it as inert as card text:
 # no HTML, links, images, code, math (`$`) or ankc syntax. Emphasis is allowed.
 _UNSAFE_NOTE = re.compile(NOT_ONE_LINE + r"|[<>\[\]`\\$]|:::|^-{3}|^#")
 
@@ -95,7 +95,7 @@ def _note(value: str) -> str:
 
 Note = Annotated[str, AfterValidator(_note)]
 
-# Research markers a note must not carry into the guide; the claim goes in the entry's `verify` list instead.
+# Research markers a note must not carry onto the card; the claim goes in the entry's `verify` list instead.
 # "as of" alone is ordinary prose ("as of 2014 it hosted..."); an "(as of" or an "as of" a 2020s-or-later year is a
 # marker. Trade-offs: genuine 2020s prose ("as of 2021 the city had") must be reworded, and "as of October 2026" passes.
 NOTE_MARKER = re.compile(r"\(as of|as of 20[2-9]\d|verify|\[v\]|\[s\]|tbd", re.IGNORECASE)
@@ -115,7 +115,7 @@ OneLine = Annotated[str, Field(min_length=1), AfterValidator(_one_line)]
 
 
 class Verify(Strict):
-    """A claim in a note that must be rechecked before release, kept out of the note so the guide never shows a
+    """A claim in a note that must be rechecked before release, kept out of the note so a card never shows a
     research marker. Never displayed; `make verify-report` lists them and `make check-data RELEASE=1` fails on any."""
 
     claim: OneLine
@@ -178,7 +178,7 @@ class Feature(Strict):
     alt_names: list[CardText] = []
     type: FeatureType
     qualifier: CardText | None = None  # the season a climate map shows, after the type word: "Wind system, July"
-    note: Note | None = None  # why it matters, 1-3 sentences; shown in the PDF guide, required on active cards
+    note: Note | None = None  # why it matters, 1-3 sentences; shown on the card back, required on active cards
     verify: list[Verify] = []
     category: Category
     tier: Literal[1, 2, 3]
