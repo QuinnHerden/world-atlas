@@ -36,7 +36,7 @@ class FeatureCardTest(unittest.TestCase):
 
     def test_card_carries_its_tags(self) -> None:
         text = card(feature_card(feature()), "abc.png")
-        self.assertIn("[^uid]: MAPQnshVtc\n[^tag]: tier::1\n[^tag]: category::straits-chokepoints\n"
+        self.assertIn("[^uid]: MAPQnshVtc\n[^tag]: category::straits-chokepoints\n"
                       "[^tag]: id_bosporus\n[^tag]: kind::feature\n[^tag]: block::features\n", text)
 
     def test_note_follows_the_answer_escaped_and_muted(self) -> None:

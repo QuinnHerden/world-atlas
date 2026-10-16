@@ -39,8 +39,9 @@ def outline_spec(frame: FrameOverride = FrameOverride()) -> RenderSpec:
     return RenderSpec(style="area", country="subject", outline="dashed", **_overrides(frame))
 
 
-def tags(kind: Kind, id: str, tier: int, category: str, region: int) -> tuple[str, ...]:
-    return (f"tier::{tier}", f"category::{category}", id_tag(kind, id), f"kind::{kind}", f"region::{region:02d}",
+def tags(kind: Kind, id: str, category: str, region: int) -> tuple[str, ...]:
+    """No tier tag: the tier is internal to the study order."""
+    return (f"category::{category}", id_tag(kind, id), f"kind::{kind}", f"region::{region:02d}",
             block_tag(block_of(kind)))
 
 
@@ -67,7 +68,7 @@ def country_cards(country: Country) -> list[Card]:
     out = [Card(
         uid=require_uid(country.id, country.uids["country"]), kind="country", id=country.id, prompt="Country",
         answer_lines=(answer(country.name, country.alt_names),),
-        tags=tags("country", country.id, country.tier, "countries", country.region), region=region, tier=country.tier,
+        tags=tags("country", country.id, "countries", country.region), region=region, tier=country.tier,
         host=host_key(country.host), note=country.note, render=RenderRef(spec=country_spec(country.frame), geometry=geometry,
                                                                      region=lambda: framing.region(country.id)),
     )]
@@ -75,7 +76,7 @@ def country_cards(country: Country) -> list[Card]:
         out.append(Card(
             uid=require_uid(f"{country.id} capital", country.uids["capital"]), kind="capital", id=country.id, prompt="City",
             answer_lines=(answer(c.name, c.alt_names), f"Capital of {country.name}"),
-            tags=tags("capital", country.id, country.tier, "cities", country.region), region=region, tier=country.tier,
+            tags=tags("capital", country.id, "cities", country.region), region=region, tier=country.tier,
             parents=(out[0].key,), note=c.note,
             render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(country.capital_point()),
                              region=framing.city_region(country.id)),
@@ -89,7 +90,7 @@ def subdivision_cards(subdivision: Subdivision) -> list[Card]:
     return [Card(
         uid=require_uid(subdivision.id, subdivision.uid), kind="subdivision", id=subdivision.id, prompt=subdivision.type,
         answer_lines=(answer(subdivision.name, subdivision.alt_names), subdivision.status_line),
-        tags=tags("subdivision", subdivision.id, TERRITORY_TIER, "territories", subdivision.region),
+        tags=tags("subdivision", subdivision.id, "territories", subdivision.region),
         region=f"{subdivision.region:02d}", tier=TERRITORY_TIER, host=host_key(subdivision.host), note=subdivision.note,
         render=RenderRef(spec=country_spec(subdivision.frame), geometry=lambda: (subdivision.outline(), (), None),
                          region=lambda: framing.region(subdivision.id)),
@@ -100,7 +101,7 @@ def territory_cards(territory: Territory) -> list[Card]:
     return [Card(
         uid=require_uid(territory.id, territory.uid), kind="territory", id=territory.id, prompt="Territory",
         answer_lines=(answer(territory.name, territory.alt_names), territory.status_line),
-        tags=tags("territory", territory.id, TERRITORY_TIER, "territories", territory.region), region=f"{territory.region:02d}",
+        tags=tags("territory", territory.id, "territories", territory.region), region=f"{territory.region:02d}",
         tier=TERRITORY_TIER, host=host_key(territory.host), note=territory.note,
         render=RenderRef(spec=outline_spec(territory.frame), geometry=lambda: (territory.outline(), (), None),
                          region=lambda: framing.region(territory.id)),
@@ -112,7 +113,7 @@ def dispute_cards(dispute: Dispute, countries: dict[str, str]) -> list[Card]:
     return [Card(
         uid=require_uid(dispute.id, dispute.uid), kind="dispute", id=dispute.id, prompt="Disputed territory",
         answer_lines=(answer(dispute.name, dispute.alt_names), dispute.parties_line(countries)),
-        tags=tags("dispute", dispute.id, TERRITORY_TIER, "territories", dispute.region), region=f"{dispute.region:02d}",
+        tags=tags("dispute", dispute.id, "territories", dispute.region), region=f"{dispute.region:02d}",
         tier=TERRITORY_TIER, host=host_key(dispute.host), note=dispute.note,
         render=RenderRef(spec=outline_spec(dispute.frame), geometry=lambda: (dispute.outline(), (), None),
                          region=lambda: framing.region(dispute.id)),

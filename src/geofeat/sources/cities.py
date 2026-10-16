@@ -47,7 +47,7 @@ class City(Strict):
         return [Card(
             uid=require_uid(self.id, self.uid), kind="city", id=self.id, prompt="City",
             answer_lines=(answer(self.name, self.alt_names), country.name),
-            tags=tags("city", self.id, TIER[self.tier], "cities", country.region), region=f"{country.region:02d}",
+            tags=tags("city", self.id, "cities", country.region), region=f"{country.region:02d}",
             tier=TIER[self.tier], anchor=card_key("feature", self.anchor) if self.anchor else None, parents=parents,
             note=self.note, render=RenderRef(spec=dot_spec(), geometry=geometry, dot=lambda: coordinates(self.point()),
                                                        region=framing.city_region(country.id)),

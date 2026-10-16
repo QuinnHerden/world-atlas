@@ -14,7 +14,7 @@ Separately, the sibling-pair check flagged nesting only when two cards had the i
 
 | Word | Cards | Why it stays |
 |---|---|---|
-| Isthmus | 2 | It tells the Isthmus of Kra apart from the Malay Peninsula, which contains it. |
+| Isthmus | 1 | The Isthmus of Panama. The word told the Isthmus of Kra (retired in v3.0.1) apart from the Malay Peninsula; it stays because no other word describes Panama's. |
 | Valley | 2 | The user merged Rift valley into Valley. |
 | Sea route | 1 | The user's name for the Northern Sea Route. |
 | Cape | 2 | No honest merge exists: Cape Horn isn't on a peninsula, and neither cape is an island. |

@@ -253,11 +253,11 @@ class FreezeGuardTest(unittest.TestCase):
 
 
 class LockedTagsTest(unittest.TestCase):
-    TAGS = ["kind::country", "block::countries", "region::04", "tier::1"]
+    TAGS = ["kind::country", "block::countries", "region::04", "category::countries"]
 
     def test_block_and_region_come_from_the_entry(self) -> None:
         self.assertEqual(locked_tags(self.TAGS, Entry(5, "countries", 7)),
-                         ["kind::country", "block::countries", "region::07", "tier::1"])
+                         ["kind::country", "block::countries", "region::07", "category::countries"])
         self.assertEqual(locked_tags(self.TAGS, None), self.TAGS)
 
     def test_a_feature_gains_no_region_tag(self) -> None:

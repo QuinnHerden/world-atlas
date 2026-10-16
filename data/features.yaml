@@ -1315,6 +1315,7 @@
   alt_names: [Zhujiang, Xi Jiang]
   type: River
   category: Rivers & Deltas
+  retired: true  # v3.0.1: a tier-3 feature cut by the user
   tier: 3
   note: >-
     It is Canton's river and the site of the Opium Wars.
@@ -1542,6 +1543,7 @@
   name: Mongolian Plateau
   type: Plateau
   category: Deserts, Plateaus & Plains
+  retired: true  # v3.0.1: a tier-3 feature cut by the user
   tier: 3
   note: >-
     It is the launch platform of the Xiongnu and the Mongol Empire.
@@ -1823,6 +1825,7 @@
   name: Isthmus of Kra
   type: Isthmus
   category: Peninsulas & Isthmuses
+  retired: true  # v3.0.1: a tier-3 feature cut by the user
   tier: 3
   note: >-
     It is the narrow neck of the Malay Peninsula, the subject of repeated canal proposals to bypass Malacca.
@@ -1956,6 +1959,7 @@
   alt_names: [Titicaca]
   type: Lake
   category: Water Bodies
+  retired: true  # v3.0.1: a tier-3 feature cut by the user
   tier: 3
   note: >-
     It is the cradle of Tiwanaku and of Inca origin myths, and the Peru–Bolivia border.
@@ -1969,6 +1973,7 @@
   name: Lake Chad
   type: Lake
   category: Water Bodies
+  retired: true  # v3.0.1: a tier-3 feature cut by the user
   tier: 3
   note: >-
     It has shrunk dramatically since the 1960s, and Boko Haram operates around it in a four-country border zone.
@@ -2147,6 +2152,7 @@
   name: Lombok Strait
   type: Strait
   category: Straits & Chokepoints
+  retired: true  # v3.0.1: a tier-3 feature cut by the user
   tier: 3
   note: >-
     It is a deep-water alternative to Malacca for the largest ships, central to any blockade or "Malacca dilemma"
@@ -2161,6 +2167,7 @@
   name: Sunda Strait
   type: Strait
   category: Straits & Chokepoints
+  retired: true  # v3.0.1: a tier-3 feature cut by the user
   tier: 3
   note: >-
     It is an alternative to Malacca between Sumatra and Java, though too shallow for the largest ships.

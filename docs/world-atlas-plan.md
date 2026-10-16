@@ -30,7 +30,7 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Capital picks | **Burundi: Gitega.** **Equatorial Guinea: Ciudad de la Paz** (decree of 2 January 2026; hand-placed point, Malabo named as the former capital). **Eswatini: Mbabane.** **Palau: Ngerulmud.** |
 | Nauru | Capital **Yaren, hand-placed** from reference coordinates; NE has no populated_places row for Nauru. Alt name **Naoero**. |
 | Names | **English exonyms** on every card. The **Gulf of Mexico** keeps that name. |
-| Country tiers | **Tier 3 is microstates and small island states only.** Kosovo, Palestine and Cyprus are tier 1. Tier sets the `tier::` tag only: every country is in pass 1. |
+| Country tiers | **Tier 3 is microstates and small island states only.** Kosovo, Palestine and Cyprus are tier 1. Tier is internal (the `tier::` tag was dropped in v3.0.1): every country is in pass 1. |
 | Cities | **25 core cities** (42 until v3.0.1, which retired 18 and added Toronto), every one in pass 1. **No per-region minimum**: regions 2, 4, 7, 9, 12, 15 and 21 have no city card. Every secondary city, Abidjan and Aden included, is deferred to the [revisit list](research/cities.md#deferred-cities-revisit-list) (user decision, 2026-10-14). **Cape Town stays a city card.** |
 | Capital and city cards | Front type word: **"City"**, for capitals and other cities alike. Back: the city name, then on a second line "Capital of &lt;Country&gt;" for a capital or "&lt;Country&gt;" for any other city. Marker: a **36 px dot with no ring**. |
 | Look-alikes | The **3–10 card window** plus a curated **confusable-country list**. |
@@ -86,7 +86,7 @@ Three structures were compared; (c) was chosen.
 | Contiguity of features and borders | Strong | Weak: the Pyrenees (tier 2) arrive weeks after France and Spain | Strong. The tier-2 features include most of the border-defining ones (Pyrenees, Carpathians, Urals, Zagros, Rio Grande, Amur), so they stay in pass 1. |
 | Cost | Simplest | Needs country tiers | One extra pass tag |
 
-(c) keeps complete neighbour chunks and holds back only the long tail. With every secondary city deferred, pass 2 is just the 10 tier-3 features, under 2% of the cards; its job is mainly to protect the early stopper. Going round the ring a second time also brings back each region's layout at a long interval.
+(c) keeps complete neighbour chunks and holds back only the long tail. With every secondary city deferred, pass 2 is just the tier-3 features (10 in v3.0.0, 3 since v3.0.1), under 2% of the cards; its job is mainly to protect the early stopper. Going round the ring a second time also brings back each region's layout at a long interval.
 
 ### The ring (default start: Western Europe)
 
@@ -172,22 +172,22 @@ ADR 0004 spreads nearby features at least 3 cards apart, while contiguity packs 
 
 - **Mixing card kinds** (the old category alternation) now happens by itself: a cluster alternates countries, capitals, rivers, ranges and straits. Dropping deck-wide category alternation is the default awaiting confirmation (decision 8 under [Open decisions](#open-decisions)).
 - **Separating look-alikes** still matters. Two look-alikes back to back get learned as "the other one", which is ADR 0004's own reason. But the benefit of interleaving comes from *contrast*, and contrast needs them close. **Decided: a window, 3 ≤ gap ≤ 10,** which keeps the pair in the same cluster and usually on the same day.
-- **Who counts as look-alikes.** Features: the pair check's sibling pairs, as now (Bosporus/Dardanelles, Lombok/Sunda). Countries: a curated list of name or shape confusables: Niger/Nigeria, Guinea/Guinea-Bissau/Equatorial Guinea, Congo/DR Congo, Sudan/South Sudan, Slovakia/Slovenia, Rwanda/Burundi, Dominica/Dominican Rep., Somalia/Somaliland. A country and a feature with the same footprint, such as Italy and the Italian Peninsula, also count (the country × land-feature check below).
+- **Who counts as look-alikes.** Features: the pair check's sibling pairs, as now (Bosporus/Dardanelles). Countries: a curated list of name or shape confusables: Niger/Nigeria, Guinea/Guinea-Bissau/Equatorial Guinea, Congo/DR Congo, Sudan/South Sudan, Slovakia/Slovenia, Rwanda/Burundi, Dominica/Dominican Rep., Somalia/Somaliland. A country and a feature with the same footprint, such as Italy and the Italian Peninsula, also count (the country × land-feature check below).
 - **Precedence.** Frontier continuity, then parent before child, then the window. If a look-alike pair spans two regions (Guinea in 11, Equatorial Guinea in 12), the window is waived; region distance already separates them.
 
 ### Pacing
 
-561 cards (607 in v3.0.0):
+554 cards (607 in v3.0.0):
 
 | Block | Cards |
 |---|---|
 | Orientation | 13: 4 oceans, 2 planetary wind bands, 7 continents |
 | Pass 1 | 538: 197 countries, 162 capitals, 5 subdivisions, 25 territories, 9 disputed areas, 115 tier 1–2 features, 25 core cities |
-| Pass 2 | 10 tier-3 features |
+| Pass 2 | 3 tier-3 features (10 in v3.0.0) |
 
-Since v3.0.0 the blocks are continents (7), countries with subdivisions, territories and disputed areas (236; 235 in v3.0.0), physical features (131; 132 in v3.0.0) and capitals and cities (187; 233 in v3.0.0); see [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300).
+Since v3.0.0 the blocks are continents (7), countries with subdivisions, territories and disputed areas (236; 235 in v3.0.0), physical features (124; 132 in v3.0.0) and capitals and cities (187; 233 in v3.0.0); see [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300).
 
-Subdivisions, territories, disputed areas and tier-3 states get no capital cards. The 131 active features split 6 orientation, 115 pass 1 and 10 pass 2.
+Subdivisions, territories, disputed areas and tier-3 states get no capital cards. The 124 active features split 6 orientation, 115 pass 1 and 3 pass 2.
 
 | New cards a day | New cards finish | Notes |
 |---|---|---|
@@ -360,6 +360,13 @@ Excluded by decision on 2026-10-14, revised for v3.0.1 on 2026-10-16, and kept o
 | Cocos (Keeling) Islands | Dependency (List 1) | Australia | Tiny atolls |
 | Coral Sea Islands | Uninhabited | Australia | Uninhabited; no permanent population (staff at most) |
 | Crimea (Peninsula) | Feature (retired v3.0.1) | — | Merged into the Crimea dispute card: same outline and answer. Its Crimean War clause moved to the dispute note |
+| Pearl River (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Mongolian Plateau (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Isthmus of Kra (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Lake Titicaca (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Lake Chad (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Lombok Strait (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
+| Sunda Strait (tier 3) | Feature (retired v3.0.1) | — | Tier-3 feature cut by the user |
 | Dokdo / Takeshima (Liancourt Rocks) | Disputed (List 2) | South Korea vs Japan | A speck; low salience |
 | Essequibo | Disputed (List 2) | Guyana vs Venezuela | Retired v3.0.1: inside Guyana's recognised borders; told in the Guyana and Venezuela notes |
 | Falkland Islands claim | Disputed (List 2) | Argentina vs UK | Covered by Falklands territory card (List 1) |

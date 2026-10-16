@@ -117,13 +117,13 @@ class CardTextTest(unittest.TestCase):
 
     def test_tags(self) -> None:
         self.assertEqual(self.cards["country:alpha"].tags,
-                         ("tier::1", "category::countries", "id_country_alpha", "kind::country", "region::01", "block::countries"))
+                         ("category::countries", "id_country_alpha", "kind::country", "region::01", "block::countries"))
         self.assertEqual(self.cards["capital:alpha"].tags,
-                         ("tier::1", "category::cities", "id_capital_alpha", "kind::capital", "region::01", "block::cities"))
+                         ("category::cities", "id_capital_alpha", "kind::capital", "region::01", "block::cities"))
         self.assertEqual(self.cards["city:alpha-port"].tags,
-                         ("tier::2", "category::cities", "id_city_alpha-port", "kind::city", "region::01", "block::cities"))
-        self.assertEqual(self.cards["territory:gamma"].tags[2:], ("id_territory_gamma", "kind::territory", "region::03", "block::countries"))
-        self.assertEqual(self.cards["dispute:delta"].tags[2:], ("id_dispute_delta", "kind::dispute", "region::01", "block::countries"))
+                         ("category::cities", "id_city_alpha-port", "kind::city", "region::01", "block::cities"))
+        self.assertEqual(self.cards["territory:gamma"].tags[1:], ("id_territory_gamma", "kind::territory", "region::03", "block::countries"))
+        self.assertEqual(self.cards["dispute:delta"].tags[1:], ("id_dispute_delta", "kind::dispute", "region::01", "block::countries"))
 
     def test_passes(self) -> None:
         self.assertEqual({k: c.study_pass for k, c in self.cards.items()}, dict.fromkeys(self.cards, 1))
@@ -453,7 +453,7 @@ class EdgeCaseTest(unittest.TestCase):
                 mock.patch.object(polities, "curriculum_placements", lambda states: place):
             card = by_key(political.cards())["subdivision:epsilon"]
             self.assertEqual((card.prompt, card.answer_lines), ("Constituent country", ("Epsilon", "Country of Alpha")))
-            self.assertEqual(card.tags[2:], ("id_subdivision_epsilon", "kind::subdivision", "region::01", "block::countries"))
+            self.assertEqual(card.tags[1:], ("id_subdivision_epsilon", "kind::subdivision", "region::01", "block::countries"))
             self.assertEqual((card.host, card.render.spec.outline), ("country:alpha", None))
             with mock.patch.object(polities, "curriculum_placements", lambda states: PLACEMENTS | {
                     "epsilon": RingPlace(1, "alpha", "territory")}), self.assertRaisesRegex(ValueError, "a subdivision"):

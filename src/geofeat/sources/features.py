@@ -24,7 +24,7 @@ def key(feature: Feature) -> str:
 
 def tags(feature: Feature) -> tuple[str, ...]:
     k = kind(feature)
-    return (f"tier::{feature.tier}", f"category::{_slug(feature.category)}", id_tag(k, feature.id), f"kind::{k}",
+    return (f"category::{_slug(feature.category)}", id_tag(k, feature.id), f"kind::{k}",
             block_tag(block_of(k)))
 
 
