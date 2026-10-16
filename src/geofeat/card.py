@@ -10,10 +10,11 @@ from typing import Annotated, Literal
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
 from shapely.geometry.base import BaseGeometry
 
+from geofeat.decks import BY_NAME, WORLD
 from geofeat.model import MEDIA_INDEX, NOT_ONE_LINE, Note  # noqa: F401  Note re-exported for the sources
 from geofeat.spec import RenderSpec
 
-Kind = Literal["feature", "country", "capital", "city", "subnational", "territory", "dispute", "continent"]
+Kind = Literal["feature", "country", "capital", "city", "subnational", "territory", "dispute", "continent", "subdivision"]
 # What render() draws besides the basemap: the geometry, the shapes drawn faintly under it, and a former extent.
 Geometry = tuple[BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None]
 # Card text goes into markdown that ankc renders, unsanitised, to HTML in Anki. deckgen HTML-escapes it, which
@@ -77,12 +78,22 @@ class Card(Frozen):
     note: Note | None = None  # why it matters; shown on the card back
     host: str | None = None  # key of the country whose run this pocket sits in, after its capital (P3)
     orientation: bool = False  # in the orientation block that opens the deck (oceans, planetary winds, continents)
+    deck: str = WORLD.name  # the deck, and so the package, it is in (geofeat.decks)
     render: RenderRef
 
     @model_validator(mode="after")
     def _block_tag(self) -> "Card":
         if [t for t in self.tags if t.startswith(("block::", "pass::"))] != [block_tag(self.block)]:
             raise ValueError(f"{self.kind}:{self.id}: needs exactly the tag {block_tag(self.block)}, and no pass:: tag")
+        return self
+
+    @model_validator(mode="after")
+    def _deck(self) -> "Card":
+        """A subdivision is in its country's companion deck; every other card is in World Atlas."""
+        if self.deck not in BY_NAME:
+            raise ValueError(f"{self.kind}:{self.id}: unknown deck {self.deck!r}")
+        if (self.kind == "subdivision") != (self.deck != WORLD.name):
+            raise ValueError(f"{self.kind}:{self.id}: only subdivisions go in a companion deck, and they always do")
         return self
 
     @property
@@ -114,12 +125,14 @@ def study_pass(kind: Kind, tier: int, orientation: bool = False) -> Pass:
     return 1 if kind in ALWAYS_PASS_1 or tier <= 2 else 2
 
 
-# The study order's four blocks (ADR 0009): the continents, the political map (countries, territories and disputed
-# areas), the physical features, then the capitals and cities.
-Block = Literal["continents", "countries", "features", "cities"]
-BLOCKS: tuple[Block, ...] = ("continents", "countries", "features", "cities")
+# World Atlas's four study blocks (ADR 0009): the continents, the political map (countries, territories and disputed
+# areas), the physical features, then the capitals and cities. A companion deck's cards are all `subdivisions`.
+Block = Literal["continents", "countries", "features", "cities", "subdivisions"]
+BLOCKS: tuple[Block, ...] = ("continents", "countries", "features", "cities", "subdivisions")
+WORLD_BLOCKS: tuple[Block, ...] = BLOCKS[:4]
 _BLOCK_OF: dict[Kind, Block] = {"continent": "continents", "country": "countries", "subnational": "countries",
-                                "territory": "countries", "dispute": "countries", "feature": "features", "capital": "cities", "city": "cities"}
+                                "territory": "countries", "dispute": "countries", "feature": "features", "capital": "cities",
+                                "city": "cities", "subdivision": "subdivisions"}
 
 
 def block_of(kind: Kind) -> Block:

@@ -1,618 +1,729 @@
 draft: false
 series: 1
-00uPkn2nCo: 194500 block=cities region=02
-03PdnXGsco: 278500 block=cities region=18
-0CIJcCjcgi: 208000 block=cities region=04
-0MXfiOff90: 263000 block=cities region=16
-0OtlVMhoor: 57000 block=countries region=11
-0POn5qvOc0: 81500 block=countries region=16
-0UkmaB73yV: 66000 block=countries region=13
-0fk4ah2jmm: 209000 block=cities region=04
-0mlO6YmzlS: 93000 block=countries region=18
-0tVkHRt8FQ: 258000 block=cities region=15
-0x3364qkTW: 4500 block=countries region=01
-12cNEI5lmL: 194000 block=cities region=02
-1HPxsv8LwP: 114000 block=countries region=21
-1NqqYsJrV3: 10000 block=countries region=01
-1PeEdtMjtK: 104500 block=countries region=20
-1WyHnUJIww: 279000 block=cities region=18
-1i6ug5DZf1: 215500 block=cities region=07
-1kmmT8KAU4: 184500 block=features region=16
-1qlvu8UyVc: 19000 block=countries region=03
-1svK3jcE6J: 300500 block=cities region=21
-243HB97AGu: 292000 block=cities region=20
-24NViuSbJf: 212500 block=cities region=06
-24rdGoHY6W: 11500 block=countries region=02
-28jyFKCEJe: 66500 block=countries region=13
-2KZ2UXO3Og: 98500 block=countries region=18
-2Os3ar0EAs: 130500 block=features region=04
-2Qsx5V9la2: 257500 block=cities region=15
-2gG6n0XOS9: 241000 block=cities region=12
-2lthRtl4LD: 173500 block=features region=19
-32LlVyTamX: 102000 block=countries region=19
-38hX6RNwme: 116500 block=countries region=21
-3CsDa5bCHw: 221000 block=cities region=08
-3SFXx6aM1D: 58000 block=countries region=11
-3b0SX9Buga: 113000 block=countries region=21
-3bKooQUa8k: 160000 block=features region=15
-3cGDMrft6v: 247000 block=cities region=13
-3yYfTA76uu: 168000 block=features region=16
-450JCjLn1m: 280500 block=cities region=18
-4CY6CqbAfU: 51500 block=countries region=11
-4I2G85idmg: 193500 block=cities region=02
-4KlkNoWMcF: 33500 block=countries region=06
-4PQ3ciT0aM: 129500 block=features region=03
-4Pm3f8UGys: 9000 block=countries region=01
-4SosBRnCmD: 104000 block=countries region=19
-4UqrkKev1j: 109000 block=countries region=20
-4Zk5pYhODg: 124000 block=features region=-
-4ZnCgcBYii: 285500 block=cities region=19
-4d0l1JxhP8: 218500 block=cities region=08
-4ngjhORp67: 3000 block=continents region=-
-4rpLRhsDwf: 172500 block=features region=17
-54JjfJDESg: 31500 block=countries region=06
-55s4Vy9R7H: 205000 block=cities region=04
-56yKzwTvtE: 277500 block=cities region=18
-5Ad1iuLyxv: 3500 block=continents region=-
-5CCAzl4q4B: 92500 block=countries region=18
-5Dq6MUs4YF: 196000 block=cities region=02
-5LKT5HE6WY: 124500 block=features region=01
-5MoxVKUHcQ: 199500 block=cities region=03
-5ONrZqA7G7: 28500 block=countries region=05
-5XHCCQ6zlY: 201500 block=cities region=03
-5atWodoWCe: 281500 block=cities region=19
-5pBQq7j1c2: 212000 block=cities region=05
-5sPHyX6RC5: 161500 block=features region=15
-5tUpLoLohS: 147500 block=features region=10
-64NBXpNOKv: 133000 block=features region=05
-6ASFkLKLpd: 207500 block=cities region=04
-6MgRR5cYrk: 103000 block=countries region=19
-6NqzLMaJIz: 214000 block=cities region=06
-6PQUUnn8Yw: 37000 block=countries region=07
-6kUNz2kobp: 189500 block=cities region=01
-7FYlvOBque: 206500 block=cities region=04
-7I9SWYqFVh: 73500 block=countries region=14
-7Kcmr3IJjZ: 303500 block=cities region=21
-7PcRA06aS9: 74500 block=countries region=14
-7Xs1baqMKr: 250000 block=cities region=13
-7XudX5lIT6: 202500 block=cities region=03
-7XueJEbFr6: 246000 block=cities region=13
-7mYsBdrYS2: 71000 block=countries region=14
-7mjXflnxVZ: 140500 block=features region=07
-7oxBRLGVy8: 154500 block=features region=14
-7xw2NrAbyQ: 23000 block=countries region=04
-8IfHdljqto: 62500 block=countries region=12
-8JcRJCqps0: 6500 block=countries region=01
-8T26JnOLAg: 15000 block=countries region=02
-8x6kKAL1xY: 268000 block=cities region=17
-91rRvC0W6S: 138500 block=features region=06
-9CR0k0WMHb: 65000 block=countries region=13
-9NisEbL99i: 225500 block=cities region=09
-9RXnw5ZQET: 219000 block=cities region=08
-9Whn1wQH4h: 102500 block=countries region=19
-9XnYuJCtNV: 131500 block=features region=04
-9ZBYfbZw8j: 182500 block=features region=03
-9dKZ99t54a: 122500 block=features region=-
-9fwYnSfoQP: 69000 block=countries region=13
-9l0dKEqCxv: 250500 block=cities region=13
-9qL6AQ9nyY: 64500 block=countries region=13
-A1GbALq04X: 33000 block=countries region=06
-AAboaHSLjx: 176500 block=features region=19
-AEj39lKwe8: 276000 block=cities region=18
-AoiR36d8dl: 272000 block=cities region=17
-Ap0MjPIXxW: 249500 block=cities region=13
-Aq8ZyotYEZ: 197000 block=cities region=03
-BJi3GD1LFi: 265000 block=cities region=16
-BLWHbP0dD3: 176000 block=features region=19
-BOfJDSGp93: 200500 block=cities region=03
-BRXi9sxovk: 159000 block=features region=15
-BXuf2N7ee1: 47500 block=countries region=09
-BZ6svqX5X1: 169500 block=features region=16
-Bf3yT5JobD: 235000 block=cities region=11
-Bq6UGqaJ92: 234000 block=cities region=11
-C0ToaF44FZ: 91500 block=countries region=18
-C2DnEHjW8C: 31000 block=countries region=06
-C5kDU0iNEl: 267000 block=cities region=16
-C7wAAr2Upf: 61500 block=countries region=12
-CCrkTz7Iye: 134500 block=features region=05
-CDLM4S6GuX: 116000 block=countries region=21
-CJBxRL8SbW: 276500 block=cities region=18
-CLfmE57Sbc: 8000 block=countries region=01
-CSxOWagJwe: 288000 block=cities region=19
-CXEAF5ogTF: 115500 block=countries region=21
-CaGdOS6BAt: 254500 block=cities region=14
-CnB1ttBYj5: 220000 block=cities region=08
-Cpm5OlGDhU: 126000 block=features region=01
-D4eY4lzEQk: 82500 block=countries region=16
-DPBwKSxWqd: 128000 block=features region=03
-DPXCxG30xy: 268500 block=cities region=17
-DPzzQrRxKV: 32000 block=countries region=06
-DRNqndLSEz: 46000 block=countries region=09
-DScYgogELP: 180500 block=features region=20
-Da7chQMJtG: 16500 block=countries region=03
-DfFU7zPSWx: 190000 block=cities region=01
-Di5fZFJ5Rz: 225000 block=cities region=09
-DmgSAskvqt: 27000 block=countries region=04
-Dqy2i8pIAX: 238000 block=cities region=11
-Dv4q6Cdmqm: 112500 block=countries region=20
-E15fL34PZL: 101000 block=countries region=19
-ECI7wuqdps: 233000 block=cities region=11
-EDEuFT6MuC: 170500 block=features region=17
-EDUOH4NxOc: 302500 block=cities region=21
-EOuJ39Gvca: 238500 block=cities region=11
-EWd7kVYYyf: 227000 block=cities region=09
-EYcP8527nX: 49000 block=countries region=10
-EhhmDJAndQ: 245500 block=cities region=13
-EnMk3w8RQR: 135500 block=features region=05
-ErwppdhGi7: 7500 block=countries region=01
-EwmpmvdJqb: 12500 block=countries region=02
-EyhRws00Ih: 174500 block=features region=19
-F0LFVO5J4K: 94500 block=countries region=18
-F8AK7aNnyO: 27500 block=countries region=04
-FHcywCTHVw: 175500 block=features region=19
-FOBEejdExP: 87500 block=countries region=17
-FOiLqDUoMB: 167000 block=features region=16
-FU7hUDe7Kf: 296500 block=cities region=20
-FgxiyqXNVR: 282000 block=cities region=19
-FhpFsM6630: 145000 block=features region=09
-FjgXO6d1Ya: 293500 block=cities region=20
-FsC3qGSzTF: 161000 block=features region=15
-FvFaC1ldG0: 294000 block=cities region=20
-GDx6o0YhpQ: 76000 block=countries region=15
-GE4gcrFv7R: 232500 block=cities region=11
-GEPjlLkedW: 237500 block=cities region=11
-GMbOv0zrzX: 60000 block=countries region=12
-GOR62Kmu6m: 206000 block=cities region=04
-GRGgvagUJY: 274500 block=cities region=18
-Gfx6RU9cU4: 188000 block=cities region=01
-GgI4GQlkTv: 17500 block=countries region=03
-Givi1ZkRab: 223000 block=cities region=08
-GqKWmK12fX: 188500 block=cities region=01
-GqSNgr5JFA: 167500 block=features region=16
-Gu38h3G7An: 81000 block=countries region=16
-GzvJcmyJPO: 185000 block=features region=16
-HMHbbmS4V5: 213500 block=cities region=06
-HRWKr40vOR: 57500 block=countries region=11
-HRaBqTzdJi: 120500 block=countries region=21
-HTwuBX9dFV: 160500 block=features region=15
-HXEV8bNubz: 70000 block=countries region=13
-HZF3aGf7mv: 129000 block=features region=03
-Heh7XKRrTp: 5000 block=countries region=01
-HrhU2FOZ5S: 156000 block=features region=14
-IEMIZklKQO: 251500 block=cities region=13
-IRkorECIHW: 217500 block=cities region=07
-ImzNN4VdYW: 68000 block=countries region=13
-IoIARhSc6m: 171500 block=features region=17
-Ip28VMelrK: 228000 block=cities region=09
-IpeoM6jT1K: 164500 block=features region=16
-Iwr1hH4kuE: 192500 block=cities region=01
-J16eHtZI0G: 279500 block=cities region=18
-J4t04J0n7x: 101500 block=countries region=19
-J5MH6tXx8j: 224500 block=cities region=09
-J6dTD8BNLJ: 4000 block=countries region=01
-JDVnNSsOEG: 13000 block=countries region=02
-JGN5CqquFS: 35000 block=countries region=07
-JIbuqCiIT4: 41000 block=countries region=08
-JWUGXjskUK: 73000 block=countries region=14
-JX1LP760qC: 252000 block=cities region=13
-JXIO45YeVJ: 202000 block=cities region=03
-JaiO4gy3l4: 197500 block=cities region=03
-JhYVnLae8v: 141000 block=features region=07
-JkIA5JQBbY: 43500 block=countries region=09
-JkVUrK1klg: 80500 block=countries region=16
-JtJcyNJFqA: 18500 block=countries region=03
-JtoZUY94uW: 287500 block=cities region=19
-K5aQ3QCkLJ: 181000 block=features region=21
-KEUAJhKg6c: 24500 block=countries region=04
-KGAyklOQPC: 70500 block=countries region=14
-KIBlvxoMSk: 113500 block=countries region=21
-KPgnUeNLWJ: 122000 block=features region=-
-KSzflb6fF2: 169000 block=features region=16
-KVCdXoUD1v: 103500 block=countries region=19
-KVXqFsZRlv: 62000 block=countries region=12
-KXRwHaydc6: 155000 block=features region=14
-Ki7AgVZfiE: 2000 block=continents region=-
-KpKgFpXEdz: 120000 block=countries region=21
-KsZZ5ueKwD: 153000 block=features region=14
-Kxj5IroeRT: 40000 block=countries region=08
-L6EQdJkyum: 203000 block=cities region=03
-L8UewbFQ8w: 46500 block=countries region=09
-LHt1iqNc9m: 88500 block=countries region=17
-LJZlDxihb7: 39500 block=countries region=08
-LYTIO4x3ro: 55500 block=countries region=11
-LkpDqNGUZb: 71750 block=countries region=14
-LwIqOqxHXt: 43000 block=countries region=09
-M4Edjpe30k: 126500 block=features region=02
-MA63to3Dqa: 236500 block=cities region=11
-MAPQnshVtc: 139500 block=features region=06
-MAoCWu8ffX: 256000 block=cities region=14
-MUSlvzPxM7: 271500 block=cities region=17
-MYFGYxhvja: 107000 block=countries region=20
-MqGOEFobaN: 255500 block=cities region=14
-Msc25n8qOC: 266000 block=cities region=16
-Mwg9eKbRgB: 236000 block=cities region=11
-N0vWpOks93: 242000 block=cities region=12
-N3NGMxsbci: 121500 block=features region=-
-N4LkoU6jYC: 111500 block=countries region=20
-NCIAyqs6XI: 157500 block=features region=15
-NIg2un15Ab: 84000 block=countries region=16
-NRdvDSnlOm: 19500 block=countries region=03
-NSvsyjcuT2: 226000 block=cities region=09
-NVM5J9JGbE: 144500 block=features region=09
-Nb3zz6P9Mo: 149000 block=features region=10
-NoYnmm5ROl: 221500 block=cities region=08
-NosIbmtwlz: 278000 block=cities region=18
-Npl2307CcB: 189000 block=cities region=01
-Nq5SbpihjQ: 8400 block=countries region=01
-NrBNJgfwuP: 244000 block=cities region=12
-NucXp2E0Dn: 110500 block=countries region=20
-O1Zxwe96zv: 48500 block=countries region=10
-O2CcjOTVB5: 9500 block=countries region=01
-O7AHjZ9fjm: 132000 block=features region=04
-O8qHQXEAd0: 97000 block=countries region=18
-O9y7WXptkf: 50000 block=countries region=10
-OZZ4K85CEg: 42500 block=countries region=09
-OaPaVecp4j: 281000 block=cities region=18
-OcV8etsSj1: 15500 block=countries region=02
-OdnB718Dzt: 86500 block=countries region=17
-OfOqF8X0nt: 245000 block=cities region=13
-OqIdq11Al3: 193000 block=cities region=02
-OwkiXEFY8A: 185500 block=features region=17
-OyjSiP9vvN: 179500 block=features region=20
-P6md72ek3p: 125000 block=features region=01
-PBrbgFgi3L: 248500 block=cities region=13
-PFVOci0FpX: 63000 block=countries region=13
-PJ4Pj3IINx: 177000 block=features region=19
-PJEhGX8mTx: 11000 block=countries region=02
-PKVsi0Kl6W: 247500 block=cities region=13
-PKXHRuuWCx: 196500 block=cities region=02
-PLLW1aEvyx: 222000 block=cities region=08
-PMSW3O0wVz: 171000 block=features region=17
-PkOyvaz7pZ: 173000 block=features region=19
-PlSONDu3A6: 166500 block=features region=16
-Pu1FMMpRM1: 266500 block=cities region=16
-PzvECO25ua: 270000 block=cities region=17
-Q33TW9AIYb: 146000 block=features region=09
-Q4Q14tcpJQ: 21000 block=countries region=03
-Q6rYtpkMsK: 131000 block=features region=04
-Qkb4Sik9dV: 249000 block=cities region=13
-RD23fod2PO: 192000 block=cities region=01
-RUSf8yxZVl: 277000 block=cities region=18
-RX22LzToKe: 290500 block=cities region=20
-Rj8szzfeZC: 244500 block=cities region=12
-RqTGKd789C: 78500 block=countries region=15
-RreWkC4xuO: 291500 block=cities region=20
-Rsd0gTspvX: 257000 block=cities region=14
-S01bRvmA5o: 214500 block=cities region=06
-S6xwitlXLX: 166000 block=features region=16
-SA29oNqkJ7: 264500 block=cities region=16
-SCyHCXE86E: 254000 block=cities region=14
-SJ0hYjiBBw: 253000 block=cities region=14
-SXBjRlNjxV: 269500 block=cities region=17
-SbkXsd8eav: 86000 block=countries region=17
-Sqd5uw8Ekc: 259000 block=cities region=15
-SucvCAjmyo: 239500 block=cities region=11
-SxKU9LYhYu: 89500 block=countries region=17
-T3Htmo4EnY: 127000 block=features region=02
-TDV0KUHFkQ: 210500 block=cities region=05
-TEKjKmR1Pv: 59000 block=countries region=12
-TFW0XVkK7g: 177500 block=features region=19
-TJreemtnZV: 183500 block=features region=10
-TOqtIHudRt: 260000 block=cities region=15
-TXGNnjHbsQ: 14500 block=countries region=02
-TbJE2rCJOU: 151000 block=features region=11
-TczlLuhbSV: 128500 block=features region=03
-Tl4yaosYpH: 298000 block=cities region=21
-TnGqDLXnpP: 76500 block=countries region=15
-TpeyP1gyLk: 264000 block=cities region=16
-TtEQLji6eE: 246500 block=cities region=13
-TwE16wD8r7: 6000 block=countries region=01
-U6CuanzyYG: 143000 block=features region=08
-U7PKVsTD6I: 93500 block=countries region=18
-UD2bGuwSe6: 132500 block=features region=04
-UILBa1e4eX: 253500 block=cities region=14
-USOI1bRyvb: 83500 block=countries region=16
-USwj3CTCEi: 106000 block=countries region=20
-UV9J8uHQL7: 39000 block=countries region=08
-UjGivL1xWT: 158500 block=features region=15
-UrHt93NDqp: 273000 block=cities region=17
-Uw1yRDLwe7: 208500 block=cities region=04
-UxUhoUzW34: 218000 block=cities region=07
-UzBw6fI17F: 163500 block=features region=16
-V48eTQOCVt: 40500 block=countries region=08
-V6Ch6dDZjH: 85000 block=countries region=17
-VDzFzv3LAh: 146500 block=features region=09
-VLFqfAc9wM: 261500 block=cities region=15
-VMRQOkuKpV: 240000 block=cities region=11
-VaNf9e7pEI: 7000 block=countries region=01
-VcDu4Y1307: 95500 block=countries region=18
-VcrojRrSZw: 182000 block=features region=21
-VhZHd8n0t7: 98000 block=countries region=18
-ViDzPDRHQB: 227500 block=cities region=09
-Vn6VjP0ayj: 96500 block=countries region=18
-VnUU40NJ5g: 255000 block=cities region=14
-VnjoQJ4I5r: 286000 block=cities region=19
-VwNbdkEAwJ: 187500 block=cities region=01
-VxhY9uRJFG: 145500 block=features region=09
-Vy73Ga6Z2h: 148000 block=features region=10
-W16JwGzLk1: 18000 block=countries region=03
-WA5m7QzQAO: 29500 block=countries region=05
-WDbgIQP4Fl: 230500 block=cities region=10
-WJiZX3aLG3: 222500 block=cities region=08
-WV3H5k8Uwu: 211500 block=cities region=05
-WcHASA4qdH: 25500 block=countries region=04
-WgJSzHj8so: 288500 block=cities region=19
-WgtsxVmRcR: 24000 block=countries region=04
-Wif3peZYli: 136500 block=features region=16
-WpEuHAjA1T: 64000 block=countries region=13
-WzBH6xnmpW: 224000 block=cities region=09
-Wzx2XJBoDN: 155500 block=features region=14
-XHz07hcXZM: 89000 block=countries region=17
-XM7tYaI6Yg: 1000 block=continents region=-
-XP8UpFlhnG: 265500 block=cities region=16
-XPPiuTLSFW: 286500 block=cities region=19
-XQjnIWChbv: 186500 block=features region=17
-XTwcofuojP: 242500 block=cities region=12
-Y0qD2nJ79g: 99500 block=countries region=19
-Y2EW8YEkcD: 175000 block=features region=19
-Y6OL8n5ldT: 141500 block=features region=07
-YELDi45seb: 283000 block=cities region=19
-YFanVLe5BY: 292500 block=cities region=20
-YH68xC0sUE: 186000 block=features region=17
-YMwv3SRf6T: 25000 block=countries region=04
-YYBSkeOiBs: 20500 block=countries region=03
-Ykq15aEwB3: 56000 block=countries region=11
-YsO7NqsK21: 187000 block=features region=20
-YwGYFMw3dz: 273500 block=cities region=17
-Z2Zv4Y2364: 183000 block=features region=05
-ZAkpWGTZzP: 10500 block=countries region=01
-ZD7QkRyGeE: 119500 block=countries region=21
-ZEWiAo0DJ1: 216500 block=cities region=07
-ZOJc1ErJKW: 58500 block=countries region=11
-ZYnpgjSrPE: 82000 block=countries region=16
-ZtTBBcCcRN: 198500 block=cities region=03
-ZvFI593Dtn: 269000 block=cities region=17
-a6NIWaSoXy: 220500 block=cities region=08
-aAfAczxNPs: 135000 block=features region=05
-aa6DLDLM4R: 252500 block=cities region=13
-adAnl75ZlL: 295500 block=cities region=20
-aeP3lCgeob: 80000 block=countries region=16
-avOKNkxBLq: 16250 block=countries region=02
-avcsZ4basU: 200000 block=cities region=03
-ayUnvU3TOU: 284000 block=cities region=19
-b26ActofVa: 38000 block=countries region=07
-b5i7EhUujX: 297500 block=cities region=21
-b8dfk0W5fY: 500 block=continents region=-
-bBac0j3A9j: 158000 block=features region=15
-bDR8QUTGCj: 248000 block=cities region=13
-bJM8iWYKUz: 36500 block=countries region=07
-bcJskUQhSd: 251000 block=cities region=13
-bigyBNVi3q: 61000 block=countries region=12
-bqHa1F3CiN: 30000 block=countries region=05
-buWvbSn4fn: 181500 block=features region=21
-c3cqKEKe3s: 105500 block=countries region=20
-c8LkvFNH05: 180000 block=features region=20
-c8yZnVf3Wx: 283500 block=cities region=19
-cFpN3I9ILO: 37500 block=countries region=07
-chwOpF2aWb: 152000 block=features region=13
-cnUtmlZgSD: 243000 block=cities region=12
-cucDLcxgiQ: 159500 block=features region=15
-d0HRyLUACO: 54000 block=countries region=11
-dBjfJbKtqd: 299000 block=cities region=21
-dDEYCruq0R: 67000 block=countries region=13
-dImD97LC2N: 106500 block=countries region=20
-dTemAoPqGr: 5500 block=countries region=01
-dXBm1y0ePl: 198000 block=cities region=03
-dZUvgEnr4w: 77500 block=countries region=15
-dhsa3y3W9q: 53500 block=countries region=11
-dngBYa46y9: 107500 block=countries region=20
-dyu2UgSEOD: 136000 block=features region=05
-e52TxnvBxI: 34500 block=countries region=06
-eGBotNQ3ps: 150000 block=features region=10
-eJkUnuSzRI: 261000 block=cities region=15
-ePXVWlJ55D: 139000 block=features region=06
-ebmkpB003M: 260500 block=cities region=15
-eynvwLG5tX: 138000 block=features region=05
-ezAhmdLnju: 123500 block=features region=-
-f4LAeHni0F: 44000 block=countries region=09
-f9P0mozGAE: 170000 block=features region=17
-fAU6K6zAAC: 164000 block=features region=16
-fS2AfevWUi: 44500 block=countries region=09
-fUfnZDfjHL: 231000 block=cities region=10
-fWzUdRCmmH: 165500 block=features region=16
-fcEZ5jjkPN: 230000 block=cities region=10
-fhfdR5asO6: 1500 block=continents region=-
-fv1atkqTiM: 88000 block=countries region=17
-fvBfUrOnq8: 157000 block=features region=14
-fvaL0bjWEc: 140000 block=features region=06
-g35JR9qURg: 65500 block=countries region=13
-g5Y6tc2bkb: 237000 block=cities region=11
-g9XLjq3Epi: 77000 block=countries region=15
-gOf9e6JRym: 263500 block=cities region=16
-gPUzEYfTK9: 142500 block=features region=08
-gWpYi0J6eZ: 297000 block=cities region=20
-gePhYMksmv: 168500 block=features region=16
-ggA0bk5Dy9: 217000 block=cities region=07
-gkgxco8RgV: 144000 block=features region=08
-gqL3vt2o13: 8100 block=countries region=01
-grkKi6RXFN: 300000 block=cities region=21
-gt9WGgNTNx: 291000 block=cities region=20
-h4EajpRReY: 26500 block=countries region=04
-hJWl9DkKtV: 151500 block=features region=12
-hRnNUC9Uui: 296000 block=cities region=20
-hSpt3W2rhr: 282500 block=cities region=19
-hh1Pgg6Hx4: 117000 block=countries region=21
-hoWzlok5ar: 191000 block=cities region=01
-htaQrQou31: 162000 block=features region=15
-i2AHoYkspg: 195500 block=cities region=02
-iErNPa3vw4: 303000 block=cities region=21
-iJ6ugTPAnT: 211000 block=cities region=05
-iX1M0zAj2z: 210000 block=cities region=05
-ifTylVQYRl: 117500 block=countries region=21
-iiimKOTQzl: 259500 block=cities region=15
-iow7ThgbZG: 275000 block=cities region=18
-itO9FQOORw: 52000 block=countries region=11
-iyQKc1iIwb: 165000 block=features region=16
-izgz8s0mFV: 121000 block=countries region=21
-j0HJzP7mvY: 16000 block=countries region=02
-j0kVA7jkEc: 22500 block=countries region=03
-j3QYOFFQ8N: 52500 block=countries region=11
-j9YnlYiBa2: 42000 block=countries region=09
-jMgCBQTIQi: 184000 block=features region=12
-jSB0N8cHrP: 231500 block=cities region=10
-jX1fHW1GAC: 105000 block=countries region=20
-jXDgL1EvrG: 29000 block=countries region=05
-jhQObGpnp5: 97500 block=countries region=18
-k1g6CtgDY4: 8200 block=countries region=01
-k1hnoO3vu4: 34000 block=countries region=06
-k5RY34HRVr: 287000 block=cities region=19
-kHWZMNI4KE: 83000 block=countries region=16
-kMb5Fz8xPf: 215000 block=cities region=06
-kMkxdZ21xT: 232000 block=cities region=10
-kWz6WIXYtX: 199000 block=cities region=03
-ka1fri6z77: 79000 block=countries region=15
-kgzLZdSYRQ: 302000 block=cities region=21
-knw0MPuRZQ: 84500 block=countries region=17
-komVNfWj1o: 209500 block=cities region=05
-kppEd3vhvo: 96000 block=countries region=18
-ktopkzjfbd: 134000 block=features region=05
-ktqqj2K8HZ: 301000 block=cities region=21
-kxjPsldP2o: 289500 block=cities region=20
-l6xmhrfeGS: 239000 block=cities region=11
-l96heyQ5gg: 207000 block=cities region=04
-lSu5WBD2wo: 299500 block=cities region=21
-lZfIs7h1Bg: 75000 block=countries region=14
-laLLJeCKyZ: 289000 block=cities region=19
-lcL93lm86T: 90000 block=countries region=17
-lltkOGGDkC: 233500 block=cities region=11
-lvmFs9SFMl: 49500 block=countries region=10
-lw2RkB2Ym5: 32500 block=countries region=06
-mGmlk3qubh: 59500 block=countries region=12
-mVAKotE1Aj: 69500 block=countries region=13
-mXpNqyMH4o: 60500 block=countries region=12
-mmJj3psFJJ: 235500 block=cities region=11
-ms0CVp2PaR: 23500 block=countries region=04
-mu7RWnc1HL: 133500 block=features region=05
-mxanpel4Ty: 162500 block=features region=16
-n1aww7nWsF: 204500 block=cities region=04
-n5BdbVaVfE: 149500 block=features region=10
-n624CYmvt8: 256500 block=cities region=14
-neNv2BS31z: 241500 block=cities region=12
-nlFHweVURH: 172000 block=features region=17
-nwbihRgCRe: 54500 block=countries region=11
-o8NQXyAfwI: 55000 block=countries region=11
-oEAraTt0XB: 48000 block=countries region=10
-oQeHFXOis8: 91000 block=countries region=18
-oYzEn5WYqO: 35500 block=countries region=07
-odXOJGWzR4: 234500 block=cities region=11
-oiDNVRsmYG: 125500 block=features region=01
-p2WBzhhSql: 137000 block=features region=05
-p5lGJL0bbY: 204000 block=cities region=03
-pIsothzLuh: 12000 block=countries region=02
-pLWW8SIgw8: 110000 block=countries region=20
-pqPvxxBuoI: 205500 block=cities region=04
-pqQcMAVCv1: 17000 block=countries region=03
-ptdi7pj4P1: 108500 block=countries region=20
-pvbVXAQYs0: 127500 block=features region=02
-pxZ8B5SY6o: 213000 block=cities region=06
-pyYNl5OqJK: 41500 block=countries region=08
-q1Iq7BXdVe: 143500 block=features region=08
-q1q9qxeuXq: 95000 block=countries region=18
-qJNGJRgiko: 63500 block=countries region=13
-qLaExhetQB: 284750 block=cities region=19
-qP2785r9Ls: 47000 block=countries region=09
-qPuw5MJfG8: 94000 block=countries region=18
-qQmDOlIvBl: 298500 block=cities region=21
-qYWz011b5J: 72000 block=countries region=14
-qa9a26OAu8: 240500 block=cities region=11
-qfGNM5rN1n: 243500 block=cities region=12
-qrWS4MkxPk: 13500 block=countries region=02
-rPisaTk2co: 51000 block=countries region=11
-rcy1eorBiO: 45000 block=countries region=09
-rsl8pK6bjC: 99000 block=countries region=19
-rtqCOpl8kf: 68500 block=countries region=13
-s0txMwbTfc: 74000 block=countries region=14
-s32fGklbzj: 71500 block=countries region=14
-s5EbQGCXDx: 275500 block=cities region=18
-s6WOivGCI6: 156500 block=features region=14
-sALBoHUhOB: 174000 block=features region=19
-sC5yjm2u8x: 148500 block=features region=10
-sD6S68Addc: 223500 block=cities region=09
-sJfBbIYrf3: 38500 block=countries region=08
-sLtR1rUDSI: 228500 block=cities region=09
-sWNjLomgK3: 258500 block=cities region=15
-sbPkxOpy3p: 152500 block=features region=14
-siBs8ZR7WE: 21500 block=countries region=03
-spVcm0TU5t: 115000 block=countries region=21
-sxVSFSgNxX: 8500 block=countries region=01
-t2hN6mRzGI: 108000 block=countries region=20
-tH9DZfJImO: 142000 block=features region=07
-tUu2L7hnrA: 219500 block=cities region=08
-tpdiV6Z1NX: 26000 block=countries region=04
-tvux6zEn1w: 154000 block=features region=14
-tyzdq3kdxF: 87000 block=countries region=17
-u2RdQ1hPOX: 28000 block=countries region=05
-u4I3oDwS7I: 78000 block=countries region=15
-u5fcjiiXme: 130000 block=features region=03
-uCmlTrHFie: 75500 block=countries region=14
-uKcMTeYtkN: 91167 block=countries region=18
-uLjAqDqCg2: 20000 block=countries region=03
-uZkjSL2B6S: 153500 block=features region=14
-uZwmdfhqNb: 150500 block=features region=11
-ugWAv0E8uH: 262000 block=cities region=16
-ui8TE2cLP7: 72500 block=countries region=14
-uqYHho0FeY: 14000 block=countries region=02
-uw5Db9n4FQ: 109500 block=countries region=20
-uwkSUXor0L: 45500 block=countries region=09
-v5TiCo54YS: 56500 block=countries region=11
-v7YzanH9sj: 267500 block=cities region=16
-vKspDkdra5: 274000 block=cities region=18
-vQukswE5eJ: 280000 block=cities region=18
-vR6h37Mc18: 295000 block=cities region=20
-vl0s8IJ1KJ: 271000 block=cities region=17
-vnx3SzmUU7: 119000 block=countries region=21
-w2aMwrVCPB: 229500 block=cities region=10
-w5NtfRCzSA: 147000 block=features region=10
-wLNcASZe18: 22000 block=countries region=03
-wNf4h5RpW3: 191500 block=cities region=01
-wSxtLBdr0g: 123000 block=features region=-
-wVdA6IiArU: 112000 block=countries region=20
-wgE8ASIFMH: 203500 block=cities region=03
-wndxpq7GzF: 50500 block=countries region=10
-wuLYNY8lju: 216000 block=cities region=07
-wvVPP9jjpA: 293000 block=cities region=20
-wz29Xes82s: 67500 block=countries region=13
-xEaTquK3Vw: 118000 block=countries region=21
-xGGoFNWAr6: 178500 block=features region=20
-xGHXl2WqON: 114500 block=countries region=21
-xTEP7LSmy5: 111000 block=countries region=20
-xU9Dl2xmUt: 270500 block=cities region=17
-xXnbXabL9G: 285000 block=cities region=19
-xePaivlOPD: 36000 block=countries region=07
-xmLBYWuR8f: 226500 block=cities region=09
-xnIrAUmkCK: 92000 block=countries region=18
-xqL26e3iLp: 90500 block=countries region=18
-xry9F3Wtsm: 53000 block=countries region=11
-y3cJ37N7ct: 30500 block=countries region=05
-y6rQUc44ZU: 178000 block=features region=19
-y9j8OdBWUL: 8300 block=countries region=01
-yJnfS3pU0E: 100000 block=countries region=19
-yfyIXiDbBl: 190500 block=cities region=01
-yhmPfRQT4B: 34250 block=countries region=06
-yiVdkTNjAy: 118500 block=countries region=21
-yjSBrmC7cs: 272500 block=cities region=17
-ymWqEmN2Qp: 262500 block=cities region=16
-yrr5stmbG1: 163000 block=features region=16
-yxl6uywlbi: 79500 block=countries region=16
-yyIyPLZLwu: 284500 block=cities region=19
-yyOK3AJBRG: 201000 block=cities region=03
-z6j3VIpZi0: 137500 block=features region=05
-zBIMIjKNZx: 195000 block=cities region=02
-zPlZ6k5WZY: 294500 block=cities region=20
-zQ0roTdkI8: 100500 block=countries region=19
-zQFNNwNser: 301500 block=cities region=21
-zbpmdVIvmD: 290000 block=cities region=20
-zcPC5VJkNH: 2500 block=continents region=-
-zg1MDs00Dp: 179000 block=features region=20
-zoDniv5XVW: 229000 block=cities region=09
-zt3UAgEwzi: 85500 block=countries region=17
+00uPkn2nCo: 194500 block=cities region=02 deck=world-atlas
+03PdnXGsco: 278500 block=cities region=18 deck=world-atlas
+0CIJcCjcgi: 208000 block=cities region=04 deck=world-atlas
+0MXfiOff90: 263000 block=cities region=16 deck=world-atlas
+0OtlVMhoor: 57000 block=countries region=11 deck=world-atlas
+0POn5qvOc0: 81500 block=countries region=16 deck=world-atlas
+0UkmaB73yV: 66000 block=countries region=13 deck=world-atlas
+0fk4ah2jmm: 209000 block=cities region=04 deck=world-atlas
+0mlO6YmzlS: 93000 block=countries region=18 deck=world-atlas
+0tVkHRt8FQ: 258000 block=cities region=15 deck=world-atlas
+0x3364qkTW: 4500 block=countries region=01 deck=world-atlas
+12cNEI5lmL: 194000 block=cities region=02 deck=world-atlas
+14u1lCKYby: 656000 block=subdivisions region=- deck=us-states
+1HPxsv8LwP: 114000 block=countries region=21 deck=world-atlas
+1NqqYsJrV3: 10000 block=countries region=01 deck=world-atlas
+1PeEdtMjtK: 104500 block=countries region=20 deck=world-atlas
+1WyHnUJIww: 279000 block=cities region=18 deck=world-atlas
+1i6ug5DZf1: 215500 block=cities region=07 deck=world-atlas
+1kmmT8KAU4: 184500 block=features region=16 deck=world-atlas
+1qlvu8UyVc: 19000 block=countries region=03 deck=world-atlas
+1svK3jcE6J: 300500 block=cities region=21 deck=world-atlas
+20Uy4H0FFK: 752000 block=subdivisions region=- deck=canadian-provinces
+243HB97AGu: 292000 block=cities region=20 deck=world-atlas
+24NViuSbJf: 212500 block=cities region=06 deck=world-atlas
+24rdGoHY6W: 11500 block=countries region=02 deck=world-atlas
+28jyFKCEJe: 66500 block=countries region=13 deck=world-atlas
+2KZ2UXO3Og: 98500 block=countries region=18 deck=world-atlas
+2Os3ar0EAs: 130500 block=features region=04 deck=world-atlas
+2Qsx5V9la2: 257500 block=cities region=15 deck=world-atlas
+2gG6n0XOS9: 241000 block=cities region=12 deck=world-atlas
+2lthRtl4LD: 173500 block=features region=19 deck=world-atlas
+32LlVyTamX: 102000 block=countries region=19 deck=world-atlas
+34CjOGBzXY: 711500 block=subdivisions region=- deck=brazilian-states
+38Sco3exVE: 706000 block=subdivisions region=- deck=brazilian-states
+38hX6RNwme: 116500 block=countries region=21 deck=world-atlas
+3CsDa5bCHw: 221000 block=cities region=08 deck=world-atlas
+3SFXx6aM1D: 58000 block=countries region=11 deck=world-atlas
+3TyFDsTK1D: 756500 block=subdivisions region=- deck=canadian-provinces
+3b0SX9Buga: 113000 block=countries region=21 deck=world-atlas
+3bKooQUa8k: 160000 block=features region=15 deck=world-atlas
+3cGDMrft6v: 247000 block=cities region=13 deck=world-atlas
+3yYfTA76uu: 168000 block=features region=16 deck=world-atlas
+411ScBCSPL: 652000 block=subdivisions region=- deck=us-states
+450JCjLn1m: 280500 block=cities region=18 deck=world-atlas
+4CY6CqbAfU: 51500 block=countries region=11 deck=world-atlas
+4I2G85idmg: 193500 block=cities region=02 deck=world-atlas
+4KlkNoWMcF: 33500 block=countries region=06 deck=world-atlas
+4PQ3ciT0aM: 129500 block=features region=03 deck=world-atlas
+4Pm3f8UGys: 9000 block=countries region=01 deck=world-atlas
+4SosBRnCmD: 104000 block=countries region=19 deck=world-atlas
+4UqrkKev1j: 109000 block=countries region=20 deck=world-atlas
+4Y9oFGzcve: 605500 block=subdivisions region=- deck=italian-regions
+4Zk5pYhODg: 124000 block=features region=- deck=world-atlas
+4ZnCgcBYii: 285500 block=cities region=19 deck=world-atlas
+4d0l1JxhP8: 218500 block=cities region=08 deck=world-atlas
+4ngjhORp67: 3000 block=continents region=- deck=world-atlas
+4rgEusmHN2: 755000 block=subdivisions region=- deck=canadian-provinces
+4rpLRhsDwf: 172500 block=features region=17 deck=world-atlas
+54JjfJDESg: 31500 block=countries region=06 deck=world-atlas
+55s4Vy9R7H: 205000 block=cities region=04 deck=world-atlas
+56yKzwTvtE: 277500 block=cities region=18 deck=world-atlas
+581S24scHe: 675500 block=subdivisions region=- deck=us-states
+5Ad1iuLyxv: 3500 block=continents region=- deck=world-atlas
+5CCAzl4q4B: 92500 block=countries region=18 deck=world-atlas
+5Dq6MUs4YF: 196000 block=cities region=02 deck=world-atlas
+5LKT5HE6WY: 124500 block=features region=01 deck=world-atlas
+5MoxVKUHcQ: 199500 block=cities region=03 deck=world-atlas
+5ONrZqA7G7: 28500 block=countries region=05 deck=world-atlas
+5XHCCQ6zlY: 201500 block=cities region=03 deck=world-atlas
+5atWodoWCe: 281500 block=cities region=19 deck=world-atlas
+5pBQq7j1c2: 212000 block=cities region=05 deck=world-atlas
+5sPHyX6RC5: 161500 block=features region=15 deck=world-atlas
+5tUpLoLohS: 147500 block=features region=10 deck=world-atlas
+64NBXpNOKv: 133000 block=features region=05 deck=world-atlas
+6ASFkLKLpd: 207500 block=cities region=04 deck=world-atlas
+6MgRR5cYrk: 103000 block=countries region=19 deck=world-atlas
+6NqzLMaJIz: 214000 block=cities region=06 deck=world-atlas
+6PQUUnn8Yw: 37000 block=countries region=07 deck=world-atlas
+6kUNz2kobp: 189500 block=cities region=01 deck=world-atlas
+7FYlvOBque: 206500 block=cities region=04 deck=world-atlas
+7I9SWYqFVh: 73500 block=countries region=14 deck=world-atlas
+7Kcmr3IJjZ: 303500 block=cities region=21 deck=world-atlas
+7PcRA06aS9: 74500 block=countries region=14 deck=world-atlas
+7Xs1baqMKr: 250000 block=cities region=13 deck=world-atlas
+7XudX5lIT6: 202500 block=cities region=03 deck=world-atlas
+7XueJEbFr6: 246000 block=cities region=13 deck=world-atlas
+7mYsBdrYS2: 71000 block=countries region=14 deck=world-atlas
+7mjXflnxVZ: 140500 block=features region=07 deck=world-atlas
+7oxBRLGVy8: 154500 block=features region=14 deck=world-atlas
+7r894Z58AT: 703000 block=subdivisions region=- deck=brazilian-states
+7xw2NrAbyQ: 23000 block=countries region=04 deck=world-atlas
+8IfHdljqto: 62500 block=countries region=12 deck=world-atlas
+8JcRJCqps0: 6500 block=countries region=01 deck=world-atlas
+8T26JnOLAg: 15000 block=countries region=02 deck=world-atlas
+8x6kKAL1xY: 268000 block=cities region=17 deck=world-atlas
+91rRvC0W6S: 138500 block=features region=06 deck=world-atlas
+9CR0k0WMHb: 65000 block=countries region=13 deck=world-atlas
+9NisEbL99i: 225500 block=cities region=09 deck=world-atlas
+9RXnw5ZQET: 219000 block=cities region=08 deck=world-atlas
+9UDrU0ErDH: 707500 block=subdivisions region=- deck=brazilian-states
+9UtPyOtwql: 709500 block=subdivisions region=- deck=brazilian-states
+9Whn1wQH4h: 102500 block=countries region=19 deck=world-atlas
+9XnYuJCtNV: 131500 block=features region=04 deck=world-atlas
+9ZBYfbZw8j: 182500 block=features region=03 deck=world-atlas
+9dKZ99t54a: 122500 block=features region=- deck=world-atlas
+9fwYnSfoQP: 69000 block=countries region=13 deck=world-atlas
+9l0dKEqCxv: 250500 block=cities region=13 deck=world-atlas
+9qL6AQ9nyY: 64500 block=countries region=13 deck=world-atlas
+A1GbALq04X: 33000 block=countries region=06 deck=world-atlas
+AAboaHSLjx: 176500 block=features region=19 deck=world-atlas
+AEj39lKwe8: 276000 block=cities region=18 deck=world-atlas
+AoiR36d8dl: 272000 block=cities region=17 deck=world-atlas
+Ap0MjPIXxW: 249500 block=cities region=13 deck=world-atlas
+Aq8ZyotYEZ: 197000 block=cities region=03 deck=world-atlas
+B3KssJiu3d: 752500 block=subdivisions region=- deck=canadian-provinces
+BJi3GD1LFi: 265000 block=cities region=16 deck=world-atlas
+BLWHbP0dD3: 176000 block=features region=19 deck=world-atlas
+BOfJDSGp93: 200500 block=cities region=03 deck=world-atlas
+BRXi9sxovk: 159000 block=features region=15 deck=world-atlas
+BTlz8pLIxm: 703500 block=subdivisions region=- deck=brazilian-states
+BXuf2N7ee1: 47500 block=countries region=09 deck=world-atlas
+BZ6svqX5X1: 169500 block=features region=16 deck=world-atlas
+BZBiJAZ1n2: 671000 block=subdivisions region=- deck=us-states
+Bf3yT5JobD: 235000 block=cities region=11 deck=world-atlas
+BjEATM1Ucr: 653000 block=subdivisions region=- deck=us-states
+Bq6UGqaJ92: 234000 block=cities region=11 deck=world-atlas
+C0ToaF44FZ: 91500 block=countries region=18 deck=world-atlas
+C2DnEHjW8C: 31000 block=countries region=06 deck=world-atlas
+C5kDU0iNEl: 267000 block=cities region=16 deck=world-atlas
+C7wAAr2Upf: 61500 block=countries region=12 deck=world-atlas
+CCrkTz7Iye: 134500 block=features region=05 deck=world-atlas
+CDLM4S6GuX: 116000 block=countries region=21 deck=world-atlas
+CJBxRL8SbW: 276500 block=cities region=18 deck=world-atlas
+CLfmE57Sbc: 8000 block=countries region=01 deck=world-atlas
+CSxOWagJwe: 288000 block=cities region=19 deck=world-atlas
+CXEAF5ogTF: 115500 block=countries region=21 deck=world-atlas
+CaGdOS6BAt: 254500 block=cities region=14 deck=world-atlas
+CcqZE8y19B: 704500 block=subdivisions region=- deck=brazilian-states
+CnB1ttBYj5: 220000 block=cities region=08 deck=world-atlas
+Cpm5OlGDhU: 126000 block=features region=01 deck=world-atlas
+D4eY4lzEQk: 82500 block=countries region=16 deck=world-atlas
+DC3oskL3gO: 712000 block=subdivisions region=- deck=brazilian-states
+DLtIHUbBjm: 653500 block=subdivisions region=- deck=us-states
+DPBwKSxWqd: 128000 block=features region=03 deck=world-atlas
+DPXCxG30xy: 268500 block=cities region=17 deck=world-atlas
+DPzzQrRxKV: 32000 block=countries region=06 deck=world-atlas
+DRNqndLSEz: 46000 block=countries region=09 deck=world-atlas
+DScYgogELP: 180500 block=features region=20 deck=world-atlas
+Da7chQMJtG: 16500 block=countries region=03 deck=world-atlas
+DfFU7zPSWx: 190000 block=cities region=01 deck=world-atlas
+Di5fZFJ5Rz: 225000 block=cities region=09 deck=world-atlas
+DmgSAskvqt: 27000 block=countries region=04 deck=world-atlas
+Dqy2i8pIAX: 238000 block=cities region=11 deck=world-atlas
+Dv4q6Cdmqm: 112500 block=countries region=20 deck=world-atlas
+E15fL34PZL: 101000 block=countries region=19 deck=world-atlas
+E3NjCPH9hr: 669500 block=subdivisions region=- deck=us-states
+ECI7wuqdps: 233000 block=cities region=11 deck=world-atlas
+EDEuFT6MuC: 170500 block=features region=17 deck=world-atlas
+EDUOH4NxOc: 302500 block=cities region=21 deck=world-atlas
+EOuJ39Gvca: 238500 block=cities region=11 deck=world-atlas
+EPnN2NzvPh: 672000 block=subdivisions region=- deck=us-states
+EWd7kVYYyf: 227000 block=cities region=09 deck=world-atlas
+EYcP8527nX: 49000 block=countries region=10 deck=world-atlas
+EebXD1yp4v: 711000 block=subdivisions region=- deck=brazilian-states
+EhhmDJAndQ: 245500 block=cities region=13 deck=world-atlas
+EnMk3w8RQR: 135500 block=features region=05 deck=world-atlas
+ErwppdhGi7: 7500 block=countries region=01 deck=world-atlas
+EwmpmvdJqb: 12500 block=countries region=02 deck=world-atlas
+EyhRws00Ih: 174500 block=features region=19 deck=world-atlas
+F0LFVO5J4K: 94500 block=countries region=18 deck=world-atlas
+F8AK7aNnyO: 27500 block=countries region=04 deck=world-atlas
+FHcywCTHVw: 175500 block=features region=19 deck=world-atlas
+FOBEejdExP: 87500 block=countries region=17 deck=world-atlas
+FOiLqDUoMB: 167000 block=features region=16 deck=world-atlas
+FU7hUDe7Kf: 296500 block=cities region=20 deck=world-atlas
+FgxiyqXNVR: 282000 block=cities region=19 deck=world-atlas
+FhpFsM6630: 145000 block=features region=09 deck=world-atlas
+FjgXO6d1Ya: 293500 block=cities region=20 deck=world-atlas
+FsC3qGSzTF: 161000 block=features region=15 deck=world-atlas
+FvFaC1ldG0: 294000 block=cities region=20 deck=world-atlas
+GDx6o0YhpQ: 76000 block=countries region=15 deck=world-atlas
+GE4gcrFv7R: 232500 block=cities region=11 deck=world-atlas
+GEPjlLkedW: 237500 block=cities region=11 deck=world-atlas
+GMbOv0zrzX: 60000 block=countries region=12 deck=world-atlas
+GOR62Kmu6m: 206000 block=cities region=04 deck=world-atlas
+GRGgvagUJY: 274500 block=cities region=18 deck=world-atlas
+Gfx6RU9cU4: 188000 block=cities region=01 deck=world-atlas
+GgI4GQlkTv: 17500 block=countries region=03 deck=world-atlas
+Givi1ZkRab: 223000 block=cities region=08 deck=world-atlas
+GqKWmK12fX: 188500 block=cities region=01 deck=world-atlas
+GqSNgr5JFA: 167500 block=features region=16 deck=world-atlas
+Gqt5Ltk2J6: 657500 block=subdivisions region=- deck=us-states
+Gu38h3G7An: 81000 block=countries region=16 deck=world-atlas
+GzvJcmyJPO: 185000 block=features region=16 deck=world-atlas
+HHfn0Ev7wJ: 672500 block=subdivisions region=- deck=us-states
+HMHbbmS4V5: 213500 block=cities region=06 deck=world-atlas
+HRWKr40vOR: 57500 block=countries region=11 deck=world-atlas
+HRaBqTzdJi: 120500 block=countries region=21 deck=world-atlas
+HTwuBX9dFV: 160500 block=features region=15 deck=world-atlas
+HXEV8bNubz: 70000 block=countries region=13 deck=world-atlas
+HZF3aGf7mv: 129000 block=features region=03 deck=world-atlas
+Heh7XKRrTp: 5000 block=countries region=01 deck=world-atlas
+HrhU2FOZ5S: 156000 block=features region=14 deck=world-atlas
+IEMIZklKQO: 251500 block=cities region=13 deck=world-atlas
+INJAwH7C0J: 704000 block=subdivisions region=- deck=brazilian-states
+IRkorECIHW: 217500 block=cities region=07 deck=world-atlas
+ImzNN4VdYW: 68000 block=countries region=13 deck=world-atlas
+IoIARhSc6m: 171500 block=features region=17 deck=world-atlas
+Ip28VMelrK: 228000 block=cities region=09 deck=world-atlas
+IpeoM6jT1K: 164500 block=features region=16 deck=world-atlas
+Iwr1hH4kuE: 192500 block=cities region=01 deck=world-atlas
+J16eHtZI0G: 279500 block=cities region=18 deck=world-atlas
+J4t04J0n7x: 101500 block=countries region=19 deck=world-atlas
+J5MH6tXx8j: 224500 block=cities region=09 deck=world-atlas
+J6dTD8BNLJ: 4000 block=countries region=01 deck=world-atlas
+JBxaYT98Fi: 702500 block=subdivisions region=- deck=brazilian-states
+JDVnNSsOEG: 13000 block=countries region=02 deck=world-atlas
+JGN5CqquFS: 35000 block=countries region=07 deck=world-atlas
+JIbuqCiIT4: 41000 block=countries region=08 deck=world-atlas
+JWUGXjskUK: 73000 block=countries region=14 deck=world-atlas
+JX1LP760qC: 252000 block=cities region=13 deck=world-atlas
+JXIO45YeVJ: 202000 block=cities region=03 deck=world-atlas
+JaiO4gy3l4: 197500 block=cities region=03 deck=world-atlas
+JhYVnLae8v: 141000 block=features region=07 deck=world-atlas
+JkIA5JQBbY: 43500 block=countries region=09 deck=world-atlas
+JkVUrK1klg: 80500 block=countries region=16 deck=world-atlas
+JtJcyNJFqA: 18500 block=countries region=03 deck=world-atlas
+JtoZUY94uW: 287500 block=cities region=19 deck=world-atlas
+K5aQ3QCkLJ: 181000 block=features region=21 deck=world-atlas
+KEUAJhKg6c: 24500 block=countries region=04 deck=world-atlas
+KGAyklOQPC: 70500 block=countries region=14 deck=world-atlas
+KIBlvxoMSk: 113500 block=countries region=21 deck=world-atlas
+KPgnUeNLWJ: 122000 block=features region=- deck=world-atlas
+KSzflb6fF2: 169000 block=features region=16 deck=world-atlas
+KVCdXoUD1v: 103500 block=countries region=19 deck=world-atlas
+KVXqFsZRlv: 62000 block=countries region=12 deck=world-atlas
+KXRwHaydc6: 155000 block=features region=14 deck=world-atlas
+Ki7AgVZfiE: 2000 block=continents region=- deck=world-atlas
+KlNaYJjN5Q: 607500 block=subdivisions region=- deck=italian-regions
+KpKgFpXEdz: 120000 block=countries region=21 deck=world-atlas
+KsZZ5ueKwD: 153000 block=features region=14 deck=world-atlas
+Ku0Uiku8Xq: 606000 block=subdivisions region=- deck=italian-regions
+Kxj5IroeRT: 40000 block=countries region=08 deck=world-atlas
+L6EQdJkyum: 203000 block=cities region=03 deck=world-atlas
+L8UewbFQ8w: 46500 block=countries region=09 deck=world-atlas
+L8x22ROPJN: 662500 block=subdivisions region=- deck=us-states
+LHt1iqNc9m: 88500 block=countries region=17 deck=world-atlas
+LJZlDxihb7: 39500 block=countries region=08 deck=world-atlas
+LQkPWNcYOa: 659000 block=subdivisions region=- deck=us-states
+LYTIO4x3ro: 55500 block=countries region=11 deck=world-atlas
+LkpDqNGUZb: 71750 block=countries region=14 deck=world-atlas
+LwIqOqxHXt: 43000 block=countries region=09 deck=world-atlas
+M4Edjpe30k: 126500 block=features region=02 deck=world-atlas
+MA63to3Dqa: 236500 block=cities region=11 deck=world-atlas
+MAPQnshVtc: 139500 block=features region=06 deck=world-atlas
+MAoCWu8ffX: 256000 block=cities region=14 deck=world-atlas
+MUSlvzPxM7: 271500 block=cities region=17 deck=world-atlas
+MVVEcLiRCX: 609000 block=subdivisions region=- deck=italian-regions
+MYFGYxhvja: 107000 block=countries region=20 deck=world-atlas
+MlkNxMhI4s: 601000 block=subdivisions region=- deck=italian-regions
+MqGOEFobaN: 255500 block=cities region=14 deck=world-atlas
+Msc25n8qOC: 266000 block=cities region=16 deck=world-atlas
+Mwg9eKbRgB: 236000 block=cities region=11 deck=world-atlas
+N0vWpOks93: 242000 block=cities region=12 deck=world-atlas
+N3NGMxsbci: 121500 block=features region=- deck=world-atlas
+N4LkoU6jYC: 111500 block=countries region=20 deck=world-atlas
+NCIAyqs6XI: 157500 block=features region=15 deck=world-atlas
+NIg2un15Ab: 84000 block=countries region=16 deck=world-atlas
+NRdvDSnlOm: 19500 block=countries region=03 deck=world-atlas
+NSvsyjcuT2: 226000 block=cities region=09 deck=world-atlas
+NVM5J9JGbE: 144500 block=features region=09 deck=world-atlas
+Nb3zz6P9Mo: 149000 block=features region=10 deck=world-atlas
+NoYnmm5ROl: 221500 block=cities region=08 deck=world-atlas
+NosIbmtwlz: 278000 block=cities region=18 deck=world-atlas
+Npl2307CcB: 189000 block=cities region=01 deck=world-atlas
+Nq5SbpihjQ: 8400 block=countries region=01 deck=world-atlas
+NrBNJgfwuP: 244000 block=cities region=12 deck=world-atlas
+NucXp2E0Dn: 110500 block=countries region=20 deck=world-atlas
+O1Zxwe96zv: 48500 block=countries region=10 deck=world-atlas
+O2CcjOTVB5: 9500 block=countries region=01 deck=world-atlas
+O7AHjZ9fjm: 132000 block=features region=04 deck=world-atlas
+O8qHQXEAd0: 97000 block=countries region=18 deck=world-atlas
+O9y7WXptkf: 50000 block=countries region=10 deck=world-atlas
+OZZ4K85CEg: 42500 block=countries region=09 deck=world-atlas
+OaPaVecp4j: 281000 block=cities region=18 deck=world-atlas
+OcV8etsSj1: 15500 block=countries region=02 deck=world-atlas
+OdnB718Dzt: 86500 block=countries region=17 deck=world-atlas
+OfOqF8X0nt: 245000 block=cities region=13 deck=world-atlas
+OqIdq11Al3: 193000 block=cities region=02 deck=world-atlas
+Otw9OKyx6e: 660500 block=subdivisions region=- deck=us-states
+OwkiXEFY8A: 185500 block=features region=17 deck=world-atlas
+OyjSiP9vvN: 179500 block=features region=20 deck=world-atlas
+P6md72ek3p: 125000 block=features region=01 deck=world-atlas
+PBrbgFgi3L: 248500 block=cities region=13 deck=world-atlas
+PFVOci0FpX: 63000 block=countries region=13 deck=world-atlas
+PJ4Pj3IINx: 177000 block=features region=19 deck=world-atlas
+PJEhGX8mTx: 11000 block=countries region=02 deck=world-atlas
+PKVsi0Kl6W: 247500 block=cities region=13 deck=world-atlas
+PKXHRuuWCx: 196500 block=cities region=02 deck=world-atlas
+PLLW1aEvyx: 222000 block=cities region=08 deck=world-atlas
+PMSW3O0wVz: 171000 block=features region=17 deck=world-atlas
+PQhxmpKUKa: 750500 block=subdivisions region=- deck=canadian-provinces
+PkOyvaz7pZ: 173000 block=features region=19 deck=world-atlas
+PlSONDu3A6: 166500 block=features region=16 deck=world-atlas
+Pu1FMMpRM1: 266500 block=cities region=16 deck=world-atlas
+PvQN6XyjEE: 674500 block=subdivisions region=- deck=us-states
+PzvECO25ua: 270000 block=cities region=17 deck=world-atlas
+Q26kuxZJlq: 602000 block=subdivisions region=- deck=italian-regions
+Q33TW9AIYb: 146000 block=features region=09 deck=world-atlas
+Q4Q14tcpJQ: 21000 block=countries region=03 deck=world-atlas
+Q6rYtpkMsK: 131000 block=features region=04 deck=world-atlas
+QHSdyqDkO6: 654000 block=subdivisions region=- deck=us-states
+QPaqdmYeVW: 667500 block=subdivisions region=- deck=us-states
+Qkb4Sik9dV: 249000 block=cities region=13 deck=world-atlas
+RD23fod2PO: 192000 block=cities region=01 deck=world-atlas
+RUSf8yxZVl: 277000 block=cities region=18 deck=world-atlas
+RX22LzToKe: 290500 block=cities region=20 deck=world-atlas
+RZM5C7NxKp: 663000 block=subdivisions region=- deck=us-states
+Rj8szzfeZC: 244500 block=cities region=12 deck=world-atlas
+RnD8GEbAbA: 668500 block=subdivisions region=- deck=us-states
+RqTGKd789C: 78500 block=countries region=15 deck=world-atlas
+RreWkC4xuO: 291500 block=cities region=20 deck=world-atlas
+Rsd0gTspvX: 257000 block=cities region=14 deck=world-atlas
+S01bRvmA5o: 214500 block=cities region=06 deck=world-atlas
+S6xwitlXLX: 166000 block=features region=16 deck=world-atlas
+SA29oNqkJ7: 264500 block=cities region=16 deck=world-atlas
+SCyHCXE86E: 254000 block=cities region=14 deck=world-atlas
+SJ0hYjiBBw: 253000 block=cities region=14 deck=world-atlas
+SKQouCezjG: 670500 block=subdivisions region=- deck=us-states
+SXBjRlNjxV: 269500 block=cities region=17 deck=world-atlas
+SbkXsd8eav: 86000 block=countries region=17 deck=world-atlas
+Sqd5uw8Ekc: 259000 block=cities region=15 deck=world-atlas
+SucvCAjmyo: 239500 block=cities region=11 deck=world-atlas
+SumTpIWA68: 655000 block=subdivisions region=- deck=us-states
+SxKU9LYhYu: 89500 block=countries region=17 deck=world-atlas
+T3Htmo4EnY: 127000 block=features region=02 deck=world-atlas
+TDV0KUHFkQ: 210500 block=cities region=05 deck=world-atlas
+TEKjKmR1Pv: 59000 block=countries region=12 deck=world-atlas
+TFW0XVkK7g: 177500 block=features region=19 deck=world-atlas
+TJreemtnZV: 183500 block=features region=10 deck=world-atlas
+TOqtIHudRt: 260000 block=cities region=15 deck=world-atlas
+TXGNnjHbsQ: 14500 block=countries region=02 deck=world-atlas
+TbJE2rCJOU: 151000 block=features region=11 deck=world-atlas
+TczlLuhbSV: 128500 block=features region=03 deck=world-atlas
+TedCKuVZdv: 661000 block=subdivisions region=- deck=us-states
+Tl4yaosYpH: 298000 block=cities region=21 deck=world-atlas
+TnGqDLXnpP: 76500 block=countries region=15 deck=world-atlas
+TpeyP1gyLk: 264000 block=cities region=16 deck=world-atlas
+TtEQLji6eE: 246500 block=cities region=13 deck=world-atlas
+TwE16wD8r7: 6000 block=countries region=01 deck=world-atlas
+U6CuanzyYG: 143000 block=features region=08 deck=world-atlas
+U7PKVsTD6I: 93500 block=countries region=18 deck=world-atlas
+UD2bGuwSe6: 132500 block=features region=04 deck=world-atlas
+UILBa1e4eX: 253500 block=cities region=14 deck=world-atlas
+UKnKPvUlqx: 666500 block=subdivisions region=- deck=us-states
+USOI1bRyvb: 83500 block=countries region=16 deck=world-atlas
+USwj3CTCEi: 106000 block=countries region=20 deck=world-atlas
+UV9J8uHQL7: 39000 block=countries region=08 deck=world-atlas
+UbhOwlYV3j: 650500 block=subdivisions region=- deck=us-states
+UjGivL1xWT: 158500 block=features region=15 deck=world-atlas
+UrHt93NDqp: 273000 block=cities region=17 deck=world-atlas
+Uw1yRDLwe7: 208500 block=cities region=04 deck=world-atlas
+UxUhoUzW34: 218000 block=cities region=07 deck=world-atlas
+UzBw6fI17F: 163500 block=features region=16 deck=world-atlas
+V48eTQOCVt: 40500 block=countries region=08 deck=world-atlas
+V6Ch6dDZjH: 85000 block=countries region=17 deck=world-atlas
+VDzFzv3LAh: 146500 block=features region=09 deck=world-atlas
+VLFqfAc9wM: 261500 block=cities region=15 deck=world-atlas
+VMRQOkuKpV: 240000 block=cities region=11 deck=world-atlas
+VaNf9e7pEI: 7000 block=countries region=01 deck=world-atlas
+VcDu4Y1307: 95500 block=countries region=18 deck=world-atlas
+VcObeEnpR3: 607000 block=subdivisions region=- deck=italian-regions
+VcrojRrSZw: 182000 block=features region=21 deck=world-atlas
+VhZHd8n0t7: 98000 block=countries region=18 deck=world-atlas
+ViDzPDRHQB: 227500 block=cities region=09 deck=world-atlas
+Vn6VjP0ayj: 96500 block=countries region=18 deck=world-atlas
+VnUU40NJ5g: 255000 block=cities region=14 deck=world-atlas
+VnjoQJ4I5r: 286000 block=cities region=19 deck=world-atlas
+VwNbdkEAwJ: 187500 block=cities region=01 deck=world-atlas
+VxhY9uRJFG: 145500 block=features region=09 deck=world-atlas
+Vy73Ga6Z2h: 148000 block=features region=10 deck=world-atlas
+W16JwGzLk1: 18000 block=countries region=03 deck=world-atlas
+WA5m7QzQAO: 29500 block=countries region=05 deck=world-atlas
+WDbgIQP4Fl: 230500 block=cities region=10 deck=world-atlas
+WJiZX3aLG3: 222500 block=cities region=08 deck=world-atlas
+WV3H5k8Uwu: 211500 block=cities region=05 deck=world-atlas
+WcHASA4qdH: 25500 block=countries region=04 deck=world-atlas
+WgJSzHj8so: 288500 block=cities region=19 deck=world-atlas
+WgtsxVmRcR: 24000 block=countries region=04 deck=world-atlas
+Wif3peZYli: 136500 block=features region=16 deck=world-atlas
+WpEuHAjA1T: 64000 block=countries region=13 deck=world-atlas
+WzBH6xnmpW: 224000 block=cities region=09 deck=world-atlas
+Wzx2XJBoDN: 155500 block=features region=14 deck=world-atlas
+XHz07hcXZM: 89000 block=countries region=17 deck=world-atlas
+XM7tYaI6Yg: 1000 block=continents region=- deck=world-atlas
+XP8UpFlhnG: 265500 block=cities region=16 deck=world-atlas
+XPPiuTLSFW: 286500 block=cities region=19 deck=world-atlas
+XQjnIWChbv: 186500 block=features region=17 deck=world-atlas
+XTwcofuojP: 242500 block=cities region=12 deck=world-atlas
+Y0qD2nJ79g: 99500 block=countries region=19 deck=world-atlas
+Y2EW8YEkcD: 175000 block=features region=19 deck=world-atlas
+Y6OL8n5ldT: 141500 block=features region=07 deck=world-atlas
+YELDi45seb: 283000 block=cities region=19 deck=world-atlas
+YFanVLe5BY: 292500 block=cities region=20 deck=world-atlas
+YH68xC0sUE: 186000 block=features region=17 deck=world-atlas
+YMwv3SRf6T: 25000 block=countries region=04 deck=world-atlas
+YYBSkeOiBs: 20500 block=countries region=03 deck=world-atlas
+YYsaTymb2p: 656500 block=subdivisions region=- deck=us-states
+YZdwCBH55M: 754500 block=subdivisions region=- deck=canadian-provinces
+Ykq15aEwB3: 56000 block=countries region=11 deck=world-atlas
+YsO7NqsK21: 187000 block=features region=20 deck=world-atlas
+YtLHo3rjLB: 712500 block=subdivisions region=- deck=brazilian-states
+YwGYFMw3dz: 273500 block=cities region=17 deck=world-atlas
+Z2Zv4Y2364: 183000 block=features region=05 deck=world-atlas
+Z5WpL9widf: 673500 block=subdivisions region=- deck=us-states
+ZAkpWGTZzP: 10500 block=countries region=01 deck=world-atlas
+ZBTqWZWodZ: 651000 block=subdivisions region=- deck=us-states
+ZD7QkRyGeE: 119500 block=countries region=21 deck=world-atlas
+ZEWiAo0DJ1: 216500 block=cities region=07 deck=world-atlas
+ZOJc1ErJKW: 58500 block=countries region=11 deck=world-atlas
+ZYnpgjSrPE: 82000 block=countries region=16 deck=world-atlas
+Zpy9ngQumd: 651500 block=subdivisions region=- deck=us-states
+ZtTBBcCcRN: 198500 block=cities region=03 deck=world-atlas
+Zu2hqMdIRl: 610000 block=subdivisions region=- deck=italian-regions
+ZvFI593Dtn: 269000 block=cities region=17 deck=world-atlas
+a6NIWaSoXy: 220500 block=cities region=08 deck=world-atlas
+aAfAczxNPs: 135000 block=features region=05 deck=world-atlas
+aOhcGvBvGz: 701500 block=subdivisions region=- deck=brazilian-states
+aa6DLDLM4R: 252500 block=cities region=13 deck=world-atlas
+adAnl75ZlL: 295500 block=cities region=20 deck=world-atlas
+aeP3lCgeob: 80000 block=countries region=16 deck=world-atlas
+atQ78EMrMu: 665000 block=subdivisions region=- deck=us-states
+avOKNkxBLq: 16250 block=countries region=02 deck=world-atlas
+avcsZ4basU: 200000 block=cities region=03 deck=world-atlas
+ayUnvU3TOU: 284000 block=cities region=19 deck=world-atlas
+azcQuchQv6: 706500 block=subdivisions region=- deck=brazilian-states
+b26ActofVa: 38000 block=countries region=07 deck=world-atlas
+b5i7EhUujX: 297500 block=cities region=21 deck=world-atlas
+b8dfk0W5fY: 500 block=continents region=- deck=world-atlas
+bBac0j3A9j: 158000 block=features region=15 deck=world-atlas
+bDR8QUTGCj: 248000 block=cities region=13 deck=world-atlas
+bG5i0whHMx: 658000 block=subdivisions region=- deck=us-states
+bJM8iWYKUz: 36500 block=countries region=07 deck=world-atlas
+bcJskUQhSd: 251000 block=cities region=13 deck=world-atlas
+bigyBNVi3q: 61000 block=countries region=12 deck=world-atlas
+bpXUvGRwri: 705000 block=subdivisions region=- deck=brazilian-states
+bqHa1F3CiN: 30000 block=countries region=05 deck=world-atlas
+brn0ZGJrDB: 702000 block=subdivisions region=- deck=brazilian-states
+buWvbSn4fn: 181500 block=features region=21 deck=world-atlas
+c3cqKEKe3s: 105500 block=countries region=20 deck=world-atlas
+c8LkvFNH05: 180000 block=features region=20 deck=world-atlas
+c8yZnVf3Wx: 283500 block=cities region=19 deck=world-atlas
+cFpN3I9ILO: 37500 block=countries region=07 deck=world-atlas
+cIyL0KQMtf: 753000 block=subdivisions region=- deck=canadian-provinces
+chwOpF2aWb: 152000 block=features region=13 deck=world-atlas
+cnUtmlZgSD: 243000 block=cities region=12 deck=world-atlas
+cpyRnVfo8z: 751500 block=subdivisions region=- deck=canadian-provinces
+cucDLcxgiQ: 159500 block=features region=15 deck=world-atlas
+d0HRyLUACO: 54000 block=countries region=11 deck=world-atlas
+dBjfJbKtqd: 299000 block=cities region=21 deck=world-atlas
+dDEYCruq0R: 67000 block=countries region=13 deck=world-atlas
+dImD97LC2N: 106500 block=countries region=20 deck=world-atlas
+dTemAoPqGr: 5500 block=countries region=01 deck=world-atlas
+dWAdGJqO78: 652500 block=subdivisions region=- deck=us-states
+dXBm1y0ePl: 198000 block=cities region=03 deck=world-atlas
+dZUvgEnr4w: 77500 block=countries region=15 deck=world-atlas
+dg1yvA5Iih: 664000 block=subdivisions region=- deck=us-states
+dhsa3y3W9q: 53500 block=countries region=11 deck=world-atlas
+dngBYa46y9: 107500 block=countries region=20 deck=world-atlas
+dyu2UgSEOD: 136000 block=features region=05 deck=world-atlas
+e52TxnvBxI: 34500 block=countries region=06 deck=world-atlas
+eGBotNQ3ps: 150000 block=features region=10 deck=world-atlas
+eInCVQPDe4: 701000 block=subdivisions region=- deck=brazilian-states
+eJkUnuSzRI: 261000 block=cities region=15 deck=world-atlas
+eN08nlrQhi: 755500 block=subdivisions region=- deck=canadian-provinces
+ePXVWlJ55D: 139000 block=features region=06 deck=world-atlas
+ebmkpB003M: 260500 block=cities region=15 deck=world-atlas
+eynvwLG5tX: 138000 block=features region=05 deck=world-atlas
+ezAhmdLnju: 123500 block=features region=- deck=world-atlas
+f4LAeHni0F: 44000 block=countries region=09 deck=world-atlas
+f9P0mozGAE: 170000 block=features region=17 deck=world-atlas
+fAU6K6zAAC: 164000 block=features region=16 deck=world-atlas
+fS2AfevWUi: 44500 block=countries region=09 deck=world-atlas
+fUfnZDfjHL: 231000 block=cities region=10 deck=world-atlas
+fWzUdRCmmH: 165500 block=features region=16 deck=world-atlas
+fcEZ5jjkPN: 230000 block=cities region=10 deck=world-atlas
+fhfdR5asO6: 1500 block=continents region=- deck=world-atlas
+ftXvZhqbwQ: 710000 block=subdivisions region=- deck=brazilian-states
+fv1atkqTiM: 88000 block=countries region=17 deck=world-atlas
+fvBfUrOnq8: 157000 block=features region=14 deck=world-atlas
+fvaL0bjWEc: 140000 block=features region=06 deck=world-atlas
+g35JR9qURg: 65500 block=countries region=13 deck=world-atlas
+g5Y6tc2bkb: 237000 block=cities region=11 deck=world-atlas
+g9XLjq3Epi: 77000 block=countries region=15 deck=world-atlas
+gOf9e6JRym: 263500 block=cities region=16 deck=world-atlas
+gPUzEYfTK9: 142500 block=features region=08 deck=world-atlas
+gWpYi0J6eZ: 297000 block=cities region=20 deck=world-atlas
+gePhYMksmv: 168500 block=features region=16 deck=world-atlas
+ggA0bk5Dy9: 217000 block=cities region=07 deck=world-atlas
+gkgxco8RgV: 144000 block=features region=08 deck=world-atlas
+gqL3vt2o13: 8100 block=countries region=01 deck=world-atlas
+grkKi6RXFN: 300000 block=cities region=21 deck=world-atlas
+gt9WGgNTNx: 291000 block=cities region=20 deck=world-atlas
+gwkSPsSYWF: 670000 block=subdivisions region=- deck=us-states
+h4EajpRReY: 26500 block=countries region=04 deck=world-atlas
+hCUwSHMWC6: 753500 block=subdivisions region=- deck=canadian-provinces
+hJWl9DkKtV: 151500 block=features region=12 deck=world-atlas
+hRnNUC9Uui: 296000 block=cities region=20 deck=world-atlas
+hSpt3W2rhr: 282500 block=cities region=19 deck=world-atlas
+hh1Pgg6Hx4: 117000 block=countries region=21 deck=world-atlas
+hhVxWhGW7E: 658500 block=subdivisions region=- deck=us-states
+hoWzlok5ar: 191000 block=cities region=01 deck=world-atlas
+hqwtvAEBcj: 602500 block=subdivisions region=- deck=italian-regions
+htaQrQou31: 162000 block=features region=15 deck=world-atlas
+i2AHoYkspg: 195500 block=cities region=02 deck=world-atlas
+iErNPa3vw4: 303000 block=cities region=21 deck=world-atlas
+iJ6ugTPAnT: 211000 block=cities region=05 deck=world-atlas
+iX1M0zAj2z: 210000 block=cities region=05 deck=world-atlas
+ifTylVQYRl: 117500 block=countries region=21 deck=world-atlas
+iiimKOTQzl: 259500 block=cities region=15 deck=world-atlas
+iow7ThgbZG: 275000 block=cities region=18 deck=world-atlas
+itO9FQOORw: 52000 block=countries region=11 deck=world-atlas
+iyQKc1iIwb: 165000 block=features region=16 deck=world-atlas
+izgz8s0mFV: 121000 block=countries region=21 deck=world-atlas
+j0HJzP7mvY: 16000 block=countries region=02 deck=world-atlas
+j0kVA7jkEc: 22500 block=countries region=03 deck=world-atlas
+j1sFaE9014: 660000 block=subdivisions region=- deck=us-states
+j3QYOFFQ8N: 52500 block=countries region=11 deck=world-atlas
+j9YnlYiBa2: 42000 block=countries region=09 deck=world-atlas
+jMgCBQTIQi: 184000 block=features region=12 deck=world-atlas
+jSB0N8cHrP: 231500 block=cities region=10 deck=world-atlas
+jX1fHW1GAC: 105000 block=countries region=20 deck=world-atlas
+jXDgL1EvrG: 29000 block=countries region=05 deck=world-atlas
+jhQObGpnp5: 97500 block=countries region=18 deck=world-atlas
+juWdc9uubp: 667000 block=subdivisions region=- deck=us-states
+k1g6CtgDY4: 8200 block=countries region=01 deck=world-atlas
+k1hnoO3vu4: 34000 block=countries region=06 deck=world-atlas
+k5RY34HRVr: 287000 block=cities region=19 deck=world-atlas
+kHWZMNI4KE: 83000 block=countries region=16 deck=world-atlas
+kMb5Fz8xPf: 215000 block=cities region=06 deck=world-atlas
+kMkxdZ21xT: 232000 block=cities region=10 deck=world-atlas
+kWxYiYBYjX: 668000 block=subdivisions region=- deck=us-states
+kWz6WIXYtX: 199000 block=cities region=03 deck=world-atlas
+ka1fri6z77: 79000 block=countries region=15 deck=world-atlas
+kdqMRLLViZ: 605000 block=subdivisions region=- deck=italian-regions
+kg4hkEg2h1: 663500 block=subdivisions region=- deck=us-states
+kgzLZdSYRQ: 302000 block=cities region=21 deck=world-atlas
+knw0MPuRZQ: 84500 block=countries region=17 deck=world-atlas
+komVNfWj1o: 209500 block=cities region=05 deck=world-atlas
+kppEd3vhvo: 96000 block=countries region=18 deck=world-atlas
+ktopkzjfbd: 134000 block=features region=05 deck=world-atlas
+ktqqj2K8HZ: 301000 block=cities region=21 deck=world-atlas
+kvAn6Sp24x: 713000 block=subdivisions region=- deck=brazilian-states
+kxjPsldP2o: 289500 block=cities region=20 deck=world-atlas
+l1WvVgTKZo: 669000 block=subdivisions region=- deck=us-states
+l6xmhrfeGS: 239000 block=cities region=11 deck=world-atlas
+l81Z2l8cLf: 606500 block=subdivisions region=- deck=italian-regions
+l96heyQ5gg: 207000 block=cities region=04 deck=world-atlas
+lSu5WBD2wo: 299500 block=cities region=21 deck=world-atlas
+lZfIs7h1Bg: 75000 block=countries region=14 deck=world-atlas
+laLLJeCKyZ: 289000 block=cities region=19 deck=world-atlas
+lcL93lm86T: 90000 block=countries region=17 deck=world-atlas
+lltkOGGDkC: 233500 block=cities region=11 deck=world-atlas
+lm4JR7x45d: 608000 block=subdivisions region=- deck=italian-regions
+lvmFs9SFMl: 49500 block=countries region=10 deck=world-atlas
+lw2RkB2Ym5: 32500 block=countries region=06 deck=world-atlas
+m8CPw4kHU6: 655500 block=subdivisions region=- deck=us-states
+mGmlk3qubh: 59500 block=countries region=12 deck=world-atlas
+mLDl8zg9ro: 608500 block=subdivisions region=- deck=italian-regions
+mNJklpywiW: 609500 block=subdivisions region=- deck=italian-regions
+mQqaUYuhlQ: 604500 block=subdivisions region=- deck=italian-regions
+mSxsuz30lr: 708000 block=subdivisions region=- deck=brazilian-states
+mVAKotE1Aj: 69500 block=countries region=13 deck=world-atlas
+mXpNqyMH4o: 60500 block=countries region=12 deck=world-atlas
+mmJj3psFJJ: 235500 block=cities region=11 deck=world-atlas
+ms0CVp2PaR: 23500 block=countries region=04 deck=world-atlas
+mu7RWnc1HL: 133500 block=features region=05 deck=world-atlas
+mxanpel4Ty: 162500 block=features region=16 deck=world-atlas
+n1aww7nWsF: 204500 block=cities region=04 deck=world-atlas
+n5BdbVaVfE: 149500 block=features region=10 deck=world-atlas
+n624CYmvt8: 256500 block=cities region=14 deck=world-atlas
+nNlmazgOMG: 710500 block=subdivisions region=- deck=brazilian-states
+nRfILR0kmY: 756000 block=subdivisions region=- deck=canadian-provinces
+nYlzjpM87c: 700500 block=subdivisions region=- deck=brazilian-states
+nbuBZLZNy1: 751000 block=subdivisions region=- deck=canadian-provinces
+neNv2BS31z: 241500 block=cities region=12 deck=world-atlas
+nlFHweVURH: 172000 block=features region=17 deck=world-atlas
+nwbihRgCRe: 54500 block=countries region=11 deck=world-atlas
+o8NQXyAfwI: 55000 block=countries region=11 deck=world-atlas
+o8sCALaPnI: 661500 block=subdivisions region=- deck=us-states
+oEAraTt0XB: 48000 block=countries region=10 deck=world-atlas
+oQeHFXOis8: 91000 block=countries region=18 deck=world-atlas
+oYzEn5WYqO: 35500 block=countries region=07 deck=world-atlas
+odXOJGWzR4: 234500 block=cities region=11 deck=world-atlas
+oiDNVRsmYG: 125500 block=features region=01 deck=world-atlas
+p2WBzhhSql: 137000 block=features region=05 deck=world-atlas
+p5lGJL0bbY: 204000 block=cities region=03 deck=world-atlas
+pFApO9lKfS: 654500 block=subdivisions region=- deck=us-states
+pIsothzLuh: 12000 block=countries region=02 deck=world-atlas
+pLWW8SIgw8: 110000 block=countries region=20 deck=world-atlas
+pqPvxxBuoI: 205500 block=cities region=04 deck=world-atlas
+pqQcMAVCv1: 17000 block=countries region=03 deck=world-atlas
+ptdi7pj4P1: 108500 block=countries region=20 deck=world-atlas
+pvbVXAQYs0: 127500 block=features region=02 deck=world-atlas
+pxZ8B5SY6o: 213000 block=cities region=06 deck=world-atlas
+pyYNl5OqJK: 41500 block=countries region=08 deck=world-atlas
+q1Iq7BXdVe: 143500 block=features region=08 deck=world-atlas
+q1q9qxeuXq: 95000 block=countries region=18 deck=world-atlas
+qJNGJRgiko: 63500 block=countries region=13 deck=world-atlas
+qLaExhetQB: 284750 block=cities region=19 deck=world-atlas
+qP2785r9Ls: 47000 block=countries region=09 deck=world-atlas
+qPuw5MJfG8: 94000 block=countries region=18 deck=world-atlas
+qQmDOlIvBl: 298500 block=cities region=21 deck=world-atlas
+qYWz011b5J: 72000 block=countries region=14 deck=world-atlas
+qa9a26OAu8: 240500 block=cities region=11 deck=world-atlas
+qfGNM5rN1n: 243500 block=cities region=12 deck=world-atlas
+qhL8pDV0Ky: 754000 block=subdivisions region=- deck=canadian-provinces
+qrWS4MkxPk: 13500 block=countries region=02 deck=world-atlas
+rPisaTk2co: 51000 block=countries region=11 deck=world-atlas
+rcy1eorBiO: 45000 block=countries region=09 deck=world-atlas
+rhyVojKsVQ: 659500 block=subdivisions region=- deck=us-states
+rjUhFNaj5q: 604000 block=subdivisions region=- deck=italian-regions
+rsl8pK6bjC: 99000 block=countries region=19 deck=world-atlas
+rtqCOpl8kf: 68500 block=countries region=13 deck=world-atlas
+rvo9vtVtzp: 705500 block=subdivisions region=- deck=brazilian-states
+s0txMwbTfc: 74000 block=countries region=14 deck=world-atlas
+s32fGklbzj: 71500 block=countries region=14 deck=world-atlas
+s5EbQGCXDx: 275500 block=cities region=18 deck=world-atlas
+s6WOivGCI6: 156500 block=features region=14 deck=world-atlas
+sALBoHUhOB: 174000 block=features region=19 deck=world-atlas
+sC5yjm2u8x: 148500 block=features region=10 deck=world-atlas
+sD6S68Addc: 223500 block=cities region=09 deck=world-atlas
+sJfBbIYrf3: 38500 block=countries region=08 deck=world-atlas
+sLtR1rUDSI: 228500 block=cities region=09 deck=world-atlas
+sWNjLomgK3: 258500 block=cities region=15 deck=world-atlas
+sbPkxOpy3p: 152500 block=features region=14 deck=world-atlas
+siBs8ZR7WE: 21500 block=countries region=03 deck=world-atlas
+spVcm0TU5t: 115000 block=countries region=21 deck=world-atlas
+sxVSFSgNxX: 8500 block=countries region=01 deck=world-atlas
+t2hN6mRzGI: 108000 block=countries region=20 deck=world-atlas
+tH9DZfJImO: 142000 block=features region=07 deck=world-atlas
+tUu2L7hnrA: 219500 block=cities region=08 deck=world-atlas
+tkZcgstRtQ: 707000 block=subdivisions region=- deck=brazilian-states
+tpdiV6Z1NX: 26000 block=countries region=04 deck=world-atlas
+tvux6zEn1w: 154000 block=features region=14 deck=world-atlas
+tyzdq3kdxF: 87000 block=countries region=17 deck=world-atlas
+u2RdQ1hPOX: 28000 block=countries region=05 deck=world-atlas
+u4I3oDwS7I: 78000 block=countries region=15 deck=world-atlas
+u5fcjiiXme: 130000 block=features region=03 deck=world-atlas
+uCmlTrHFie: 75500 block=countries region=14 deck=world-atlas
+uE3QChc6kZ: 709000 block=subdivisions region=- deck=brazilian-states
+uKcMTeYtkN: 91167 block=countries region=18 deck=world-atlas
+uLjAqDqCg2: 20000 block=countries region=03 deck=world-atlas
+uZkjSL2B6S: 153500 block=features region=14 deck=world-atlas
+uZwmdfhqNb: 150500 block=features region=11 deck=world-atlas
+ugWAv0E8uH: 262000 block=cities region=16 deck=world-atlas
+ui8TE2cLP7: 72500 block=countries region=14 deck=world-atlas
+uqYHho0FeY: 14000 block=countries region=02 deck=world-atlas
+uw5Db9n4FQ: 109500 block=countries region=20 deck=world-atlas
+uwkSUXor0L: 45500 block=countries region=09 deck=world-atlas
+v5TiCo54YS: 56500 block=countries region=11 deck=world-atlas
+v7YzanH9sj: 267500 block=cities region=16 deck=world-atlas
+vKspDkdra5: 274000 block=cities region=18 deck=world-atlas
+vQukswE5eJ: 280000 block=cities region=18 deck=world-atlas
+vR6h37Mc18: 295000 block=cities region=20 deck=world-atlas
+vRp5tG0Yr5: 666000 block=subdivisions region=- deck=us-states
+vl0s8IJ1KJ: 271000 block=cities region=17 deck=world-atlas
+vnx3SzmUU7: 119000 block=countries region=21 deck=world-atlas
+vwjB3ORI1V: 673000 block=subdivisions region=- deck=us-states
+w2aMwrVCPB: 229500 block=cities region=10 deck=world-atlas
+w5NtfRCzSA: 147000 block=features region=10 deck=world-atlas
+wLNcASZe18: 22000 block=countries region=03 deck=world-atlas
+wNf4h5RpW3: 191500 block=cities region=01 deck=world-atlas
+wSxtLBdr0g: 123000 block=features region=- deck=world-atlas
+wVdA6IiArU: 112000 block=countries region=20 deck=world-atlas
+wWP2Cef0D7: 600500 block=subdivisions region=- deck=italian-regions
+wgE8ASIFMH: 203500 block=cities region=03 deck=world-atlas
+wndxpq7GzF: 50500 block=countries region=10 deck=world-atlas
+wrKXx0Disg: 671500 block=subdivisions region=- deck=us-states
+wuLYNY8lju: 216000 block=cities region=07 deck=world-atlas
+wvVPP9jjpA: 293000 block=cities region=20 deck=world-atlas
+wz29Xes82s: 67500 block=countries region=13 deck=world-atlas
+x7n4cScJdS: 601500 block=subdivisions region=- deck=italian-regions
+xEaTquK3Vw: 118000 block=countries region=21 deck=world-atlas
+xF6OhguvVA: 674000 block=subdivisions region=- deck=us-states
+xGGoFNWAr6: 178500 block=features region=20 deck=world-atlas
+xGHXl2WqON: 114500 block=countries region=21 deck=world-atlas
+xNnuylakM5: 713500 block=subdivisions region=- deck=brazilian-states
+xTEP7LSmy5: 111000 block=countries region=20 deck=world-atlas
+xU9Dl2xmUt: 270500 block=cities region=17 deck=world-atlas
+xVImwS2r9I: 603500 block=subdivisions region=- deck=italian-regions
+xXnbXabL9G: 285000 block=cities region=19 deck=world-atlas
+xePaivlOPD: 36000 block=countries region=07 deck=world-atlas
+xmLBYWuR8f: 226500 block=cities region=09 deck=world-atlas
+xnIrAUmkCK: 92000 block=countries region=18 deck=world-atlas
+xqL26e3iLp: 90500 block=countries region=18 deck=world-atlas
+xrLzB81igh: 657000 block=subdivisions region=- deck=us-states
+xry9F3Wtsm: 53000 block=countries region=11 deck=world-atlas
+y3cJ37N7ct: 30500 block=countries region=05 deck=world-atlas
+y6rQUc44ZU: 178000 block=features region=19 deck=world-atlas
+y7saLkDMyK: 708500 block=subdivisions region=- deck=brazilian-states
+y9j8OdBWUL: 8300 block=countries region=01 deck=world-atlas
+yJnfS3pU0E: 100000 block=countries region=19 deck=world-atlas
+yfyIXiDbBl: 190500 block=cities region=01 deck=world-atlas
+yhmPfRQT4B: 34250 block=countries region=06 deck=world-atlas
+yiVdkTNjAy: 118500 block=countries region=21 deck=world-atlas
+yjSBrmC7cs: 272500 block=cities region=17 deck=world-atlas
+ymWqEmN2Qp: 262500 block=cities region=16 deck=world-atlas
+yrr5stmbG1: 163000 block=features region=16 deck=world-atlas
+yxl6uywlbi: 79500 block=countries region=16 deck=world-atlas
+yyIyPLZLwu: 284500 block=cities region=19 deck=world-atlas
+yyOK3AJBRG: 201000 block=cities region=03 deck=world-atlas
+yznFS6sgSC: 664500 block=subdivisions region=- deck=us-states
+z4LUVfvCQy: 665500 block=subdivisions region=- deck=us-states
+z6j3VIpZi0: 137500 block=features region=05 deck=world-atlas
+z77IsySgZt: 662000 block=subdivisions region=- deck=us-states
+zBIMIjKNZx: 195000 block=cities region=02 deck=world-atlas
+zPlZ6k5WZY: 294500 block=cities region=20 deck=world-atlas
+zQ0roTdkI8: 100500 block=countries region=19 deck=world-atlas
+zQFNNwNser: 301500 block=cities region=21 deck=world-atlas
+zafUGtS6eg: 603000 block=subdivisions region=- deck=italian-regions
+zbpmdVIvmD: 290000 block=cities region=20 deck=world-atlas
+zcPC5VJkNH: 2500 block=continents region=- deck=world-atlas
+zg1MDs00Dp: 179000 block=features region=20 deck=world-atlas
+zoDniv5XVW: 229000 block=cities region=09 deck=world-atlas
+zt3UAgEwzi: 85500 block=countries region=17 deck=world-atlas
+zxyuuJmcDJ: 675000 block=subdivisions region=- deck=us-states

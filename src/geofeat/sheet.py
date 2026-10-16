@@ -8,6 +8,8 @@ feature (`nile`). No pattern means every rendered card.
 (build/phone-NN.png), or all on one page with --out.
 `sheet --review`: one phone-size sheet per ring region, cards in study order (build/review-NN.png), and one for the
 orientation block (build/review-orientation.png), each map labelled with its study position, key and answer.
+`sheet --companions`: each companion deck's maps in study order, one 800 px map per row with its card id above, six to
+a JPEG (build/framing/subdiv/<prefix>-NN.jpg, e.g. us-01.jpg).
 `sheet --pairs`: flagged, nested, allowed and near-threshold sibling pairs side by side, labelled with their overlap
 scores, PAIRS_PER_PAGE to a page (build/pairs-NN.png); every pair goes to build/pairs.log.
 """
@@ -21,6 +23,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from geofeat.card import card_key, load_media, match_keys
+from geofeat.decks import COMPANIONS
 from geofeat.model import BUILD, DECK, active, load_features
 from geofeat.pairs import find_pairs
 from geofeat.resolve import resolve
@@ -77,7 +80,8 @@ def pairs_sheet() -> None:
 
 
 def review_sheets() -> None:
-    """Every card at phone size, by region in study order: what the user signs off."""
+    """Every World Atlas card at phone size, by region in study order: what the user signs off. The companion decks'
+    are `companion_sheets`."""
     from geofeat.curriculum import load_curriculum
     from geofeat.countries_ne import state_ids
     from geofeat.order import frames
@@ -95,6 +99,36 @@ def review_sheets() -> None:
         contact_sheet([(label, thumbnail(key, PHONE_W)) for label, key in cells], REVIEW_COLUMNS, BUILD / f"review-{name}.png")
 
 
+COMPANION_W, COMPANION_PER_SHEET, COMPANION_LABEL_H = 800, 6, 34
+
+
+def companion_sheets() -> None:
+    """Every companion deck card at 800 px, in study order: what the user signs off for the companion decks."""
+    from PIL import ImageFont
+
+    from geofeat.sources import subdivisions
+
+    out_dir = BUILD / "framing/subdiv"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for old in out_dir.glob("*.jpg"):
+        old.unlink()
+    font = ImageFont.load_default(size=22)
+    for deck in COMPANIONS:
+        ids = [s.id for s in subdivisions.of_country(deck.country)]
+        for page, start in enumerate(range(0, len(ids), COMPANION_PER_SHEET), 1):
+            chunk = ids[start:start + COMPANION_PER_SHEET]
+            h = round(COMPANION_W * 9 / 16)
+            sheet = Image.new("RGB", (COMPANION_W, len(chunk) * (h + COMPANION_LABEL_H)), "white")
+            draw = ImageDraw.Draw(sheet)
+            for i, id in enumerate(chunk):
+                y = i * (h + COMPANION_LABEL_H)
+                draw.text((8, y + 5), f"{start + i + 1}. {id}", fill="black", font=font)
+                sheet.paste(thumbnail(card_key("subdivision", id), COMPANION_W), (0, y + COMPANION_LABEL_H))
+            out = out_dir / f"{deck.prefix}-{page:02d}.jpg"
+            sheet.save(out, quality=88)
+            print(out)
+
+
 def out_name(args: list[str], default: str | None) -> tuple[str | None, list[str]]:
     if args[:1] != ["--out"]:
         return default, args
@@ -110,6 +144,9 @@ def main() -> None:
         return
     if args == ["--review"]:
         review_sheets()
+        return
+    if args == ["--companions"]:
+        companion_sheets()
         return
     phone = args[:1] == ["--phone"]
     out, patterns = out_name(args[1:] if phone else args, None if phone else "sheet.png")

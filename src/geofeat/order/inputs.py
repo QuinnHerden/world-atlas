@@ -10,7 +10,8 @@ from geofeat.card import Card, card_key
 from geofeat.countries_ne import state_ids
 from geofeat.curriculum import Curriculum, load_curriculum
 from geofeat.model import active, load_features
-from geofeat.order import frames
+from geofeat.decks import WORLD
+from geofeat.order import companions, frames
 from geofeat.order.engine import Frame, Ordering, OrderError, curriculum_order, lookup, region_of
 from geofeat.order.legacy import Siblings, dependencies, load_siblings
 from geofeat.sources import all_cards
@@ -76,8 +77,9 @@ def lookalikes(cards: list[Card], curriculum: Curriculum, facts: frames.Geometry
 
 
 def ordering(siblings: Siblings | None = None) -> Ordering:
-    """Every active card in the curriculum order (ADR 0009), with its report."""
-    cards = all_cards()
+    """World Atlas's active cards in the curriculum order (ADR 0009), with its report. The companion decks are
+    `deck_order`'s."""
+    cards = [c for c in all_cards() if c.deck == WORLD.name]
     siblings = siblings or load_siblings()
     features = active(load_features())
     curriculum = load_curriculum(state_ids())
@@ -87,6 +89,12 @@ def ordering(siblings: Siblings | None = None) -> Ordering:
                             edges, lookalikes(cards, curriculum, facts))
 
 
+def deck_order(world: Ordering | None = None) -> list[Card]:
+    """Every deck's active cards in study order: World Atlas's (`world`, or `ordering()`), then each companion deck's
+    in its walk order (ADR 0012). What positions, deckgen and `check package` place."""
+    return (world or ordering()).cards + companions.study_order(all_cards())
+
+
 def card_region(curriculum: Curriculum) -> Callable[[Card], int]:
     """Each card's ring region by the engine's rule, over the same feature frames `ordering` uses."""
     frame_of = lookup(feature_frames(frames.load(), curriculum))
@@ -94,4 +102,5 @@ def card_region(curriculum: Curriculum) -> Callable[[Card], int]:
 
 
 def ideal_order(siblings: Siblings | None = None) -> list[Card]:
-    return ordering(siblings).cards
+    """Every deck's cards in study order (`deck_order`)."""
+    return deck_order(ordering(siblings))

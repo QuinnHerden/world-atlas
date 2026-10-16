@@ -151,11 +151,13 @@ def _borders(res: str, lonlat_bounds) -> tuple[BaseGeometry, BaseGeometry]:
             unary_union([*_clip(lines[dashed], lonlat_bounds), *_clip(disputed, lonlat_bounds)]))
 
 
-def _basemap(ax, spec: RenderSpec, frame_: Frame, lonlat_bounds, clear: BaseGeometry | None = None) -> None:
-    """`clear`: a state drawn on the card, whose borders inside it the basemap leaves out."""
+def _basemap(ax, spec: RenderSpec, frame_: Frame, lonlat_bounds, clear: BaseGeometry | None = None,
+             res: str | None = None) -> None:
+    """`clear`: a state drawn on the card, whose borders inside it the basemap leaves out. `res` forces the land and
+    ocean layers' resolution (a companion deck's country frame draws 10m bays and sounds at any width)."""
     world = frame_.extent is None
     span = None if world else frame_.extent[1] - frame_.extent[0]
-    res = "50m" if world or span > LARGE_FRAME_M else "10m"
+    res = res or ("50m" if world or span > LARGE_FRAME_M else "10m")
     land_rows = _clip(layer(f"{res}_land"), lonlat_bounds)
     _fill(ax, land_rows, lonlat_bounds, LAND, 1, world)
     if world or span >= RELIEF_MIN_M:
@@ -585,7 +587,8 @@ def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry
            former: BaseGeometry | None = None, region: BaseGeometry | None = None) -> bytes:
     """The card's map: `geometry` drawn as `spec` says over the basemap, with `context` lines drawn faintly underneath
     and a `former` shoreline dashed in grey. A political subject is framed on its curriculum `region` (member points).
-    Reads nothing but the basemap layers and relief."""
+    Reads nothing but the basemap layers and relief. A companion deck's map (`framing: country`) is
+    geofeat.country_map's."""
     frame_ = frame(spec, geometry, region)
     fig = plt.figure(figsize=(WIDTH_PX / DPI, HEIGHT_PX / DPI), dpi=DPI, facecolor=OCEAN)
     ax = fig.add_axes([0, 0, 1, 1], projection=frame_.projection)
@@ -626,6 +629,11 @@ def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry
             avoid.append((dx, dy, dx, dy))
         _inset(fig, frame_, avoid)
 
+    return png(fig)
+
+
+def png(fig) -> bytes:
+    """The figure as the card's PNG, quantized to a 256-colour palette; closes the figure."""
     raw = io.BytesIO()
     fig.savefig(raw, format="png", dpi=DPI, facecolor=OCEAN, metadata={"Software": None})
     plt.close(fig)

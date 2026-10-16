@@ -31,7 +31,7 @@ from shapely.geometry.base import BaseGeometry  # noqa: E402
 from shapely.ops import polylabel  # noqa: E402
 
 from geofeat import adjacency  # noqa: E402
-from geofeat.card import BLOCKS, Card  # noqa: E402
+from geofeat.card import WORLD_BLOCKS, Card  # noqa: E402
 from geofeat.countries_ne import outline, state_ids  # noqa: E402
 from geofeat.curriculum import Region, load_curriculum  # noqa: E402
 from geofeat.model import BUILD  # noqa: E402
@@ -142,7 +142,7 @@ def load() -> Atlas:
     facts = frames.load()
     curriculum = load_curriculum(state_ids())
     segments = []
-    for block in BLOCKS[1:]:  # continents and the orientation features have no region
+    for block in WORLD_BLOCKS[1:]:  # continents and the orientation features have no region
         cards = [c for c in o.cards if c.block == block and c.study_pass != "orientation"]
         natural = [facts.features[c.id].region if c.kind == "feature" else int(c.region) for c in cards]
         # Regions run in order within a block, round the ring once (twice for features: the tier-3 ones go round
@@ -181,7 +181,7 @@ def card_line(c: Card, atlas: Atlas, region: Region, walk_no: dict[str, int], mo
 
 
 def region_cards(atlas: Atlas, number: int) -> dict[str, list[tuple[Card, bool]]]:
-    out: dict[str, list[tuple[Card, bool]]] = {b: [] for b in BLOCKS[1:]}
+    out: dict[str, list[tuple[Card, bool]]] = {b: [] for b in WORLD_BLOCKS[1:]}
     for c, block, region, moved in atlas.segments:
         if region == number:
             out[block].append((c, moved))

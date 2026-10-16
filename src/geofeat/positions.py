@@ -17,11 +17,14 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from geofeat.card import BLOCKS, Block, Card
+from geofeat.decks import BY_NAME, BY_SLUG, DECKS, WORLD, DeckInfo
 from geofeat.model import ROOT
 
 LOCK_FILE = ROOT / "data/positions.lock"
 STRIDE = 500
 LIMIT = 1_000_000  # a margin under 2,000,000, where Anki's Check Database rewrites new-card dues (ADR 0006)
+if any(d.limit > LIMIT for d in DECKS):
+    raise ValueError(f"a deck's position range passes {LIMIT:,}")
 DEFAULT_BASE = "origin/main"  # the ref whose committed lock a frozen lock must extend; POSITIONS_BASE overrides it
 LEGACY_SERIES = 2  # a frozen lock with no `series:` line is v2's, the only one written before series existed
 FIRST_SERIES = 1  # versioning restarted at v1.0.0: the first release under the vX.Y.Z tags is series 1's
@@ -30,7 +33,10 @@ ARCHIVE_PREFIX = "archive/"  # archive/vX.Y.Z: a pre-1.0 release, archived when 
 _HEADER = re.compile(r"draft: (true|false)")
 _SERIES = re.compile(r"series: ([1-9][0-9]*)", re.ASCII)
 _LEGACY_ENTRY = re.compile(r"[A-Za-z0-9]{10}: [0-9]+ pass=(orientation|1|2) region=(-|[0-9]{2})", re.ASCII)  # series 2's format
-_ENTRY = re.compile(r"([A-Za-z0-9]{10}): ([0-9]+) block=(" + "|".join(BLOCKS) + r") region=(-|[0-9]{2})", re.ASCII)
+# `deck=` names the entry's deck by slug (geofeat.decks); a line without it (series 3 before the companion decks) is
+# World Atlas's
+_ENTRY = re.compile(r"([A-Za-z0-9]{10}): ([0-9]+) block=(" + "|".join(BLOCKS) + r") region=(-|[0-9]{2})"
+                    r"(?: deck=(" + "|".join(BY_SLUG) + r"))?", re.ASCII)
 
 
 class GapExhausted(ValueError):
@@ -44,18 +50,25 @@ class Entry:
 
     position: int
     block: Block
-    region: int | None  # None for a continent or an orientation feature (an ocean, a planetary wind band)
+    region: int | None  # None for a continent, an orientation feature (an ocean, a planetary wind band) or a subdivision
+    deck: str = WORLD.slug  # the deck's slug; frozen like the position, since re-importing never moves a card's deck
 
     def __post_init__(self) -> None:
-        if self.block == "continents" and self.region is not None or \
+        if self.block in ("continents", "subdivisions") and self.region is not None or \
                 self.block in ("countries", "cities") and self.region is None:
-            raise ValueError(f"block {self.block} with region {self.region}: continents have no region, political "
-                             f"cards and cities one")
+            raise ValueError(f"block {self.block} with region {self.region}: continents and subdivisions have no "
+                             f"region, political cards and cities one")
         if self.region is not None and not 1 <= self.region <= 99:
             raise ValueError(f"region {self.region} is not 01-99")
+        if (deck := BY_SLUG.get(self.deck)) is None:
+            raise ValueError(f"unknown deck {self.deck!r}")
+        if (self.block == "subdivisions") != (deck != WORLD):
+            raise ValueError(f"block {self.block} in deck {self.deck}: subdivisions, and only they, are in a companion deck")
+        if not deck.base <= self.position < deck.limit:
+            raise ValueError(f"position {self.position} is outside {deck.slug}'s range [{deck.base:,}, {deck.limit:,})")
 
 
-Placement = tuple[str, Block, int | None]  # a card in the ideal order: uid, block, region (None: no region)
+Placement = tuple[str, Block, int | None, str]  # a card in the ideal order: uid, block, region (None: none), deck slug
 
 
 @dataclass(frozen=True)
@@ -86,13 +99,14 @@ def parse(text: str) -> Lock:
     entries: dict[str, Entry] = {}
     for number, line in enumerate(lines[2:], 3):
         if not (m := _ENTRY.fullmatch(line)):
-            raise ValueError(f"positions.lock:{number}: expected `<uid>: <position> block=<block> region=<NN or ->`, "
-                             f"got {line!r}")
+            raise ValueError(f"positions.lock:{number}: expected `<uid>: <position> block=<block> region=<NN or -> "
+                             f"deck=<deck>`, got {line!r}")
         uid = m.group(1)
         if uid in entries:
             raise ValueError(f"positions.lock:{number}: {uid} appears twice")
         try:
-            entries[uid] = Entry(int(m.group(2)), m.group(3), None if m.group(4) == "-" else int(m.group(4)))
+            entries[uid] = Entry(int(m.group(2)), m.group(3), None if m.group(4) == "-" else int(m.group(4)),
+                                 m.group(5) or WORLD.slug)
         except ValueError as exc:
             raise ValueError(f"positions.lock:{number}: {exc}") from None
     lock = Lock(draft, entries, series)
@@ -102,8 +116,8 @@ def parse(text: str) -> Lock:
 
 def dump(lock: Lock) -> str:
     _validate(lock.positions)
-    lines = "".join(f"{uid}: {e.position} block={e.block} region={'-' if e.region is None else f'{e.region:02d}'}\n"
-                    for uid, e in sorted(lock.entries.items()))
+    lines = "".join(f"{uid}: {e.position} block={e.block} region={'-' if e.region is None else f'{e.region:02d}'} "
+                    f"deck={e.deck}\n" for uid, e in sorted(lock.entries.items()))
     return f"draft: {str(lock.draft).lower()}\nseries: {lock.series}\n{lines}"
 
 
@@ -126,22 +140,26 @@ def require(lock: Lock, uids: list[str]) -> None:
         raise SystemExit(f"uids not in {LOCK_FILE.name} (run `make positions` and commit it): {missing}")
 
 
-def regenerate(ideal: list[str]) -> dict[str, int]:
-    return {uid: STRIDE * (i + 1) for i, uid in enumerate(ideal)}
+def regenerate(ideal: list[str], deck: DeckInfo = WORLD) -> dict[str, int]:
+    if deck.base + STRIDE * len(ideal) >= deck.limit:
+        raise GapExhausted(f"{len(ideal)} cards don't fit {deck.slug}'s range at stride {STRIDE}")
+    return {uid: deck.base + STRIDE * (i + 1) for i, uid in enumerate(ideal)}
 
 
 def _entries(positions: dict[str, int], placed: list[Placement], keep: dict[str, Entry]) -> dict[str, Entry]:
-    """Entries for `positions`: a kept entry as it is, any other uid with its block and region from `placed`."""
-    where = {uid: (block, region) for uid, block, region in placed}
+    """Entries for `positions`: a kept entry as it is, any other uid with its block, region and deck from `placed`."""
+    where = {uid: (block, region, deck) for uid, block, region, deck in placed}
     return {uid: keep[uid] if uid in keep else Entry(p, *where[uid]) for uid, p in positions.items()}
 
 
-def place(locked: dict[str, int], ideal: list[str]) -> dict[str, int]:
-    """Add the uids in `ideal` that `locked` lacks, never moving a locked one.
+def place(locked: dict[str, int], ideal: list[str], deck: DeckInfo = WORLD) -> dict[str, int]:
+    """Add the uids in `ideal` that `locked` lacks, never moving a locked one; `locked` and `ideal` are one deck's,
+    and every position stays in its range.
 
     Each new uid goes after `pred`, the nearest earlier uid in `ideal` that is locked: between locked[pred] and the
-    next locked value above it, or below the lowest value when it has no pred, or at max + STRIDE when
-    nothing is locked above pred. New uids that share a gap are spread evenly through it, in ideal order.
+    next locked value above it, or below the lowest value (and at or above the deck's base) when it has no pred, or at
+    max + STRIDE when nothing is locked above pred (from the deck's base when nothing is locked at all). New uids that
+    share a gap are spread evenly through it, in ideal order.
     """
     groups: dict[str | None, list[str]] = {}
     pred = None
@@ -153,12 +171,12 @@ def place(locked: dict[str, int], ideal: list[str]) -> dict[str, int]:
     values = sorted(locked.values())
     result = dict(locked)
     for pred, new in groups.items():
-        low = locked[pred] if pred is not None else -1  # below every position, 0 included
+        low = locked[pred] if pred is not None else deck.base - 1  # below every position, the base included
         above = [v for v in values if v > low]
-        if not above:  # the end of the order (or an empty lock): extend at the stride
-            low = max(low, 0)
-            if low + STRIDE * len(new) >= LIMIT:
-                raise GapExhausted(f"no room for {len(new)} new position(s) after {low} below {LIMIT:,}: {new}")
+        if not above:  # the end of the order (or an empty deck): extend at the stride
+            low = max(low, deck.base)
+            if low + STRIDE * len(new) >= deck.limit:
+                raise GapExhausted(f"no room for {len(new)} new position(s) after {low} below {deck.limit:,}: {new}")
             result |= {uid: low + STRIDE * k for k, uid in enumerate(new, 1)}
             continue
         gap = above[0] - low
@@ -181,8 +199,15 @@ def moved(lock: Lock, placed: list[Placement]) -> list[str]:
     """Locked cards whose block or region the order engine would now give differently. A frozen card keeps the lock's:
     its slot and its `block::`/`region::` tags (`locked_tags`)."""
     return [f"{uid} (locked: block {e.block}, region {e.region}; now: block {block}, region {region})"
-            for uid, block, region in placed
+            for uid, block, region, _ in placed
             if (e := lock.entries.get(uid)) is not None and (e.block, e.region) != (block, region)]
+
+
+def deck_errors(lock: Lock, placed: list[Placement]) -> list[str]:
+    """Locked cards now in another deck. Unlike a block or region, a deck can't be kept from the lock: the card is in
+    its package, and re-importing never moves a card to another deck, so a changed deck fails."""
+    return [f"{uid} is locked in deck {e.deck} but is now in {deck}" for uid, _, _, deck in placed
+            if (e := lock.entries.get(uid)) is not None and e.deck != deck]
 
 
 def locked_tags(tags: list[str], entry: Entry | None) -> list[str]:
@@ -203,15 +228,16 @@ def locked_tags(tags: list[str], entry: Entry | None) -> list[str]:
 
 
 def placements(ideal: list[Card] | None = None) -> list[Placement]:
-    """The ideal order's cards (by default, every active card's), with the block and the region the order engine placed
-    each in: none for a continent or an orientation feature."""
+    """The ideal order's cards (by default, every deck's active cards), with the block and the region the order engine
+    placed each in (none for a continent, an orientation feature or a subdivision), and the deck."""
     from geofeat.countries_ne import state_ids
     from geofeat.curriculum import load_curriculum
-    from geofeat.order.inputs import card_region, ordering  # imports the card sources; keep this module light
+    from geofeat.order.inputs import card_region, deck_order  # imports the card sources; keep this module light
 
     region = card_region(load_curriculum(state_ids()))
-    cards = ordering().cards if ideal is None else ideal
-    return [(c.uid, c.block, None if c.study_pass == "orientation" else region(c)) for c in cards]
+    cards = deck_order() if ideal is None else ideal
+    return [(c.uid, c.block, None if c.study_pass == "orientation" or c.block == "subdivisions" else region(c),
+             BY_NAME[c.deck].slug) for c in cards]
 
 
 def lock_error(lock: Lock) -> str | None:
@@ -225,6 +251,8 @@ def lock_error(lock: Lock) -> str | None:
         return f"study order: {exc}"
     if stale_draft(lock, placed):
         return f"{LOCK_FILE.name} is a draft written for an older study order; run `make positions` and commit it"
+    if errors := deck_errors(lock, placed):
+        return "; ".join(errors)
     if not lock.draft:
         warn_moved(lock, placed)
     return None
@@ -236,10 +264,16 @@ def warn_moved(lock: Lock, placed: list[Placement]) -> None:
 
 
 def update(lock: Lock, placed: list[Placement]) -> Lock:
-    ideal = [uid for uid, *_ in placed]
-    if lock.draft:
-        return Lock(True, _entries(regenerate(ideal), placed, {}), lock.series)
-    return Lock(False, _entries(place(lock.positions, ideal), placed, lock.entries), lock.series)
+    """Each deck's positions within its range: regenerated for a draft, else the new uids placed among the locked."""
+    positions: dict[str, int] = {}
+    for deck in DECKS:
+        ideal = [uid for uid, *_, slug in placed if slug == deck.slug]
+        if lock.draft:
+            positions |= regenerate(ideal, deck)
+        else:
+            mine = {u: e.position for u, e in lock.entries.items() if e.deck == deck.slug}
+            positions |= place(mine, ideal, deck)
+    return Lock(lock.draft, _entries(positions, placed, {} if lock.draft else lock.entries), lock.series)
 
 
 def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE, pre_release: bool = False
@@ -435,18 +469,18 @@ def guard(lock: Lock, strict: bool, release: str | None = None, require_release:
 
 def main() -> None:
     from geofeat.order import OrderError
-    from geofeat.order.inputs import ordering  # imports the card sources; keep this module light for check.py
+    from geofeat.order.inputs import deck_order, ordering  # imports the card sources; keep this module light
 
     try:
         result = ordering()
-        placed = placements(result.cards)
+        placed = placements(deck_order(result))
     except OrderError as exc:
         raise SystemExit(f"study order: {exc}")
     old = read() if LOCK_FILE.exists() else Lock(True, {}, FIRST_SERIES)
     if not old.draft and (generated := sorted({r.region.slug for r in result.reports if not r.walk.frozen})):
         raise SystemExit(f"{LOCK_FILE.name} is frozen (draft: false), but these regions' walks are generated, not "
                          f"frozen in curriculum.yaml (ADR 0009): {generated}")
-    if errors := guard(old, strict=True)[0]:
+    if errors := guard(old, strict=True)[0] + deck_errors(old, placed):
         raise SystemExit("; ".join(errors))
     if not old.draft:
         warn_moved(old, placed)

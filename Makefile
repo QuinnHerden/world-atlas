@@ -1,5 +1,4 @@
 PY := uv run python -m geofeat
-DECK := World Atlas
 # Card key patterns for render, sheet, phone and cvd: keys or globs, e.g. IDS="country:france city:*"; a bare id is a
 # feature. `make render IDS=...` renders only those cards and deletes nothing (a pilot); unset, every card.
 IDS ?=
@@ -20,7 +19,7 @@ $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions adjacency walks render deck check build sheet phone review pairs cvd verify-report import-test clean
+.PHONY: all test fetch ids check-data positions adjacency walks companion-walks companion-sheets render deck check build sheet phone review pairs cvd verify-report import-test clean
 
 all: build
 
@@ -53,6 +52,11 @@ adjacency: fetch
 walks: check-data
 	uv run python tools/walk_maps.py
 
+# Each companion deck's walk, its jumps and look-alike gaps; `uv run python -m geofeat.order.companions --write`
+# rewrites data/subdivisions.yaml in the generated order (ADR 0012).
+companion-walks: check-data
+	$(PY).order.companions
+
 render: check-data
 	$(PY).jobs $(QIDS)
 
@@ -63,10 +67,9 @@ deck: render
 check: deck
 	$(PY).check deck
 
+# One package per deck: dist/world-atlas.apkg and each companion deck's (geofeat.decks).
 build: check
-	mkdir -p dist
-	rm -f dist/*.apkg
-	$(ANKC) build --deck $(call quote,$(DECK)) --path deck --output dist
+	$(PY).package
 	$(PY).check package
 	@ls dist/*.apkg
 
@@ -79,6 +82,10 @@ phone:
 # One phone-size sheet per ring region, in study order (build/review-NN.png), and build/review-orientation.png.
 review:
 	$(PY).sheet --review
+
+# Each companion deck's maps, 800 px, six to a JPEG in study order (build/framing/subdiv/<it|us|br|ca>-NN.jpg).
+companion-sheets:
+	$(PY).sheet --companions
 
 pairs: render
 	$(PY).sheet --pairs

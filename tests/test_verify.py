@@ -84,7 +84,8 @@ class NotedTest(unittest.TestCase):
         territory, dispute = territories()
         with data([country | {"verify": [ITEM]}, countries()[1]], [territory, dispute | {"verify": [ITEM]}],
                   [cities_data()[0] | {"verify": [ITEM]}]), \
-                mock.patch.object(check, "load_features", lambda: [feature("f", "Plain", note="Why.", verify=[Verify(**ITEM)])]):
+                mock.patch.object(check, "load_features", lambda: [feature("f", "Plain", note="Why.", verify=[Verify(**ITEM)])]), \
+                mock.patch.object(check.subdivisions, "active", lambda: []):
             found = {r.key: len(r.verify) for r in noted()}
         self.assertEqual(found, {"feature:f": 1, "country:alpha": 1, "capital:alpha": 1, "country:beta": 0,
                                  "territory:gamma": 0, "dispute:delta": 1, "city:alpha-port": 1})
@@ -149,6 +150,8 @@ class ReleaseGateTest(unittest.TestCase):
                 mock.patch.object(check, "GEOMETRY", mock.Mock(glob=lambda _: [])), \
                 mock.patch.object(check.political, "check", return_value=([], {})), \
                 mock.patch.object(check.cities, "check", return_value=[]), \
+                mock.patch.object(check.subdivisions, "check", return_value=[]), \
+                mock.patch.object(check.companions, "errors", return_value=[]), \
                 mock.patch.object(check, "lock_freeze_errors", return_value=[]), \
                 mock.patch.object(check, "save_siblings") as save:
             errors, _ = check.check_data(release=True)

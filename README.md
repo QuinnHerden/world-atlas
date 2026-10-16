@@ -6,6 +6,8 @@ World Atlas grew out of the **Geographic Features** deck, which held physical fe
 
 The first release is v1.0.0. Earlier builds were pre-releases, archived as the `archive/v1.0.0` to `archive/v3.0.0` tags; if you imported one, see [Upgrading from a pre-release](#upgrading-from-a-pre-release). Changes are in [CHANGELOG.md](CHANGELOG.md).
 
+Four **companion decks** go deeper on single countries: Italy's 20 regions, the 50 US states and DC, Brazil's 26 states and the Distrito Federal, and Canada's 10 provinces and 3 territories. Each is a separate deck and download; see [Companion decks](#companion-decks).
+
 Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.6.
 
 - How the build works: [docs/architecture.md](docs/architecture.md)
@@ -17,11 +19,30 @@ Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. 
 
 Download `world-atlas.apkg` from the [latest release](https://github.com/QuinnHerden/world-atlas/releases/latest).
 
+The companion decks are separate downloads from the same release; see [Companion decks](#companion-decks).
+
 **New to the deck.** In Anki, choose **File → Import** and pick `world-atlas.apkg`. Every card lands in one deck, `World Atlas`, in the study order described under [Study](#study).
 
 **Upgrading from a World Atlas pre-release.** Import it the same way. Your cards are updated in place and keep their order; [Upgrading from a pre-release](#upgrading-from-a-pre-release) covers what changes and, for the v2.0.0 pre-release, how to switch to the new order.
 
 **Upgrading from Geographic Features.** Follow [Upgrading from Geographic Features](#upgrading-from-geographic-features) instead. It covers keeping your review history and moving the old cards into `World Atlas`.
+
+## Companion decks
+
+Each companion deck teaches one country's first-level subdivisions. Each is its own deck in Anki and its own package, and none touches World Atlas. Import only the ones you want, in any order.
+
+| Package | Deck | Cards |
+|---|---|---|
+| `italian-regions.apkg` | Italian Regions | 20 regions |
+| `us-states.apkg` | US States | 50 states and the District of Columbia |
+| `brazilian-states.apkg` | Brazilian States | 26 states and the Distrito Federal |
+| `canadian-provinces.apkg` | Canadian Provinces and Territories | 10 provinces and 3 territories |
+
+**Importing.** In Anki, choose **File → Import** and pick the package. Its cards land in a new top-level deck named in the table, beside `World Atlas`. The decks use World Atlas's note type, so importing one into a collection that has World Atlas adds no note type and changes no World Atlas card.
+
+**The cards.** Every card shows the same map of the country, with its internal borders and the other countries faded. One subdivision is in red, and a small one is also ringed. A zoomed inset in a corner shows it with its neighbours, except on the largest (Texas, Amazonas, Quebec and the like), which read well enough on the main map. Alaska and Hawaii are drawn in boxes in the bottom left of the US map, as on most US maps. The front says "Region", "State", "Province", "Territory" or "Federal district". The back gives the name and a short note. Italian regions are named in Italian and Brazilian states in Portuguese, with no English forms: Puglia, Sicilia, Distrito Federal.
+
+**Study order.** New cards come up in a walk from neighbour to neighbour. Italy starts at Valle d'Aosta, the US at Maine (Alaska and Hawaii last) and Brazil at Roraima in the north. Canada runs east from British Columbia, taking in the territories among the provinces from west to east. A deck takes 1 to 4 days at 15 new cards a day. Each card is tagged `kind::subdivision`, `block::subdivisions` and `country::<country>` (for example `country::united-states`).
 
 ## Build
 
@@ -36,7 +57,7 @@ make adjacency  # the country adjacency graph and its report
 
 `ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. Every card gets its new-card position from `data/positions.lock` as a `[^pos]` footnote. The lock is frozen and append-only, so ankc 0.5, which can't write positions, fails the build.
 
-Output: `dist/world-atlas.apkg`. Import it in Anki with **File → Import**.
+Output: `dist/world-atlas.apkg` and one package per companion deck (`dist/italian-regions.apkg`, `dist/us-states.apkg`, `dist/brazilian-states.apkg`, `dist/canadian-provinces.apkg`). Import any of them in Anki with **File → Import**.
 
 A release build names its version: `make all RELEASE=1 RELEASE_VERSION=v1.0.0`. It fails without `RELEASE_VERSION` (unless a release tag is on `HEAD`), when the version's major isn't the lock's series, while a note has an open verify item, or when the freeze guard can't run: no readable `origin/main`, a shallow clone, or no tags (the `archive/*` tags included). Fetch the full history and tags first. [CONTRIBUTING.md](CONTRIBUTING.md#release) has the release steps.
 
@@ -163,6 +184,7 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 - **`geometry/*.geojson`** holds shapes Natural Earth lacks. Every feature in a file needs `source`, `method` and `refs`. The scripts that made the derived shapes are in `tools/` ([tools/README.md](tools/README.md)).
 - **Type words:** `type` must be one of the 23 words in `src/geofeat/model.py`.
 - **World Atlas data:** `data/countries.yaml`, `data/territories.yaml` and `data/cities.yaml` hold the political cards; `data/curriculum.yaml` places each country, subnational, territory and disputed area in a region. See [Political data](docs/architecture.md#political-data).
+- **Companion decks:** `data/subdivisions.yaml` holds the subdivisions, each country's in study order. See [Companion decks](docs/architecture.md#companion-decks).
 
 [docs/architecture.md](docs/architecture.md) covers the selectors, frame options, nesting overrides and every check.
 

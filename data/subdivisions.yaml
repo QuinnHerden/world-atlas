@@ -1,7 +1,6 @@
-- id: it-aosta-valley
+- id: it-valle-d-aosta
   uid: wWP2Cef0D7
-  name: Aosta Valley
-  alt_names: [Valle d'Aosta]
+  name: "Valle d'Aosta"
   country: italy
   type: Region
   geometry:
@@ -12,10 +11,9 @@
     the Matterhorn, Monte Rosa and Gran Paradiso. Italian and French are both official, and the Mont Blanc Tunnel
     links it to Chamonix.
 
-- id: it-piedmont
+- id: it-piemonte
   uid: MlkNxMhI4s
-  name: Piedmont
-  alt_names: [Piemonte]
+  name: Piemonte
   country: italy
   type: Region
   geometry:
@@ -34,13 +32,12 @@
   - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Liguria}, rows: 4}
   expect: [7.47, 43.78, 10.06, 44.69]
   note: >-
-    A narrow arc of coast on the Ligurian Sea, backed by the Alps and Apennines between France and Tuscany. It
+    A narrow arc of coast on the Ligurian Sea, backed by the Alps and Apennines between France and Toscana. It
     roughly matches the former Republic of Genoa, the maritime power whose sailors included Christopher Columbus.
 
-- id: it-lombardy
+- id: it-lombardia
   uid: Q26kuxZJlq
-  name: Lombardy
-  alt_names: [Lombardia]
+  name: Lombardia
   country: italy
   type: Region
   geometry:
@@ -53,7 +50,6 @@
 - id: it-trentino-alto-adige
   uid: hqwtvAEBcj
   name: Trentino-Alto Adige
-  alt_names: [Trentino-South Tyrol]
   country: italy
   type: Region
   geometry:
@@ -100,10 +96,9 @@
     Spans northern Italy from the Apennines to the Adriatic, with the Po along much of its northern border. Named
     after the Via Aemilia, the Roman road from Piacenza to Rimini completed in 187 BC.
 
-- id: it-tuscany
+- id: it-toscana
   uid: mQqaUYuhlQ
-  name: Tuscany
-  alt_names: [Toscana]
+  name: Toscana
   country: italy
   type: Region
   geometry:
@@ -130,7 +125,6 @@
 - id: it-lazio
   uid: 4Y9oFGzcve
   name: Lazio
-  alt_names: [Latium]
   country: italy
   type: Region
   geometry:
@@ -155,7 +149,6 @@
 - id: it-marche
   uid: l81Z2l8cLf
   name: Marche
-  alt_names: [The Marches]
   country: italy
   type: Region
   geometry:
@@ -187,7 +180,7 @@
   - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Basilicata}, rows: 2}
   expect: [15.34, 39.9, 16.87, 41.14]
   note: >-
-    The arch of the Italian boot, between Campania, Apulia and Calabria, with short Tyrrhenian and Ionian coasts.
+    The arch of the Italian boot, between Campania, Puglia and Calabria, with short Tyrrhenian and Ionian coasts.
     Known in antiquity as Lucania, it holds the Sassi cave dwellings of Matera, a UNESCO World Heritage Site since
     1993.
 
@@ -201,12 +194,11 @@
   expect: [15.62, 37.91, 17.21, 40.14]
   note: >-
     The toe of the Italian boot, a long peninsula between the Tyrrhenian and Ionian seas, across the Strait of
-    Messina from Sicily. Ancient Greeks first applied the name Italy to this land, the heart of Magna Graecia.
+    Messina from Sicilia. Ancient Greeks first applied the name Italy to this land, the heart of Magna Graecia.
 
-- id: it-apulia
+- id: it-puglia
   uid: mLDl8zg9ro
-  name: Apulia
-  alt_names: [Puglia]
+  name: Puglia
   country: italy
   type: Region
   geometry:
@@ -225,14 +217,13 @@
   - {layer: 10m_admin_1_states_provinces, select: {adm0_a3: ITA, region: Molise}, rows: 2}
   expect: [13.94, 41.37, 15.16, 42.08]
   note: >-
-    A small, mountainous region of southern Italy between Abruzzo, Lazio, Campania and Apulia, with a short sandy
-    Adriatic coast facing the Tremiti Islands. Second smallest after Aosta Valley, it was separated from Abruzzo in
+    A small, mountainous region of southern Italy between Abruzzo, Lazio, Campania and Puglia, with a short sandy
+    Adriatic coast facing the Tremiti Islands. Second smallest after Valle d'Aosta, it was separated from Abruzzo in
     1963.
 
-- id: it-sicily
+- id: it-sicilia
   uid: mNJklpywiW
-  name: Sicily
-  alt_names: [Sicilia]
+  name: Sicilia
   country: italy
   type: Region
   geometry:
@@ -242,10 +233,9 @@
     The largest island in the Mediterranean, off the toe of Italy across the Strait of Messina, called Trinacria in
     antiquity for its triangular shape. Mount Etna, near its east coast, is the tallest active volcano in Europe.
 
-- id: it-sardinia
+- id: it-sardegna
   uid: Zu2hqMdIRl
-  name: Sardinia
-  alt_names: [Sardegna]
+  name: Sardegna
   country: italy
   type: Region
   geometry:
@@ -982,13 +972,12 @@
   expect: [-53.25, -19.49, -45.91, -12.39]
   note: >-
     A Center-West state on a high plateau that divides three great river systems, the Paraná, São Francisco and
-    Araguaia-Tocantins, and wraps around the Federal District. Pioneers from São Paulo began settling it in the
+    Araguaia-Tocantins, and wraps around the Distrito Federal. Pioneers from São Paulo began settling it in the
     early 18th century.
 
-- id: br-federal-district
+- id: br-distrito-federal
   uid: CcqZE8y19B
-  name: Federal District
-  alt_names: [Distrito Federal]
+  name: Distrito Federal
   country: brazil
   type: Federal district
   geometry:

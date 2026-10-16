@@ -1,15 +1,22 @@
-"""Write the deck markdown for ankc: one file, every card in the one deck, in the curriculum order (geofeat.order)."""
+"""Write the deck markdown for ankc: one file per deck (geofeat.decks), World Atlas's and each companion deck's, every
+card in the study order (geofeat.order)."""
 
 import html
+from pathlib import Path
 
 import geofeat.positions as positions
 from geofeat.ankc import writes_pos
 from geofeat.card import Card, load_media
-from geofeat.model import DECK, ROOT_DECK, Feature, active, load_features
+from geofeat.decks import BY_NAME, DECKS, WORLD, DeckInfo
+from geofeat.model import DECK, Feature, active, load_features
 from geofeat.order import OrderError, Siblings, dependencies, report, study_order
-from geofeat.order.inputs import ideal_order, ordering  # noqa: F401  ideal_order re-exported for check.py
+from geofeat.order.inputs import deck_order, ideal_order, ordering  # noqa: F401  ideal_order re-exported for check.py
 
-DECK_FILE = DECK / "world-atlas.md"
+DECK_FILE = DECK / f"{WORLD.slug}.md"
+
+
+def deck_file(deck: DeckInfo) -> Path:
+    return DECK / f"{deck.slug}.md"
 # The note under the answer: smaller, and muted by opacity rather than a grey, so it reads in light and night mode.
 NOTE_STYLE = "font-size:0.8em;opacity:0.65;margin-top:0.4em"
 
@@ -46,20 +53,25 @@ def main() -> None:
         raise SystemExit(f"study order: {exc}")
     print(report(result))
     lock = positions.read()
-    positions.require(lock, [c.uid for c in result.cards])
+    cards = deck_order(result)
+    positions.require(lock, [c.uid for c in cards])
     if not lock.draft and not writes_pos():
         raise SystemExit(f"{positions.LOCK_FILE.name} is frozen (draft: false), so ankc 0.6+ must write it")
     pos = lock.positions if writes_pos() else {}
-    cards = result.cards
+    if moved := [f"{c.key} is locked in {lock.entries[c.uid].deck}, not {BY_NAME[c.deck].slug}" for c in cards
+                 if lock.entries[c.uid].deck != BY_NAME[c.deck].slug]:
+        raise SystemExit(f"a card's deck is frozen with its position: {'; '.join(moved)}")
     require_rendered(cards, media)
 
     DECK.mkdir(exist_ok=True)
     for old in DECK.glob("*.md"):
         old.unlink()
-    header = f"---\ndeck: \"{ROOT_DECK}\"\n---\n"
-    body = [card(c, media[c.key], pos.get(c.uid), positions.locked_tags(c.tags, lock.entries.get(c.uid))) for c in cards]
-    DECK_FILE.write_text(header + "\n".join(body))
-    print(f"wrote {len(cards)} cards to {DECK_FILE.name}" + (" with [^pos]" if pos else ""))
+    for deck in DECKS:
+        mine = [c for c in cards if c.deck == deck.name]
+        header = f"---\ndeck: \"{deck.name}\"\n---\n"
+        body = [card(c, media[c.key], pos.get(c.uid), positions.locked_tags(c.tags, lock.entries.get(c.uid))) for c in mine]
+        deck_file(deck).write_text(header + "\n".join(body))
+        print(f"wrote {len(mine)} cards to {deck_file(deck).name}" + (" with [^pos]" if pos else ""))
 
 
 if __name__ == "__main__":

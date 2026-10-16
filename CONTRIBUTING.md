@@ -192,4 +192,10 @@ A retired card's entry and uid stay in the data, and its lock entry keeps its sl
 
 ### Companion decks
 
-See ADR 0012 once it is merged.
+Italian Regions, US States, Brazilian States and Canadian Provinces and Territories are separate decks built from this repo, each its own package ([ADR 0012](docs/adr/0012-companion-decks.md)). Their maps are [ADR 0013](docs/adr/0013-subdivision-framing.md)'s.
+
+- **Data.** `data/subdivisions.yaml`, one entry per subdivision, each country's in study order. An id starts with its deck's prefix (`it-`, `us-`, `br-`, `ca-`). Italian and Brazilian names are Italian and Portuguese only. Every entry needs a note.
+- **Order.** The file order must be a neighbour walk: `make companion-walks` prints a generated one, and `make check-data` fails on an avoidable jump.
+- **Positions.** Each deck has its own range of `positions.lock` (`src/geofeat/decks.py`), and a card's `deck=` is frozen like its position. Never move a card between decks.
+- **Maps.** Check them with `make companion-sheets` (`build/framing/subdiv/`).
+- **A new deck** needs a registry entry with an unused range in `decks.py`, a frame in `country_map.FRAMES`, and its entries.
