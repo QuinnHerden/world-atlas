@@ -15,7 +15,7 @@ from shapely.geometry.base import BaseGeometry
 from geofeat.frame import ASPECT, FILL, GIANT_FRAME_M, Equirectangular, centre, main_group, project
 from geofeat.ne import GEOD
 from geofeat.polities import load_political
-from geofeat.regions import ring
+from geofeat.regions import ring as curriculum_regions
 
 Framing = tuple[str, BaseGeometry, tuple[float, float, float, float] | None, float | None]
 
@@ -76,6 +76,9 @@ def _included(ids: tuple[str, ...]) -> tuple[tuple[float, float], ...]:
     """Points round the main bodies a card's frame `include`s, INCLUDE_PAD_DEG out (giants too: Australia)."""
     if unknown := [i for i in ids if i not in _entries()]:
         raise ValueError(f"frame include: no country or territory {', '.join(unknown)}")
+    lons = [lon for i in ids for lon, _ in _body(i)[0]]
+    if max(lons) - min(lons) > 180:  # padded in lon/lat, so a body across 180° would span the globe
+        raise ValueError(f"frame include {', '.join(ids)}: a body across 180° can't be included")
     return tuple(p for i in ids for p in MultiPoint(_body(i)[0]).convex_hull.buffer(INCLUDE_PAD_DEG).exterior.coords)
 
 
@@ -118,7 +121,7 @@ def region(id: str) -> Framing:
     if name in SUB_FRAMES:
         framing = "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name), None
     else:
-        framing = "region", _points(members), None, ring()[int(name)].frame_margin
+        framing = "region", _points(members), None, curriculum_regions()[int(name)].frame_margin
     if include := _entries()[id][2]:
         kind, points, locator, margin = framing
         return kind, MultiPoint([*points.geoms, *_included(include)]), locator, margin

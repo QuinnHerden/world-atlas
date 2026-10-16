@@ -226,10 +226,6 @@ class SubFramesTest(unittest.TestCase):
         self.assertEqual([id for id, n in counts.items() if n > 1], [])
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class FrameIncludeTest(unittest.TestCase):
     def test_new_zealands_frame_takes_in_australia_and_its_capital_follows(self) -> None:
         from geofeat.framing import SUB_FRAMES, _box_points, _included, city_region, region
@@ -246,3 +242,18 @@ class FrameIncludeTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             _included(("atlantis",))
+        with self.assertRaises(ValueError):
+            _included(("fiji",))  # across 180°
+
+    def test_every_include_names_a_known_body(self) -> None:
+        from geofeat.framing import _entries, _included
+
+        for id, (_, _, include) in _entries().items():
+            if include:
+                with self.subTest(id):
+                    self.assertNotIn(id, include)
+                    _included(include)
+
+
+if __name__ == "__main__":
+    unittest.main()

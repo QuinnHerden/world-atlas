@@ -28,10 +28,10 @@ CLOSE_DOT_FRAME_M = 1_000_000
 # Country, territory and dispute subjects (spec.framing) are framed on their curriculum region: the box round its
 # members' main bodies, REGION_MARGIN larger (or the region's own `frame_margin`, spec.region_margin) and at least
 # REGION_MIN_M wide ("region"), or a sub-frame's fixed box ("fixed"), shared by every card on it whose subject fits
-# SUBJECT_MARGIN in from the edges (others shift or widen theirs). A subject that would still fill more than REGION_FILL_MAX of it widens its frame to that fill, unless it is
-# a giant, whose v2.0 frame was over GIANT_FRAME_M wide: those keep their v2.0 frames (Russia, Canada, the United
-# States, Greenland, China, India, Japan, Myanmar, Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru;
-# Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant, nor is a subject
+# SUBJECT_MARGIN in from the edges (others shift or widen theirs). A subject that would still fill more than
+# REGION_FILL_MAX of it widens its frame to that fill, unless it is a giant, whose v2.0 frame was over GIANT_FRAME_M
+# wide: those keep their v2.0 frames (Russia, Canada, the United States, Greenland, China, India, Japan, Myanmar,
+# Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru; Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant, nor is a subject
 # inside its sub-frame's box. No political card has the world locator.
 REGION_MARGIN = 1.1
 REGION_FILL_MAX = 0.35

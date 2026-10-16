@@ -75,7 +75,7 @@ The Lesser Antilles box is too tight to place on its own, so it gets a **regiona
 | Kuwait | `inset: true` | Just over the size cut at the Arabian Peninsula's scale. |
 | Spratly Islands | `inset: true, inset_km: 900` | A sea area of reefs; zoomed in past the default so the island group reads. |
 | New Zealand, Papua New Guinea | `include: [australia]` | Each is read against Australia, which the Polynesia and Melanesia boxes cut off. |
-| Micronesia, Kiribati, Tonga, French Polynesia | `ring: false` | The rings round their island groups cluttered the map. Without them, their atolls are specks on the main map: Tonga has its inset, but Micronesia and Kiribati have none, since they are scattered. |
+| Micronesia, Kiribati, Tonga, French Polynesia | `ring: false` | The rings round their island groups cluttered the map. Without them, their atolls are specks on the main map: Tonga has its inset, but Micronesia, Kiribati and French Polynesia have none, since they are scattered. |
 | Aruba, Curaçao | `inset_centre: [-69.12, 12.35], inset_km: 250` | One inset of the ABC islands (Aruba, Curaçao and Bonaire), so the two are told apart. |
 
 **Render cache.** The region's points travel in the render job and are in its cache key (`jobs.RenderJob.region`). A change to a region's membership re-renders that region's cards.

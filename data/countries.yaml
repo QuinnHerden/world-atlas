@@ -2750,7 +2750,7 @@
   name: Papua New Guinea
   uids: {country: C0ToaF44FZ, capital: s5EbQGCXDx}
   tier: 1
-  frame: {include: [australia]}  # read against Australia across the Torres Strait; the user asked for all of it
+  frame: {include: [australia]}  # read against Australia across the Torres Strait, which the Melanesia box cuts off
   note: >-
     Occupies the eastern half of the island of New Guinea, plus many smaller islands, between the Coral Sea and the
     South Pacific. Its only land border is with Indonesia, which holds the western half of the island. It is part of
@@ -2806,7 +2806,7 @@
   name: New Zealand
   uids: {country: oQeHFXOis8, capital: iow7ThgbZG}
   tier: 1
-  frame: {include: [australia]}  # read against Australia across the Tasman; the user asked for all of it in view
+  frame: {include: [australia]}  # read against Australia across the Tasman, which the Polynesia box cuts off
   note: >-
     Two main islands, North Island and South Island, in the South Pacific, southeast of Australia. Polynesians
     settled it in the late Middle Ages and called it Aotearoa. It is a parliamentary democracy and a Commonwealth
@@ -2845,7 +2845,7 @@
   name: Tonga
   uids: {country: VcDu4Y1307, capital: 03PdnXGsco}
   tier: 3
-  frame: {ring: false}  # rings round its island groups cluttered the map; the user asked for none
+  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
   note: >-
     A Polynesian archipelago in the South Pacific, east of Fiji. It is a kingdom: it was a British protected state
     for a time but never lost its own monarchy.
@@ -2899,7 +2899,7 @@
   name: Kiribati
   uids: {country: O8qHQXEAd0, capital: vQukswE5eJ}
   tier: 3
-  frame: {ring: false}  # rings round its island groups cluttered the map; the user asked for none
+  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
   note: >-
     Coral atolls scattered across the central Pacific, straddling the Equator, in three groups: the Gilbert, Phoenix
     and Line Islands. Its people are mostly Micronesian.
@@ -2956,7 +2956,7 @@
   name: Micronesia
   uids: {country: xnIrAUmkCK, capital: AEj39lKwe8}
   tier: 3
-  frame: {ring: false}  # rings round its island groups cluttered the map; the user asked for none
+  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
   note: >-
     The Federated States of Micronesia: four island states (Yap, Chuuk, Pohnpei and Kosrae) spread across the
     Caroline Islands in the North Pacific, north of New Guinea. It is in free association with the United States.
