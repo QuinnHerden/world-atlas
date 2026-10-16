@@ -281,7 +281,7 @@ def retired_lock_errors(lock: positions.Lock, active: set[str], entries: list[di
     entry would hide its uid from the duplicate-uid check."""
     known = {u for e in entries for u in entry_uids(e)}
     retired = {u for e in entries if e.get("retired") for u in entry_uids(e)}
-    retired |= {e["uids"]["capital"] for e in entries if (e.get("capital") or {}).get("retired") and e.get("uids")}
+    retired |= {u for e in entries if (e.get("capital") or {}).get("retired") and (u := (e.get("uids") or {}).get("capital"))}
     errors = []
     if orphans := sorted(set(lock.entries) - known):
         errors.append(f"{positions.LOCK_FILE.name} holds uids no source entry has (keep a retired entry): {orphans}")

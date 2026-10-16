@@ -9,17 +9,22 @@ changes an edge or a feature's region today."""
 
 from functools import cache
 
+import shapely
+from shapely import unary_union
 from shapely.geometry.base import BaseGeometry
 
 from geofeat.model import Part
-from geofeat.polities import compose, read_countries, active_territory_file
+from geofeat.polities import BBox, Subdivision, active_territory_file, compose, in_bbox, read_countries
 
 
 @cache
-def _sources() -> tuple[tuple[str, ...], dict[str, tuple[Part, ...]]]:
-    """The entries unplaced: geometry needs no curriculum, so the graph builds while curriculum.yaml is mid-edit."""
+def _sources() -> tuple[tuple[str, ...], dict[str, tuple[Part, ...]], dict[str, BBox]]:
+    """The entries unplaced: geometry needs no curriculum, so the graph builds while curriculum.yaml is mid-edit. A
+    subdivision's `within` defines it (Kaliningrad is the part of Russia's row inside it), so it applies here too;
+    a country's `mainland` is a display crop and doesn't."""
     countries, others = read_countries(), active_territory_file()
-    return tuple(sorted(c.id for c in countries)), {e.id: tuple(e.geometry) for e in (*countries, *others)}
+    within = {e.id: e.within for e in others if isinstance(e, Subdivision) and e.within}
+    return tuple(sorted(c.id for c in countries)), {e.id: tuple(e.geometry) for e in (*countries, *others)}, within
 
 
 def state_ids() -> list[str]:
@@ -33,8 +38,12 @@ def parts(id: str) -> tuple[Part, ...]:
 
 
 def outline(id: str) -> BaseGeometry:
-    """A state's, territory's or dispute's full outline, composed as its card's is but never cropped."""
-    return compose(id, list(parts(id)))
+    """A state's, subdivision's, territory's or dispute's full outline, composed as its card's is but never cropped
+    to `mainland`."""
+    shape = compose(id, list(parts(id)))
+    if box := _sources()[2].get(id):
+        shape = unary_union([p for p in shapely.get_parts(shape) if in_bbox(p, box)])
+    return shape
 
 
 def outlines() -> dict[str, BaseGeometry]:

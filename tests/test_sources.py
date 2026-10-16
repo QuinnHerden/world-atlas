@@ -266,7 +266,7 @@ class UniquenessTest(unittest.TestCase):
             political.load_countries()
         clash = territories()
         clash[1]["id"] = "gamma"
-        with data(territories=clash), self.assertRaisesRegex(ValueError, "duplicate territory or dispute id"):
+        with data(territories=clash), self.assertRaisesRegex(ValueError, "duplicate subdivision, territory or dispute id"):
             polities.load_territories()
 
     def test_two_kinds_share_an_id(self) -> None:
@@ -406,7 +406,7 @@ class EdgeCaseTest(unittest.TestCase):
 
     def test_city_that_is_its_capital(self) -> None:
         with data(countries(), cities_=[cities_data()[0] | {"ne_id": 101, "expect": [4, 4, 6, 6]}]):
-            self.assertEqual(cities.check(political.check()[1]), ["alpha-port: is alpha's capital, which has a capital card"])
+            self.assertEqual(cities.check(political.check()[1]), ["alpha-port: is alpha's capital, which has (or had) a capital card"])
 
     def test_retired_territory_or_dispute(self) -> None:
         """A retired entry makes no card and needs no placement; the curriculum may not place it."""
@@ -423,22 +423,27 @@ class EdgeCaseTest(unittest.TestCase):
 
     def test_retired_capital_and_city(self) -> None:
         """A retired capital or city makes no card; a city's parents drop the retired capital; a tier-3 state's
-        capital must be retired."""
+        capital, and only one, is retired."""
         entries = countries()
         entries[0]["capital"]["retired"] = True
+        entries[0]["tier"] = 3
         with data(entries, territories(), cities_data()):
             cards = by_key(political.cards() + cities.cards())
             self.assertNotIn("capital:alpha", cards)
             self.assertEqual(cards["city:alpha-port"].parents, ("country:alpha",))
             self.assertEqual(political.check()[0], [])
+        entries[0]["tier"] = 1
+        with data(entries, territories()):
+            self.assertIn("alpha capital: a tier-3 state's capital, and only one, is retired (`retired: true` under "
+                          "`capital`); tier 1, retired: True", political.check()[0])
         with data(countries(), territories(), [cities_data()[0] | {"retired": True}]):
             self.assertEqual(cities.cards(), [])
             self.assertEqual([c.id for c in cities.read_cities()], ["alpha-port"])
         entries = countries()
         entries[0]["tier"] = 3
         with data(entries, territories()):
-            self.assertIn("alpha capital: a tier-3 state's capital has no card; set `retired: true` under it",
-                          political.check()[0])
+            self.assertIn("alpha capital: a tier-3 state's capital, and only one, is retired (`retired: true` under "
+                          "`capital`); tier 3, retired: False", political.check()[0])
 
     def test_subdivision(self) -> None:
         entry = {"kind": "subdivision", "type": "Constituent country", "id": "epsilon", "name": "Epsilon", "uid": "Constitu01", "state": "alpha",
@@ -456,6 +461,12 @@ class EdgeCaseTest(unittest.TestCase):
         with data(countries(), [*territories(), entry | {"state": "omega"}]), \
                 mock.patch.object(polities, "curriculum_placements", lambda states: place):
             self.assertIn("epsilon: state 'omega' is not a country", political.check()[0])
+        with data(countries(), [*territories(), entry | {"state": "beta"}]), \
+                mock.patch.object(polities, "curriculum_placements", lambda states: place):
+            self.assertIn("epsilon: outline is not inside its state 'beta'", political.check()[0])
+        with data(countries(), [*territories(), entry]), \
+                mock.patch.object(polities, "curriculum_placements", lambda states: place):
+            self.assertEqual(political.check()[0], [])
 
     def test_ring_override(self) -> None:
         entries = territories()

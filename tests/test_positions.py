@@ -280,6 +280,16 @@ class RetiredLockTest(unittest.TestCase):
         self.assertRegex(" ".join(self.errors([{"id": "y", "uid": B}])), "no source entry has")
         self.assertRegex(" ".join(self.errors([{"id": "x", "uid": A}, {"id": "y", "uid": B}])), "aren't `retired: true`")
 
+    def test_the_committed_lock_and_data(self) -> None:
+        """Every uid in the committed lock belongs to an active card or a retired entry (`make check` runs this only
+        on a rendered deck)."""
+        from geofeat.check import retired_lock_errors
+        from geofeat.sources import PATHS, all_cards
+        from ruamel.yaml import YAML
+
+        entries = [e for path in PATHS for e in (YAML(typ="safe").load(path) or [])]
+        self.assertEqual(retired_lock_errors(positions.read(), {c.uid for c in all_cards()}, entries), [])
+
     def test_a_retired_capital_keeps_its_uid(self) -> None:
         country = {"id": "y", "uids": {"country": B, "capital": A}, "capital": {"name": "Y", "retired": True}}
         self.assertEqual(self.errors([country]), [])

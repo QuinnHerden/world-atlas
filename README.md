@@ -94,7 +94,7 @@ v3.0.1 has 561 cards against v3.0.0's 607. It adds 9 cards and retires 55:
 - **Retired cities (18):** Rotterdam, Seville, Hamburg, Frankfurt, Volgograd, Aleppo, Medina, Zanzibar, Johannesburg, Samarkand, Isfahan, Guangzhou, Xi'an, Osaka, Malacca, New Orleans, Potosí and Montreal.
 - **Retired feature (1):** Crimea (Peninsula). It showed the same outline and answer as the Crimea disputed-area card, which stays.
 
-Some maps are redrawn. Brussels, Amsterdam, Pretoria, Sucre, Kuala Lumpur, Doha, Barcelona and Kyoto lost their close-up frame, because the nearby city that needed it was retired; they now show their region with an inset. The South Asia and East Asia region maps are narrower.
+Some maps are redrawn. Brussels, Amsterdam, Pretoria, Sucre, Kuala Lumpur, Doha, Barcelona and Kyoto lost their close-up frame, because the nearby city that needed it was retired; they now show their region with an inset. The South Asia and East Asia region maps are narrower, and the Caucasus & Anatolia map changes slightly, because retired disputed areas no longer shape them.
 
 Import the package as usual. The new cards slot in among the cards you haven't studied yet, and no existing card moves. The 55 retired cards stay in your collection until you delete them; see [Retired cards](#retired-cards).
 

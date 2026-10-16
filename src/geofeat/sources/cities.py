@@ -124,8 +124,8 @@ def check(outlines: dict[str, BaseGeometry]) -> list[str]:
         return [str(exc)]
     errors = unknown_countries(cities, set(countries))
     errors += anchor_errors(cities, countries if outlines else {})  # no outlines: political failed, and said so
-    errors += [f"{c.id}: is {c.country}'s capital, which has a capital card" for c in cities
-               if c.country in countries and (cap := countries[c.country].carded_capital) and cap.ne_id == c.ne_id]
+    errors += [f"{c.id}: is {c.country}'s capital, which has (or had) a capital card" for c in cities
+               if c.country in countries and (cap := countries[c.country].capital) and cap.ne_id == c.ne_id]
     for city in cities:
         try:
             point = city.point()

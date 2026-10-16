@@ -62,9 +62,9 @@ def lookalikes(cards: list[Card], curriculum: Curriculum, facts: frames.Geometry
     keys = {c.key for c in cards}
 
     def key(id: str) -> str:
-        found = next((k for kind in ("country", "dispute", "territory") if (k := card_key(kind, id)) in keys), None)
+        found = next((k for kind in ("country", "dispute", "territory", "subdivision") if (k := card_key(kind, id)) in keys), None)
         if found is None:
-            raise OrderError(f"confusable {id}: no country, dispute or territory card")
+            raise OrderError(f"confusable {id}: no country, dispute, territory or subdivision card")
         return found
 
     pairs = [(key(a), key(b)) for group in curriculum.confusables for i, a in enumerate(group) for b in group[i + 1:]]

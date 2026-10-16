@@ -9,7 +9,7 @@ from geofeat import framing
 from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, block_of, block_tag
 from geofeat.polities import (  # noqa: F401  re-exported for cities.py and the tests
     COUNTRIES, PATHS, PLACES, TERRITORIES, BBox, Capital, Subdivision, Country, Dispute, FrameOverride, Id, Territory, Uid,
-    composition_errors,
+    OUTSIDE_SHARE, area_km2, compose, composition_errors,
     in_bbox, load_countries, load_political, outline, outside_country, place, read_entries, unique,
 )
 from geofeat.spec import RenderSpec
@@ -168,18 +168,24 @@ def check() -> tuple[list[str], dict[str, BaseGeometry]]:
         except (ValueError, OSError, GEOSException) as exc:
             errors.append(str(exc))
             continue
-        if country.tier == 3 and country.carded_capital:
-            errors.append(f"{country.id} capital: a tier-3 state's capital has no card; set `retired: true` under it")
+        if country.capital and (country.tier == 3) != country.capital.retired:
+            errors.append(f"{country.id} capital: a tier-3 state's capital, and only one, is retired (`retired: true` "
+                          f"under `capital`); tier {country.tier}, retired: {country.capital.retired}")
         if country.capital:
             try:
                 errors += outside_country(f"{country.id} capital", country.capital_point(), country.id, outlines[country.id])
             except (ValueError, OSError, GEOSException) as exc:
                 errors.append(str(exc))
     errors += reference_errors(countries, others)
+    states = {c.id: c for c in countries}
     for other in others:
         try:
             errors += composition_errors(other.id, other.geometry)
-            other.outline()
+            shape = other.outline()
+            if isinstance(other, Subdivision) and other.state in states:
+                state = compose(other.state, states[other.state].geometry)  # uncropped: an exclave lies outside `mainland`
+                if area_km2(shape.difference(state)) > OUTSIDE_SHARE * area_km2(shape):
+                    errors.append(f"{other.id}: outline is not inside its state {other.state!r}")
         except (ValueError, OSError, GEOSException) as exc:
             errors.append(str(exc))
     return errors, outlines

@@ -356,7 +356,7 @@ def read_territory_file() -> list[Subdivision | Territory | Dispute]:
         if not isinstance(entry, dict) or entry.get("kind") not in models:
             raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be subdivision, territory or dispute")
     loaded = [models[e["kind"]].model_validate(e) for e in entries]
-    unique(loaded, "territory or dispute")
+    unique(loaded, "subdivision, territory or dispute")
     return loaded
 
 
