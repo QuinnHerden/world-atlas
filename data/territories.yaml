@@ -148,7 +148,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320643}}
   expect: [-154.6, -27.7, -134.9, -7.9]
-  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
+  frame: {ring: single}  # one ring round all its island groups: a ring round each cluttered the map
   note: French Polynesia is an overseas collectivity of France, styled an "overseas country", made up of five archipelagos in the South Pacific roughly halfway between South America and Australia; Tahiti is its main island. France tested nuclear weapons at Mururoa and Fangataufa atolls from 1966 to 1996, and the UN relisted the territory as non-self-governing in 2013.
 
 - kind: territory

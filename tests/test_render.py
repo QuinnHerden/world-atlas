@@ -50,6 +50,7 @@ class KeyTest(unittest.TestCase):
             "outline": "dashed", "frame": FrameOptions(min_span_km=4000), "world": True, "close_dot": True,
             "framing": "region", "inset": True, "inset_km": 500.0, "locator": (-88.0, -56.0, 7.0, 28.0),
             "region_margin": 1.4, "inset_centre": (11.0, 41.0), "ring": False,
+            "hold": (0.0, 0.0, 1.0, 1.0),
         }
         self.assertEqual(set(changes), set(RenderSpec.model_fields), "a new RenderSpec field needs a case here")
         for field, value in changes.items():

@@ -7,14 +7,14 @@ All notable changes to this deck are recorded here. The format follows [Keep a C
 ### Added
 
 - A region can set its own frame margin, `frame_margin` in `curriculum.yaml` ([ADR 0010](docs/adr/0010-region-framing.md#decision)).
-- Per-card `frame:` overrides `include` (the frame also takes in other bodies), `ring: false` and `inset_centre`.
+- Per-card `frame:` overrides `include` (the frame also holds other bodies), `ring: false` or `ring: single`, and `inset_centre`.
 
 ### Changed
 
 - Card notes no longer refer to the deck or to other cards. Sentences that only pointed at other cards ("has no card of its own") are gone; where a sentence carried a real fact, such as which recognised borders include a disputed area, the fact stays as plain geography. The continent notes describe the usual Europe–Asia boundary and the usual extent of North America and Oceania without claiming them for the deck. Notes appear on card backs and in the study guide; re-importing the package updates them on existing cards and keeps scheduling.
-- Horn & East Africa is framed wider (`frame_margin: 1.4`, 9,398 km, was 7,384 km), so Egypt, Libya, Malawi, Zambia and Mozambique show round it. Sudan, Somalia and Tanzania now share the region frame.
+- Horn & East Africa is framed wider (`frame_margin: 1.4`, 9,398 km, was 7,384 km), so Egypt, Libya, Malawi, Zambia and Mozambique show round it. Somalia now shares the region frame. Tanzania's frame and its cities' move south to take in Malawi, Zambia and Mozambique, and Sudan's move north to the Mediterranean, at the same width.
 - New Zealand's and Papua New Guinea's maps, and their capitals', take in the whole of Australia.
-- Micronesia, Kiribati, Tonga and French Polynesia are no longer ringed.
+- Micronesia, Kiribati and French Polynesia get one ring round the whole state instead of one per island group. Tonga is no longer ringed.
 - Aruba's and Curaçao's insets show the ABC islands together.
 
 ## [3.0.0] - 2026-10-16

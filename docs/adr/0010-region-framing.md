@@ -58,15 +58,15 @@ The Lesser Antilles box is too tight to place on its own, so it gets a **regiona
 
 | Region | `frame_margin` | Frame | Why |
 |---|---|---|---|
-| 09 Horn & East Africa | 1.4 | 9,398 km (was 7,384 km) | At 1.1 the frame ran from 13.4°S to 23.9°N, ending at Egypt's border and just past Tanzania's south coast. Sudan and Somalia filled more than 35% and widened their own frames, and Tanzania moved its frame south. At 1.4 the frame runs from 18.5°S to 29°N, takes in southern Egypt and Libya, Malawi, Zambia and northern Mozambique, and every card in the region shares it. |
+| 09 Horn & East Africa | 1.4 | 9,398 km (was 7,384 km) | At 1.1 the frame ran from 13.4°S to 23.9°N, ending at Egypt's border and just past Tanzania's south coast. Sudan and Somalia filled more than 35% and widened their own frames, and Tanzania moved its frame south. At 1.4 the frame runs from 18.5°S to 29°N, takes in southern Egypt and Libya, Malawi, Zambia and northern Mozambique, and every card in the region but Tanzania and Sudan shares it. Those two `include` their neighbours and move the frame at the same width (below). |
 
 **Per-card overrides.** An entry in `countries.yaml` or `territories.yaml` may carry `frame:` (`polities.FrameOverride`):
 
 - `inset: true` or `false` forces the detail inset on or off, scattered states included.
 - `inset_km` sets the inset's width (over 0, at most 5,000).
 - `inset_centre: [lon, lat]` centres the inset on that point, not on the subject, so it takes in the neighbours the subject is told apart from. The leader lines still run from the subject.
-- `ring: false` draws no ring round the subject, on the main map or in the inset.
-- `include: [ids]` makes the frame also take in those countries' or territories' main bodies (giants included), 2° out (`framing.INCLUDE_PAD_DEG`). It adds their points to the region or sub-frame points, so it moves the frame itself.
+- `ring: false` draws no ring round the subject, on the main map or in the inset. `ring: single` draws one ring on the main map round the bounding circle of all the subject's parts, measured in the frame's projection, and none in the inset.
+- `include: [ids]` makes the frame also hold the lon/lat box round those countries' or territories' main bodies (giants included; not across 180°). The frame holds the box as it holds the subject, `SUBJECT_MARGIN` in from its edges: it moves first, and widens only if the box doesn't fit. The box travels in the spec (`RenderSpec.hold`).
 
 `inset`, `inset_km`, `inset_centre` and `ring` apply to the country card only. The capital card follows the city rule, and a city's host is never ringed. `include` changes the host's frame, so its capital and city cards follow it. Each override has a comment giving its reason. These are in use:
 
@@ -74,11 +74,14 @@ The Lesser Antilles box is too tight to place on its own, so it gets a **regiona
 |---|---|---|
 | Kuwait | `inset: true` | Just over the size cut at the Arabian Peninsula's scale. |
 | Spratly Islands | `inset: true, inset_km: 900` | A sea area of reefs; zoomed in past the default so the island group reads. |
-| New Zealand, Papua New Guinea | `include: [australia]` | Each is read against Australia, which the Polynesia and Melanesia boxes cut off. |
-| Micronesia, Kiribati, Tonga, French Polynesia | `ring: false` | The rings round their island groups cluttered the map. Without them, their atolls are specks on the main map: Tonga has its inset, but Micronesia, Kiribati and French Polynesia have none, since they are scattered. |
+| Tanzania | `include: [malawi, zambia, mozambique]` | Its southern neighbours, which the region frame cut off. The frame keeps the region's 9,398 km and moves south: 30.2°S to 17.3°N. |
+| Sudan | `include: [egypt, libya]` | Its northern neighbours to the Mediterranean. The frame keeps 9,398 km and moves north: 11°S to 36.6°N. |
+| New Zealand, Papua New Guinea | `include: [australia]` | Each is read against Australia, which the Polynesia and Melanesia boxes cut off. New Zealand's frame is 9,093 km wide, Papua New Guinea's 9,373 km. |
+| Micronesia, Kiribati, French Polynesia | `ring: single` | A ring round each island group cluttered the map, and with none their atolls were specks: they are scattered, so they have no inset. Micronesia's ring also takes in Guam and the southern Marianas, and Kiribati's Nauru and Tuvalu. |
+| Tonga | `ring: false` | Its inset shows it; the ring round the Niuas cluttered the map. |
 | Aruba, Curaçao | `inset_centre: [-69.12, 12.35], inset_km: 250` | One inset of the ABC islands (Aruba, Curaçao and Bonaire), so the two are told apart. |
 
-**Render cache.** The region's points travel in the render job and are in its cache key (`jobs.RenderJob.region`). A change to a region's membership re-renders that region's cards.
+**Render cache.** The region's points travel in the render job and are in its cache key (`jobs.RenderJob.region`). A change to a region's membership re-renders that region's cards. An `include` box and a region's `frame_margin` travel in the spec (`RenderSpec.hold`, `region_margin`), so they are keyed too.
 
 ## Consequences
 

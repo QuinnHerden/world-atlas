@@ -163,6 +163,18 @@ class PoliticalFrameTest(unittest.TestCase):
         self.assertAlmostEqual((dy0 + dy1) / 2, y, delta=1)
         self.assertEqual(moved.mark, plain.mark)
 
+    def test_a_held_box_moves_the_frame_before_widening_it(self) -> None:
+        from geofeat.frame import _to_map
+
+        region = MultiPoint([(0, 30), (40, 30), (0, 60), (40, 60)])
+        subject, hold = box(19, 46, 22, 48), (15.0, 61.0, 25.0, 64.0)  # just north of the shared frame
+        shared, held = self.frame(subject, region), self.frame(subject, region, hold=hold)
+        self.assertAlmostEqual(held.extent[1] - held.extent[0], shared.extent[1] - shared.extent[0])
+        x0, x1, y0, y1 = held.extent
+        for lon, lat in ((15, 61), (25, 64)):
+            x, y = _to_map(held.projection, lon, lat)
+            self.assertTrue(x0 < x < x1 and y0 < y < y1)
+
     def test_close_dot_city_gets_a_detail_inset_round_its_dot(self) -> None:
         from geofeat.frame import CLOSE_DOT_DETAIL_M, DETAIL_SHARE, DETAIL_ZOOM, project
 
@@ -227,15 +239,28 @@ class SubFramesTest(unittest.TestCase):
 
 
 class FrameIncludeTest(unittest.TestCase):
-    def test_new_zealands_frame_takes_in_australia_and_its_capital_follows(self) -> None:
-        from geofeat.framing import SUB_FRAMES, _box_points, _included, city_region, region
+    def test_new_zealands_frame_holds_australia_and_its_capital_follows(self) -> None:
+        from geofeat.framing import _included, city_region, region
 
-        kind, points, _, _ = region("new-zealand")
+        kind, _, _, _, hold = region("new-zealand")
         self.assertEqual(kind, "fixed")
-        self.assertLessEqual(set(_included(("australia",))), {(p.x, p.y) for p in points.geoms})
-        self.assertTrue(city_region("new-zealand")()[1].equals(points))
-        polynesia = _box_points(*SUB_FRAMES["18-polynesia"][0])
-        self.assertTrue(region("tonga")[1].equals(polynesia))  # the rest of Polynesia keeps its box
+        self.assertEqual(hold, _included(("australia",)))
+        self.assertEqual(city_region("new-zealand")()[4], hold)
+        self.assertIsNone(region("tonga")[4])  # the rest of Polynesia keeps its box
+
+    def test_new_zealands_frame_holds_australias_corners_across_180(self) -> None:
+        from geofeat.frame import _to_map
+        from geofeat.framing import _entries, region
+        from geofeat.spec import RenderSpec
+
+        kind, points, _, _, hold = region("new-zealand")
+        f = frame(RenderSpec(style="area", country="subject", framing=kind, hold=hold), _entries()["new-zealand"][1],
+                  points)
+        x0, x1, y0, y1 = f.extent
+        for lon in hold[::2]:
+            for lat in hold[1::2]:
+                x, y = _to_map(f.projection, lon, lat)
+                self.assertTrue(x0 < x < x1 and y0 < y < y1)
 
     def test_an_unknown_include_fails(self) -> None:
         from geofeat.framing import _included

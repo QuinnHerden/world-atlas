@@ -17,7 +17,8 @@ from geofeat.ne import GEOD
 from geofeat.polities import load_political
 from geofeat.regions import ring as curriculum_regions
 
-Framing = tuple[str, BaseGeometry, tuple[float, float, float, float] | None, float | None]
+Box = tuple[float, float, float, float]
+Framing = tuple[str, BaseGeometry, Box | None, float | None, Box | None]
 
 # Capitals and cities on their host's region frame (v2.1.0, ADR 0003). False reverts them to v2.0 framing
 # (their host country's frame, or the 1,000 km close-dot frame) without touching the political cards.
@@ -43,7 +44,6 @@ SUB_FRAMES = {
 # the north coast of South America (lon0, lon1, lat0, lat1)
 LOCATORS = {"21-lesser-antilles": (-88.0, -56.0, 7.0, 28.0)}
 MUST_SUB_FRAME = frozenset({18})  # every card in these regions must be on a sub-frame
-INCLUDE_PAD_DEG = 2.0  # round a body a card's frame `include`s, so its coast isn't on the frame's edge
 
 
 @cache
@@ -72,14 +72,14 @@ def _hull_points(id: str) -> list[tuple[float, float]] | None:
 
 
 @cache
-def _included(ids: tuple[str, ...]) -> tuple[tuple[float, float], ...]:
-    """Points round the main bodies a card's frame `include`s, INCLUDE_PAD_DEG out (giants too: Australia)."""
+def _included(ids: tuple[str, ...]) -> Box:
+    """The lon/lat box (west, south, east, north) round the main bodies a card's frame `include`s (giants too)."""
     if unknown := [i for i in ids if i not in _entries()]:
         raise ValueError(f"frame include: no country or territory {', '.join(unknown)}")
-    lons = [lon for i in ids for lon, _ in _body(i)[0]]
-    if max(lons) - min(lons) > 180:  # padded in lon/lat, so a body across 180° would span the globe
-        raise ValueError(f"frame include {', '.join(ids)}: a body across 180° can't be included")
-    return tuple(p for i in ids for p in MultiPoint(_body(i)[0]).convex_hull.buffer(INCLUDE_PAD_DEG).exterior.coords)
+    lons, lats = zip(*(p for i in ids for p in _body(i)[0]))
+    if max(lons) - min(lons) > 180:  # a lon/lat box across 180° would span the globe
+        raise ValueError(f"frame include {', '.join(ids)}: the box round them crosses 180°, which isn't supported")
+    return float(min(lons)), float(min(lats)), float(max(lons)), float(max(lats))
 
 
 @cache
@@ -114,18 +114,14 @@ def region_of(id: str) -> tuple[str, tuple[str, ...]]:
 
 
 def region(id: str) -> Framing:
-    """("region", the region's member points, None, its frame_margin) or ("fixed", a sub-frame's box points, its
-    regional locator, None) for a political card. A card whose frame `include`s other bodies (New Zealand: Australia)
-    adds points round them."""
+    """("region", the region's member points, None, its frame_margin, hold) or ("fixed", a sub-frame's box points, its
+    regional locator, None, hold) for a political card. `hold` is the lon/lat box round the bodies its frame
+    `include`s (New Zealand: Australia), which frame.py holds as it holds the subject; None if it includes none."""
     name, members = region_of(id)
+    hold = _included(include) if (include := _entries()[id][2]) else None
     if name in SUB_FRAMES:
-        framing = "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name), None
-    else:
-        framing = "region", _points(members), None, curriculum_regions()[int(name)].frame_margin
-    if include := _entries()[id][2]:
-        kind, points, locator, margin = framing
-        return kind, MultiPoint([*points.geoms, *_included(include)]), locator, margin
-    return framing
+        return "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name), None, hold
+    return "region", _points(members), None, curriculum_regions()[int(name)].frame_margin, hold
 
 
 def city_region(country_id: str) -> Callable[[], Framing] | None:

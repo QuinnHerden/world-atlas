@@ -10,7 +10,8 @@
 # - tier 3: microstates and small island states only.
 # - frame: the card's own exception to the framing rules (ADR 0010): {inset: true|false} forces its detail inset on or
 #   off, inset_km sets the inset's width and inset_centre [lon, lat] its centre; ring: false draws no ring round the
-#   subject; include: [ids] makes the frame take in those countries' main bodies too (its capital and cities follow).
+#   subject (ring: single, one round all its parts); include: [ids] makes the frame hold those countries' main bodies
+#   too, moving before it widens (its capital and cities follow).
 # - note: the P2.7 blurbs, copied as written.
 
 - id: portugal
@@ -1255,6 +1256,7 @@
   name: Tanzania
   uids: {country: qP2785r9Ls, capital: Ip28VMelrK}
   tier: 1
+  frame: {include: [malawi, zambia, mozambique]}  # its southern neighbours, which the region frame cuts off
   note: >-
     Tanzania lies on the Indian Ocean between Kenya and Mozambique, framed by Lake Victoria to the north, Lake
     Tanganyika to the west and Lake Nyasa (Lake Malawi) to the south-west. It holds Kilimanjaro, Africa's highest
@@ -1348,6 +1350,7 @@
   name: Sudan
   uids: {country: BXuf2N7ee1, capital: zoDniv5XVW}
   tier: 1
+  frame: {include: [egypt, libya]}  # its northern neighbours to the Mediterranean, which the region frame cuts off
   note: >-
     Sudan lies south of Egypt on the Red Sea, and the Blue Nile and White Nile meet within it to form the Nile.
     Independent from Egypt and the UK since 1956, it lost its south when South Sudan became independent in 2011. In
@@ -2899,7 +2902,7 @@
   name: Kiribati
   uids: {country: O8qHQXEAd0, capital: vQukswE5eJ}
   tier: 3
-  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
+  frame: {ring: single}  # one ring round all its island groups: a ring round each cluttered the map
   note: >-
     Coral atolls scattered across the central Pacific, straddling the Equator, in three groups: the Gilbert, Phoenix
     and Line Islands. Its people are mostly Micronesian.
@@ -2956,7 +2959,7 @@
   name: Micronesia
   uids: {country: xnIrAUmkCK, capital: AEj39lKwe8}
   tier: 3
-  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
+  frame: {ring: single}  # one ring round all its island groups: a ring round each cluttered the map
   note: >-
     The Federated States of Micronesia: four island states (Yap, Chuuk, Pohnpei and Kosrae) spread across the
     Caroline Islands in the North Pacific, north of New Guinea. It is in free association with the United States.

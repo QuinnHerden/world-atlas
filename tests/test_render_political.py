@@ -156,3 +156,20 @@ class RingOverrideTest(unittest.TestCase):
             rings.assert_not_called()
             render._country(mock.MagicMock(), country_spec(), box(0, 0, 0.01, 0.01), f)
             rings.assert_called_once()
+
+    def test_ring_single_draws_one_ring_round_all_the_parts(self) -> None:
+        from unittest import mock
+
+        from shapely.geometry import MultiPolygon
+
+        from geofeat.polities import FrameOverride
+        from geofeat.sources.political import country_spec
+
+        spec = country_spec(FrameOverride(ring="single"))
+        islands = MultiPolygon([box(0, 0, 0.01, 0.01), box(5, 0, 5.01, 0.01), box(10, 3, 10.01, 3.01)])
+        f = frame(spec, islands)
+        with mock.patch.object(render, "_metres_per_px", return_value=1.0), \
+                mock.patch.object(render, "_cluster_rings") as clusters, mock.patch.object(render, "_ring") as ring:
+            render._country(mock.MagicMock(), spec, islands, f, ring=spec.ring)
+            clusters.assert_not_called()
+            ring.assert_called_once()

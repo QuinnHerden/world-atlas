@@ -200,9 +200,13 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         return None
     main, share = main_group(projected)
     sx0, sy0, sx1, sy1 = projected.bounds
+    hx0, hy0, hx1, hy1 = sx0, sy0, sx1, sy1  # what the frame must hold: the subject, and any box it `include`s
+    if hold := getattr(feature, "hold", None):
+        xs, ys = zip(*(_to_map(projection, lon, lat) for lon in hold[::2] for lat in hold[1::2]))
+        hx0, hy0, hx1, hy1 = min(hx0, *xs), min(hy0, *ys), max(hx1, *xs), max(hy1, *ys)
     margin = SUBJECT_MARGIN * width
-    x0, w = _fit_axis(x0, width, sx0, sx1, margin)
-    y0, h = _fit_axis(y0, width / ASPECT, sy0, sy1, margin)
+    x0, w = _fit_axis(x0, width, hx0, hx1, margin)
+    y0, h = _fit_axis(y0, width / ASPECT, hy0, hy1, margin)
     if w > width or h * ASPECT > width:  # widened: keep 16:9 round the widened box
         cx, cy = x0 + w / 2, y0 + h / 2
         width = max(w, h * ASPECT)
@@ -216,8 +220,8 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         return None
     if size / width > REGION_FILL_MAX:  # widen round the subject's side of the frame
         grown = size / REGION_FILL_MAX
-        x0 = min(max(x0 - (grown - width) / 2, sx1 + margin - grown), sx0 - margin)
-        y0 = min(max(y0 - (grown - width) / ASPECT / 2, sy1 + margin - grown / ASPECT), sy0 - margin)
+        x0 = min(max(x0 - (grown - width) / 2, hx1 + margin - grown), hx0 - margin)
+        y0 = min(max(y0 - (grown - width) / ASPECT / 2, hy1 + margin - grown / ASPECT), hy0 - margin)
         width = grown
     pole_y = projection.y_limits[1]
     y0 = min(max(y0, -pole_y), pole_y - width / ASPECT)

@@ -3,6 +3,7 @@
 import io
 import math
 from functools import cache
+from typing import Literal
 
 import cartopy.crs as ccrs
 import matplotlib
@@ -286,6 +287,14 @@ def _ring_round(ax, shape: BaseGeometry, frame_: Frame) -> None:
     _ring(ax, (px0 + px1) / 2, (py0 + py1) / 2, frame_.projection, size=size)
 
 
+def _single_ring(ax, shape: BaseGeometry, frame_: Frame) -> None:
+    """One ring round the bounding circle of all of a projected subject's parts (`ring: single`)."""
+    circle = shapely.minimum_bounding_circle(shape)
+    centre = circle.centroid
+    across = 2 * shapely.minimum_bounding_radius(shape) / _metres_per_px(ax)
+    _ring(ax, centre.x, centre.y, frame_.projection, size=max(pt(RING_PX), pt_full(across + 2 * SMALL_RING_CLEAR_PX)))
+
+
 def _small_ring(ax, shape: BaseGeometry, frame_: Frame) -> None:
     """Ring a projected area too small or short to find on a phone."""
     if _is_small(ax, shape):
@@ -313,11 +322,12 @@ def _cluster_rings(ax, shape: BaseGeometry, frame_: Frame, skip: BaseGeometry | 
             _ring_round(ax, land, frame_)
 
 
-def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: bool = True,
+def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: bool | Literal["single"] = True,
              skip: BaseGeometry | None = None) -> None:
     """A country, territory or disputed area. As the subject: a crisp red outline with a white casing over a faint
-    fill, dashed for a territory or dispute, ringed when small (unless `ring` is off), except for the groups inside
-    `skip`, round a detail inset's subject, which the leader lines find instead. As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
+    fill, dashed for a territory or dispute. Ringed when small (unless `ring` is off; "single" draws one ring round all
+    of it), except for the groups inside `skip`, round a detail inset's subject, which the leader lines find instead.
+    As context for a city dot: washed lighter and edged in a dark neutral, with nothing red."""
     fuse = 2 * _metres_per_px(ax)
     shape = project(geometry, frame_.projection).buffer(fuse).buffer(-fuse)
     crs = frame_.projection
@@ -331,7 +341,9 @@ def _country(ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ring: 
     ax.add_geometries([shape], crs, facecolor="none", edgecolor=CASING, linewidth=pt(casing_px), zorder=4.05)
     ax.add_geometries([shape], crs, facecolor="none", edgecolor=HIGHLIGHT, linewidth=pt(OUTLINE_PX), zorder=4.1,
                       linestyle=_dashes(OUTLINE_DASH_PX, OUTLINE_PX) if dashed else "solid")
-    if ring:
+    if ring == "single":
+        _single_ring(ax, shape, frame_)
+    elif ring:
         _cluster_rings(ax, shape, frame_, skip)
 
 
@@ -488,7 +500,7 @@ def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ta
     shown = project(geometry, frame_.projection).intersection(box(dx0, dy0, dx1, dy1))
     sx0, sy0, sx1, sy1 = shown.bounds
     _country(inset, spec, geometry, zoomed,
-             ring=spec.ring and max(sx1 - sx0, sy1 - sy0) * w / (dx1 - dx0) < INSET_RING_BELOW_PX)
+             ring=spec.ring is True and max(sx1 - sx0, sy1 - sy0) * w / (dx1 - dx0) < INSET_RING_BELOW_PX)
     if spec.dot:
         _dot(inset, *spec.dot)
 
