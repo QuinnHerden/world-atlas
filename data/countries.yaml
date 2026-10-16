@@ -5,13 +5,15 @@
 # - geometry: Natural Earth rows; the first is the base, `subtract` parts are cut out (recognised borders, ADR 0008).
 #   The adjacency graph and the region outlines read it too (countries_ne.py).
 # - mainland: keep only the outline's parts wholly inside this box (drops remote outliers that get no card). A display
-#   crop for the card only: adjacency and region derivation use the full outline (countries_ne.py).
+#   crop for the card only: adjacency and region derivation use the full outline (countries_ne.py). It needs a
+#   mainland_reason saying what it drops.
 # - expect: the card outline's bbox (lon_min > lon_max crosses 180°); a capital's is a box around its point.
 # - tier 3: microstates and small island states only.
 # - frame: the card's own exception to the framing rules (ADR 0010): {inset: true|false} forces its detail inset on or
 #   off, inset_km sets the inset's width and inset_centre [lon, lat] its centre; ring: false draws no ring round the
 #   subject (ring: oval, one oval round all its parts); include: [ids] makes the frame hold those countries' main bodies
-#   too, moving before it widens (its capital and cities follow).
+#   too, moving before it widens (its capital and cities follow). Every override needs a `reason:` saying why it
+#   exists ("user review: ..." when the user asked for it); `make check-data` fails without one.
 # - note: the P2.7 blurbs, copied as written.
 
 - id: portugal
@@ -80,6 +82,7 @@
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159320651}}
   mainland: [-5.5, 41.0, 10.0, 51.5]
+  mainland_reason: "metropolitan France and Corsica only; the map-unit row already leaves out the overseas regions, which have their own cards, so the box is a guard"
   expect: [-5.14, 41.36, 9.56, 51.09]
   capital:
     name: Paris
@@ -143,6 +146,7 @@
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321105}}
   mainland: [3.0, 50.5, 7.5, 54.0]
+  mainland_reason: "the European Netherlands only; the map-unit row already leaves out the Caribbean Netherlands, so the box is a guard"
   expect: [3.34, 50.74, 7.2, 53.56]
   capital:
     name: Amsterdam
@@ -219,6 +223,7 @@
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321117}}
   mainland: [4.0, 57.5, 31.5, 71.5]
+  mainland_reason: "mainland Norway only; the map-unit row already leaves out Svalbard, which has its own card, so the box is a guard"
   expect: [4.64, 57.99, 31.08, 71.17]
   capital:
     name: Oslo
@@ -1041,7 +1046,9 @@
   name: Kuwait
   uids: {country: sJfBbIYrf3, capital: 4d0l1JxhP8}
   tier: 1
-  frame: {inset: true}  # just over the inset's size cut at the Arabian Peninsula's scale; the user asked for one
+  frame:
+    inset: true
+    reason: "user review: needs a detail inset; it is just over the inset's size cut at the Arabian Peninsula's scale"
   note: >-
     Kuwait sits at the head of the Persian Gulf, wedged between Iraq and Saudi Arabia. It became independent from
     the UK in 1961, and Iraq invaded and overran it in 1990.
@@ -1265,7 +1272,9 @@
   name: Tanzania
   uids: {country: qP2785r9Ls, capital: Ip28VMelrK}
   tier: 1
-  frame: {include: [malawi, zambia, mozambique]}  # its southern neighbours, which the region frame cuts off
+  frame:
+    include: [malawi, zambia, mozambique]
+    reason: "user review: southern neighbours fully in view; the region frame cuts off Malawi, Zambia and Mozambique"
   note: >-
     Tanzania lies on the Indian Ocean between Kenya and Mozambique, framed by Lake Victoria to the north, Lake
     Tanganyika to the west and Lake Nyasa (Lake Malawi) to the south-west. It holds Kilimanjaro, Africa's highest
@@ -1359,7 +1368,9 @@
   name: Sudan
   uids: {country: BXuf2N7ee1, capital: zoDniv5XVW}
   tier: 1
-  frame: {include: [egypt, libya]}  # its northern neighbours to the Mediterranean, which the region frame cuts off
+  frame:
+    include: [egypt, libya]
+    reason: "user review: northern neighbours in view to the Mediterranean; the region frame cuts off Egypt and Libya"
   note: >-
     Sudan lies south of Egypt on the Red Sea, and the Blue Nile and White Nile meet within it to form the Nile.
     Independent from Egypt and the UK since 1956, it lost its south when South Sudan became independent in 2011. In
@@ -2048,6 +2059,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321431}}
   mainland: [16.0, -35.5, 33.5, -22.0]
+  mainland_reason: "drops the Prince Edward Islands, sub-Antarctic outliers that would stretch the frame"
   expect: [16.46, -34.83, 32.9, -22.12]
   capital:
     name: Pretoria
@@ -2517,6 +2529,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320937}}
   mainland: [122.0, 24.0, 146.0, 46.0]
+  mainland_reason: "drops Minami-Torishima, a remote Pacific outlier that would stretch the frame"
   expect: [122.93, 24.21, 145.83, 45.53]
   capital:
     name: Tokyo
@@ -2757,6 +2770,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320355}}
   mainland: [112.0, -44.0, 160.0, -9.0]
+  mainland_reason: "drops Macquarie Island, a sub-Antarctic outlier that would stretch the frame"
   expect: [112.91, -43.65, 159.11, -9.24]
   capital:
     name: Canberra
@@ -2771,7 +2785,9 @@
   name: Papua New Guinea
   uids: {country: C0ToaF44FZ, capital: s5EbQGCXDx}
   tier: 1
-  frame: {include: [australia]}  # read against Australia across the Torres Strait, which the Melanesia box cuts off
+  frame:
+    include: [australia]
+    reason: "user review: show all of Australia for context, across the Torres Strait; the Melanesia box cuts it off"
   note: >-
     Occupies the eastern half of the island of New Guinea, plus many smaller islands, between the Coral Sea and the
     South Pacific. Its only land border is with Indonesia, which holds the western half of the island. It is part of
@@ -2828,7 +2844,9 @@
   name: New Zealand
   uids: {country: oQeHFXOis8, capital: iow7ThgbZG}
   tier: 1
-  frame: {include: [australia]}  # read against Australia across the Tasman, which the Polynesia box cuts off
+  frame:
+    include: [australia]
+    reason: "user review: show all of Australia for context, across the Tasman; the Polynesia box cuts it off"
   note: >-
     Two main islands, North Island and South Island, in the South Pacific, southeast of Australia. Polynesians
     settled it in the late Middle Ages and called it Aotearoa. It is a parliamentary democracy and a Commonwealth
@@ -2836,6 +2854,7 @@
   geometry:
   - {layer: 10m_admin_0_map_units, select: {ne_id: 1159321135}}
   mainland: [166.0, -48.0, 179.0, -34.0]
+  mainland_reason: "drops the Kermadecs, the Chathams and the sub-Antarctic islands, remote outliers that would stretch the frame"
   expect: [166.46, -47.28, 178.57, -34.14]
   capital:
     name: Wellington
@@ -2868,7 +2887,9 @@
   name: Tonga
   uids: {country: VcDu4Y1307, capital: 03PdnXGsco}
   tier: 3
-  frame: {ring: false}  # rings round its island groups clutter the map more than they locate it
+  frame:
+    ring: false
+    reason: "user review: its inset shows it; the ring round the Niuas cluttered the map"
   note: >-
     A Polynesian archipelago in the South Pacific, east of Fiji. It is a kingdom: it was a British protected state
     for a time but never lost its own monarchy.
@@ -2925,7 +2946,9 @@
   name: Kiribati
   uids: {country: O8qHQXEAd0, capital: vQukswE5eJ}
   tier: 3
-  frame: {ring: oval}  # one oval round all its island groups: a ring round each cluttered the map
+  frame:
+    ring: oval
+    reason: "user review: scattered with no inset; a ring round each island group cluttered the map, so one oval round all of them"
   note: >-
     Coral atolls scattered across the central Pacific, straddling the Equator, in three groups: the Gilbert, Phoenix
     and Line Islands. Its people are mostly Micronesian.
@@ -2985,7 +3008,9 @@
   name: Micronesia
   uids: {country: xnIrAUmkCK, capital: AEj39lKwe8}
   tier: 3
-  frame: {ring: oval}  # one oval round all its island groups: a ring round each cluttered the map
+  frame:
+    ring: oval
+    reason: "user review: scattered with no inset; a ring round each island group cluttered the map, so one oval round all of them"
   note: >-
     The Federated States of Micronesia: four island states (Yap, Chuuk, Pohnpei and Kosrae) spread across the
     Caroline Islands in the North Pacific, north of New Guinea. It is in free association with the United States.
@@ -3031,6 +3056,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159321369}}
   mainland: [172.0, 18.5, -66.5, 72.0]
+  mainland_reason: "the lower 48, Alaska with the Aleutians across 180° and Hawaii; drops nothing today, a guard against stray outlying parts"
   expect: [172.47, 18.9, -66.97, 71.42]
   capital:
     name: Washington, D.C.
@@ -3390,6 +3416,7 @@
   geometry:
   - {layer: 10m_admin_0_countries, select: {ne_id: 1159320441}}
   mainland: [-75.0, -34.0, -32.0, 6.0]
+  mainland_reason: "drops Trindade and Martim Vaz and the Saint Peter and Saint Paul rocks, Atlantic outliers that would stretch the frame"
   expect: [-74.02, -33.75, -32.38, 5.27]
   capital:
     name: Brasília

@@ -26,8 +26,9 @@ from geofeat.card import card_key, load_media
 from geofeat.frame import laea, project
 from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids, uids as entry_uids
-from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, Verify, active, load_features
-from geofeat.polities import read_countries, active_territory_file
+from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, FrameOptions, Verify, active, load_features
+from geofeat.curriculum import CURRICULUM, Curriculum
+from geofeat.polities import FrameOverride, read_countries, active_territory_file, read_territory_file
 from geofeat import framing
 from geofeat.decks import COMPANIONS, DECKS
 from geofeat.order import Siblings, companions, load_siblings, save_siblings
@@ -207,6 +208,36 @@ def retired_references(features: list[Feature]) -> tuple[list[str], list[str]]:
     return errors, notes
 
 
+def frame_reason_error(owner: str, frame: FrameOptions | FrameOverride) -> str | None:
+    """A per-card `frame:` that sets any key needs a `reason`, and a reason needs a key to explain."""
+    keys = sorted(frame.model_fields_set - {"reason"})
+    if keys and frame.reason is None:
+        return f"{owner}: frame override ({', '.join(keys)}) needs a `reason`"
+    if frame.reason is not None and not keys:
+        return f"{owner}: frame `reason` with no override to explain"
+    return None
+
+
+def paired_reason_errors(owner: str, value: object, key: str, reason: str | None) -> list[str]:
+    if (value is None) != (reason is None):
+        return [f"{owner}: `{key}` and `{key}_reason` go together"]
+    return []
+
+
+def override_reason_errors(features: list[Feature]) -> list[str]:
+    """Every override of a computed frame says why it exists, retired entries included: a feature's or political
+    card's `frame:`, a country's `mainland` crop, a region's pinned `frame` and its `frame_margin`."""
+    countries, others = read_countries(), read_territory_file()
+    errors = [frame_reason_error(e.id, e.frame) for e in (*features, *countries, *others)]
+    errors = [e for e in errors if e]
+    for c in countries:
+        errors += paired_reason_errors(c.id, c.mainland, "mainland", c.mainland_reason)
+    for r in Curriculum.model_validate(YAML(typ="safe").load(CURRICULUM)).regions:
+        errors += paired_reason_errors(f"region {r.slug}", r.frame, "frame", r.frame_reason)
+        errors += paired_reason_errors(f"region {r.slug}", r.frame_margin, "frame_margin", r.frame_margin_reason)
+    return errors
+
+
 def check_data(release: bool = False) -> tuple[list[str], list[str]]:
     """Errors, and notes that must stay visible: trims, nesting overrides, and flagged or nested sibling pairs. A
     release also fails while any verify item is open."""
@@ -214,6 +245,7 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
     features = active(all_features)
     errors = [f"{f.id}: no uid (run `make ids` and commit)" for f in features if f.uid is None]
     errors += missing_notes(all_features)
+    errors += override_reason_errors(all_features)
     errors += [f"uid {uid} is used more than once across {', '.join(p.name for p in PATHS)}"
                for uid in duplicate_uids(list(PATHS))]
     if not errors:

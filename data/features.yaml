@@ -121,7 +121,10 @@
   - {layer: 10m_rivers_lake_centerlines, select: {name: Rosetta Branch, rivernum: 19}}
   - {layer: 10m_rivers_lake_centerlines, select: {name: Damietta Branch, rivernum: 20}}
   expect: {bbox: [30.1, -1.0, 34.1, 31.6], length_km: [5500, 6800]}
-  frame: {centre: [32.0, 16.5], min_span_km: 5500}
+  frame:
+    centre: [32.0, 16.5]
+    min_span_km: 5500
+    reason: "holds the whole river, Lake Victoria to the delta, with the Mediterranean and the Great Lakes round its ends"
 
 - id: mississippi-missouri-ohio
   uid: PkOyvaz7pZ
@@ -278,7 +281,9 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104185}}
   expect: {bbox: [74.8, 33.2, 80.0, 38.0]}
-  frame: {centre: [72.5, 36.0]}
+  frame:
+    centre: [72.5, 36.0]
+    reason: "the Karakoram, Pamirs and Hindu Kush share one frame, so the three neighbouring ranges are told apart"
 
 - id: pamirs
   uid: cucDLcxgiQ
@@ -293,7 +298,9 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104181}}
   expect: {bbox: [71.1, 37.0, 77.1, 39.7]}
-  frame: {centre: [72.5, 36.0]}
+  frame:
+    centre: [72.5, 36.0]
+    reason: "the Karakoram, Pamirs and Hindu Kush share one frame, so the three neighbouring ranges are told apart"
 
 - id: hindu-kush
   uid: FsC3qGSzTF
@@ -308,7 +315,9 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104183}}
   expect: {bbox: [66.5, 34.0, 75.8, 37.6]}
-  frame: {centre: [72.5, 36.0]}
+  frame:
+    centre: [72.5, 36.0]
+    reason: "the Karakoram, Pamirs and Hindu Kush share one frame, so the three neighbouring ranges are told apart"
 
 - id: tibetan-plateau
   uid: yrr5stmbG1
@@ -341,7 +350,9 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159103505}}
   expect: {bbox: [29.7, 30.0, 32.2, 31.7]}
-  frame: {context: [nile]}
+  frame:
+    context: [nile]
+    reason: "the Nile drawn faintly under its delta, so the delta reads as the river's mouth"
 
 - id: canary-current
   uid: 2ruzsrsPTl
@@ -886,7 +897,9 @@
   geometry:
   - {layer: 10m_geography_regions_polys, select: {ne_id: 1159104309}}
   expect: {bbox: [-81, -55.5, -63, 11.5], area_km2: [2700000, 3400000]}
-  frame: {centre: [-66, -22]}  # the fitted frame for this tall range wraps past a hemisphere
+  frame:
+    centre: [-66, -22]
+    reason: "the fitted frame for this tall range wraps past a hemisphere; a fixed centre keeps it on one continent"
 
 - id: pyrenees
   uid: P6md72ek3p
@@ -1860,7 +1873,9 @@
   geometry:
   - {layer: 10m_geography_regions_points, select: {ne_id: 1159104715}}
   expect: {bbox: [72.4, -7.4, 72.5, -7.3]}
-  frame: {min_span_km: 7000}
+  frame:
+    min_span_km: 7000
+    reason: "a speck of an atoll; 7,000 km wide so the Indian Ocean's coasts round it place it"
 
 - id: falkland-islands
   uid: klYnVNGTPP
@@ -1936,7 +1951,9 @@
   - {layer: 10m_lakes, select: {ne_id: 1729982865}}
   - {layer: 10m_lakes, select: {ne_id: 1159126555}}
   expect: {bbox: [58.2, 44.4, 61.6, 46.8]}
-  frame: {former: aral-sea-1960.geojson}
+  frame:
+    former: aral-sea-1960.geojson
+    reason: "the 1960 shoreline, dashed, so the card shows how far the sea has shrunk"
 
 - id: lake-baikal
   uid: Z2Zv4Y2364
@@ -1981,7 +1998,9 @@
   geometry:
   - {layer: 10m_lakes, select: {ne_id: 1159113219}}
   expect: {bbox: [14.2, 12.8, 14.8, 13.3]}
-  frame: {centre: [12.5, 9.0]}  # south of the lake, so the Bight of Biafra is in frame
+  frame:
+    centre: [12.5, 9.0]
+    reason: "centred south of the lake, so the Bight of Biafra is in frame"
 
 - id: great-rift-valley
   uid: VxhY9uRJFG
@@ -2224,7 +2243,9 @@
   geometry:
   - {file: cumberland-gap.geojson}
   expect: {bbox: [-83.72, 36.55, -83.62, 36.65]}
-  frame: {admin1: true}  # the gap is at the KY/VA/TN tripoint
+  frame:
+    admin1: true
+    reason: "the gap is at the Kentucky, Virginia and Tennessee tripoint, which only state borders show"
 
 - id: thermopylae
   uid: nJnS0WbtQX
@@ -2524,7 +2545,10 @@
   geometry:
   - {file: humboldt-current.geojson}
   expect: {bbox: [-89, -44, -72, -1], length_km: [4800, 5900]}
-  frame: {centre: [-78, -21], min_span_km: 13000}
+  frame:
+    centre: [-78, -21]
+    min_span_km: 13000
+    reason: "the current's whole run up South America's west coast, with the continent beside it"
 
 - id: east-asian-monsoon
   uid: feHY0ji3ZH
