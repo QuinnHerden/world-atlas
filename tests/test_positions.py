@@ -280,6 +280,12 @@ class RetiredLockTest(unittest.TestCase):
         self.assertRegex(" ".join(self.errors([{"id": "y", "uid": B}])), "no source entry has")
         self.assertRegex(" ".join(self.errors([{"id": "x", "uid": A}, {"id": "y", "uid": B}])), "aren't `retired: true`")
 
+    def test_a_retired_capital_keeps_its_uid(self) -> None:
+        country = {"id": "y", "uids": {"country": B, "capital": A}, "capital": {"name": "Y", "retired": True}}
+        self.assertEqual(self.errors([country]), [])
+        country["capital"]["retired"] = False
+        self.assertRegex(" ".join(self.errors([country])), "aren't `retired: true`")
+
 
 class LockTest(unittest.TestCase):
     """The committed lock: series 3, frozen, in the four blocks (ADR 0009), Greenland right after Iceland."""

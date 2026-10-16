@@ -1615,6 +1615,7 @@
   name: Crimea
   type: Peninsula
   category: Peninsulas & Isthmuses
+  retired: true  # v3.0.1: duplicated the Crimea dispute card (same outline, same answer); the dispute card stays
   tier: 1
   note: >-
     It is the Black Sea fleet base (Sevastopol) and the scene of the Crimean War (1853–56). Russia annexed it in

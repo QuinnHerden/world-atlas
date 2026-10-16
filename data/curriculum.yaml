@@ -26,7 +26,8 @@
 # - countries: every member state, in the plan's walk order. Pockets are members too.
 # - pockets: states the plan italicises (microstates, enclaves, Kosovo, Palestine). They sit in a host's run instead of
 #   being walk nodes (pocket: host). Taiwan, italic in the plan, is a walk node here because it is region 16's exit.
-# - territories, disputes: placed by geography (decision 5 default) as pockets (card: host).
+# - subdivisions, territories, disputes: placed by geography (decision 5 default) as pockets (card: host). A
+#   subdivision (a constituent country, an exclave) sits right after its host, before the territories.
 # - host is a placement anchor only, never a statement of sovereignty (sovereignty lives in the card data). It is the
 #   sovereign or administering state when that is a walk node of the region, otherwise the nearest walk node.
 
@@ -41,7 +42,7 @@ passes:
   - id: pass-1
     name: Pass 1
     ring: true
-    kinds: [country, capital, territory, dispute, feature, city]
+    kinds: [country, capital, subdivision, territory, dispute, feature, city]
     feature_tiers: [1, 2]
     city_tiers: [core]
   - id: pass-2
@@ -63,6 +64,7 @@ regions:
     way_in: Atlantic, from region 21 (Bahamas)
     countries: [portugal, spain, andorra, france, monaco, belgium, luxembourg, netherlands, united-kingdom, ireland]
     pockets: {andorra: spain, monaco: france}
+    subdivisions: {england: united-kingdom, scotland: united-kingdom, wales: united-kingdom, northern-ireland: united-kingdom}
     territories: {gibraltar: united-kingdom, isle-of-man: united-kingdom, jersey: united-kingdom, guernsey: united-kingdom}
     walk: [portugal, spain, france, luxembourg, belgium, netherlands, united-kingdom, ireland]
 
@@ -74,6 +76,7 @@ regions:
     way_in: North Sea
     countries: [iceland, norway, sweden, denmark, finland, estonia, latvia, lithuania]
     territories: {greenland: iceland, faroe-islands: denmark, svalbard: norway}  # greenland: see placements below
+    subdivisions: {kaliningrad: lithuania}
     walk: [iceland, norway, denmark, sweden, finland, estonia, latvia, lithuania]
 
   - number: 3
@@ -118,6 +121,7 @@ regions:
     opener: anatolia
     way_in: Russia → Georgia
     countries: [georgia, azerbaijan, armenia, turkey, cyprus]
+    territories: {akrotiri-and-dhekelia: cyprus}
     disputes: {abkhazia: georgia, south-ossetia: georgia, northern-cyprus: cyprus}
     walk: [georgia, armenia, azerbaijan, turkey, cyprus]
 
@@ -130,7 +134,6 @@ regions:
     way_in: Turkey → Syria
     countries: [syria, lebanon, israel, palestine, jordan, iraq]
     pockets: {palestine: israel}
-    disputes: {golan-heights: syria}
     walk: [syria, israel, lebanon, jordan, iraq]
 
   - number: 8
@@ -206,7 +209,7 @@ regions:
     way_in: Indian Ocean, the monsoon trade route
     countries: [maldives, sri-lanka, india, bangladesh, bhutan, nepal, pakistan]
     territories: {british-indian-ocean-territory: maldives}
-    disputes: {kashmir-indian-administered: india, kashmir-pakistani-administered: pakistan, arunachal-pradesh: india}
+    disputes: {kashmir: india}
     walk: [maldives, india, sri-lanka, bangladesh, bhutan, nepal, pakistan]
 
   - number: 15
@@ -227,7 +230,6 @@ regions:
     way_in: Kazakhstan → China
     countries: [china, mongolia, north-korea, south-korea, japan, taiwan]
     territories: {hong-kong: china, macau: china}
-    disputes: {aksai-chin: china, kuril-islands: japan}  # kuril-islands: decided, see placements below
     walk: [china, mongolia, north-korea, south-korea, japan, taiwan]
 
   - number: 17
@@ -250,7 +252,7 @@ regions:
     way_in: Timor-Leste → Australia
     countries: [australia, papua-new-guinea, solomon-islands, vanuatu, new-zealand, fiji, tonga, samoa, tuvalu,
                 kiribati, nauru, marshall-islands, micronesia, palau]
-    territories: {guam: micronesia, new-caledonia: vanuatu, french-polynesia: kiribati}
+    territories: {guam: micronesia, new-caledonia: vanuatu, french-polynesia: kiribati, cook-islands: new-zealand}
     walk: [australia, new-zealand, papua-new-guinea, micronesia, palau, solomon-islands, vanuatu, fiji, tonga, samoa,
            tuvalu, kiribati, marshall-islands, nauru]
 
@@ -273,7 +275,6 @@ regions:
     countries: [colombia, ecuador, peru, chile, bolivia, argentina, uruguay, paraguay, brazil, suriname, guyana,
                 venezuela]
     territories: {falkland-islands: argentina, french-guiana: brazil, aruba: venezuela, curacao: venezuela}
-    disputes: {essequibo: guyana}
     walk: [colombia, ecuador, peru, chile, bolivia, paraguay, argentina, uruguay, brazil, suriname, guyana, venezuela]
 
   - number: 21
@@ -293,8 +294,8 @@ regions:
 # - greenland: nordic-baltic, host iceland, so it comes right after Iceland (v3.0.0; v2 had north-central-america, host
 #   canada). Sovereignty (Kingdom of Denmark, beside Iceland and the Faroes) against geography (North American plate,
 #   19 km from Canada). It stays in North America on the continent cards (continents.MEMBERSHIP).
-# - kuril-islands: east-asia, host japan (alternative eastern-europe, host russia). Geography (the southern four lie off
-#   Hokkaido; the dispute is Japan's claim) against the administering power, Russia.
+# - kuril-islands (retired in v3.0.1): east-asia, host japan (alternative eastern-europe, host russia). Geography (the
+#   southern four lie off Hokkaido; the dispute is Japan's claim) against the administering power, Russia.
 # - bermuda: north-central-america, host united-states (alternative caribbean, host bahamas). Geography (nearest state
 #   the United States, about 1,040 km) against the ring (on the Bahamas → Atlantic → Iberia exit, with the hurricane
 #   belt and the Gulf Stream).

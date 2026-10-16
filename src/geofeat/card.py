@@ -13,7 +13,7 @@ from shapely.geometry.base import BaseGeometry
 from geofeat.model import MEDIA_INDEX, NOT_ONE_LINE, Note  # noqa: F401  Note re-exported for the sources
 from geofeat.spec import RenderSpec
 
-Kind = Literal["feature", "country", "capital", "city", "territory", "dispute", "continent"]
+Kind = Literal["feature", "country", "capital", "city", "subdivision", "territory", "dispute", "continent"]
 # What render() draws besides the basemap: the geometry, the shapes drawn faintly under it, and a former extent.
 Geometry = tuple[BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None]
 # Card text goes into markdown that ankc renders, unsanitised, to HTML in Anki. deckgen HTML-escapes it, which
@@ -102,7 +102,7 @@ class Card(Frozen):
 
 Pass = Literal["orientation", 1, 2]
 PASS_ORDER: dict[Pass, int] = {"orientation": 0, 1: 1, 2: 2}  # sort by this; the labels themselves don't sort
-ALWAYS_PASS_1: frozenset[Kind] = frozenset({"country", "capital", "territory", "dispute"})
+ALWAYS_PASS_1: frozenset[Kind] = frozenset({"country", "capital", "subdivision", "territory", "dispute"})
 
 
 def study_pass(kind: Kind, tier: int, orientation: bool = False) -> Pass:
@@ -118,8 +118,8 @@ def study_pass(kind: Kind, tier: int, orientation: bool = False) -> Pass:
 # areas), the physical features, then the capitals and cities.
 Block = Literal["continents", "countries", "features", "cities"]
 BLOCKS: tuple[Block, ...] = ("continents", "countries", "features", "cities")
-_BLOCK_OF: dict[Kind, Block] = {"continent": "continents", "country": "countries", "territory": "countries",
-                                "dispute": "countries", "feature": "features", "capital": "cities", "city": "cities"}
+_BLOCK_OF: dict[Kind, Block] = {"continent": "continents", "country": "countries", "subdivision": "countries",
+                                "territory": "countries", "dispute": "countries", "feature": "features", "capital": "cities", "city": "cities"}
 
 
 def block_of(kind: Kind) -> Block:

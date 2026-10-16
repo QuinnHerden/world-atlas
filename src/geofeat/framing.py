@@ -35,7 +35,7 @@ SUB_FRAMES = {
     "18-micronesia": ((112.0, -12.0, 178.0, 26.0), ("palau", "micronesia", "guam", "marshall-islands", "nauru")),
     "18-central-pacific": ((145.0, -25.0, 228.0, 28.0), ("kiribati",)),
     "18-polynesia": ((148.0, -48.0, 228.0, -2.0),
-                     ("new-zealand", "fiji", "tonga", "samoa", "tuvalu", "french-polynesia")),
+                     ("new-zealand", "fiji", "tonga", "samoa", "tuvalu", "french-polynesia", "cook-islands")),
     "21-lesser-antilles": ((-64.0, 11.6, -58.8, 18.3),
                            ("antigua-and-barbuda", "saint-kitts-and-nevis", "dominica", "saint-lucia",
                             "saint-vincent-and-the-grenadines", "grenada", "barbados", "guadeloupe", "martinique")),

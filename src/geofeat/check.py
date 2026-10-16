@@ -27,7 +27,7 @@ from geofeat.frame import laea, project
 from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids, uids as entry_uids
 from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature, Verify, active, load_features
-from geofeat.polities import read_countries, read_territory_file
+from geofeat.polities import read_countries, active_territory_file
 from geofeat.order import Siblings, load_siblings, save_siblings
 from geofeat.pairs import NEAR_M, UNCOMPARED_FAMILIES, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
@@ -142,9 +142,9 @@ def noted() -> list[Noted]:
     rows = [Noted(features_source.key(f), f.note, f.verify) for f in active(load_features())]
     for c in read_countries():
         rows.append(Noted(card_key("country", c.id), c.note, c.verify))
-        if c.capital:
-            rows.append(Noted(card_key("capital", c.id), c.capital.note, c.capital.verify))
-    rows += [Noted(card_key(e.kind, e.id), e.note, e.verify) for e in read_territory_file()]
+        if cap := c.carded_capital:
+            rows.append(Noted(card_key("capital", c.id), cap.note, cap.verify))
+    rows += [Noted(card_key(e.kind, e.id), e.note, e.verify) for e in active_territory_file()]
     rows += [Noted(card_key("city", c.id), c.note, c.verify) for c in cities.load_cities()]
     return rows
 
@@ -161,7 +161,7 @@ def open_verify(rows: list[Noted]) -> list[str]:
 def missing_card_notes(rows: list[Noted]) -> list[str]:
     """Every card's back shows its note, so the political and city cards need one too (`missing_notes` does features)."""
     return [f"{r.key}: no note (1-3 sentences on why it matters)" for r in rows
-            if not r.note and r.key.partition(":")[0] in ("country", "capital", "city", "territory", "dispute")]
+            if not r.note and r.key.partition(":")[0] in ("country", "capital", "city", "subdivision", "territory", "dispute")]
 
 
 def verify_errors(release: bool) -> list[str]:
@@ -277,9 +277,11 @@ def lock_freeze_errors(release: bool) -> list[str]:
 
 def retired_lock_errors(lock: positions.Lock, active: set[str], entries: list[dict]) -> list[str]:
     """A frozen lock keeps retired uids (ADR 0006), so every locked uid must belong to a source entry, active or
-    marked `retired: true`: deleting a retired entry would hide its uid from the duplicate-uid check."""
+    marked `retired: true` (a retired capital: `retired: true` under the country's `capital`): deleting a retired
+    entry would hide its uid from the duplicate-uid check."""
     known = {u for e in entries for u in entry_uids(e)}
     retired = {u for e in entries if e.get("retired") for u in entry_uids(e)}
+    retired |= {e["uids"]["capital"] for e in entries if (e.get("capital") or {}).get("retired") and e.get("uids")}
     errors = []
     if orphans := sorted(set(lock.entries) - known):
         errors.append(f"{positions.LOCK_FILE.name} holds uids no source entry has (keep a retired entry): {orphans}")

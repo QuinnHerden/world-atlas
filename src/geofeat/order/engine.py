@@ -203,7 +203,8 @@ def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, 
 
     1. continents, in ring order (CONTINENTS);
     2. countries, territories and disputed areas, region by region round the ring: each walk node, then its pocket
-       countries (in member order), then the territories and disputes it hosts (in curriculum order);
+       countries (in member order), then the subdivisions, territories and disputes it hosts (in
+       curriculum order);
     3. physical features in their ring order: orientation (oceans, then planetary winds), pass 1 round the ring, then
        pass 2, which keeps parent before child;
     4. capitals and cities, region by region in the same country order: each country's capital, then its cities in
@@ -223,7 +224,8 @@ def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, 
         for node in region_walks[r.number].nodes:
             members = [node, *(p for p in r.countries if r.pockets.get(p) == node)]
             political += [f"country:{m}" for m in members]
-            political += [f"{kind}:{i}" for kind, group in (("territory", r.territories), ("dispute", r.disputes))
+            political += [f"{kind}:{i}" for kind, group in (("subdivision", r.subdivisions), ("territory", r.territories),
+                                                             ("dispute", r.disputes))
                           for i, host in group.items() if host == node]
             for m in members:
                 towns += [by_key[k] for k in (f"capital:{m}",) if k in by_key] + cities.pop(m, [])
@@ -311,7 +313,7 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
                 problems.append(f"{c.key}: not a country of region {region.number}")
             elif c.kind == "country" and c.host and c.host != f"country:{region.pockets.get(c.id)}":
                 problems.append(f"{c.key}: host {c.host} isn't its curriculum host")
-        elif c.kind in ("territory", "dispute"):
+        elif c.kind in ("subdivision", "territory", "dispute"):
             host = (c.host or "").removeprefix("country:")
             if host != region.placed().get(c.id):
                 problems.append(f"{c.key}: host {c.host} isn't its curriculum host in region {region.number}")
@@ -344,7 +346,7 @@ def _place(cards: list[Card], region: Region, walk: Walk, frame_of: Callable[[Ca
 
     def sibling_rank(k: str) -> tuple:
         c = present.get(k)
-        kind_rank = ("feature", "country", "territory", "dispute", "city").index(k.split(":")[0])
+        kind_rank = ("feature", "country", "subdivision", "territory", "dispute", "city").index(k.split(":")[0])
         return (kind_rank, member_order.get(k.removeprefix("country:"), 0) if k.startswith("country:") else 0,
                 c.tier if c else 0, k)
 

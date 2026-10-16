@@ -12,13 +12,13 @@ from functools import cache
 from shapely.geometry.base import BaseGeometry
 
 from geofeat.model import Part
-from geofeat.polities import compose, read_countries, read_territory_file
+from geofeat.polities import compose, read_countries, active_territory_file
 
 
 @cache
 def _sources() -> tuple[tuple[str, ...], dict[str, tuple[Part, ...]]]:
     """The entries unplaced: geometry needs no curriculum, so the graph builds while curriculum.yaml is mid-edit."""
-    countries, others = read_countries(), read_territory_file()
+    countries, others = read_countries(), active_territory_file()
     return tuple(sorted(c.id for c in countries)), {e.id: tuple(e.geometry) for e in (*countries, *others)}
 
 
