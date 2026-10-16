@@ -1,5 +1,5 @@
 """The curriculum order's inputs from the real data, wired into the engine: the one place deckgen, positions, the
-checks and later the walk maps and the guide get the study order from. Policy is applied here, over the geometry facts
+checks and the walk maps get the study order from. Policy is applied here, over the geometry facts
 geofeat.order.frames measures and caches."""
 
 from collections.abc import Callable

@@ -1,6 +1,6 @@
 # 11. Re-freezing the study order at a major version
 
-Status: accepted, 2026-10-16 (v3.0.0). Amends [ADR 0006](0006-positions-lock-and-pos-footnote.md) (the lock's format and the freeze guard) and [ADR 0009](0009-curriculum-order.md) (the study order).
+Status: accepted, 2026-10-16 (v3.0.0); amended 2026-10-16 when versioning restarted at v1.0.0 ([Amendment](#amendment-versioning-restarted-at-v100)): the v3.0.0 named here is now the pre-release `archive/v3.0.0`, and its series 3 is series 1. Amends [ADR 0006](0006-positions-lock-and-pos-footnote.md) (the lock's format and the freeze guard) and [ADR 0009](0009-curriculum-order.md) (the study order).
 
 ## Context
 
@@ -51,8 +51,20 @@ Greenland keeps its v2 card and uid (`24rdGoHY6W`) and is card 23, at 11,500, in
 ## Consequences
 
 - New users get the four-block order from a fresh import.
-- An upgraded v2 collection keeps v2's interleaved queue. Re-importing updates every note's maps and tags (`block::`, `region::`) in place and keeps review history, but no `due` changes. A user who wants the new order either deletes the deck and imports fresh (losing review history), or repositions the unstudied cards block by block in **Browse** ([README](../../README.md#upgrading-from-v2)). Repositioning puts the blocks in v3 order but keeps v2's relative order within each block, which is close to v3's but not the same.
+- An upgraded v2 collection keeps v2's interleaved queue. Re-importing updates every note's maps and tags (`block::`, `region::`) in place and keeps review history, but no `due` changes. A user who wants the new order either deletes the deck and imports fresh (losing review history), or repositions the unstudied cards block by block in **Browse** ([README](../../README.md#upgrading-from-a-pre-release)). Repositioning puts the blocks in v3 order but keeps v2's relative order within each block, which is close to v3's but not the same.
 - Within series 3, ADR 0006's promise holds again: adding a card never moves an existing one, and fresh and upgraded v3 collections see the same order.
 - The `pass::` tags are gone. A filtered deck that searched them must search `block::` instead. That is a breaking change, and part of why this is a major version.
 - Region numbers stay identifiers. A series-3 card's `region::` tag comes from its lock entry, as before.
 - Every future reorder costs existing users the same choice. A re-freeze should be rare and carry a real gain.
+
+## Amendment: versioning restarted at v1.0.0
+
+Versioning restarted at v1.0.0; earlier releases archived as `archive/v1.0.0`–`archive/v3.0.0` and treated as pre-release. This is a documented one-off, not a mechanism. Its constants in `positions.py` (`FIRST_SERIES`, `RESTARTED_FROM`, `ARCHIVE_PREFIX`) are permanent; a later re-freeze changes only the lock's `series:`.
+
+- **Tags.** Each old release tag became an annotated `archive/vX.Y.Z` tag at the same commit, and the `vX.Y.Z` tags and their GitHub releases were deleted. The next release is v1.0.0. A clone that fetched the old tags keeps them until `git fetch --prune --prune-tags origin` (or `git tag -d v1.0.0 v2.0.0 v3.0.0`); until then the guard fails it.
+- **Series.** The lock's header is `series: 1`. Its entries are archived v3.0.0's, unchanged: series 1 continues the series 3 order under a new number. Within series 1, positions are append-only, as before. A later re-freeze starts series 2 at v2.0.0, as above.
+- **The guard** (`positions.guard`) changes in three ways; nothing else is relaxed:
+  - Every lock must keep every uid of every archived release it can see (`dropped_released` over the `archive/vX.Y.Z` tags merged into `HEAD`), so users of the pre-releases keep their notes. `archive/v1.0.0` has no lock; its uids are in `archive/v2.0.0`'s.
+  - A series-1 lock is held entry by entry to the newest archived series-3 lock (`archive/v3.0.0`), as if they were one series. Until the first `vX.Y.Z` tag exists, the base ref may still hold that series-3 lock and is compared the same way. Once v1.0.0 is tagged, a series-3 base is an error again ("a series never goes back").
+  - With no `vX.Y.Z` tag yet, the lock must be series 1, and the oldest release (tag or `RELEASE_VERSION`) must be v1.x. A frozen series-1 lock, or any frozen lock while no `vX.Y.Z` tag exists, needs the archive tags: without them a release build or `make positions` fails, and any other build warns.
+- **Why.** The old numbers carried pre-release churn (a rename, a re-freeze) that users of the first public release shouldn't have to read past. Archiving the tags rather than deleting them keeps the history and lets the guard go on protecting the uids those builds shipped.

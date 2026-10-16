@@ -6,7 +6,8 @@ the ideal order at STRIDE. Once it isn't a draft, existing entries never change:
 the nearest earlier card in the ideal order that is already locked, and a retired uid keeps its slot. The lock
 declares the major version series it belongs to (`series: N`). The freeze guard (`guard`) holds it to the frozen lock
 of the same series on origin/main and on the newest release tag of that series; a lock of a new series is a fresh
-freeze, allowed only as the next major version.
+freeze, allowed only as the next major version. Versioning restarted at v1.0.0: the earlier releases are archived as
+`archive/vX.Y.Z` tags, pre-1.0 history whose uids every lock keeps, and series 1 continues the archived series 3 order.
 """
 
 import os
@@ -23,6 +24,9 @@ STRIDE = 500
 LIMIT = 1_000_000  # a margin under 2,000,000, where Anki's Check Database rewrites new-card dues (ADR 0006)
 DEFAULT_BASE = "origin/main"  # the ref whose committed lock a frozen lock must extend; POSITIONS_BASE overrides it
 LEGACY_SERIES = 2  # a frozen lock with no `series:` line is v2's, the only one written before series existed
+FIRST_SERIES = 1  # versioning restarted at v1.0.0: the first release under the vX.Y.Z tags is series 1's
+RESTARTED_FROM = 3  # the archived series whose frozen order series 1 continues, entry for entry
+ARCHIVE_PREFIX = "archive/"  # archive/vX.Y.Z: a pre-1.0 release, archived when versioning restarted
 _HEADER = re.compile(r"draft: (true|false)")
 _SERIES = re.compile(r"series: ([1-9][0-9]*)", re.ASCII)
 _LEGACY_ENTRY = re.compile(r"[A-Za-z0-9]{10}: [0-9]+ pass=(orientation|1|2) region=(-|[0-9]{2})", re.ASCII)  # series 2's format
@@ -35,8 +39,8 @@ class GapExhausted(ValueError):
 
 @dataclass(frozen=True)
 class Entry:
-    """A card's slot: its position (the new-card due) and the block and ring region it was placed in, so the guide's
-    sections and the `block::`/`region::` tags that filtered decks search are held to the order the lock records."""
+    """A card's slot: its position (the new-card due) and the block and ring region it was placed in, so the
+    `block::`/`region::` tags that filtered decks search are held to the order the lock records."""
 
     position: int
     block: Block
@@ -175,7 +179,7 @@ def stale_draft(lock: Lock, placed: list[Placement]) -> bool:
 
 def moved(lock: Lock, placed: list[Placement]) -> list[str]:
     """Locked cards whose block or region the order engine would now give differently. A frozen card keeps the lock's:
-    its slot, its guide section and its `block::`/`region::` tags (`locked_tags`)."""
+    its slot and its `block::`/`region::` tags (`locked_tags`)."""
     return [f"{uid} (locked: block {e.block}, region {e.region}; now: block {block}, region {region})"
             for uid, block, region in placed
             if (e := lock.entries.get(uid)) is not None and (e.block, e.region) != (block, region)]
@@ -228,7 +232,7 @@ def lock_error(lock: Lock) -> str | None:
 
 def warn_moved(lock: Lock, placed: list[Placement]) -> None:
     for line in moved(lock, placed):
-        print(f"warning: frozen card keeps its locked block and region (slot, guide section, tags): {line}")
+        print(f"warning: frozen card keeps its locked block and region (slot, tags): {line}")
 
 
 def update(lock: Lock, placed: list[Placement]) -> Lock:
@@ -238,11 +242,13 @@ def update(lock: Lock, placed: list[Placement]) -> Lock:
     return Lock(False, _entries(place(lock.positions, ideal), placed, lock.entries), lock.series)
 
 
-def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE) -> list[str]:
+def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE, pre_release: bool = False
+                  ) -> list[str]:
     """The freeze guard against one base lock: once the lock on `ref` is frozen, a lock of the same series must keep
     it frozen and hold every one of its entries unchanged (position, block and region). It may only add uids. A lock
     of a later series is a fresh freeze and isn't compared (`series_errors` decides whether it may exist); an earlier
-    series is an error. A draft or missing base passes."""
+    series is an error. A draft or missing base passes. `pre_release`: `ref` holds pre-1.0 history, so a series-1 lock
+    is held to its series-RESTARTED_FROM lock as if they were one series."""
     if base_text is None:
         return []
     try:
@@ -251,7 +257,8 @@ def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE) ->
         return [f"{ref}'s {LOCK_FILE.name} has no `draft: true|false` header"]
     if draft:
         return []  # a draft base may be in an older format, so it isn't parsed
-    if series > lock.series:
+    continued = pre_release and (series, lock.series) == (RESTARTED_FROM, FIRST_SERIES)
+    if series > lock.series and not continued:
         return [f"{LOCK_FILE.name} is series {lock.series}, but {ref}'s is series {series}: a series never goes back"]
     if series < lock.series:  # an older series: not compared, but it must be a well-formed lock of its own format
         lines = base_text.splitlines()
@@ -303,6 +310,11 @@ def newest(tags: list[str], series: int | None = None) -> str | None:
     return max(found, key=version, default=None)
 
 
+def newest_first(tags: list[str]) -> str | None:
+    """The lowest vX.Y.Z tag among `tags`, by version: the first release."""
+    return min((t for t in tags if version(t)), key=version, default=None)
+
+
 def series_errors(lock: Lock, last: str | None, release: str | None) -> list[str]:
     """A lock's series against the release tags. `last` is the newest release reachable from HEAD; `release` the
     version this build is for (a release build's RELEASE_VERSION, or a release tag on HEAD). The series may stay at the
@@ -346,6 +358,12 @@ def release_tags() -> list[str] | None:
     return None if out is None else [t for t in out.split() if version(t)]
 
 
+def archive_tags() -> list[str] | None:
+    """Every archive/vX.Y.Z tag merged into HEAD: the pre-1.0 releases. None when git can't list them."""
+    out = _git("tag", "--merged", "HEAD", "--list", f"{ARCHIVE_PREFIX}v*")
+    return None if out is None else [t for t in out.split() if version(t.removeprefix(ARCHIVE_PREFIX))]
+
+
 def head_tags() -> list[str]:
     """The release tags on HEAD itself."""
     out = _git("tag", "--points-at", "HEAD", "--list", "v*")
@@ -362,17 +380,27 @@ def guard(lock: Lock, strict: bool, release: str | None = None, require_release:
     its own series, and its series to the release tags (`series_errors`). `strict` (a release build, or `make
     positions`) makes an unreadable base ref, a shallow clone or unreadable tags an error for a frozen lock, not a
     warning. `release`, a release build's version (RELEASE_VERSION=vX.Y.Z), and every release tag on HEAD must be of the
-    lock's series; `require_release` (a release build) fails without one."""
+    lock's series; `require_release` (a release build) fails without one. Every lock keeps the uids of every archived
+    pre-1.0 release, and a series-1 lock extends the newest archived series-RESTARTED_FROM lock; until the first
+    release, the base ref may still hold that lock."""
     ref = base_ref()
     text = base_text(ref)
-    errors, warnings = frozen_errors(lock, text, ref), []
+    tags = release_tags()
+    archived = archive_tags()
+    continued = newest([t.removeprefix(ARCHIVE_PREFIX) for t in archived or []], RESTARTED_FROM)
+    restarting = continued is not None and tags == []  # the restart is visible and nothing is released since
+    errors, warnings = frozen_errors(lock, text, ref, pre_release=restarting), []
+    if restarting and lock.series != FIRST_SERIES:
+        errors.append(f"{LOCK_FILE.name} is series {lock.series}: until v{FIRST_SERIES}.0.0 is tagged it must be series "
+                      f"{FIRST_SERIES}")
     problems = []
     if text is None:
         problems.append(f"can't read {LOCK_FILE.name} on {ref} to check the frozen lock against it (fetch it, e.g. "
                         f"`git fetch origin main` or a full-depth CI checkout, or set POSITIONS_BASE)")
-    tags = release_tags()
     if tags is None or shallow():
         problems.append("can't see every release tag (a shallow clone, or no git): fetch the full history and tags")
+    if continued is None and (lock.series == FIRST_SERIES or tags == []):  # without them, no rule bounds the series
+        problems.append(f"can't see the archived pre-1.0 releases ({ARCHIVE_PREFIX}v{RESTARTED_FROM}.*): fetch the tags")
     if not lock.draft:
         (errors if strict else warnings).extend(problems)
     tags = tags or []
@@ -382,6 +410,8 @@ def guard(lock: Lock, strict: bool, release: str | None = None, require_release:
         errors.append(f"RELEASE_VERSION={release!r} is not vX.Y.Z")
     elif require_release and not releases:
         errors.append("a release build needs its version: set RELEASE_VERSION=vX.Y.Z (or tag HEAD)")
+    elif continued is not None and (first := newest_first(tags + releases)) and major(first) != FIRST_SERIES:
+        errors.append(f"the first release is v{FIRST_SERIES}.x (versioning restarted at v1.0.0), not {first}")
     if require_release and lock.draft:
         errors.append(f"a release must ship a frozen {LOCK_FILE.name} (draft: false)")
     errors += series_errors(lock, last, None)
@@ -392,6 +422,12 @@ def guard(lock: Lock, strict: bool, release: str | None = None, require_release:
                         f"v{lock.series}.0.0")
     if last is not None and (prior := major(last)) is not None and prior < lock.series:
         errors += dropped_released(lock, base_text(last), last)
+    for tag in archived or []:
+        errors += dropped_released(lock, base_text(tag), tag)
+    if lock.series == FIRST_SERIES and continued is not None:
+        tag = ARCHIVE_PREFIX + continued
+        if (archived_text := base_text(tag)) != text:  # before the first release, main may hold the same lock
+            errors += frozen_errors(lock, archived_text, tag, pre_release=True)
     if (tag := newest(tags, lock.series)) is not None and tag != ref:
         errors += frozen_errors(lock, base_text(tag), tag)
     return errors, warnings
@@ -406,7 +442,7 @@ def main() -> None:
         placed = placements(result.cards)
     except OrderError as exc:
         raise SystemExit(f"study order: {exc}")
-    old = read() if LOCK_FILE.exists() else Lock(True, {}, LEGACY_SERIES + 1)
+    old = read() if LOCK_FILE.exists() else Lock(True, {}, FIRST_SERIES)
     if not old.draft and (generated := sorted({r.region.slug for r in result.reports if not r.walk.frozen})):
         raise SystemExit(f"{LOCK_FILE.name} is frozen (draft: false), but these regions' walks are generated, not "
                          f"frozen in curriculum.yaml (ADR 0009): {generated}")

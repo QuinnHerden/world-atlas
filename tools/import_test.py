@@ -260,7 +260,7 @@ def upgrade(v1: Path, apkg: Path, lock: dict[str, int], tmp: Path) -> None:
         check(len(tagged) == len(shared), "the shared notes carry World Atlas tags (the update was applied)",
               f"{len(tagged)} of {len(shared)}")
         noted = [g for g in shared if NOTE_STYLE in col.get_note(after[g][0])["Answer"]]
-        check(len(noted) == len(shared), "their backs now carry the study-guide note, scheduling kept (above)",
+        check(len(noted) == len(shared), "their backs now carry the card note, scheduling kept (above)",
               f"{len(noted)} of {len(shared)}")
         added = set(lock) - set(studied)
         check(deck_names(col, added) == {ROOT_DECK}, f'the {len(added)} new notes land in "{ROOT_DECK}"')
