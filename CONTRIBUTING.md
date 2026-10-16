@@ -155,7 +155,7 @@ Work on a branch named `ws/<topic>` and open the pull request against `main`.
 | New or retired cards, the study order, the lock, deckgen or tags | `make all`, then `make import-test` |
 | Political geometry or `curriculum.yaml` regions | `make adjacency` |
 
-`make import-test` builds the package and imports it into fresh collections with the official `anki` library. It checks the study order, a region filtered deck, Check Database and the upgrade from Geographic Features.
+`make import-test` builds the packages and imports them into fresh collections with the official `anki` library. It checks World Atlas's study order, a region filtered deck, Check Database and the upgrade from Geographic Features, then that each companion package lands in its own deck, at its lock positions, on World Atlas's note type.
 
 Add a line to the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) for anything a user would notice.
 
@@ -175,22 +175,22 @@ Add a line to the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) for anyth
 
 2. In CHANGELOG.md, change the version's heading from `Unreleased` to today's date. Commit and push it to `main`, so the tag carries the date.
 3. Build: `make all RELEASE=1 RELEASE_VERSION=vX.Y.Z`. A release build also fails while any verify item is open, with a draft lock, or when the version's major isn't the lock's `series:`. With no `vX.Y.Z` tag yet, the first release must be v1.x.
-4. `make import-test`.
+4. `make import-test`. It covers World Atlas and the four companion packages.
 5. Tag and push:
 
    ```sh
-   git tag -a vX.Y.Z -m vX.Y.Z
+   git tag -a vX.Y.Z -m "World Atlas vX.Y.Z"
    git push origin vX.Y.Z
    ```
 
-6. Publish the `.apkg` and its checksum, with the version's CHANGELOG section saved as `build/notes.md` (`build/` is ignored):
+6. Publish the five packages, World Atlas and the four companion decks, with a `SHA256SUMS` over them written in `dist/`. Save the version's CHANGELOG section as `build/notes.md` (`build/` is ignored):
 
    ```sh
    (cd dist && sha256sum *.apkg > SHA256SUMS)
-   gh release create vX.Y.Z dist/*.apkg dist/SHA256SUMS --verify-tag --repo QuinnHerden/world-atlas --notes-file build/notes.md
+   gh release create vX.Y.Z dist/*.apkg dist/SHA256SUMS --verify-tag --repo QuinnHerden/world-atlas --title "World Atlas vX.Y.Z" --notes-file build/notes.md
    ```
 
-The releases before v1.0.0 are archived as the tags `archive/v1.0.0`, `archive/v2.0.0` and `archive/v3.0.0`, with no GitHub releases; never create a release for an `archive/*` tag. Series 1 continues archived v3.0.0's order entry for entry, and every lock must keep every uid of every archived release. See [ADR 0011's amendment](docs/adr/0011-refreezing-at-a-major-version.md#amendment-versioning-restarted-at-v100).
+The releases before v1.0.0 are archived as the tags `archive/v1.0.0`, `archive/v2.0.0` and `archive/v3.0.0`, with no GitHub releases; never create a release for an `archive/*` tag. Series 1 continues archived v3.0.0's order entry for entry, except the four oceans, moved to just after the continents before v1.0.0. Every lock must keep every uid of every archived release. See [ADR 0011's amendment](docs/adr/0011-refreezing-at-a-major-version.md#amendment-versioning-restarted-at-v100).
 
 ### Frozen order
 
