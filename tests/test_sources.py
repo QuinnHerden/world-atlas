@@ -266,7 +266,7 @@ class UniquenessTest(unittest.TestCase):
             political.load_countries()
         clash = territories()
         clash[1]["id"] = "gamma"
-        with data(territories=clash), self.assertRaisesRegex(ValueError, "duplicate subdivision, territory or dispute id"):
+        with data(territories=clash), self.assertRaisesRegex(ValueError, "duplicate subnational, territory or dispute id"):
             polities.load_territories()
 
     def test_two_kinds_share_an_id(self) -> None:
@@ -445,18 +445,19 @@ class EdgeCaseTest(unittest.TestCase):
             self.assertIn("alpha capital: a tier-3 state's capital, and only one, is retired (`retired: true` under "
                           "`capital`); tier 3, retired: False", political.check()[0])
 
-    def test_subdivision(self) -> None:
-        entry = {"kind": "subdivision", "type": "Constituent country", "id": "epsilon", "name": "Epsilon", "uid": "Constitu01", "state": "alpha",
+    def test_subnational(self) -> None:
+        entry = {"kind": "subnational", "type": "Constituent country", "id": "epsilon", "name": "Epsilon", "uid": "Constitu01", "state": "alpha",
                  "status_line": "Country of Alpha", "geometry": [a0(1)], "expect": [0, 0, 10, 10]}
-        place = PLACEMENTS | {"epsilon": RingPlace(1, "alpha", "subdivision")}
+        place = PLACEMENTS | {"epsilon": RingPlace(1, "alpha", "subnational")}
         with data(countries(), [*territories(), entry]), \
                 mock.patch.object(polities, "curriculum_placements", lambda states: place):
-            card = by_key(political.cards())["subdivision:epsilon"]
+            card = by_key(political.cards())["subnational:epsilon"]
             self.assertEqual((card.prompt, card.answer_lines), ("Constituent country", ("Epsilon", "Country of Alpha")))
-            self.assertEqual(card.tags[1:], ("id_subdivision_epsilon", "kind::subdivision", "region::01", "block::countries"))
+            self.assertEqual(card.tags[0], "category::subnational")
+            self.assertEqual(card.tags[1:], ("id_subnational_epsilon", "kind::subnational", "region::01", "block::countries"))
             self.assertEqual((card.host, card.render.spec.outline), ("country:alpha", None))
             with mock.patch.object(polities, "curriculum_placements", lambda states: PLACEMENTS | {
-                    "epsilon": RingPlace(1, "alpha", "territory")}), self.assertRaisesRegex(ValueError, "a subdivision"):
+                    "epsilon": RingPlace(1, "alpha", "territory")}), self.assertRaisesRegex(ValueError, "a subnational"):
                 political.cards()
         with data(countries(), [*territories(), entry | {"state": "omega"}]), \
                 mock.patch.object(polities, "curriculum_placements", lambda states: place):

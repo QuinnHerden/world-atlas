@@ -58,7 +58,7 @@ Do this on both phones; desktop is optional. Find each card in **Browse** by its
 
 | Card | Tag | Expect |
 |---|---|---|
-| Kaliningrad Oblast, exclave (37) | `id_subdivision_kaliningrad` | A solid red outline between Poland and Lithuania, with the rest of Russia off to the east |
+| Kaliningrad Oblast, exclave (37) | `id_subnational_kaliningrad` | A solid red outline between Poland and Lithuania, with the rest of Russia off to the east |
 | Crimea, dispute (64) | `id_dispute_crimea` | A dashed red outline on the peninsula in the Black Sea (dashed means disputed) |
 | Europe, continent (1) | `id_continent_europe` | Europe filled red on a world map, islands included |
 | Kyoto (510) | `id_city_kyoto` | On its region's frame with a detail inset round its dot (no close-dot frame since Osaka was retired); the dot reads against the coast and Lake Biwa |

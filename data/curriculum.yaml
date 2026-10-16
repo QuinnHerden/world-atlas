@@ -26,8 +26,8 @@
 # - countries: every member state, in the plan's walk order. Pockets are members too.
 # - pockets: states the plan italicises (microstates, enclaves, Kosovo, Palestine). They sit in a host's run instead of
 #   being walk nodes (pocket: host). Taiwan, italic in the plan, is a walk node here because it is region 16's exit.
-# - subdivisions, territories, disputes: placed by geography (decision 5 default) as pockets (card: host). A
-#   subdivision (a constituent country, an exclave) sits right after its host, before the territories.
+# - subnationals, territories, disputes: placed by geography (decision 5 default) as pockets (card: host). A
+#   subnational (a constituent country, an exclave) sits right after its host, before the territories.
 # - host is a placement anchor only, never a statement of sovereignty (sovereignty lives in the card data). It is the
 #   sovereign or administering state when that is a walk node of the region, otherwise the nearest walk node.
 
@@ -42,7 +42,7 @@ passes:
   - id: pass-1
     name: Pass 1
     ring: true
-    kinds: [country, capital, subdivision, territory, dispute, feature, city]
+    kinds: [country, capital, subnational, territory, dispute, feature, city]
     feature_tiers: [1, 2]
     city_tiers: [core]
   - id: pass-2
@@ -64,7 +64,7 @@ regions:
     way_in: Atlantic, from region 21 (Bahamas)
     countries: [portugal, spain, andorra, france, monaco, belgium, luxembourg, netherlands, united-kingdom, ireland]
     pockets: {andorra: spain, monaco: france}
-    subdivisions: {england: united-kingdom, scotland: united-kingdom, wales: united-kingdom, northern-ireland: united-kingdom}
+    subnationals: {england: united-kingdom, scotland: united-kingdom, wales: united-kingdom, northern-ireland: united-kingdom}
     territories: {gibraltar: united-kingdom, isle-of-man: united-kingdom, jersey: united-kingdom, guernsey: united-kingdom}
     walk: [portugal, spain, france, luxembourg, belgium, netherlands, united-kingdom, ireland]
 
@@ -76,7 +76,7 @@ regions:
     way_in: North Sea
     countries: [iceland, norway, sweden, denmark, finland, estonia, latvia, lithuania]
     territories: {greenland: iceland, faroe-islands: denmark, svalbard: norway}  # greenland: see placements below
-    subdivisions: {kaliningrad: lithuania}
+    subnationals: {kaliningrad: lithuania}
     walk: [iceland, norway, denmark, sweden, finland, estonia, latvia, lithuania]
 
   - number: 3

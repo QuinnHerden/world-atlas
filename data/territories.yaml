@@ -1,14 +1,14 @@
-# Subdivision, territory and dispute cards (docs/world-atlas-plan.md#territories, ADR 0008). Outlines from
+# Subnational, territory and dispute cards (docs/world-atlas-plan.md#territories, ADR 0008). Outlines from
 # docs/research/ne-political-layers.md (b); notes verbatim from docs/research/blurbs/d-americas-continents-territories-disputes.md (ws/blurbs-d).
-# Region and host are not stored here: they come from data/curriculum.yaml's subdivisions, territories and disputes
-# maps, and every active id must be placed there. A subdivision (v3.0.1) is part of `state`: a constituent country or
+# Region and host are not stored here: they come from data/curriculum.yaml's subnationals, territories and disputes
+# maps, and every active id must be placed there. A subnational (v3.0.1) is part of `state`: a constituent country or
 # an exclave, its front word in `type`; it draws a solid outline, as a country's, and `within` keeps the parts inside
 # a box. The adjacency graph and the region outlines read `geometry` too (countries_ne.py). parties:
 # states or authorities that claim or administer the area, not backers or recognisers; a self-declared entity is
 # labelled by its short common name.
 # frame: the card's own exception to the framing rules, as in countries.yaml.
 
-- kind: subdivision
+- kind: subnational
   type: Constituent country
   id: england
   uid: gqL3vt2o13
@@ -20,7 +20,7 @@
   expect: [-6.4, 49.8, 1.8, 55.9]
   note: England is the largest of the United Kingdom's four countries, home to about 85% of its people, and its capital, London, is also the UK's.
 
-- kind: subdivision
+- kind: subnational
   type: Constituent country
   id: scotland
   uid: k1g6CtgDY4
@@ -32,7 +32,7 @@
   expect: [-13.7, 54.6, -0.7, 60.9]
   note: Scotland, the northern part of Great Britain, joined England in the Kingdom of Great Britain under the Acts of Union of 1707. It has had its own devolved parliament since 1999, and in a 2014 referendum voted 55% to 45% against independence.
 
-- kind: subdivision
+- kind: subnational
   type: Constituent country
   id: wales
   uid: y9j8OdBWUL
@@ -44,7 +44,7 @@
   expect: [-5.4, 51.3, -2.6, 53.5]
   note: Wales, in the west of Great Britain, has had its own devolved legislature since 1999, renamed the Senedd in 2020. Welsh is an official language there alongside English, and 18% of people could speak it in the 2021 census.
 
-- kind: subdivision
+- kind: subnational
   type: Constituent country
   id: northern-ireland
   uid: Nq5SbpihjQ
@@ -56,7 +56,7 @@
   expect: [-8.2, 54, -5.4, 55.4]
   note: Northern Ireland, in the north-east of the island of Ireland, was created by the partition of Ireland in 1921. The Troubles, a conflict from the late 1960s that killed about 3,500 people, largely ended with the 1998 Good Friday Agreement, which set up power-sharing government; its border with Ireland is the UK's only land border.
 
-- kind: subdivision
+- kind: subnational
   type: Exclave
   id: kaliningrad
   uid: avOKNkxBLq

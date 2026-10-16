@@ -136,7 +136,7 @@ class Capital(Strict):
 class RingPlace(NamedTuple):
     region: int  # ring order, as numbered in data/curriculum.yaml
     host: str | None  # the walk node a pocket sits beside (P3), never a statement of sovereignty
-    kind: Literal["country", "subdivision", "territory", "dispute"]  # the curriculum map that places it
+    kind: Literal["country", "subnational", "territory", "dispute"]  # the curriculum map that places it
 
 
 class FrameOverride(Strict):
@@ -233,13 +233,13 @@ class Territory(Placed):
         return outline(self.id, self.geometry, self.expect)
 
 
-class Subdivision(Placed):
+class Subnational(Placed):
     """A part of a state carded on its own: a constituent country (England, Scotland, Wales and Northern Ireland in
     the United Kingdom) or an exclave (Kaliningrad). Neither sovereign, so not a country card, nor a dependent
     territory. `type` is the card's front word; `within` keeps only the composed outline's parts wholly inside a box
     (Kaliningrad from Russia's row)."""
 
-    kind: Literal["subdivision"]
+    kind: Literal["subnational"]
     type: Literal["Constituent country", "Exclave"]
     name: Text
     alt_names: list[Text] = []
@@ -326,7 +326,7 @@ def curriculum_placements(states: list[str]) -> dict[str, RingPlace]:
     placements = {}
     for r in load_curriculum(states).regions:
         placements |= {c: RingPlace(r.number, r.pockets.get(c), "country") for c in r.countries}
-        placements |= {c: RingPlace(r.number, host, "subdivision") for c, host in r.subdivisions.items()}
+        placements |= {c: RingPlace(r.number, host, "subnational") for c, host in r.subnationals.items()}
         placements |= {c: RingPlace(r.number, host, "territory") for c, host in r.territories.items()}
         placements |= {c: RingPlace(r.number, host, "dispute") for c, host in r.disputes.items()}
     return placements
@@ -348,19 +348,19 @@ def read_countries() -> list[Country]:
     return countries
 
 
-def read_territory_file() -> list[Subdivision | Territory | Dispute]:
+def read_territory_file() -> list[Subnational | Territory | Dispute]:
     """data/territories.yaml's entries in file order, unplaced, retired ones included."""
-    models = {"subdivision": Subdivision, "territory": Territory, "dispute": Dispute}
+    models = {"subnational": Subnational, "territory": Territory, "dispute": Dispute}
     entries = read_entries(TERRITORIES)
     for i, entry in enumerate(entries):
         if not isinstance(entry, dict) or entry.get("kind") not in models:
-            raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be subdivision, territory or dispute")
+            raise ValueError(f"{TERRITORIES.name} entry {i}: `kind` must be subnational, territory or dispute")
     loaded = [models[e["kind"]].model_validate(e) for e in entries]
-    unique(loaded, "subdivision, territory or dispute")
+    unique(loaded, "subnational, territory or dispute")
     return loaded
 
 
-def active_territory_file() -> list[Subdivision | Territory | Dispute]:
+def active_territory_file() -> list[Subnational | Territory | Dispute]:
     """data/territories.yaml's active entries: a retired one (`retired: true`) is archived, kept only so its uid is
     never reused. It is validated against the schema, but makes no card, has no placement and no outline."""
     return [e for e in read_territory_file() if not e.retired]
@@ -372,7 +372,7 @@ def load_countries() -> list[Country]:
     return placed(countries, COUNTRIES, curriculum_placements([c.id for c in countries])) if countries else countries
 
 
-def load_political() -> tuple[list[Country], list[Subdivision | Territory | Dispute]]:
+def load_political() -> tuple[list[Country], list[Subnational | Territory | Dispute]]:
     """The countries, and the territories and disputes in file order, each placed by data/curriculum.yaml. A territory
     or dispute the curriculum places must have an active entry: a retired one has no placement."""
     countries, others = read_countries(), active_territory_file()

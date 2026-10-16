@@ -47,8 +47,8 @@ LAND, NODE, OCEAN, EDGE = "#ebe7df", "#f6e7c1", "#dfeaf2", "#5b5b5b"
 STEP, JUMP = "#1f4e8c", "#d9730d"
 ENTRY, EXIT, NUMBER = "#2e7d32", "#b23a48", "#1f4e8c"
 KIND_COLOUR = {"country": "#1a1a1a", "capital": "#6b6b6b", "feature": "#2e7d32", "city": "#7b3fa0",
-               "subdivision": "#3d5a80", "territory": "#8a5a00", "dispute": "#b23a48"}
-MARKERS = {"pocket": "s", "subdivision": "o", "territory": "D", "dispute": "X"}
+               "subnational": "#3d5a80", "territory": "#8a5a00", "dispute": "#b23a48"}
+MARKERS = {"pocket": "s", "subnational": "o", "territory": "D", "dispute": "X"}
 
 
 # Geometry
@@ -168,7 +168,7 @@ def card_line(c: Card, atlas: Atlas, region: Region, walk_no: dict[str, int], mo
         text = f"{name} (pocket in {atlas.names[region.pockets[c.id]]})"
     elif c.kind == "capital":
         text = f"{name}, capital"
-    elif c.kind in ("subdivision", "territory", "dispute") and c.id in region.placed():
+    elif c.kind in ("subnational", "territory", "dispute") and c.id in region.placed():
         text = f"{name} ({c.kind}, beside {atlas.names[region.placed()[c.id]]})"
     elif c.kind == "feature":
         touches = ", ".join(atlas.names.get(t, t) for t in atlas.touches.get(c.id, ())) or "no country"
@@ -241,7 +241,7 @@ def label_points(points: dict[str, tuple[float, float]], small: set[str], radius
 
 def draw_region(atlas: Atlas, region: Region, report: RegionReport) -> None:
     walk = report.walk
-    pockets = {p: "pocket" for p in region.pockets} | {c: "subdivision" for c in region.subdivisions} | \
+    pockets = {p: "pocket" for p in region.pockets} | {c: "subnational" for c in region.subnationals} | \
         {t: "territory" for t in region.territories} | {d: "dispute" for d in region.disputes}
     members = [*walk.nodes, *pockets]
     frame = region_frame([main_part(atlas.shapes[n]) for n in members])
@@ -338,7 +338,7 @@ def draw_region(atlas: Atlas, region: Region, report: RegionReport) -> None:
         plt.Line2D([], [], color=ENTRY, marker="o", linestyle="", markersize=8, label="entry"),
         plt.Line2D([], [], color=EXIT, marker="o", linestyle="", markersize=8, label="exit"),
         *(plt.Line2D([], [], color=KIND_COLOUR["country" if k == "pocket" else k], marker=MARKERS[k], linestyle="",
-                     markersize=6, label=k) for k in ("pocket", "subdivision", "territory", "dispute") if k in pockets.values()),
+                     markersize=6, label=k) for k in ("pocket", "subnational", "territory", "dispute") if k in pockets.values()),
     ]
     ax.legend(handles=key, loc="lower left", fontsize=8, framealpha=0.9)
 

@@ -8,7 +8,7 @@ from shapely.geometry.base import BaseGeometry
 from geofeat import framing
 from geofeat.card import Card, Geometry, Kind, RenderRef, card_key, id_tag, block_of, block_tag
 from geofeat.polities import (  # noqa: F401  re-exported for cities.py and the tests
-    COUNTRIES, PATHS, PLACES, TERRITORIES, BBox, Capital, Subdivision, Country, Dispute, FrameOverride, Id, Territory, Uid,
+    COUNTRIES, PATHS, PLACES, TERRITORIES, BBox, Capital, Subnational, Country, Dispute, FrameOverride, Id, Territory, Uid,
     OUTSIDE_SHARE, area_km2, compose, composition_errors,
     in_bbox, load_countries, load_political, outline, outside_country, place, read_entries, unique,
 )
@@ -84,16 +84,16 @@ def country_cards(country: Country) -> list[Card]:
     return out
 
 
-def subdivision_cards(subdivision: Subdivision) -> list[Card]:
+def subnational_cards(subnational: Subnational) -> list[Card]:
     """A constituent country or an exclave: its outline drawn solid, like a country's, since its border with the rest
     of its state is not in dispute."""
     return [Card(
-        uid=require_uid(subdivision.id, subdivision.uid), kind="subdivision", id=subdivision.id, prompt=subdivision.type,
-        answer_lines=(answer(subdivision.name, subdivision.alt_names), subdivision.status_line),
-        tags=tags("subdivision", subdivision.id, "territories", subdivision.region),
-        region=f"{subdivision.region:02d}", tier=TERRITORY_TIER, host=host_key(subdivision.host), note=subdivision.note,
-        render=RenderRef(spec=country_spec(subdivision.frame), geometry=lambda: (subdivision.outline(), (), None),
-                         region=lambda: framing.region(subdivision.id)),
+        uid=require_uid(subnational.id, subnational.uid), kind="subnational", id=subnational.id, prompt=subnational.type,
+        answer_lines=(answer(subnational.name, subnational.alt_names), subnational.status_line),
+        tags=tags("subnational", subnational.id, "subnational", subnational.region),
+        region=f"{subnational.region:02d}", tier=TERRITORY_TIER, host=host_key(subnational.host), note=subnational.note,
+        render=RenderRef(spec=country_spec(subnational.frame), geometry=lambda: (subnational.outline(), (), None),
+                         region=lambda: framing.region(subnational.id)),
     )]
 
 
@@ -121,21 +121,21 @@ def dispute_cards(dispute: Dispute, countries: dict[str, str]) -> list[Card]:
 
 
 def cards() -> list[Card]:
-    """Each country's card and its capital's, then the subdivisions, territories and disputes, in file
+    """Each country's card and its capital's, then the subnationals, territories and disputes, in file
     order."""
     countries, others = load_political()
     names = {c.id: c.name for c in countries}
 
-    def other_cards(other: Subdivision | Territory | Dispute) -> list[Card]:
+    def other_cards(other: Subnational | Territory | Dispute) -> list[Card]:
         if isinstance(other, Dispute):
             return dispute_cards(other, names)
-        return subdivision_cards(other) if isinstance(other, Subdivision) else territory_cards(other)
+        return subnational_cards(other) if isinstance(other, Subnational) else territory_cards(other)
 
     return [card for country in countries for card in country_cards(country)] + [
         card for other in others for card in other_cards(other)]
 
 
-def reference_errors(countries: list[Country], others: list[Subdivision | Territory | Dispute]) -> list[str]:
+def reference_errors(countries: list[Country], others: list[Subnational | Territory | Dispute]) -> list[str]:
     """Every country id a source names must exist: sovereigns, states and parties. Hosts come from the curriculum, which checks
     its own (curriculum_placements)."""
     names = {c.id: c.name for c in countries}
@@ -143,7 +143,7 @@ def reference_errors(countries: list[Country], others: list[Subdivision | Territ
     for other in others:
         if isinstance(other, Territory) and other.sovereign not in names:
             errors.append(f"{other.id}: sovereign {other.sovereign!r} is not a country")
-        if isinstance(other, Subdivision) and other.state not in names:
+        if isinstance(other, Subnational) and other.state not in names:
             errors.append(f"{other.id}: state {other.state!r} is not a country")
         if isinstance(other, Dispute):
             try:
@@ -183,7 +183,7 @@ def check() -> tuple[list[str], dict[str, BaseGeometry]]:
         try:
             errors += composition_errors(other.id, other.geometry)
             shape = other.outline()
-            if isinstance(other, Subdivision) and other.state in states:
+            if isinstance(other, Subnational) and other.state in states:
                 state = compose(other.state, states[other.state].geometry)  # uncropped: an exclave lies outside `mainland`
                 if area_km2(shape.difference(state)) > OUTSIDE_SHARE * area_km2(shape):
                     errors.append(f"{other.id}: outline is not inside its state {other.state!r}")

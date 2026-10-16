@@ -36,7 +36,7 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Look-alikes | The **3–10 card window** plus a curated **confusable-country list**. |
 | Microstates | Sit **with their neighbours** in the order, as pockets. Their capital cards follow the Capitals rule. |
 | Country cards | Show the **mainland only**. Overseas territories are their own cards, per [Territories](#territories). Remote islands are cropped from the card by its `mainland` box: the Kermadecs, the Chathams and the NZ sub-Antarctic islands, Trindade, Minami-Torishima, Okinotorishima, the Prince Edward Islands and Macquarie. The crop is for the card only; adjacency and feature regions use the full outline. |
-| Region and host | **`curriculum.yaml` is the one source** of region and pocket host for countries, subdivisions, territories and disputed areas. The entries in `countries.yaml` and `territories.yaml` carry no region. Cities take their country's region. |
+| Region and host | **`curriculum.yaml` is the one source** of region and pocket host for countries, subnationals, territories and disputed areas. The entries in `countries.yaml` and `territories.yaml` carry no region. Cities take their country's region. |
 | Territory placement | Geographic pockets (decision 5). **Greenland and Bermuda in region 19, the Kurils in 16 (until their card was retired in v3.0.1), Aruba and Curaçao in 20.** `curriculum.yaml` records the alternatives, now decided, in a comment above `confusables`. v3.0.0 moved Greenland to region 02 (Nordic & Baltic), hosted by Iceland, so it comes right after Iceland ([ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300)). |
 | Dispute parties | **Claimants or administrators only.** A party that isn't one of the 197 states gets a **short label** (Transnistria, Northern Cyprus, Sahrawi Republic (Polisario Front)). |
 | Feature regions | Derived by the [rules below](#assigning-physical-features-to-regions), with **overrides in `features.yaml`** (`region` plus `region_reason`): Nile 10, Karakoram 14, Danish Straits 2, Caucasus 6, Tian Shan 15, Amur 16, GIUK gap 2, Typhoon alley 17, and the Gulf Stream and Atlantic hurricane belt 21. |
@@ -47,7 +47,7 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Country design | **Split cards** (separate country outline and capital dot notes), as in the PoC on branch `poc/countries` (`f4a3503`). |
 | Dependencies | The 25 **include** territories in [List 1](#appendix-b-list-1-dependent-and-autonomous-territories-inhabited) get cards (23 until v3.0.1). The 27 **exclude** territories stay on the [revisit list](#intentionally-excluded-revisit-list). |
 | Disputed territories | The 9 **card** entries in [List 2](#appendix-c-list-2-disputed-and-occupied-territories) get cards (15 until v3.0.1). The 20 **no card** entries stay on the [revisit list](#intentionally-excluded-revisit-list). |
-| Subdivisions | **5 cards from v3.0.1:** England, Scotland, Wales and Northern Ireland (front word "Constituent country") and Kaliningrad Oblast ("Exclave"). Solid outline, as a country; no capital card. Placed as pockets after the United Kingdom and after Lithuania. |
+| Subnationals | **5 cards from v3.0.1:** England, Scotland, Wales and Northern Ireland (front word "Constituent country") and Kaliningrad Oblast ("Exclave"). Solid outline, as a country; no capital card. Placed as pockets after the United Kingdom and after Lithuania. |
 
 **Earlier proposals these decisions overrode:**
 
@@ -182,12 +182,12 @@ ADR 0004 spreads nearby features at least 3 cards apart, while contiguity packs 
 | Block | Cards |
 |---|---|
 | Orientation | 13: 4 oceans, 2 planetary wind bands, 7 continents |
-| Pass 1 | 538: 197 countries, 162 capitals, 5 subdivisions, 25 territories, 9 disputed areas, 115 tier 1–2 features, 25 core cities |
+| Pass 1 | 538: 197 countries, 162 capitals, 5 subnationals, 25 territories, 9 disputed areas, 115 tier 1–2 features, 25 core cities |
 | Pass 2 | 3 tier-3 features (10 in v3.0.0) |
 
-Since v3.0.0 the blocks are continents (7), countries with subdivisions, territories and disputed areas (236; 235 in v3.0.0), physical features (124; 132 in v3.0.0) and capitals and cities (187; 233 in v3.0.0); see [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300).
+Since v3.0.0 the blocks are continents (7), countries with subnationals, territories and disputed areas (236; 235 in v3.0.0), physical features (124; 132 in v3.0.0) and capitals and cities (187; 233 in v3.0.0); see [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300).
 
-Subdivisions, territories, disputed areas and tier-3 states get no capital cards. The 124 active features split 6 orientation, 115 pass 1 and 3 pass 2.
+Subnationals, territories, disputed areas and tier-3 states get no capital cards. The 124 active features split 6 orientation, 115 pass 1 and 3 pass 2.
 
 | New cards a day | New cards finish | Notes |
 |---|---|---|
@@ -239,7 +239,7 @@ Pass 2 is 10 cards, so pass 1 ends within a day of the last new card at every ra
 | One note or two | **Two notes**, `uids: {country, capital}`, as the PoC has (decided: split cards). | ankc "reversed" swaps one front/back pair. Country (outline → name) and capital (dot → capital) differ on both sides, so reversed can't express them. Cloze can't hide one image per card. Two notes also give independent tags, tiers, positions and retirement (for example, dropping the capital card for city-states). The cost is that Anki won't bury them as siblings, so the order engine has to space them. |
 | Id namespace | **Kind-prefixed id tags for new kinds**: `id_country_niger`, `id_capital_niger`, `id_city_istanbul`. Existing feature tags stay `id_<id>`. | Real collisions exist: the rivers Niger, Congo and Jordan, and retired island ids such as cyprus and taiwan. A check enforces global uniqueness across sources. |
 | New tags | `kind::<k>`, `region::NN`, `pass::<p>`. Keep `tier::` and `category::`; countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. | Filtered decks keep working. |
-| Region membership | **Countries, subdivisions, territories and disputed areas: placed by `data/curriculum.yaml`**, the one source of region and pocket host; their own yaml entries carry neither. Cities inherit their country's region. **Features: derived** by `regions.py` from the region with the largest share (a region's outline is the union of its members' full outlines, before any `mainland` crop). A `region` override with a `region_reason` in `features.yaml` covers the exceptions, and the orientation features go to the orientation block. | Region membership is curricular, not geometric (Egypt, Turkey, Russia, Kazakhstan). For 132 features, derivation is cheap and the override handles the exceptions. |
+| Region membership | **Countries, subnationals, territories and disputed areas: placed by `data/curriculum.yaml`**, the one source of region and pocket host; their own yaml entries carry neither. Cities inherit their country's region. **Features: derived** by `regions.py` from the region with the largest share (a region's outline is the union of its members' full outlines, before any `mainland` crop). A `region` override with a `region_reason` in `features.yaml` covers the exceptions, and the orientation features go to the orientation block. | Region membership is curricular, not geometric (Egypt, Turkey, Russia, Kazakhstan). For 132 features, derivation is cheap and the override handles the exceptions. |
 | Adjacency | **Computed at build time** (`make adjacency`) from the recognised-border outlines composed from the `geometry` in `countries.yaml`, uncropped. Touching is `intersects` after a 1 km buffer, to absorb 10m slivers. Sea edges link countries within 200 km, so island states aren't isolated (UK–France, Japan–Korea, Sri Lanka–India). Hand edits go in `data/adjacency.yaml` (`add`/`remove`, each with a `reason`). Results are cached in `build/adjacency.json`, keyed by an inputs hash, as `siblings.json` is. | Deterministic and reviewable. ~200 outlines with an STRtree index takes seconds. |
 
 ### Ordering engine

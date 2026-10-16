@@ -161,7 +161,7 @@ def open_verify(rows: list[Noted]) -> list[str]:
 def missing_card_notes(rows: list[Noted]) -> list[str]:
     """Every card's back shows its note, so the political and city cards need one too (`missing_notes` does features)."""
     return [f"{r.key}: no note (1-3 sentences on why it matters)" for r in rows
-            if not r.note and r.key.partition(":")[0] in ("country", "capital", "city", "subdivision", "territory", "dispute")]
+            if not r.note and r.key.partition(":")[0] in ("country", "capital", "city", "subnational", "territory", "dispute")]
 
 
 def verify_errors(release: bool) -> list[str]:

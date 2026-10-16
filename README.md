@@ -1,6 +1,6 @@
 # World Atlas
 
-An Anki deck of 554 map cards that teaches the political and physical map of the world together: 197 countries, 162 capitals, 25 other cities, 25 territories, 5 subdivisions (England, Scotland, Wales, Northern Ireland and Kaliningrad), 9 disputed areas, the 7 continents and 131 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name, and under a thin rule, in smaller muted text, a short note on why it matters (the same note the study guide prints).
+An Anki deck of 554 map cards that teaches the political and physical map of the world together: 197 countries, 162 capitals, 25 other cities, 25 territories, 5 subnationals (England, Scotland, Wales, Northern Ireland and Kaliningrad), 9 disputed areas, the 7 continents and 131 physical features that shaped settlement, trade and war (oceans and seas, straits, rivers, mountain ranges, plains, peninsulas and six climate systems). Each card front shows an unlabelled map with one place highlighted in red and its type ("Country", "City", "Strait") above it. The back gives its name, and under a thin rule, in smaller muted text, a short note on why it matters (the same note the study guide prints).
 
 World Atlas grew out of the **Geographic Features** deck (v1), which held physical features alone. Its 124 active feature notes carry over, with their review history; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
 
@@ -46,22 +46,22 @@ A release build names its version: `make all RELEASE=1 RELEASE_VERSION=v3.0.0`. 
 
 Rendering takes about 10 s per map and is cached, so only changed maps re-render. `JOBS=2 make all` renders in parallel; each worker needs about 1.5 GB of RAM.
 
-`make guide` writes `build/world-atlas-guide.pdf`, a printable guide to every card in the order Anki shows new cards: entry N is the Nth new card, with its map, answer and a short note on why it matters. It is sectioned by the four blocks, then by region. `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with one region only: that region's countries, capitals, cities, subdivisions, territories and disputed areas, plus the features the study order places in its run. The `tag:region::NN` filtered deck (see **Pacing**) holds the same political cards but no features, because features have no region tag. It uses the optional `guide` dependency group (reportlab).
+`make guide` writes `build/world-atlas-guide.pdf`, a printable guide to every card in the order Anki shows new cards: entry N is the Nth new card, with its map, answer and a short note on why it matters. It is sectioned by the four blocks, then by region. `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with one region only: that region's countries, capitals, cities, subnationals, territories and disputed areas, plus the features the study order places in its run. The `tag:region::NN` filtered deck (see **Pacing**) holds the same political cards but no features, because features have no region tag. It uses the optional `guide` dependency group (reportlab).
 
 ## Study
 
 Every card is in one deck, `World Atlas`, with no subdecks. Each card has these tags:
 
-- `kind::<kind>`: `country` (197), `capital` (162), `city` (25), `territory` (25), `subdivision` (5), `dispute` (9), `continent` (7) or `feature` (124). A subdivision is a constituent country of the United Kingdom or an exclave (Kaliningrad)
-- `block::continents`, `block::countries`, `block::features` or `block::cities` (7, 236, 124 and 187 cards): the study block. Countries, subdivisions, territories and disputed areas are in `countries`; capitals and other cities in `cities`
-- `region::01` to `region::21`: the region of a country, capital, city, subdivision, territory or disputed area (features have none)
-- `category::<slug>`: `countries`, `cities` (capitals and other cities), `territories` (territories, subdivisions and disputed areas), `continents`, or a feature category: `water-bodies`, `straits-chokepoints`, `mountain-ranges`, `rivers-deltas`, `deserts-plateaus-plains`, `peninsulas-isthmuses`, `regions-rifts` or `climate-systems`
+- `kind::<kind>`: `country` (197), `capital` (162), `city` (25), `territory` (25), `subnational` (5), `dispute` (9), `continent` (7) or `feature` (124). A subnational is a constituent country of the United Kingdom or an exclave (Kaliningrad)
+- `block::continents`, `block::countries`, `block::features` or `block::cities` (7, 236, 124 and 187 cards): the study block. Countries, subnationals, territories and disputed areas are in `countries`; capitals and other cities in `cities`
+- `region::01` to `region::21`: the region of a country, capital, city, subnational, territory or disputed area (features have none)
+- `category::<slug>`: `countries`, `cities` (capitals and other cities), `territories` (territories and disputed areas), `subnational` (England, Scotland, Wales, Northern Ireland and Kaliningrad Oblast), `continents`, or a feature category: `water-bodies`, `straits-chokepoints`, `mountain-ranges`, `rivers-deltas`, `deserts-plateaus-plains`, `peninsulas-isthmuses`, `regions-rifts` or `climate-systems`
 - `id_<id>` for a feature, e.g. `id_nile`, or `id_<kind>_<id>` for any other kind, e.g. `id_country_france`
 
 New cards come up in a fixed order, in four blocks:
 
 1. **Continents** (7 cards, about half a day at 15 a day): Europe first, Antarctica last.
-2. **Countries, territories and disputed areas** (236 cards, about 16 days): once round a ring of 21 regions, starting in Western Europe with Portugal and ending in the Caribbean with the Bahamas. Within a region you go country by neighbouring country. Microstates and enclaves come right after a neighbour (Andorra after Spain, Monaco after France), and subdivisions, territories and disputed areas after the country they are placed with (England and Gibraltar after the United Kingdom, Kaliningrad after Lithuania, Greenland after Iceland).
+2. **Countries, territories and disputed areas** (236 cards, about 16 days): once round a ring of 21 regions, starting in Western Europe with Portugal and ending in the Caribbean with the Bahamas. Within a region you go country by neighbouring country. Microstates and enclaves come right after a neighbour (Andorra after Spain, Monaco after France), and subnationals, territories and disputed areas after the country they are placed with (England and Gibraltar after the United Kingdom, Kaliningrad after Lithuania, Greenland after Iceland).
 3. **Physical features** (124 cards, about 8 days): the oceans and planetary winds first, then the rest round the ring, region by region. The 3 tier 3 features come last.
 4. **Capitals and cities** (187 cards, about 12½ days): round the ring again, in the same country order. Each country's capital comes first, then its other cities. Microstates and small island states have no capital card.
 
@@ -133,7 +133,7 @@ Re-importing never changes a card's place in the new-card queue, so **an upgrade
 
 ### Upgrading from Geographic Features
 
-World Atlas v2.0.0 replaces the **Geographic Features** deck (v1), which held the physical features alone. World Atlas has 554 cards: 124 of the same 132 features (8 were retired in v3.0.1), plus countries, capitals, cities, territories, subdivisions, disputed areas and continents. Pick one of the two paths below.
+World Atlas v2.0.0 replaces the **Geographic Features** deck (v1), which held the physical features alone. World Atlas has 554 cards: 124 of the same 132 features (8 were retired in v3.0.1), plus countries, capitals, cities, territories, subnationals, disputed areas and continents. Pick one of the two paths below.
 
 **Fresh start.** Use this if you haven't studied much. You get the full study order.
 
@@ -166,13 +166,13 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 - **`data/features.yaml`** is the feature list. Each entry has a name, a type word, a category, a tier, a `note`, geometry selectors and `expect` bounds that catch accidental changes to the shape. The note is one to three plain sentences on why the feature matters; it appears on the card back and in the PDF guide, and `make check-data` fails if an active card lacks one.
 - **`geometry/*.geojson`** holds shapes Natural Earth lacks. Every feature in a file needs `source`, `method` and `refs`. The scripts that made the derived shapes are in `tools/` ([tools/README.md](tools/README.md)).
 - **Type words:** `type` must be one of the 23 words in `src/geofeat/model.py`.
-- **World Atlas data:** `data/countries.yaml`, `data/territories.yaml` and `data/cities.yaml` hold the political cards; `data/curriculum.yaml` places each country, subdivision, territory and disputed area in a region. See [Political data](docs/architecture.md#political-data).
+- **World Atlas data:** `data/countries.yaml`, `data/territories.yaml` and `data/cities.yaml` hold the political cards; `data/curriculum.yaml` places each country, subnational, territory and disputed area in a region. See [Political data](docs/architecture.md#political-data).
 
 [docs/architecture.md](docs/architecture.md) covers the selectors, frame options, nesting overrides and every check.
 
 **Uids.** `make ids` gives each new entry a permanent `uid`, the Anki note GUID, and `make positions` gives it a new-card position; `make all` refuses to build while either is missing. Never edit or reuse a uid. A feature's `id`, `name`, tier and category can change freely without losing review history.
 
-**Retiring a card.** Set `retired: true` and keep the rest of the entry. This works on a feature, city, territory, subdivision or disputed area, and on a country's `capital:` for its capital card. A retired territory, subdivision or disputed area also comes out of `data/curriculum.yaml`. A tier 3 state's capital must stay retired; `make check-data` fails otherwise. After un-retiring one, run `make check-data`.
+**Retiring a card.** Set `retired: true` and keep the rest of the entry. This works on a feature, city, territory, subnational or disputed area, and on a country's `capital:` for its capital card. A retired territory, subnational or disputed area also comes out of `data/curriculum.yaml`. A tier 3 state's capital must stay retired; `make check-data` fails otherwise. After un-retiring one, run `make check-data`.
 
 **Reviewing maps.** `make sheet` writes a grid of every map to `build/sheet.png`; `make phone` writes each map 390 px wide, as on a phone; `make pairs` shows neighbouring features side by side; `make cvd` simulates colour blindness. Each except `pairs` takes `IDS="bosporus country:france city:*"` to limit it to the maps you name (a bare id is a feature); `make review` writes one phone-size sheet per region in study order. `make import-test` imports the package into fresh Anki collections and checks the study order, a region filtered deck, Check Database and the upgrade from v1; [docs/device-test-checklist.md](docs/device-test-checklist.md) repeats those checks by hand on Anki desktop, AnkiDroid and AnkiMobile.
 
