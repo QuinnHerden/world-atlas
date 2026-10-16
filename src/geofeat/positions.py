@@ -382,6 +382,8 @@ def guard(lock: Lock, strict: bool, release: str | None = None, require_release:
         errors.append(f"VERSION={release!r} is not vX.Y.Z")
     elif require_release and not releases:
         errors.append("a release build needs its version: set VERSION=vX.Y.Z (or tag HEAD)")
+    if require_release and lock.draft:
+        errors.append(f"a release must ship a frozen {LOCK_FILE.name} (draft: false)")
     errors += series_errors(lock, last, None)
     for tag in releases:
         errors += series_errors(lock, None, tag)

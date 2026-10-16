@@ -218,6 +218,10 @@ class FreezeGuardTest(unittest.TestCase):
         self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, require=True)[0])  # a release needs VERSION
         self.assertTrue(self.guard(Lock(False, {}, 4), texts, ["v2.0.0"], True)[0])
 
+    def test_a_release_ships_a_frozen_lock(self) -> None:
+        texts = {"origin/main": self.V2, "v2.0.0": self.V2}
+        self.assertTrue(self.guard(Lock(True, {}, 3), texts, ["v2.0.0"], True, release="v3.0.0", require=True)[0])
+
     def test_a_series_bump_after_a_major_release_needs_the_next_major(self) -> None:
         v3 = dump(self.BASE)
         bumped = Lock(False, {A: Entry(1, "countries", 1), B: Entry(2, "countries", 2)}, 4)
