@@ -453,8 +453,8 @@
   category: Continents
   tier: 1
   note: >-
-    North America runs from the Arctic to the Isthmus of Panama, where it joins South America. It includes Central
-    America, the Caribbean islands and Greenland.
+    North America runs from the Arctic to the Isthmus of Panama, where it joins South America. It usually includes
+    Central America, the Caribbean islands and Greenland.
   style: area
   geometry:
   - {layer: continent, select: {id: north-america}}
@@ -467,9 +467,9 @@
   category: Continents
   tier: 1
   note: >-
-    Oceania comprises Australia, New Zealand, Papua New Guinea and the Pacific islands of Melanesia, Micronesia and
-    Polynesia. Some atlases call the seventh continent "Australia" and treat Oceania as a wider region around it. It
-    is the least populous of the six inhabited continents.
+    Oceania usually means Australia, New Zealand, Papua New Guinea and the Pacific islands of Melanesia, Micronesia
+    and Polynesia. Some atlases call the seventh continent "Australia" and treat Oceania as a wider region around
+    it. It is the least populous of the six inhabited continents.
   style: area
   geometry:
   - {layer: continent, select: {id: oceania}}
@@ -615,8 +615,7 @@
   category: Water Bodies
   tier: 2
   note: >-
-    Japan defeated the Russian fleet here in 1905 (see Korea Strait). The sea's name itself is disputed between
-    Japan and the Koreas.
+    Japan defeated the Russian fleet here in 1905. The sea's name itself is disputed between Japan and the Koreas.
   style: area
   geometry:
   - {layer: 10m_geography_marine_polys, select: {ne_id: 1159115305}}

@@ -6,7 +6,7 @@ All notable changes to this deck are recorded here. The format follows [Keep a C
 
 ### Changed
 
-- Card notes no longer refer to the deck or to other cards. Notes that said a card "shows" a border now state the border as fact, and the continent notes describe the usual Europe–Asia boundary without claiming it for the deck. Re-importing the package updates the notes on existing cards; scheduling is kept.
+- Card notes no longer refer to the deck or to other cards. Sentences that only pointed at other cards ("has no card of its own") are gone; where a sentence carried a real fact, such as which recognised borders include a disputed area, the fact stays as plain geography. The continent notes describe the usual Europe–Asia boundary and the usual extent of North America and Oceania without claiming them for the deck. Notes appear on card backs and in the study guide; re-importing the package updates them on existing cards and keeps scheduling.
 
 ## [3.0.0] - 2026-10-16
 
