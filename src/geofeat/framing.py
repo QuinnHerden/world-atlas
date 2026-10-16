@@ -15,8 +15,9 @@ from shapely.geometry.base import BaseGeometry
 from geofeat.frame import ASPECT, FILL, GIANT_FRAME_M, Equirectangular, centre, main_group, project
 from geofeat.ne import GEOD
 from geofeat.polities import load_political
+from geofeat.regions import ring
 
-Framing = tuple[str, BaseGeometry, tuple[float, float, float, float] | None]
+Framing = tuple[str, BaseGeometry, tuple[float, float, float, float] | None, float | None]
 
 # Capitals and cities on their host's region frame (v2.1.0, ADR 0003). False reverts them to v2.0 framing
 # (their host country's frame, or the 1,000 km close-dot frame) without touching the political cards.
@@ -42,27 +43,40 @@ SUB_FRAMES = {
 # the north coast of South America (lon0, lon1, lat0, lat1)
 LOCATORS = {"21-lesser-antilles": (-88.0, -56.0, 7.0, 28.0)}
 MUST_SUB_FRAME = frozenset({18})  # every card in these regions must be on a sub-frame
+INCLUDE_PAD_DEG = 2.0  # round a body a card's frame `include`s, so its coast isn't on the frame's edge
 
 
 @cache
-def _entries() -> dict[str, tuple[int, BaseGeometry]]:
-    """Every country, territory and dispute: its region and its card outline."""
+def _entries() -> dict[str, tuple[int, BaseGeometry, tuple[str, ...]]]:
+    """Every country, territory and dispute: its region, its card outline and what its frame `include`s."""
     countries, others = load_political()
-    return {e.id: (e.region, e.outline()) for e in (*countries, *others)}
+    return {e.id: (e.region, e.outline(), tuple(e.frame.include)) for e in (*countries, *others)}
 
 
 @cache
-def _hull_points(id: str) -> list[tuple[float, float]] | None:
-    """The lon/lat corners of the convex hull of a member's main body, or None for a giant."""
+def _body(id: str) -> tuple[list[tuple[float, float]], bool]:
+    """The lon/lat corners of the convex hull of a card's main body, and whether it is a giant."""
     outline = _entries()[id][1]
     projection = Equirectangular(*centre(outline))
     body, _ = main_group(project(outline, projection))
     x0, y0, x1, y1 = body.bounds
-    if max(x1 - x0, (y1 - y0) * ASPECT) / FILL > GIANT_FRAME_M:
-        return None
     xs, ys = np.array(body.convex_hull.exterior.coords).T
     lons, lats = Transformer.from_crs(projection.proj4_init, "EPSG:4326", always_xy=True).transform(xs, ys)
-    return list(zip(lons, lats))
+    return list(zip(lons, lats)), max(x1 - x0, (y1 - y0) * ASPECT) / FILL > GIANT_FRAME_M
+
+
+def _hull_points(id: str) -> list[tuple[float, float]] | None:
+    """A member's main body's hull corners, or None for a giant."""
+    hull, giant = _body(id)
+    return None if giant else hull
+
+
+@cache
+def _included(ids: tuple[str, ...]) -> tuple[tuple[float, float], ...]:
+    """Points round the main bodies a card's frame `include`s, INCLUDE_PAD_DEG out (giants too: Australia)."""
+    if unknown := [i for i in ids if i not in _entries()]:
+        raise ValueError(f"frame include: no country or territory {', '.join(unknown)}")
+    return tuple(p for i in ids for p in MultiPoint(_body(i)[0]).convex_hull.buffer(INCLUDE_PAD_DEG).exterior.coords)
 
 
 @cache
@@ -93,16 +107,22 @@ def region_of(id: str) -> tuple[str, tuple[str, ...]]:
         return found[0], ()
     if region in MUST_SUB_FRAME:
         raise ValueError(f"{id}: region {region} is drawn on sub-frames only, and none of framing.SUB_FRAMES has it")
-    return f"{region:02d}", tuple(sorted(i for i, (r, _) in entries.items() if r == region))
+    return f"{region:02d}", tuple(sorted(i for i, (r, _, _) in entries.items() if r == region))
 
 
 def region(id: str) -> Framing:
-    """("region", the region's member points, None) or ("fixed", a sub-frame's box points, its regional locator) for
-    a political card."""
+    """("region", the region's member points, None, its frame_margin) or ("fixed", a sub-frame's box points, its
+    regional locator, None) for a political card. A card whose frame `include`s other bodies (New Zealand: Australia)
+    adds points round them."""
     name, members = region_of(id)
     if name in SUB_FRAMES:
-        return "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name)
-    return "region", _points(members), None
+        framing = "fixed", _box_points(*SUB_FRAMES[name][0]), LOCATORS.get(name), None
+    else:
+        framing = "region", _points(members), None, ring()[int(name)].frame_margin
+    if include := _entries()[id][2]:
+        kind, points, locator, margin = framing
+        return kind, MultiPoint([*points.geoms, *_included(include)]), locator, margin
+    return framing
 
 
 def city_region(country_id: str) -> Callable[[], Framing] | None:

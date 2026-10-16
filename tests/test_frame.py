@@ -144,6 +144,25 @@ class PoliticalFrameTest(unittest.TestCase):
         f = self.frame(hungary, inset=True, inset_km=400.0)
         self.assertAlmostEqual(f.detail[1] - f.detail[0], 400_000)
 
+    def test_a_region_frame_margin_widens_the_shared_frame(self) -> None:
+        from geofeat.frame import REGION_MARGIN
+
+        subject, region = box(19, 46, 22, 48), MultiPoint([(0, 30), (40, 30), (0, 60), (40, 60)])  # over the minimum
+        default, wider = self.frame(subject, region), self.frame(subject, region, region_margin=1.4)
+        self.assertAlmostEqual((wider.extent[1] - wider.extent[0]) / (default.extent[1] - default.extent[0]),
+                               1.4 / REGION_MARGIN)
+
+    def test_inset_centre_moves_the_inset_but_not_its_mark(self) -> None:
+        from geofeat.frame import _to_map
+
+        kosovo = box(20.3, 42.3, 21.5, 43.1)
+        plain, moved = self.frame(kosovo), self.frame(kosovo, inset_centre=(22.0, 42.5), inset_km=300.0)
+        dx0, dx1, dy0, dy1 = moved.detail
+        x, y = _to_map(moved.projection, 22.0, 42.5)
+        self.assertAlmostEqual((dx0 + dx1) / 2, x, delta=1)
+        self.assertAlmostEqual((dy0 + dy1) / 2, y, delta=1)
+        self.assertEqual(moved.mark, plain.mark)
+
     def test_close_dot_city_gets_a_detail_inset_round_its_dot(self) -> None:
         from geofeat.frame import CLOSE_DOT_DETAIL_M, DETAIL_SHARE, DETAIL_ZOOM, project
 
@@ -209,3 +228,21 @@ class SubFramesTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FrameIncludeTest(unittest.TestCase):
+    def test_new_zealands_frame_takes_in_australia_and_its_capital_follows(self) -> None:
+        from geofeat.framing import SUB_FRAMES, _box_points, _included, city_region, region
+
+        kind, points, _, _ = region("new-zealand")
+        self.assertEqual(kind, "fixed")
+        self.assertLessEqual(set(_included(("australia",))), {(p.x, p.y) for p in points.geoms})
+        self.assertTrue(city_region("new-zealand")()[1].equals(points))
+        polynesia = _box_points(*SUB_FRAMES["18-polynesia"][0])
+        self.assertTrue(region("tonga")[1].equals(polynesia))  # the rest of Polynesia keeps its box
+
+    def test_an_unknown_include_fails(self) -> None:
+        from geofeat.framing import _included
+
+        with self.assertRaises(ValueError):
+            _included(("atlantis",))

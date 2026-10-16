@@ -26,9 +26,9 @@ INSET_BELOW_M = 8_000_000  # wider frames show whole continents, and their box o
 CLOSE_DOT_FRAME_M = 1_000_000
 
 # Country, territory and dispute subjects (spec.framing) are framed on their curriculum region: the box round its
-# members' main bodies, REGION_MARGIN larger and at least REGION_MIN_M wide ("region"), or a sub-frame's fixed box
-# ("fixed"), shared by every card on it whose subject fits SUBJECT_MARGIN in from the edges (others shift or widen
-# theirs). A subject that would still fill more than REGION_FILL_MAX of it widens its frame to that fill, unless it is
+# members' main bodies, REGION_MARGIN larger (or the region's own `frame_margin`, spec.region_margin) and at least
+# REGION_MIN_M wide ("region"), or a sub-frame's fixed box ("fixed"), shared by every card on it whose subject fits
+# SUBJECT_MARGIN in from the edges (others shift or widen theirs). A subject that would still fill more than REGION_FILL_MAX of it widens its frame to that fill, unless it is
 # a giant, whose v2.0 frame was over GIANT_FRAME_M wide: those keep their v2.0 frames (Russia, Canada, the United
 # States, Greenland, China, India, Japan, Myanmar, Indonesia, Australia, DR Congo, Brazil, Argentina, Chile, Peru;
 # Myanmar and Peru sit near the line). A scattered state (Kiribati, French Polynesia) is never a giant, nor is a subject
@@ -192,7 +192,7 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
     rx0, ry0, rx1, ry1 = project(points, projection).bounds
     width = _long(rx0, ry0, rx1, ry1)
     if feature.framing == "region":
-        width = max(width * REGION_MARGIN, REGION_MIN_M)
+        width = max(width * (getattr(feature, "region_margin", None) or REGION_MARGIN), REGION_MIN_M)
     x0, y0 = (rx0 + rx1 - width) / 2, (ry0 + ry1 - width / ASPECT) / 2
 
     projected = project(geometry, projection)
@@ -236,7 +236,9 @@ def _political(feature: Framed, geometry: BaseGeometry, points: BaseGeometry) ->
         wanted = disc < DETAIL_DISC_PX * width / 1600 and width / dw * DETAIL_SHARE >= DETAIL_ZOOM
     if not wanted:
         return Frame(projection, extent, inset=False)
-    detail = _window(projection, (tx0 + tx1) / 2, (ty0 + ty1) / 2, dw)
+    centre_at = getattr(feature, "inset_centre", None)
+    cx, cy = _to_map(projection, *centre_at) if centre_at else ((tx0 + tx1) / 2, (ty0 + ty1) / 2)
+    detail = _window(projection, cx, cy, dw)
     return Frame(projection, extent, inset=False, detail=detail, mark=main.convex_hull)
 
 

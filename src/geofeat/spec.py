@@ -47,9 +47,13 @@ class RenderSpec(BaseModel):
     close_dot: bool = False
     # A country, territory or dispute subject: framed on its curriculum region, or on a fixed sub-frame (`fixed`)
     framing: Literal["region", "fixed"] | None = None
+    # A region frame's own margin (curriculum.yaml `frame_margin`), in place of frame.REGION_MARGIN
+    region_margin: float | None = None
     # A political card's own framing exceptions (data `frame:`): force its detail inset on or off, set its width
     inset: bool | None = None
     inset_km: float | None = None
+    inset_centre: tuple[float, float] | None = None  # lon, lat: the inset's centre, in place of the subject's
+    ring: bool = True  # False: no ring round the subject anywhere
     # A small regional locator (lon0, lon1, lat0, lat1, plate carrée) for a sub-frame too tight to place on its own
     locator: tuple[float, float, float, float] | None = None
 

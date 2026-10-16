@@ -487,7 +487,8 @@ def _detail(fig, ax, spec: RenderSpec, geometry: BaseGeometry, frame_: Frame, ta
     _basemap(inset, spec, zoomed, _lonlat_bounds(inset), clear=geometry if spec.outline is None else None)
     shown = project(geometry, frame_.projection).intersection(box(dx0, dy0, dx1, dy1))
     sx0, sy0, sx1, sy1 = shown.bounds
-    _country(inset, spec, geometry, zoomed, ring=max(sx1 - sx0, sy1 - sy0) * w / (dx1 - dx0) < INSET_RING_BELOW_PX)
+    _country(inset, spec, geometry, zoomed,
+             ring=spec.ring and max(sx1 - sx0, sy1 - sy0) * w / (dx1 - dx0) < INSET_RING_BELOW_PX)
     if spec.dot:
         _dot(inset, *spec.dot)
 
@@ -565,7 +566,7 @@ def render(spec: RenderSpec, geometry: BaseGeometry, context: tuple[BaseGeometry
                           linewidth=pt(FORMER_SHORE_PX), linestyle=(0, (4, 3)), zorder=1.45)
     if spec.country:
         skip = None if frame_.mark is None else frame_.mark.buffer(SKIP_RING_PX * _metres_per_px(ax))
-        _country(ax, spec, geometry, frame_, skip=skip)
+        _country(ax, spec, geometry, frame_, ring=spec.ring, skip=skip)
     else:
         _highlight(ax, spec, geometry, frame_)
     if spec.dot:

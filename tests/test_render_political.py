@@ -136,3 +136,23 @@ class FilteredRenderTest(unittest.TestCase):
                 jobs.render_cards([], only=["country:beta"])
             self.assertEqual(json.loads(media.read_text()), {"country:alpha": "old.png", "country:beta": "new.png"})
             self.assertTrue((deck / "old.png").exists())
+
+
+class RingOverrideTest(unittest.TestCase):
+    def test_ring_false_reaches_the_spec_and_draws_no_ring(self) -> None:
+        from unittest import mock
+
+        from geofeat.polities import FrameOverride
+        from geofeat.sources.political import country_spec, outline_spec
+
+        self.assertFalse(country_spec(FrameOverride(ring=False)).ring)
+        self.assertFalse(outline_spec(FrameOverride(ring=False)).ring)
+        self.assertTrue(country_spec().ring)
+        spec = country_spec(FrameOverride(ring=False))
+        f = frame(spec, box(0, 0, 0.01, 0.01))
+        with mock.patch.object(render, "_metres_per_px", return_value=1.0), \
+                mock.patch.object(render, "_cluster_rings") as rings:
+            render._country(mock.MagicMock(), spec, box(0, 0, 0.01, 0.01), f, ring=spec.ring)
+            rings.assert_not_called()
+            render._country(mock.MagicMock(), country_spec(), box(0, 0, 0.01, 0.01), f)
+            rings.assert_called_once()

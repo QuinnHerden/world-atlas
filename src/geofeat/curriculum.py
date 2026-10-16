@@ -5,7 +5,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from ruamel.yaml import YAML
 
 from geofeat.model import ROOT
@@ -38,6 +38,9 @@ class Region(BaseModel):
     disputes: dict[str, str] = {}
     walk: list[str] = []  # the frozen neighbour walk over the walk nodes (P3); empty: the order engine generates one
     opener: str | None = None  # a region frame feature opening the region; geofeat.order.inputs checks it
+    # The region frame's margin round its members' box, in place of frame.REGION_MARGIN: a tall region whose 16:9
+    # frame clips the neighbours north and south of it (ADR 0010)
+    frame_margin: float | None = Field(None, ge=1.0, le=2.0)
 
     def placed(self) -> dict[str, str]:
         return self.territories | self.disputes
