@@ -305,7 +305,7 @@ def newest(tags: list[str], series: int | None = None) -> str | None:
 
 def series_errors(lock: Lock, last: str | None, release: str | None) -> list[str]:
     """A lock's series against the release tags. `last` is the newest release reachable from HEAD; `release` the
-    version this build is for (a release build's VERSION, or a release tag on HEAD). The series may stay at the
+    version this build is for (a release build's RELEASE_VERSION, or a release tag on HEAD). The series may stay at the
     newest release's major or start the next one, a fresh freeze; only a major version may start it, so a release
     must be of the lock's series."""
     errors = []
@@ -361,7 +361,7 @@ def guard(lock: Lock, strict: bool, release: str | None = None, require_release:
     """The freeze guard: (errors, warnings). The lock is held to the base ref's and to that of the newest release of
     its own series, and its series to the release tags (`series_errors`). `strict` (a release build, or `make
     positions`) makes an unreadable base ref, a shallow clone or unreadable tags an error for a frozen lock, not a
-    warning. `release`, a release build's version (VERSION=vX.Y.Z), and every release tag on HEAD must be of the
+    warning. `release`, a release build's version (RELEASE_VERSION=vX.Y.Z), and every release tag on HEAD must be of the
     lock's series; `require_release` (a release build) fails without one."""
     ref = base_ref()
     text = base_text(ref)
@@ -379,9 +379,9 @@ def guard(lock: Lock, strict: bool, release: str | None = None, require_release:
     last = newest(tags)
     releases = ([release] if release else []) + head_tags()
     if release is not None and version(release) is None:
-        errors.append(f"VERSION={release!r} is not vX.Y.Z")
+        errors.append(f"RELEASE_VERSION={release!r} is not vX.Y.Z")
     elif require_release and not releases:
-        errors.append("a release build needs its version: set VERSION=vX.Y.Z (or tag HEAD)")
+        errors.append("a release build needs its version: set RELEASE_VERSION=vX.Y.Z (or tag HEAD)")
     if require_release and lock.draft:
         errors.append(f"a release must ship a frozen {LOCK_FILE.name} (draft: false)")
     errors += series_errors(lock, last, None)

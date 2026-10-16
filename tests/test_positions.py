@@ -215,7 +215,7 @@ class FreezeGuardTest(unittest.TestCase):
         self.assertEqual(self.guard(reordered, texts, ["v2.0.0"], True, head=["v3.0.0"], require=True), ([], []))
         self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, release="v2.1.0", require=True)[0])
         self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, head=["v2.1.0"])[0])
-        self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, require=True)[0])  # a release needs VERSION
+        self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, require=True)[0])  # a release needs RELEASE_VERSION
         self.assertTrue(self.guard(Lock(False, {}, 4), texts, ["v2.0.0"], True)[0])
 
     def test_a_release_ships_a_frozen_lock(self) -> None:

@@ -36,7 +36,7 @@ Greenland keeps its v2 card and uid (`24rdGoHY6W`) and is card 23, at 11,500, in
 - A base of an earlier series isn't compared entry by entry. It is checked to be a well-formed lock of its own format, and the new lock must keep every uid of the newest earlier release (`dropped_released`): users hold those notes. A uid only ever on main or a branch may go.
 - A base of a later series is an error: a series never goes back.
 - `series_errors` holds the series to the release tags. It may equal the major version of the newest release merged into `HEAD`, or be exactly the next one (a fresh freeze). It may not be lower, and it may not skip a major version. Release tags are found with `git tag --merged HEAD`, exact `vX.Y.Z` only, newest by version.
-- A release build names its version: `make all RELEASE=1 VERSION=vX.Y.Z`. The version's major, and any release tag on `HEAD`, must equal the lock's series, so a `v2.x` release can't ship a series-3 lock. A release build with no version and no tag on `HEAD` fails. A non-release build whose lock is ahead of the newest release warns that the next release must be vN.0.0.
+- A release build names its version: `make all RELEASE=1 RELEASE_VERSION=vX.Y.Z`. The version's major, and any release tag on `HEAD`, must equal the lock's series, so a `v2.x` release can't ship a series-3 lock. A release build with no version and no tag on `HEAD` fails. A non-release build whose lock is ahead of the newest release warns that the next release must be vN.0.0.
 - In a release build or `make positions`, a frozen lock fails when the tags can't be listed or the clone is shallow.
 
 **To re-freeze**, in a future major version N:
@@ -44,7 +44,7 @@ Greenland keeps its v2 card and uid (`24rdGoHY6W`) and is card 23, at 11,500, in
 1. Replace the lock with a header of `draft: true` and `series: N`.
 2. Run `make positions`. A draft lock is regenerated from the study order at stride 500.
 3. Set `draft: false` and commit.
-4. Build with `make all RELEASE=1 VERSION=vN.0.0` and release as vN.0.0.
+4. Build with `make all RELEASE=1 RELEASE_VERSION=vN.0.0` and release as vN.0.0.
 
 **This is not an exception mechanism.** No entry can change within a series: the guard within a series is ADR 0006's, unchanged. A new series is a whole new freeze, not an edit to the old one. It is tied to a semver major version and checked against the release tags, and it can't go back or skip a version. Breaking the order is possible, but only as a declared, versioned break.
 

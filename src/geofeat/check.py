@@ -268,8 +268,8 @@ def lock_freeze_errors(release: bool) -> list[str]:
         lock = positions.read()
     except (SystemExit, ValueError) as exc:
         return [str(exc)]
-    errors, warnings = positions.guard(lock, strict=release, release=os.environ.get("VERSION") or None if release else None,
-                                       require_release=release)
+    version = os.environ.get("RELEASE_VERSION") or None if release else None
+    errors, warnings = positions.guard(lock, strict=release, release=version, require_release=release)
     for warning in warnings:
         print(f"warning: {warning}")
     return errors

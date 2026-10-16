@@ -24,7 +24,7 @@ A new study order in four blocks, political and city maps redrawn on their curri
 - Country, territory, dispute, capital and city cards no longer show the world locator. Feature cards keep it.
 - Political land is ringed only at microstate scale, per island group.
 - The study guide is sectioned by block, then region.
-- A release build names its version, `make all RELEASE=1 VERSION=vX.Y.Z`, whose major must equal the lock's series. Release tags are read with `git tag --merged HEAD` (exact `vX.Y.Z` only), and a release build fails on a shallow clone.
+- A release build names its version, `make all RELEASE=1 RELEASE_VERSION=vX.Y.Z`, whose major must equal the lock's series. Release tags are read with `git tag --merged HEAD` (exact `vX.Y.Z` only), and a release build fails on a shallow clone.
 - Features no longer take an `anchor` override; the schema rejects one. Cities keep theirs.
 
 ### Upgrade notes

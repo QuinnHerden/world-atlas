@@ -42,7 +42,7 @@ make adjacency  # the country adjacency graph and its report
 
 Output: `dist/world-atlas.apkg`. Import it in Anki with **File → Import**.
 
-A release build names its version: `make all RELEASE=1 VERSION=v3.0.0`. It fails without `VERSION` (unless a release tag is on `HEAD`), when the version's major isn't the lock's series, while a note has an open verify item, or when the freeze guard can't run: no readable `origin/main`, a shallow clone, or no tags. Fetch the full history and tags first.
+A release build names its version: `make all RELEASE=1 RELEASE_VERSION=v3.0.0`. It fails without `RELEASE_VERSION` (unless a release tag is on `HEAD`), when the version's major isn't the lock's series, while a note has an open verify item, or when the freeze guard can't run: no readable `origin/main`, a shallow clone, or no tags. Fetch the full history and tags first.
 
 Rendering takes about 10 s per map and is cached, so only changed maps re-render. `JOBS=2 make all` renders in parallel; each worker needs about 1.5 GB of RAM.
 
