@@ -142,8 +142,8 @@ class FrameOverride(Strict):
     """A card's own exception to the political framing rules: `inset` forces its detail inset on or off, and
     `inset_km` sets the inset's width (the Spratlys, zoomed in past the default so the island group reads);
     `inset_centre` centres the inset on a point instead of the subject, so it takes in the neighbours it is told apart
-    from (the ABC islands). `ring: false` draws no ring round the subject, on the map or in the inset; `ring: single`
-    draws one on the main map round all its parts (a state scattered over an ocean), and none in the inset. On a country
+    from (the ABC islands). `ring: false` draws no ring round the subject, on the map or in the inset; `ring: oval`
+    draws one oval on the main map round all its parts (a state scattered over an ocean), and none in the inset. On a country
     these apply to the country card only; its capital card always has an inset by the city rule, and no ring.
     `include` names countries or territories whose main bodies the frame holds too, moving before it widens (Australia,
     for New Zealand). It moves the frame itself, so the capital and city cards drawn on it follow."""
@@ -151,7 +151,7 @@ class FrameOverride(Strict):
     inset: bool | None = None
     inset_km: Annotated[float, Field(gt=0, le=5000)] | None = None
     inset_centre: tuple[Lon, Lat] | None = None
-    ring: bool | Literal["single"] = True
+    ring: bool | Literal["oval"] = True
     include: list[Id] = []
 
 

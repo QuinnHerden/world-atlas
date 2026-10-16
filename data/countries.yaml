@@ -10,7 +10,7 @@
 # - tier 3: microstates and small island states only.
 # - frame: the card's own exception to the framing rules (ADR 0010): {inset: true|false} forces its detail inset on or
 #   off, inset_km sets the inset's width and inset_centre [lon, lat] its centre; ring: false draws no ring round the
-#   subject (ring: single, one round all its parts); include: [ids] makes the frame hold those countries' main bodies
+#   subject (ring: oval, one oval round all its parts); include: [ids] makes the frame hold those countries' main bodies
 #   too, moving before it widens (its capital and cities follow).
 # - note: the P2.7 blurbs, copied as written.
 
@@ -2902,7 +2902,7 @@
   name: Kiribati
   uids: {country: O8qHQXEAd0, capital: vQukswE5eJ}
   tier: 3
-  frame: {ring: single}  # one ring round all its island groups: a ring round each cluttered the map
+  frame: {ring: oval}  # one oval round all its island groups: a ring round each cluttered the map
   note: >-
     Coral atolls scattered across the central Pacific, straddling the Equator, in three groups: the Gilbert, Phoenix
     and Line Islands. Its people are mostly Micronesian.
@@ -2959,7 +2959,7 @@
   name: Micronesia
   uids: {country: xnIrAUmkCK, capital: AEj39lKwe8}
   tier: 3
-  frame: {ring: single}  # one ring round all its island groups: a ring round each cluttered the map
+  frame: {ring: oval}  # one oval round all its island groups: a ring round each cluttered the map
   note: >-
     The Federated States of Micronesia: four island states (Yap, Chuuk, Pohnpei and Kosrae) spread across the
     Caroline Islands in the North Pacific, north of New Guinea. It is in free association with the United States.
