@@ -1,3 +1,5 @@
+feature:atlantic-ocean
+feature:pacific-ocean
 country:alba
 country:bravo
 country:andor
@@ -13,8 +15,6 @@ country:india
 country:juliet
 country:kilo
 feature:europe
-feature:atlantic-ocean
-feature:pacific-ocean
 feature:trade-winds
 feature:westerlies
 feature:west-peninsula

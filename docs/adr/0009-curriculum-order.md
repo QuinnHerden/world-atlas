@@ -2,7 +2,7 @@
 
 Status: proposed, 2026-10-14. When accepted, supersedes rules 1 (tier first) and 3 (category alternation and the ≥ 3 card gap) of [ADR 0004](0004-flat-deck-and-study-order.md). ADR 0004's rule 2 (prerequisites first) stays. The design and its reasons are in the [World Atlas plan](../world-atlas-plan.md#curriculum); several parameters are defaults under decision 8 ([open decisions](../world-atlas-plan.md#open-decisions)). Built in P3.
 
-Amended on 2026-10-16 (v3.0.0): the study order is cut from the ring order in four blocks, and Greenland moves to region 02 (see [Amendment: four blocks](#amendment-four-blocks-v300) and [ADR 0011](0011-refreezing-at-a-major-version.md)).
+Amended on 2026-10-16 (v3.0.0): the study order is cut from the ring order in four blocks, and Greenland moves to region 02 (see [Amendment: four blocks](#amendment-four-blocks-v300) and [ADR 0011](0011-refreezing-at-a-major-version.md)). Amended for v1.0.0: the four oceans follow the continents (the last paragraph of that amendment).
 
 Superseded in part: the PDF guide was removed before v1.0.0 (notes are on the card backs only), so the PDF guide in **Output** no longer applies.
 
@@ -57,12 +57,14 @@ The interleaved ring order above proved harder to follow than learning the map i
 
 1. **Continents** (7 cards), in ring order: Europe … Antarctica.
 2. **Countries, territories and disputed areas** (235 cards), region by region round the ring, on the frozen walks. Each walk node is followed by its pocket countries, then by the territories and disputed areas it hosts. Capitals aren't here.
-3. **Physical features** (132 cards), in their ring order: the oceans and planetary winds first, then pass 1's features round the ring, then the 10 tier-3 features. Parent before child holds. Cutting out the countries closes up gaps, so within each ring segment (pass and region) the look-alike window (3 to 10 cards) is repaired again in the study order. Pairs that repair can't fix, and look-alike country pairs (the walk doesn't move), are reported as `study order:` waivers.
+3. **Physical features** (132 cards), in their ring order: the oceans and planetary winds first (since v1.0.0 the oceans follow the continents instead; below), then pass 1's features round the ring, then the 10 tier-3 features. Parent before child holds. Cutting out the countries closes up gaps, so within each ring segment (pass and region) the look-alike window (3 to 10 cards) is repaired again in the study order. Pairs that repair can't fix, and look-alike country pairs (the walk doesn't move), are reported as `study order:` waivers.
 4. **Capitals and cities** (233 cards), region by region in the same country order: each country's capital, then its other cities (core before secondary). A city's `anchor` feature now only orders it among its own country's cities.
 
 At 15 new cards a day the continents take about half a day, the countries 16 days, the features 9 and the capitals and cities 16: still about 6 weeks for all 607.
 
 The passes now exist only inside the engine. A card's block follows from its kind (`card.block_of`), and its `block::` tag (`block::continents`, `block::countries`, `block::features` or `block::cities`) replaces the `pass::` tag. Political cards and cities keep their `region::NN` tag, so a region filtered deck gives that region's countries, then its capitals and cities. The guide is sectioned by block, then region.
+
+**v1.0.0: the oceans follow the continents.** The four oceans (Atlantic, Indian, Pacific, Arctic) come straight after the seven continents, at new-card positions 8 to 11, instead of opening the features block: they are the frame the countries are placed against, so they are learned with the continents (the user's decision). They keep their `block::features` tag, so a features filtered deck still finds them. The planetary winds still open the features block. In the lock this is the one entry change series 1 makes to archived series 3 ([ADR 0011's amendment](0011-refreezing-at-a-major-version.md#amendment-versioning-restarted-at-v100)).
 
 **Greenland is in region 02, Nordic & Baltic, hosted by Iceland**, not in 19. A host is a placement anchor, not a statement of sovereignty: hosting it by Iceland puts it right after Iceland in the countries block (card 23). Sovereignty (the Kingdom of Denmark, beside Iceland and the Faroes) outweighs geography (the North American plate, 19 km from Canada). It stays in North America on the continent cards. `data/curriculum.yaml` records the decision and the v2 placement in its placements comment. Greenland keeps its v2 card and uid: the re-freeze places every card afresh, so no card has to be retired to move.
 
