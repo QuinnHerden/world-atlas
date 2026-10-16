@@ -298,6 +298,7 @@ class FreezeGuardTest(unittest.TestCase):
             elsewhere = Lock(False, {A: Entry(502, "countries", 1), B: Entry(1000, "countries", 2)}, 1)
             self.assertTrue(self.guard(elsewhere, self.restarted(), [], True, archived=self.ARCHIVED)[0])
             texts = self.restarted() | {"origin/main": dump(moved_a), "v1.0.0": dump(moved_a)}
+            self.assertEqual(self.guard(moved_a, texts, ["v1.0.0"], True, archived=self.ARCHIVED), ([], []))  # still
             back = Lock(False, self.BASE.entries, 1)  # once v1.0.0 is out, its lock is held as released
             self.assertRegex(" ".join(self.guard(back, texts, ["v1.0.0"], True, archived=self.ARCHIVED)[0]),
                              "changes entries frozen on origin/main")

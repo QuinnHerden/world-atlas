@@ -86,6 +86,11 @@ def orientation_rank(card: Card) -> tuple[int, int, str]:
     return 3, 0, card.id
 
 
+def is_ocean(card: Card) -> bool:
+    """An orientation ocean: studied right after the continents (`blocks`)."""
+    return card.kind == "feature" and card.study_pass == "orientation" and orientation_rank(card)[0] == 1
+
+
 def walks(curriculum: Curriculum, adjacency: Adjacency, frozen: Mapping[str, Sequence[str]] | None = None) -> dict[int, Walk]:
     """Each region's walk: `frozen[slug]` (tests), else the region's frozen `walk` in curriculum.yaml, else generated."""
     frozen = frozen or {}
@@ -229,10 +234,9 @@ def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, 
                           for i, host in group.items() if host == node]
             for m in members:
                 towns += [by_key[k] for k in (f"capital:{m}",) if k in by_key] + cities.pop(m, [])
-    oceans = [c for c in ring if c.kind == "feature" and c.study_pass == "orientation" and orientation_rank(c)[0] == 1]
-    out = [c for c in ring if c.kind == "continent"] + oceans
+    out = [c for c in ring if c.kind == "continent"] + [c for c in ring if is_ocean(c)]
     out += [by_key[k] for k in political if k in by_key]
-    out += [c for c in ring if c.kind == "feature" and c not in oceans] + towns
+    out += [c for c in ring if c.kind == "feature" and not is_ocean(c)] + towns
     if missing := sorted({c.key for c in ring} - {c.key for c in out}):
         raise OrderError(f"no block place for {missing}")
     return out

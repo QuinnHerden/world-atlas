@@ -7,7 +7,7 @@ the nearest earlier card in the ideal order that is already locked, and a retire
 declares the major version series it belongs to (`series: N`). The freeze guard (`guard`) holds it to the frozen lock
 of the same series on origin/main and on the newest release tag of that series; a lock of a new series is a fresh
 freeze, allowed only as the next major version. Versioning restarted at v1.0.0: the earlier releases are archived as
-`archive/vX.Y.Z` tags, pre-1.0 history whose uids every lock keeps, and series 1 continues the archived series 3 order.
+`archive/vX.Y.Z` tags, pre-1.0 history whose uids every lock keeps, and series 1 continues the archived series 3 order, but for the oceans' move (RESTART_MOVES).
 """
 
 import os
@@ -28,7 +28,7 @@ if any(d.limit > LIMIT for d in DECKS):
 DEFAULT_BASE = "origin/main"  # the ref whose committed lock a frozen lock must extend; POSITIONS_BASE overrides it
 LEGACY_SERIES = 2  # a frozen lock with no `series:` line is v2's, the only one written before series existed
 FIRST_SERIES = 1  # versioning restarted at v1.0.0: the first release under the vX.Y.Z tags is series 1's
-RESTARTED_FROM = 3  # the archived series whose frozen order series 1 continues, entry for entry
+RESTARTED_FROM = 3  # the archived series whose frozen order series 1 continues, entry for entry but RESTART_MOVES
 ARCHIVE_PREFIX = "archive/"  # archive/vX.Y.Z: a pre-1.0 release, archived when versioning restarted
 # The one reorder series 1 makes to the archived series-3 order, before its first release: the four oceans (Atlantic,
 # Indian, Pacific, Arctic) move from the head of the features block to just after the seven continents, new-card
