@@ -1,6 +1,6 @@
 # 10. Region framing for political and city cards
 
-Status: accepted, 2026-10-15 (v2.1.0). Amends [ADR 0003](0003-projection-and-framing.md) for country, territory, dispute, capital and city cards: their frame, the locator inset and the ring. Feature and continent cards are unchanged. The projection rule (cylindrical, north up) holds for every card. The constants are in `src/geofeat/frame.py` and `src/geofeat/framing.py`, with comments that explain each rule; sizes in px are at the rendered 1600 px width.
+Status: accepted, 2026-10-15 (v3.0.0). Amends [ADR 0003](0003-projection-and-framing.md) for country, territory, dispute, capital and city cards: their frame, the locator inset and the ring. Feature and continent cards are unchanged. The projection rule (cylindrical, north up) holds for every card. The constants are in `src/geofeat/frame.py` and `src/geofeat/framing.py`, with comments that explain each rule; sizes in px are at the rendered 1600 px width.
 
 ## Context
 
@@ -66,7 +66,7 @@ The Lesser Antilles box is too tight to place on its own, so it gets a **regiona
 ## Consequences
 
 - Cards studied together share a frame, so the learner sees each region's map built up card by card. A giant's card still looks as it did in v2.0, minus the locator.
-- Every political, capital and city map changed in v2.1.0, so re-importing replaces those images.
+- Every political, capital and city map changed in v3.0.0, so re-importing replaces those images.
 - A card's frame depends on its region's other members. Moving a card between regions, or editing a member's outline, can change its neighbours' maps.
 - Close-dot pairs outside giant hosts (Vienna and Bratislava, Dubai and Abu Dhabi) now show their region, with the close-up in the inset instead of on the main map.
 - With no world locator, a frame must be recognisable from its own coastlines. The 3,500 km minimum and the sub-frame boxes, chosen round known anchors (New Guinea, eastern Australia, New Zealand, Hawaii, the Philippines), are what make that hold. The Lesser Antilles needed its regional locator.

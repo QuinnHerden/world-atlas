@@ -24,9 +24,9 @@ LIMIT = 1_000_000  # a margin under 2,000,000, where Anki's Check Database rewri
 DEFAULT_BASE = "origin/main"  # the ref whose committed lock a frozen lock must extend; POSITIONS_BASE overrides it
 LEGACY_SERIES = 2  # a frozen lock with no `series:` line is v2's, the only one written before series existed
 _HEADER = re.compile(r"draft: (true|false)")
-_SERIES = re.compile(r"series: ([1-9]\d*)")
-_LEGACY_ENTRY = re.compile(r"[A-Za-z0-9]{10}: \d+ pass=(orientation|1|2) region=(-|\d{2})")  # series 2's format
-_ENTRY = re.compile(r"([A-Za-z0-9]{10}): (\d+) block=(" + "|".join(BLOCKS) + r") region=(-|\d{2})")
+_SERIES = re.compile(r"series: ([1-9][0-9]*)", re.ASCII)
+_LEGACY_ENTRY = re.compile(r"[A-Za-z0-9]{10}: [0-9]+ pass=(orientation|1|2) region=(-|[0-9]{2})", re.ASCII)  # series 2's format
+_ENTRY = re.compile(r"([A-Za-z0-9]{10}): ([0-9]+) block=(" + "|".join(BLOCKS) + r") region=(-|[0-9]{2})", re.ASCII)
 
 
 class GapExhausted(ValueError):
@@ -272,25 +272,52 @@ def frozen_errors(lock: Lock, base_text: str | None, ref: str = DEFAULT_BASE) ->
     return errors
 
 
+_RELEASE = re.compile(r"v([0-9]+)\.([0-9]+)\.([0-9]+)", re.ASCII)
+
+
+def version(tag: str) -> tuple[int, int, int] | None:
+    """A release tag's (major, minor, patch); None for anything not exactly vX.Y.Z (v3.0.0-rc1, vtest)."""
+    m = _RELEASE.fullmatch(tag)
+    return (int(m.group(1)), int(m.group(2)), int(m.group(3))) if m else None
+
+
+def dropped_released(lock: Lock, text: str | None, tag: str) -> list[str]:
+    """A fresh freeze may reorder, but must keep every uid of the release before it: users hold those notes. (A uid
+    only ever on a branch or main, never released, may go.) A draft is checked once it is frozen."""
+    if text is None or lock.draft:
+        return []
+    lines = text.splitlines()
+    body = lines[2:] if len(lines) > 1 and _SERIES.fullmatch(lines[1]) else lines[1:]
+    if dropped := sorted({line.split(":", 1)[0] for line in body if line} - set(lock.entries)):
+        return [f"{LOCK_FILE.name} drops uids released in {tag}: {dropped}"]
+    return []
+
+
 def major(tag: str) -> int | None:
-    m = re.fullmatch(r"v(\d+)\.\d+\.\d+", tag)
-    return int(m.group(1)) if m else None
+    return v[0] if (v := version(tag)) else None
 
 
-def series_errors(lock: Lock, newest: str | None, head: str | None) -> list[str]:
-    """A lock's series against the release tags: `newest`, the newest `vX.Y.Z` tag reachable from HEAD, and `head`,
-    a release tag on HEAD itself. The series may stay at the newest release's major or start the next one, a fresh
-    freeze that only a major version bump may make; a release tag on HEAD must be of the lock's series."""
+def newest(tags: list[str], series: int | None = None) -> str | None:
+    """The highest vX.Y.Z tag among `tags` (of one major `series`, if given), by version, not by commit distance."""
+    found = [t for t in tags if (v := version(t)) and (series is None or v[0] == series)]
+    return max(found, key=version, default=None)
+
+
+def series_errors(lock: Lock, last: str | None, release: str | None) -> list[str]:
+    """A lock's series against the release tags. `last` is the newest release reachable from HEAD; `release` the
+    version this build is for (a release build's VERSION, or a release tag on HEAD). The series may stay at the
+    newest release's major or start the next one, a fresh freeze; only a major version may start it, so a release
+    must be of the lock's series."""
     errors = []
-    if newest is not None and (last := major(newest)) is not None:
-        if lock.series < last:
-            errors.append(f"{LOCK_FILE.name} is series {lock.series}, older than release {newest}")
-        elif lock.series > last + 1:
+    if last is not None and (prior := major(last)) is not None:
+        if lock.series < prior:
+            errors.append(f"{LOCK_FILE.name} is series {lock.series}, older than release {last}")
+        elif lock.series > prior + 1:
             errors.append(f"{LOCK_FILE.name} is series {lock.series}, but a new series must be the next major "
-                          f"version after {newest} (series {last + 1})")
-    if head is not None and (own := major(head)) is not None and own != lock.series:
-        errors.append(f"HEAD is tagged {head}, but {LOCK_FILE.name} is series {lock.series}: only a major version "
-                      f"starts a series")
+                          f"version after {last} (series {prior + 1})")
+    if release is not None and major(release) != lock.series:
+        errors.append(f"this build is for {release}, but {LOCK_FILE.name} is series {lock.series}: a release must be "
+                      f"of its lock's series, and only a major version starts a series")
     return errors
 
 
@@ -313,31 +340,57 @@ def base_text(ref: str) -> str | None:
     return _git("show", "--end-of-options", f"{ref}:{LOCK_FILE.relative_to(ROOT).as_posix()}")
 
 
-def release_tag(match: str = "v*") -> str | None:
-    """The newest release tag matching `match` reachable from HEAD: what users last imported (of that series)."""
-    out = _git("describe", "--tags", "--abbrev=0", "--match", match, "HEAD")
-    return out.strip() or None if out else None
+def release_tags() -> list[str] | None:
+    """Every vX.Y.Z tag merged into HEAD, or None when git can't list them."""
+    out = _git("tag", "--merged", "HEAD", "--list", "v*")
+    return None if out is None else [t for t in out.split() if version(t)]
 
 
-def head_tag() -> str | None:
-    """A release tag on HEAD itself, if any."""
-    out = _git("describe", "--tags", "--exact-match", "--match", "v*", "HEAD")
-    return out.strip() or None if out else None
+def head_tags() -> list[str]:
+    """The release tags on HEAD itself."""
+    out = _git("tag", "--points-at", "HEAD", "--list", "v*")
+    return [t for t in (out or "").split() if version(t)]
 
 
-def guard(lock: Lock, strict: bool) -> tuple[list[str], list[str]]:
-    """The freeze guard: (errors, warnings). The lock is held to the base ref's and to that of the newest release tag
-    of its own series, and its series to the release tags (`series_errors`). An unreadable base ref for a frozen lock
-    is an error when `strict` (a release build, or `make positions`), else a warning."""
+def shallow() -> bool:
+    return (_git("rev-parse", "--is-shallow-repository") or "").strip() == "true"
+
+
+def guard(lock: Lock, strict: bool, release: str | None = None, require_release: bool = False
+          ) -> tuple[list[str], list[str]]:
+    """The freeze guard: (errors, warnings). The lock is held to the base ref's and to that of the newest release of
+    its own series, and its series to the release tags (`series_errors`). `strict` (a release build, or `make
+    positions`) makes an unreadable base ref, a shallow clone or unreadable tags an error for a frozen lock, not a
+    warning. `release`, a release build's version (VERSION=vX.Y.Z), and every release tag on HEAD must be of the
+    lock's series; `require_release` (a release build) fails without one."""
     ref = base_ref()
     text = base_text(ref)
     errors, warnings = frozen_errors(lock, text, ref), []
-    if text is None and not lock.draft:
-        message = (f"can't read {LOCK_FILE.name} on {ref} to check the frozen lock against it (fetch it, e.g. "
-                   f"`git fetch origin main` or a full-depth CI checkout, or set POSITIONS_BASE)")
-        (errors if strict else warnings).append(message)
-    errors += series_errors(lock, release_tag(), head_tag())
-    if (tag := release_tag(f"v{lock.series}.*")) is not None and tag != ref:
+    problems = []
+    if text is None:
+        problems.append(f"can't read {LOCK_FILE.name} on {ref} to check the frozen lock against it (fetch it, e.g. "
+                        f"`git fetch origin main` or a full-depth CI checkout, or set POSITIONS_BASE)")
+    tags = release_tags()
+    if tags is None or shallow():
+        problems.append("can't see every release tag (a shallow clone, or no git): fetch the full history and tags")
+    if not lock.draft:
+        (errors if strict else warnings).extend(problems)
+    tags = tags or []
+    last = newest(tags)
+    releases = ([release] if release else []) + head_tags()
+    if release is not None and version(release) is None:
+        errors.append(f"VERSION={release!r} is not vX.Y.Z")
+    elif require_release and not releases:
+        errors.append("a release build needs its version: set VERSION=vX.Y.Z (or tag HEAD)")
+    errors += series_errors(lock, last, None)
+    for tag in releases:
+        errors += series_errors(lock, None, tag)
+    if last is not None and major(last) is not None and lock.series > major(last) and not releases:
+        warnings.append(f"{LOCK_FILE.name} is series {lock.series}, not yet released: the next release must be "
+                        f"v{lock.series}.0.0")
+    if last is not None and (prior := major(last)) is not None and prior < lock.series:
+        errors += dropped_released(lock, base_text(last), last)
+    if (tag := newest(tags, lock.series)) is not None and tag != ref:
         errors += frozen_errors(lock, base_text(tag), tag)
     return errors, warnings
 

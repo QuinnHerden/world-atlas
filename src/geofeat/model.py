@@ -168,8 +168,6 @@ class AllowNested(Strict):
     reason: Annotated[str, Field(min_length=10)]
 
 
-# The card a feature is placed after in the curriculum: a card key, kind:id (P3; see card.Card.anchor).
-AnchorKey = Annotated[str, Field(pattern=r"^(feature|country|capital|city|territory|dispute|continent):[a-z0-9][a-z0-9-]*$")]
 Reason = Annotated[str, Field(min_length=10), AfterValidator(_card_text)]
 
 
@@ -191,17 +189,14 @@ class Feature(Strict):
     allow_nested: list[AllowNested] = []
     trim_to_largest: bool = False  # after subtracting, keep only the largest polygon (drops cut-off scraps)
     retired: bool = False
-    # Curriculum overrides, for where regions.py's derivation or P3's default anchor gets it wrong; each needs a reason.
+    # A curriculum override, for where regions.py's derivation gets it wrong; it needs a reason.
     region: Annotated[int, Field(ge=1, le=21)] | None = None  # ring region, see docs/world-atlas-plan.md
     region_reason: Reason | None = None
-    anchor: AnchorKey | None = None
-    anchor_reason: Reason | None = None
 
     @model_validator(mode="after")
-    def _overrides_have_reasons(self) -> "Feature":
-        for field in ("region", "anchor"):
-            if (getattr(self, field) is None) != (getattr(self, f"{field}_reason") is None):
-                raise ValueError(f"`{field}` and `{field}_reason` go together")
+    def _override_has_a_reason(self) -> "Feature":
+        if (self.region is None) != (self.region_reason is None):
+            raise ValueError("`region` and `region_reason` go together")
         return self
 
     @property
@@ -220,10 +215,6 @@ def load_features() -> list[Feature]:
         duplicates = {v for v in values if values.count(v) > 1}
         if duplicates:
             raise ValueError(f"duplicate {key}: {sorted(duplicates)}")
-    ids = {f.id for f in active(features)}
-    for f in features:
-        if f.anchor and f.anchor.startswith("feature:") and f.anchor.removeprefix("feature:") not in ids - {f.id}:
-            raise ValueError(f"{f.id}: anchor {f.anchor!r} names no other active feature")
     return features
 
 

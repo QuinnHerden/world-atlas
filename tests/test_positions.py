@@ -170,44 +170,79 @@ class FreezeGuardTest(unittest.TestCase):
         lock = Lock(False, {}, 3)
         self.assertEqual(series_errors(lock, "v2.0.0", None), [])  # the next major starts series 3
         self.assertEqual(series_errors(lock, "v2.0.0", "v3.0.0"), [])  # and v3.0.0 releases it
-        self.assertEqual(series_errors(lock, "v3.1.0", None), [])
+        self.assertEqual(series_errors(lock, "v3.1.0", "v3.2.0"), [])
         self.assertTrue(series_errors(Lock(False, {}, 2), "v3.0.0", None))  # backwards
         self.assertTrue(series_errors(Lock(False, {}, 4), "v2.0.0", None))  # skips a major
-        self.assertTrue(series_errors(lock, "v2.0.0", "v2.1.0"))  # a new series without a major tag
+        self.assertTrue(series_errors(lock, "v2.0.0", "v2.1.0"))  # a new series without a major release
+        self.assertTrue(series_errors(Lock(False, {}, 4), "v3.0.0", "v3.1.0"))  # a series bump in a minor release
         self.assertEqual(series_errors(lock, None, None), [])
+
+    def test_newest_is_by_version_and_ignores_other_tags(self) -> None:
+        from geofeat.positions import newest
+
+        tags = ["v2.0.0", "v10.0.0", "v3.1.0", "v3.0.0-rc1", "vtest", "v3.x"]
+        self.assertEqual(newest(tags), "v10.0.0")
+        self.assertEqual(newest(tags, 3), "v3.1.0")
+        self.assertIsNone(newest(tags, 4))
 
     def test_a_bad_base_is_an_error_not_a_pass(self) -> None:
         for text in ("draft: false\r\n", "<<<<<<< HEAD\n", f"draft: false\nseries: 3\n{A}: 500\n"):
             with self.subTest(text):
                 self.assertTrue(frozen_errors(self.BASE, text))
 
-    def guard(self, lock: Lock, texts: dict[str, str | None], tags: dict[str, str], strict: bool, head=None):
-        """`tags` maps a `--match` pattern to the newest tag it finds."""
+    def guard(self, lock: Lock, texts: dict[str, str | None], tags: list[str] | None, strict: bool, head=(),
+              release=None, require=False, shallow=False):
         with mock.patch.object(positions, "base_text", lambda ref: texts.get(ref)), \
-                mock.patch.object(positions, "release_tag", lambda match="v*": tags.get(match)), \
-                mock.patch.object(positions, "head_tag", lambda: head), \
+                mock.patch.object(positions, "release_tags", lambda: tags), \
+                mock.patch.object(positions, "head_tags", lambda: list(head)), \
+                mock.patch.object(positions, "shallow", lambda: shallow), \
                 mock.patch.dict("os.environ", {"POSITIONS_BASE": ""}):
-            return positions.guard(lock, strict)
+            return positions.guard(lock, strict, release, require)
 
     def test_guard_checks_the_base_ref_and_the_newest_tag_of_the_series(self) -> None:
         moved_a = Lock(False, {A: Entry(501, "countries", 1), B: Entry(1000, "countries", 2)}, 3)
-        self.assertEqual(self.guard(self.BASE, {"origin/main": dump(self.BASE)}, {}, True), ([], []))
-        tags = {"v*": "v3.1.0", "v3.*": "v3.1.0"}
+        self.assertEqual(self.guard(self.BASE, {"origin/main": dump(self.BASE)}, [], True), ([], []))
+        tags = ["v2.0.0", "v3.1.0", "v3.0.0"]
         self.assertTrue(self.guard(moved_a, {"origin/main": dump(moved_a), "v3.1.0": dump(self.BASE)}, tags, True)[0])
 
-    def test_guard_accepts_a_new_series_at_a_major_bump_only(self) -> None:
+    def test_guard_accepts_a_new_series_at_a_major_release_only(self) -> None:
         reordered = Lock(False, {A: Entry(9000, "countries", 4)}, 3)
         texts = {"origin/main": self.V2, "v2.0.0": self.V2}
-        self.assertEqual(self.guard(reordered, texts, {"v*": "v2.0.0"}, True), ([], []))
-        self.assertEqual(self.guard(reordered, texts, {"v*": "v2.0.0"}, True, head="v3.0.0"), ([], []))
-        self.assertTrue(self.guard(reordered, texts, {"v*": "v2.0.0"}, True, head="v2.1.0")[0])
-        self.assertTrue(self.guard(Lock(False, {}, 4), texts, {"v*": "v2.0.0"}, True)[0])
+        errors, warnings = self.guard(reordered, texts, ["v2.0.0"], True)
+        self.assertEqual(errors, [])
+        self.assertRegex(" ".join(warnings), "next release must be v3.0.0")
+        self.assertEqual(self.guard(reordered, texts, ["v2.0.0"], True, release="v3.0.0", require=True), ([], []))
+        self.assertEqual(self.guard(reordered, texts, ["v2.0.0"], True, head=["v3.0.0"], require=True), ([], []))
+        self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, release="v2.1.0", require=True)[0])
+        self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, head=["v2.1.0"])[0])
+        self.assertTrue(self.guard(reordered, texts, ["v2.0.0"], True, require=True)[0])  # a release needs VERSION
+        self.assertTrue(self.guard(Lock(False, {}, 4), texts, ["v2.0.0"], True)[0])
+
+    def test_a_series_bump_after_a_major_release_needs_the_next_major(self) -> None:
+        v3 = dump(self.BASE)
+        bumped = Lock(False, {A: Entry(1, "countries", 1), B: Entry(2, "countries", 2)}, 4)
+        texts = {"origin/main": v3, "v3.0.0": v3}
+        self.assertTrue(self.guard(bumped, texts, ["v2.0.0", "v3.0.0"], True, release="v3.1.0", require=True)[0])
+        self.assertEqual(self.guard(bumped, texts, ["v2.0.0", "v3.0.0"], True, release="v4.0.0", require=True)[0], [])
+
+    def test_a_fresh_freeze_keeps_every_released_uid(self) -> None:
+        dropping = Lock(False, {B: Entry(1, "countries", 1)}, 3)
+        texts = {"origin/main": self.V2 + f"{B}: 1000 pass=1 region=01\n", "v2.0.0": self.V2}
+        self.assertTrue(self.guard(dropping, texts, ["v2.0.0"], True)[0])  # drops A, released in v2.0.0
+        keeping = Lock(False, {A: Entry(1, "countries", 1)}, 3)  # drops B, which was only ever on main
+        self.assertEqual(self.guard(keeping, texts, ["v2.0.0"], True)[0], [])
+
+    def test_unseen_tags_fail_strict(self) -> None:
+        texts = {"origin/main": dump(self.BASE)}
+        self.assertTrue(self.guard(self.BASE, texts, None, True)[0])
+        self.assertTrue(self.guard(self.BASE, texts, ["v2.0.0"], True, shallow=True)[0])
+        self.assertEqual(len(self.guard(self.BASE, texts, None, False)[1]), 1)
 
     def test_an_unreadable_base_fails_strict_and_warns_otherwise(self) -> None:
-        self.assertTrue(self.guard(self.BASE, {}, {}, True)[0])
-        errors, warnings = self.guard(self.BASE, {}, {}, False)
+        self.assertTrue(self.guard(self.BASE, {}, [], True)[0])
+        errors, warnings = self.guard(self.BASE, {}, [], False)
         self.assertEqual((errors, len(warnings)), ([], 1))
-        self.assertEqual(self.guard(Lock(True, {}, 3), {}, {}, True), ([], []))  # a draft has nothing to guard
+        self.assertEqual(self.guard(Lock(True, {}, 3), {}, [], True), ([], []))  # a draft has nothing to guard
 
     def test_an_option_like_ref_is_never_passed_to_git(self) -> None:
         self.assertIsNone(positions.base_text("--output=/tmp/x"))

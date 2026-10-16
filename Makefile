@@ -10,8 +10,11 @@ quote = '$(subst ','\'',$(1))'
 # Each pattern quoted, so the shell neither globs nor interprets it.
 QIDS = $(foreach p,$(IDS),$(call quote,$(p)))
 # RELEASE=1: check-data (and everything after it) also fails while any note has an open verify item, and when the
-# frozen positions.lock can't be checked against origin/main (ADR 0006).
+# frozen positions.lock can't be checked against origin/main and the release tags (ADR 0006, ADR 0011).
 RELEASE ?=
+# VERSION=vX.Y.Z: the release a RELEASE=1 build is for; its major must be positions.lock's series (ADR 0011).
+VERSION ?=
+export VERSION
 $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 # The ankc to build with; a command line works, e.g. ANKC="uv run --with ../ankcompiler ankc". 0.6+ gets [^pos].
 ANKC ?= ankc

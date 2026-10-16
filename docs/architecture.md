@@ -2,7 +2,7 @@
 
 How the World Atlas deck is built. This describes the system as it is now; the reasons for the larger choices are in the [ADRs](adr/), and the plan for the extension beyond the original feature deck is in the [World Atlas plan](world-atlas-plan.md).
 
-The deck is 607 cards from four sources: 139 active entries in `data/features.yaml` (132 physical features, 6 of them climate systems, and the 7 continents), 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`. `data/features.yaml` also keeps 34 retired entries (7 passes, 3 corridors, 15 islands and 9 climate systems), and `data/territories.yaml` one (Greenland's v2.0 card). The 132 features were released as the Geographic Features deck (v1); the curriculum order engine (`order/`) orders every kind, and one command turns the data into an `.apkg`, with no manual step per build.
+The deck is 607 cards from four sources: 139 active entries in `data/features.yaml` (132 physical features, 6 of them climate systems, and the 7 continents), 197 countries and 191 capitals from `data/countries.yaml`, 23 territories and 15 disputed areas from `data/territories.yaml`, and 42 cities from `data/cities.yaml`. `data/features.yaml` also keeps 34 retired entries (7 passes, 3 corridors, 15 islands and 9 climate systems). The 132 features were released as the Geographic Features deck (v1); the curriculum order engine (`order/`) orders every kind, and one command turns the data into an `.apkg`, with no manual step per build.
 
 ## Pipeline
 
@@ -31,7 +31,7 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
 | `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). `IDS="country:france city:*"` renders only the matching cards and deletes nothing, for a pilot. |
 | `make deck` | `deckgen.py` | Writes every card, in study order, to `deck/world-atlas.md`, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map. |
-| `make check` | `check.py deck` | Every card rendered and in the lock; a draft lock matches the current order (a frozen card whose pass or region changed only warns); ankc `>=0.5,<0.7`; `ankc check` passes. |
+| `make check` | `check.py deck` | Every card rendered and in the lock; a draft lock matches the current order (a frozen card whose block or region changed only warns; every locked uid belongs to a source entry); ankc `>=0.5,<0.7`; `ankc check` passes. |
 | `make build` | `ankc build`, then `check.py package` | Builds `dist/world-atlas.apkg` and checks it. |
 | `make guide` | `guide.py` | The PDF guide (below). |
 | `make import-test` | `tools/import_test.py` | Imports the package into fresh collections with the official `anki` library and checks the study order, a region filtered deck, Check Database and the upgrade from v1 (below). Not part of `make all`. |
@@ -51,7 +51,7 @@ data/territories.yaml  the 23 territories and 15 disputed areas
 data/cities.yaml       the 42 core cities
 data/curriculum.yaml   passes, the ring of 21 regions, walk lists, pockets and placements, confusables
 data/adjacency.yaml    hand edits to the computed adjacency graph, each with a reason
-data/positions.lock    each card's new-card position, pass and region, keyed by uid; written only by `make positions`
+data/positions.lock    the lock's series, and each card's new-card position, block and region, keyed by uid; written only by `make positions`
 data/sources.lock      Natural Earth repo, commit, path, sha256 and git blob sha per file
 geometry/*.geojson     hand-authored or derived shapes, each with provenance
 src/geofeat/           the pipeline (modules below)
@@ -67,9 +67,9 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 | Module | Does |
 |---|---|
 | `model.py` | The `Feature` schema, type words, families, categories and shared paths. |
-| `card.py` | The `Card` DTO and `RenderRef`, the study-pass rule (`study_pass`), and the `pass::` and `id_` tag formats. |
+| `card.py` | The `Card` DTO and `RenderRef`, the four study blocks (`BLOCKS`, `block_of`), the ring order's pass rule (`study_pass`), and the `block::` and `id_` tag formats. |
 | `sources/` | One adapter per data file: `features.py`, `political.py` (countries, capitals, territories, disputes) and `cities.py`. `all_cards()` collects them. |
-| `polities.py` | The political entities: `Country` (with `Capital`), `Territory` and `Dispute`, and `FrameOverride`. Loads `countries.yaml` and `territories.yaml` (dropping retired territories), places each entry from `curriculum.yaml`, and composes outlines from their `geometry` parts, cropped to `mainland` for the card. |
+| `polities.py` | The political entities: `Country` (with `Capital`), `Territory` and `Dispute`, and `FrameOverride`. Loads `countries.yaml` and `territories.yaml`, places each entry from `curriculum.yaml`, and composes outlines from their `geometry` parts, cropped to `mainland` for the card. |
 | `framing.py` | The frame each political card is drawn on: its curriculum region's member points, or a fixed sub-frame's box and its regional locator; and `CITY_REGION_FRAMING`, which puts capitals and cities on their host's ([ADR 0010](adr/0010-region-framing.md)). |
 | `countries_ne.py` | Each state's, territory's and dispute's full outline, never cropped, read from the yaml `geometry`. What the adjacency graph and the region outlines use. |
 | `curriculum.py` | The `curriculum.yaml` schema and its checks: every state in exactly one region, regions numbered in ring order, entry, exit and hosts being walk nodes, confusables naming known cards. |
@@ -81,8 +81,8 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 | `spec.py` | `RenderSpec`, the visual treatment of a card, and `BASEMAP_LAYERS`. |
 | `jobs.py` | Turns cards into render jobs, keys them, and renders what the cache lacks. Not in the cache key. |
 | `render.py`, `frame.py`, `style.py` | Drawing, framing (region frames and detail insets included) and the style constants. |
-| `positions.py` | Reads, places and writes `positions.lock`; the freeze guard against `origin/main`. |
-| `order/` | The curriculum order (ADR 0009): `engine.py` (pure: passes, regions, walks, anchoring, repair, report), `walk.py`, `frames.py` (geometry facts cached in `build/frames.json`), `inputs.py` (real-data wiring and policy), `legacy.py` (ADR 0004's feature order and the sibling cache). |
+| `positions.py` | Reads, places and writes `positions.lock`; the freeze guard against `origin/main` and the newest release tag of the lock's series, and the series check against the release tags. |
+| `order/` | The curriculum order (ADR 0009): `engine.py` (pure: passes, regions, walks, anchoring, repair, report, then the four blocks cut from that ring order), `walk.py`, `frames.py` (geometry facts cached in `build/frames.json`), `inputs.py` (real-data wiring and policy), `legacy.py` (ADR 0004's feature order and the sibling cache). |
 | `deckgen.py` | The deck markdown. |
 | `ankc.py` | Runs the configured ankc and reads its version. |
 | `check.py` | `check data`, `check deck`, `check package`. |
@@ -113,7 +113,6 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
   trim_to_largest: false
   retired: false
   region: null                # optional ring-region override; needs region_reason
-  anchor: null                # optional curriculum anchor override; needs anchor_reason
 ```
 
 **Geometry parts.** Each part has exactly one source:
@@ -137,7 +136,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 `polities.py` defines and loads the political entities; `sources/cities.py` the cities. All reject unknown keys.
 
 - **`countries.yaml`:** `id`, `name`, `alt_names`, `uids: {country, capital}`, `tier` (1, or 3 for microstates and small island states), `note`, `geometry`, `mainland`, `expect`, an optional `frame` override, and a nested `capital` (`name`, `alt_names`, one of `ne_id` or `file`, `expect`, `note`). `capital: null` (Monaco, Luxembourg, San Marino, Vatican, Palestine, Singapore) means no capital card and no capital uid.
-- **`territories.yaml`:** entries with `kind: territory` (`sovereign`, `status_line`) or `kind: dispute` (`parties`: country ids, or `{label: ...}` for a party that isn't a state). Both have `uid`, `name`, `alt_names`, `geometry`, `expect`, `note` and an optional `frame` override. A territory may also have an `anchor` card key with an `anchor_reason` (ADR 0009), and `retired: true`.
+- **`territories.yaml`:** entries with `kind: territory` (`sovereign`, `status_line`) or `kind: dispute` (`parties`: country ids, or `{label: ...}` for a party that isn't a state). Both have `uid`, `name`, `alt_names`, `geometry`, `expect`, `note` and an optional `frame` override.
 - **`cities.yaml`:** `id`, `name`, `alt_names`, `uid`, `country`, `tier` (`core` or `secondary`; all 42 are core), `ne_id` (populated places), `expect`, an optional `anchor` feature and `note`.
 
 **Geometry** uses the feature grammar: Natural Earth rows, a `geometry/` file or a feature's shape, with `subtract` parts cut out. The first part is the base; `make check-data` fails unless every added part lies outside the base and every subtracted part inside it, so no sliver hides in the result. That is how recognised borders are composed (Crimea added to Ukraine, Western Sahara cut from Morocco).
@@ -145,8 +144,6 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 **`mainland`** is a display crop for the card only. It keeps the outline's parts wholly inside the box and drops remote islands (the Kermadecs, Chathams, NZ sub-Antarctic islands, Trindade, Minami-Torishima, Okinotorishima, the Prince Edward Islands, Macquarie). `countries_ne.py` gives the adjacency graph and the region derivation the full, uncropped outline.
 
 **`frame`** is a card's own exception to the framing rules ([ADR 0010](adr/0010-region-framing.md)): `{inset: true|false}` forces its detail inset on or off, and `inset_km` sets the inset's width. On a country it applies to the country card only. In use: Kuwait (`inset: true`) and the Spratly Islands (`inset: true, inset_km: 900`).
-
-**Retired territories.** A territory with `retired: true` keeps its uid and data and is validated, but makes no card and isn't placed. Its id may be reused by the entry that replaces it. This is how a frozen political card moves region ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md#amendment-retire-and-replace-v210)): Greenland's v2.0 card (`24rdGoHY6W`, region 19) is retired, and a new entry (`zjAlvxD9jl`) places it in region 02.
 
 **Region and host** are not in these files. `curriculum.yaml` is the one source of both for countries, territories and disputes: the loaders place each entry from it and fail on an entry it doesn't place, or places as another kind. A host is a placement anchor only, never a statement of sovereignty. Cities take their country's region.
 
@@ -159,7 +156,7 @@ A `Card` is a frozen pydantic model:
 - `uid`, `kind` and `id`, which is unique within its kind. Kinds: `feature`, `country`, `capital`, `city`, `territory`, `dispute`, and `continent`.
 - `prompt`, the type word on the front, and `answer_lines`, which deckgen escapes and joins with `<br>`. Both reject markdown and HTML syntax, since ankc renders card text unsanitised.
 - `tags`, `tier`, `region` (`"NN"` for political and city cards; unset on features) and `note`. The note is printed in the PDF guide and, on the card, under the answer: deckgen appends `<hr>` and the HTML-escaped note in a `<div>` styled smaller and muted by opacity (`NOTE_STYLE`), so it reads in light and night mode. It goes into the existing answer field, so the note type is unchanged; `answer_lines` stays the name alone. The note validator keeps it inert (no HTML, links, images, code, `$` math or ankc syntax), allowing only emphasis, which ankc renders as `<em>`.
-- Curriculum links for P3: `host`, the country key a pocket sits after; `anchor`, the key of the card this one comes right after (a city's feature, or a feature's or territory's `anchor` override); `parents`, keys that must come first (a capital's country, a city's country and capital); `orientation`, true for the orientation block.
+- Curriculum links for P3: `host`, the country key a pocket sits after; `anchor`, the key of the card this one comes right after in the ring order (a city's feature); `parents`, keys that must come first (a capital's country, a city's country and capital); `orientation`, true for the orientation block.
 - `render`: a `RenderRef` holding the `RenderSpec`, a `geometry` provider, for capitals and cities a `dot` provider, and for political, capital and city cards a `region` provider (`framing.py`). They resolve only when called, so building cards doesn't load Natural Earth.
 
 | Kind | Front | Back | Drawn as |
@@ -173,14 +170,14 @@ A `Card` is a frozen pydantic model:
 
 Alternate names follow the name in brackets.
 
-**Study pass.** `card.study_pass` derives a card's pass from its kind, tier and orientation flag; it isn't stored. Continents and orientation features (the 4 oceans, the 2 planetary wind bands) are `orientation`. Countries, capitals, territories and disputes are always pass 1, tier-3 microstates included. Any other card is pass 1 at tier 1–2 and pass 2 at tier 3. Cities map `core` to tier 2 and `secondary` to tier 3; territories and disputes are tier 2. Today: 6 orientation, 584 pass 1 and 10 pass 2 cards.
+**Block and pass.** `card.block_of` gives a card's study block from its kind, and it isn't stored: `continents` (continents, 7 cards), `countries` (countries, territories and disputes, 235), `features` (132) or `cities` (capitals and cities, 233). The pass belongs to the ring order that the engine builds before it cuts the blocks; learners no longer see it. `card.study_pass` derives it from kind, tier and orientation flag. Continents and orientation features (the 4 oceans, the 2 planetary wind bands) are `orientation`. Countries, capitals, territories and disputes are always pass 1, tier-3 microstates included. Any other card is pass 1 at tier 1–2 and pass 2 at tier 3. Cities map `core` to tier 2 and `secondary` to tier 3; territories and disputes are tier 2. Today: 13 orientation, 584 pass 1 and 10 pass 2 cards.
 
 ### Tags
 
 | Tag | On | Value |
 |---|---|---|
 | `kind::<kind>` | every card | the card's kind |
-| `pass::<p>` | every card | `orientation`, `1` or `2`; validated against `card.study_pass` |
+| `block::<b>` | every card | `continents`, `countries`, `features` or `cities`; validated against `card.block`. Replaced `pass::` in v3.0.0 |
 | `tier::<n>` | every card | the tier |
 | `category::<slug>` | every card | a feature's category; `countries`, `cities` (capitals and cities) or `territories` (territories and disputes) |
 | `region::NN` | political and city cards | the ring region, zero-padded; features don't carry it yet |
@@ -190,11 +187,13 @@ Alternate names follow the name in brackets.
 
 ### Positions
 
-`data/positions.lock` gives every card its new-card position ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md)). The first line is `draft: true` or `draft: false`; each other line is `<uid>: <position> pass=<orientation|1|2> region=<NN|->`, sorted by uid. Positions are unique and below 1,000,000. The pass and region are where the order engine placed the card when it was locked (a feature's region is its frame region; orientation has none). The guide sections by them, deckgen writes each card's `pass::` and `region::` tags from them, and `check package` holds the packaged tags to them, so a filtered deck and a region's guide hold the cards their slots say.
+`data/positions.lock` gives every card its new-card position ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md), [ADR 0011](adr/0011-refreezing-at-a-major-version.md)). The first line is `draft: true` or `draft: false`, the second `series: N`, the major version whose order the lock freezes (3 since v3.0.0). Each other line is `<uid>: <position> block=<continents|countries|features|cities> region=<NN|->`, sorted by uid. Positions are unique and below 1,000,000. The block and region are where the order engine placed the card when it was locked (a feature's region is its frame region; a continent, an ocean or a planetary wind has none). The guide sections by them, deckgen writes each card's `block::` and `region::` tags from them, and `check package` holds the packaged tags to them, so a filtered deck and a region's guide hold the cards their slots say.
 
-`make positions` is the only writer. While the lock is a draft it is regenerated from the study order at a stride of 500, so retired uids drop out. Once it is frozen, locked entries never move. A new uid goes after `pred`, the nearest earlier card in the study order that is in the lock. It takes a slot between `lock[pred]` and the next locked value above it. New uids that share a gap are spread evenly (after the last locked value, at successive strides of 500), and the command fails when a gap is exhausted. A retired uid keeps its entry, so no position is reused. A political card that must move region is retired and replaced by a new uid, which `make positions` places as usual (Greenland in v2.1.0).
+`make positions` is the only writer. While the lock is a draft it is regenerated from the study order at a stride of 500, so retired uids drop out. Once it is frozen, locked entries never move. A new uid goes after `pred`, the nearest earlier card in the study order that is in the lock. It takes a slot between `lock[pred]` and the next locked value above it. New uids that share a gap are spread evenly (after the last locked value, at successive strides of 500), and the command fails when a gap is exhausted. A retired uid keeps its entry, so no position is reused, and `check deck` fails on a locked uid that no source entry, active or `retired: true`, holds.
 
-The lock was frozen (`draft: false`) for v2.0.0. The freeze guard in `check data` and `make positions` reads the lock committed on `origin/main` (`POSITIONS_BASE` overrides the ref) and on the newest `v*` tag reachable from `HEAD`. Once a base lock is frozen, the working lock must stay frozen and keep every one of its entries unchanged; it may only add uids. Without a readable base ref (a source archive, a shallow CI checkout) `check data` warns and skips that comparison; with `RELEASE=1` it fails, and `make positions` always fails. A frozen card whose pass or region changes in the data keeps its locked slot, section and tags; `check deck` and `make positions` print a warning.
+The series-3 lock was regenerated for v3.0.0 and frozen: 607 entries from 500 to 303,500, with the blocks starting at 500 (continents), 4,000 (countries), 121,500 (features) and 187,500 (cities). The freeze guard in `check data` and `make positions` reads the lock committed on `origin/main` (`POSITIONS_BASE` overrides the ref) and the one on the newest release tag of the lock's series (`v3.*`) reachable from `HEAD`. Against a frozen base of the same series, the working lock must stay frozen and keep every one of its entries unchanged; it may only add uids. A base of an earlier series (v2.0.0's lock, which has no `series:` line) is only checked to be well formed; one of a later series is an error. The series itself must equal the major version of the newest `v*` tag reachable from `HEAD`, or be the next one, and a release tag on `HEAD` must be of the lock's series. Release tags are found with `git tag --merged HEAD`, keeping only exact `vX.Y.Z` tags (prereleases and other `v*` tags are ignored); the newest is by version, not by commit distance. A fresh freeze (a lock whose series is ahead of the newest release) may reorder, but must keep every uid of that release, since users hold those notes; a uid that was only ever on main or a branch may go. A release build (`make all RELEASE=1 VERSION=vX.Y.Z`; `VERSION` is exported to `check data`) fails without a version, unless a release tag is on `HEAD`, and fails when the version's major, or any release tag on `HEAD`, isn't the lock's series. A non-release build with a lock ahead of the newest release warns that the next release must be vN.0.0. Without a readable base ref, a full clone or a tag list (a source archive, a shallow CI checkout), `check data` warns and skips those checks; under `RELEASE=1`, and always in `make positions`, a frozen lock fails instead. A frozen card whose block or region changes in the data keeps its locked slot, section and tags; `check deck` and `make positions` print a warning.
+
+**Re-freezing** at a new major version N ([ADR 0011](adr/0011-refreezing-at-a-major-version.md)): replace the lock with the two lines `draft: true` and `series: N`, run `make positions` (it regenerates the lock at stride 500), set `draft: false`, commit, and release as vN.0.0.
 
 ### Type words and families
 
@@ -333,7 +332,7 @@ It also fails on political and city data:
 - an outline that doesn't compose exactly, falls outside its `expect`, or isn't a polygon; a capital or city point outside its country;
 - a territory's `sovereign` or a dispute's party that isn't a country, or party names that repeat;
 - a city whose country is unknown, which is its country's capital, or whose `anchor` isn't an active feature, is in orientation or a later pass, or **derives to a different region from the city's country** (the anchor-region check: a city comes right after its anchor, so both must be in one region);
-- a feature `region` override outside 1–21, or a `region` or `anchor` override without its reason (schema). `regions.py` also checks overrides against the ring whenever it derives a region.
+- a feature `region` override outside 1–21, or one without its `region_reason` (schema). Features take no `anchor`; the schema rejects one. `regions.py` also checks overrides against the ring whenever it derives a region.
 - a ring region's or a composed continent's outline that is more than 0.5% sea (`SEA_SHARE_MAX` in `regions.py`). The real outlines are all land; the check catches a dispute whose outline takes in sea leaking into them, as the Spratly envelope once made region 17 4.1% sea. It runs wherever the outlines are built (`regions.region_outlines`, `continents.geometry`).
 
 It prints every trim, every `allow_nested` override, references to retired features, and each flagged or nested pair.
@@ -344,9 +343,9 @@ It prints every trim, every `allow_nested` override, references to retired featu
 - **Nested** pairs from different families (a delta in its river's frame, a strait inside a cyclone belt) are allowed and reported.
 - **Override policy.** Fix a same-family nesting in the data first: subtract the inner card when the outer shape shouldn't include it. Use `allow_nested: [{id, reason}]` only when the inner feature is a named part of the outer one and cutting it out would misdraw the outer shape. The reason must say why the cards still differ. Current overrides: Aegean/Mediterranean, Barents/Arctic Ocean, Levant/Fertile Crescent, Pontic–Caspian Steppe/Eurasian Steppe, Zagros/Iranian Plateau, and Arabian Desert/Arabian Peninsula (cross-family, so not required, but recorded because its IoU sits just under 0.8).
 
-**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, a draft lock still matches the current study order (`make positions` would leave it unchanged) (a frozen card whose pass or region changed is a warning, not an error), ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "World Atlas"` passes.
+**`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, a draft lock still matches the current study order (`make positions` would leave it unchanged) (a frozen card whose block or region changed is a warning, not an error), every locked uid belongs to an active or `retired: true` source entry, ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, and `ankc check --deck "World Atlas"` passes.
 
-**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `World Atlas` deck, every note carrying all its tags, `pass::` and `region::` tags equal to the note's lock entry, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
+**`check package`** (after the build): exactly one `.apkg` in `dist/`, with one note per active card and no others, every card in the `World Atlas` deck, every note carrying all its tags, `block::` and `region::` tags equal to the note's lock entry, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
 
 ## Deck and study order
 
@@ -356,10 +355,11 @@ It prints every trim, every `allow_nested` override, references to retired featu
 
 **Study order** (`order/`, [ADR 0009](adr/0009-curriculum-order.md)):
 
-1. Orientation (continents, oceans, planetary winds), then pass 1, then pass 2; within a pass, the 21 regions in ring order.
-2. Within a region, countries follow the frozen `walk:` in `curriculum.yaml`, or a generated neighbour walk (most recent neighbour, then Warnsdorff, then id). A capital comes 2–3 cards after its country; pockets, territories and disputes after the host's capital; a feature right after the last country of its region it touches, or before the first country it mostly covers if it is the region's `opener:`; a city right after its `anchor` feature, else after its capital; a feature or territory with an `anchor` override right after that card, which must be in the same pass and region (Greenland after Iceland, the GIUK Gap after Greenland).
+1. The engine first builds the ring order: orientation (continents, oceans, planetary winds), then pass 1, then pass 2; within a pass, the 21 regions in ring order.
+2. Within a region, countries follow the frozen `walk:` in `curriculum.yaml`, or a generated neighbour walk (most recent neighbour, then Warnsdorff, then id). A capital comes 2–3 cards after its country; pockets, territories and disputes after the host's capital; a feature right after the last country of its region it touches, or before the first country it mostly covers if it is the region's `opener:`; a city right after its `anchor` feature, else after its capital. Greenland is hosted by Iceland in region 02, so it comes right after Iceland.
 3. Repair, in precedence order: parent before child (a `frame.context` reference, an added part, an `allow_nested` or a nested pair; never a `subtract`); the capital gap; no two cards with the same id side by side; look-alikes 3–10 cards apart within a region (curated confusables, same-family features within 50 km that don't contain one another, and a feature and a country with outline IoU ≥ 0.6). Walk countries never move. What can't be repaired is a waiver, printed per region with the walk's jumps.
 4. Every tie-break ends in an id, so the order is deterministic.
+5. `engine.blocks` cuts the study order from the ring order in four blocks: the continents; the countries, territories and disputes, region by region on the frozen walks, each walk node followed by its pocket countries and then the territories and disputes it hosts; the physical features in ring order (oceans and planetary winds, then pass 1, then the tier-3 features of pass 2); then the capitals and cities, region by region in the same country order, each capital followed by its country's other cities (a city's `anchor` now only orders it among its own country's cities). Cutting out the countries closes up gaps between features, so within each ring segment (pass and region) the features are repaired again for the look-alike window, parent before child first. Pairs that repair can't fix, and look-alike country pairs (the walk doesn't move), are printed as `study order:` waivers in the deckgen report. `Ordering.cards` is the study order; `Ordering.ring` keeps the ring order.
 
 The order uses the pair results that `check data` caches in `build/siblings.json`, keyed by a hash of its inputs; deckgen refuses a stale copy. Anki keeps a new card's position on first import. With ankc 0.6 that position is the card's `[^pos]` from the lock; ankc 0.5 numbers new cards in source order, which is the study order.
 
@@ -369,11 +369,11 @@ The order uses the pair results that `check data` caches in `build/siblings.json
 
 `make guide` writes `build/world-atlas-guide.pdf` (A4, reportlab, in the optional `guide` dependency group). The name comes from the deck name. It holds every active card, of every kind, in the new-card study order from `data/positions.lock`, so entry N is the Nth new card Anki shows. Each entry gives the card number, the prompt, the answer lines, the map and the note.
 
-Sections: Orientation, then Pass 1 and Pass 2, each by ring region in ring order. A section's pass and region are the ones `positions.lock` records for its cards (the order engine's `region_of` at the time each was locked). A card can sit outside its own region's run: the engine moves a parent to just before its child. The guide shows such a card where Anki shows it, and prints a line for each. To do that, it takes the heaviest chain of (pass, region) runs that never goes back in ring order as the sections; every other run joins the section after it. A linked contents page and PDF bookmarks cover each pass, each region and each card.
+Sections: the four blocks (Continents; Countries, territories and disputed areas; Physical features; Capitals and cities), each by ring region in ring order. The features block opens with the oceans and planetary winds, which have no region, and ends with the tier-3 features in their own run of regions. A section's block and region are the ones `positions.lock` records for its cards (the order engine's `region_of` at the time each was locked). A card can sit outside its own region's run: the engine moves a parent feature to just before its child. The guide shows such a card where Anki shows it, and prints a line for each. To do that, it takes the heaviest chain of (block, tier-3 run, region) runs that never goes back as the sections; every other run joins the section after it. A linked contents page and PDF bookmarks cover each block, each region and each card.
 
-`make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with only that region's pass 1 and pass 2 sections. These hold the region's political cards, the same ones a `tag:region::NN` filtered deck holds, plus the features the study order places in the region's run; features carry no region tag, so the filtered deck has none.
+`make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with only that region's sections, in every block. These hold the region's political cards, capitals and cities, the same ones a `tag:region::NN` filtered deck holds, plus the features the study order places in the region's run; features carry no region tag, so the filtered deck has none.
 
-The build fails if a card is unrendered, has no note, or has a note carrying a research marker (`NOTE_MARKER` in `model.py`). It also fails if the lock is a draft that `make positions` would rewrite. Sections come from the pass and region the lock records. It warns if the PDF is over the 80 MB budget. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12).
+The build fails if a card is unrendered, has no note, or has a note carrying a research marker (`NOTE_MARKER` in `model.py`). It also fails if the lock is a draft that `make positions` would rewrite. Sections come from the block and region the lock records. It warns if the PDF is over the 80 MB budget. The notes come from [docs/research/research-independent.md](research/research-independent.md) (as of 2026-10-12).
 
 ## Review tools
 

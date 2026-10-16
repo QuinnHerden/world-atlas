@@ -164,7 +164,38 @@ def curriculum_order(cards: Iterable[Card], curriculum: Curriculum, adjacency: A
     segment = {c.key: seg for c, seg in entries}
     waivers += [f"{a.key} and {b.key} share an id and sit side by side" for a, b in zip(ordered, ordered[1:])
                 if a.id == b.id and (segment[a.key] != segment[b.key] or segment[a.key][0] == "orientation")]
-    return Ordering(blocks(ordered, curriculum, region_walks), reports, waivers, ordered)
+    study = blocks(ordered, curriculum, region_walks)
+    study, study_waivers = _block_lookalikes(study, segment, parents, lookalike_pairs)
+    return Ordering(study, reports, waivers + study_waivers, ordered)
+
+
+def _block_lookalikes(cards: list[Card], segment: Mapping[str, tuple[Pass, int]], parents: Mapping[str, tuple[str, ...]],
+                      pairs: list[tuple[str, str]]) -> tuple[list[Card], list[str]]:
+    """The look-alike window in the study order, where cutting the blocks out of the ring closes up the gaps. Within
+    each run of features of one ring segment the cards are repaired as in the ring (parent before child first); the
+    countries block keeps its walk, so a pair there is only reported, as is anything repair can't fix."""
+    out: list[Card] = []
+    i = 0
+    while i < len(cards):
+        j = i
+        while j < len(cards) and cards[j].block == cards[i].block and segment[cards[j].key] == segment[cards[i].key]:
+            j += 1
+        run = cards[i:j]
+        if run[0].block == "features" and len(run) > 1:
+            members = {c.key for c in run}
+            run = _repair(run, _Context(parents, {}, [(a, b) for a, b in pairs if a in members and b in members], set()))
+        out += run
+        i = j
+    pos = {c.key: n for n, c in enumerate(out)}
+    by_key = {c.key: c for c in out}
+    waivers = []
+    for a, b in pairs:
+        if a in pos and b in pos and by_key[a].block == by_key[b].block and segment[a][1] == segment[b][1]:
+            gap = abs(pos[a] - pos[b])
+            if not LOOKALIKE_GAP[0] <= gap <= LOOKALIKE_GAP[1]:
+                waivers.append(f"study order: look-alikes {a} and {b} are {gap} cards apart "
+                               f"(wants {LOOKALIKE_GAP[0]}-{LOOKALIKE_GAP[1]})")
+    return out, waivers
 
 
 def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, Walk]) -> list[Card]:
@@ -182,7 +213,9 @@ def blocks(ring: list[Card], curriculum: Curriculum, region_walks: Mapping[int, 
     cities: dict[str, list[Card]] = {}
     for c in ring:
         if c.kind == "city":
-            country = next(p.removeprefix("country:") for p in c.parents if p.startswith("country:"))
+            country = next((p.removeprefix("country:") for p in c.parents if p.startswith("country:")), None)
+            if country is None:
+                raise OrderError(f"{c.key}: no country parent")
             cities.setdefault(country, []).append(c)
     political: list[str] = []
     towns: list[Card] = []
@@ -485,7 +518,8 @@ def _waivers(seg: list[Card], ctx: _Context) -> list[str]:
 
 
 def report(ordering: Ordering) -> str:
-    """Per region and pass: the walk's jumps and frontier breaks, then every waiver."""
+    """Per region and pass of the ring order: the walk's jumps and frontier breaks, then every waiver (the ring's,
+    then the study order's look-alike pairs, marked `study order:`)."""
     lines = []
     for r in ordering.reports:
         head = f"pass {r.study_pass} region {r.region.number:2d} {r.region.name}"

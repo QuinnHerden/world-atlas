@@ -114,12 +114,9 @@ class OverrideFieldTest(unittest.TestCase):
             with self.assertRaises(ValidationError):
                 feature("Plain", region=region, region_reason="out of the ring")
 
-    def test_anchor_is_a_card_key_with_a_reason(self) -> None:
-        feature("Sea", anchor="country:egypt", anchor_reason="placed after Egypt's card")
+    def test_features_take_no_anchor(self) -> None:  # the features block keeps the ring order (ADR 0009)
         with self.assertRaises(ValidationError):
-            feature("Sea", anchor="egypt", anchor_reason="placed after Egypt's card")
-        with self.assertRaises(ValidationError):
-            feature("Sea", anchor="country:egypt")
+            feature("Sea", anchor="country:egypt", anchor_reason="placed after Egypt's card")
 
     def test_continent_is_its_own_family(self) -> None:
         self.assertEqual(feature("Continent").family, "continent")

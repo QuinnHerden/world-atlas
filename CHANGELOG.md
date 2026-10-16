@@ -2,35 +2,35 @@
 
 All notable changes to this deck are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## [2.1.0] - 2026-10-15
+## [3.0.0] - 2026-10-16
 
-Political and city maps are redrawn on their curriculum regions, and Greenland moves to Nordic & Baltic.
+A new study order in four blocks, political and city maps redrawn on their curriculum regions, and Greenland in Nordic & Baltic. The new order reaches fresh imports only; see the upgrade notes.
 
 ### Added
 
 - Detail insets: a small country, territory or disputed area gets a zoomed corner inset of its main body, joined to it by leader lines. Every capital and city card gets one round its dot ([ADR 0010](docs/adr/0010-region-framing.md)).
 - Fixed sub-frames for Oceania (Melanesia, Micronesia, central Pacific, Polynesia) and the Lesser Antilles. The Lesser Antilles frame has a small Caribbean locator.
 - Per-card `frame: {inset, inset_km}` overrides in `countries.yaml` and `territories.yaml`. Kuwait and the Spratly Islands use them.
-- `anchor` overrides for features and territories, each with an `anchor_reason`: the card comes right after its anchor in the same pass and region ([ADR 0009](docs/adr/0009-curriculum-order.md)).
-- Retired territories (`retired: true`), kept with their uid and lock entry, so a political card can move region by retire and replace ([ADR 0006](docs/adr/0006-positions-lock-and-pos-footnote.md)).
+- `block::` tags: `block::continents`, `block::countries`, `block::features` and `block::cities`.
 
 ### Changed
 
-- Country, territory and dispute cards are framed on their curriculum region: one frame round the region's members, at least 3,500 km wide, shared by the cards that fit it. States whose v2.0 frame was over 8,000 km wide keep it.
+- **Breaking:** the study order is now four blocks ([ADR 0009](docs/adr/0009-curriculum-order.md#amendment-four-blocks-v300)): the 7 continents; then the 235 countries, territories and disputed areas, region by region round the ring; then the 132 physical features, oceans and planetary winds first and tier 3 last; then the 233 capitals and cities, region by region in the same country order, each capital before its country's other cities. v2 interleaved every kind in one pass round the ring, with a second pass for tier 3.
+- **Breaking:** the `pass::` tags are replaced by `block::` tags. Filtered decks that search `pass::` find nothing. `region::` tags stay on political cards and cities.
+- **Breaking:** `data/positions.lock` is re-frozen as series 3 ([ADR 0011](docs/adr/0011-refreezing-at-a-major-version.md)). Every card has a new position, regenerated at stride 500 (500 to 303,500). The lock declares its series, and entries record `block=` instead of `pass=`. The freeze guard compares the lock only with locks of the same series; a new series is allowed only as the next major version, and must keep every uid of the release before it.
+- Greenland moves from North & Central America (region 19) to Nordic & Baltic (region 02), right after Iceland (card 23). It keeps its card and uid (`24rdGoHY6W`). It stays in North America on the continent cards.
+- Country, territory and dispute cards are framed on their curriculum region: one frame round the region's members, at least 3,500 km wide, shared by the cards that fit it. States whose v2 frame was over 8,000 km wide keep it.
 - Capital and city cards are framed on their country's region. A close-dot city shows its region, with the close-up in its inset; in a giant country (Kinshasa, Kyoto, Osaka) it keeps the 1,000 km close-dot frame.
 - Country, territory, dispute, capital and city cards no longer show the world locator. Feature cards keep it.
 - Political land is ringed only at microstate scale, per island group.
-- Greenland moves from North & Central America (region 19) to Nordic & Baltic (region 02), right after Iceland. The GIUK Gap now follows Greenland. Greenland stays in North America on the continent cards.
-
-### Removed
-
-- The v2.0 Greenland card (`24rdGoHY6W`) is retired and replaced by a new card (`zjAlvxD9jl`). The deck still has 607 active cards and 23 territories.
+- The study guide is sectioned by block, then region.
+- A release build names its version, `make all RELEASE=1 VERSION=vX.Y.Z`, whose major must equal the lock's series. Release tags are read with `git tag --merged HEAD` (exact `vX.Y.Z` only), and a release build fails on a shallow clone.
+- Features no longer take an `anchor` override; the schema rejects one. Cities keep theirs.
 
 ### Upgrade notes
 
-- Re-importing updates the maps and tags of existing cards in place. They keep their review history and queue position.
-- Greenland is a new note. It arrives as a new card between Iceland and the GIUK Gap.
-- The old Greenland card stays in an upgraded collection, with its review history, until you delete it. Its history does not carry over to the new card. Find it with `deck:"World Atlas" tag:id_territory_greenland tag:region::19`; see [Upgrading from v2.0](README.md#upgrading-from-v20).
+- Re-importing updates maps and tags (`block::`, `region::`) in place. Cards keep their review history.
+- Re-importing never changes a card's queue position, so an upgraded collection keeps the v2 interleaved order. To get the v3 order, delete the deck and import fresh (losing review history), or reposition the unstudied cards block by block in **Browse**; see [Upgrading from v2](README.md#upgrading-from-v2). Repositioning keeps the v2 order within each block, which is close to v3's but not the same.
 - Run **Tools → Check Media** afterwards to delete the old maps.
 
 ## [2.0.0] - 2026-10-14
@@ -80,6 +80,6 @@ The **Geographic Features** deck. Tagged retrospectively at commit `b63bf0e`.
 - North-up framing with a 2,600 km minimum width, and a fixed world inset.
 - Built with ankc 0.4. Output: `geographic-features.apkg`.
 
-[2.1.0]: https://github.com/QuinnHerden/world-atlas/compare/v2.0.0...v2.1.0
+[3.0.0]: https://github.com/QuinnHerden/world-atlas/compare/v2.0.0...v3.0.0
 [2.0.0]: https://github.com/QuinnHerden/world-atlas/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/QuinnHerden/world-atlas/releases/tag/v1.0.0

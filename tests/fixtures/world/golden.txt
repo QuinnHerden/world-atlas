@@ -18,10 +18,10 @@ feature:pacific-ocean
 feature:trade-winds
 feature:westerlies
 feature:west-peninsula
-feature:west-range
 feature:long-river
 feature:cerul
 feature:long-river-delta
+feature:west-range
 feature:ocean-sea
 feature:inner-gulf
 feature:north-sea

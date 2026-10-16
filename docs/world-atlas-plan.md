@@ -10,6 +10,8 @@ One deck, **World Atlas**, that teaches a total beginner the political and physi
 
 **Curriculum.** The program is an **atlas ring**. It opens with a 1–2 day **orientation** (the oceans, the planetary wind belts and the seven continents). Then it makes **one complete pass round 21 regions** in a closed loop, and each region crossing goes over a border or a short stretch of sea. Inside a region, countries come **neighbour to neighbour**: each new country borders one already introduced, preferring the most recent. Each capital comes 2–3 cards after its country. A physical feature comes right after the countries that frame it, and a core city comes after its capital or its river. Pass 1 holds every country and capital, the territories and disputed areas, the tier 1–2 features and the core cities. A short **depth pass** then goes round the same ring again with the tier 3 features (and the secondary cities, all deferred for now). Look-alikes sit **near but not adjacent**, 3 to 10 cards apart. Suggested rate: **15 new cards a day**, about 6 weeks of new cards.
 
+> **Superseded in v3.0.0.** The ring order described here is still built, but the study order is now cut from it in four blocks: continents, then countries with their territories and disputed areas, then physical features, then capitals and cities. See [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300) and [ADR 0011](adr/0011-refreezing-at-a-major-version.md).
+
 **System.** Keep one repo and one renderer. Add **card sources**: `features.yaml` (unchanged), `countries.yaml`, `territories.yaml` and `cities.yaml`. Each source has its own pydantic model and turns its entries into a plain `Card` DTO. Everything downstream works on `Card`: the order engine, deckgen, the package check and the guide. Each country/capital pair is **two notes** with two uids. `curriculum.yaml` places every country, territory and disputed area in a region; physical features get theirs from geometry. Adjacency is computed from the recognised-border outlines at build time and cached. `order.py` becomes a pipeline of pure functions: passes, then regions, then a neighbour walk, then anchored interleaving, then local repair rules. The structural change is that **positions become persisted data**: an append-only `data/positions.lock` maps uid to a sparse integer, and ankc writes it as the card's `due`. Adding a card never moves an existing card, and fresh and existing collections see the same order.
 
 ## Decisions so far
@@ -35,7 +37,7 @@ Decided 2026-10-14. The defaults still waiting for the user's confirmation are u
 | Microstates | Sit **with their neighbours** in the order, as pockets. Their capital cards follow the Capitals rule. |
 | Country cards | Show the **mainland only**. Overseas territories are their own cards, per [Territories](#territories). Remote islands are cropped from the card by its `mainland` box: the Kermadecs, the Chathams and the NZ sub-Antarctic islands, Trindade, Minami-Torishima, Okinotorishima, the Prince Edward Islands and Macquarie. The crop is for the card only; adjacency and feature regions use the full outline. |
 | Region and host | **`curriculum.yaml` is the one source** of region and pocket host for countries, territories and disputed areas. The entries in `countries.yaml` and `territories.yaml` carry no region. Cities take their country's region. |
-| Territory placement | Geographic pockets (decision 5). **Greenland and Bermuda in region 19, the Kurils in 16, Aruba and Curaçao in 20.** `curriculum.yaml` records the alternatives, now decided, in a comment above `confusables`. v2.1.0 moved Greenland to region 02 (Nordic & Baltic), right after Iceland ([ADR 0009](adr/0009-curriculum-order.md#amendment-anchor-overrides-v210)). |
+| Territory placement | Geographic pockets (decision 5). **Greenland and Bermuda in region 19, the Kurils in 16, Aruba and Curaçao in 20.** `curriculum.yaml` records the alternatives, now decided, in a comment above `confusables`. v3.0.0 moved Greenland to region 02 (Nordic & Baltic), hosted by Iceland, so it comes right after Iceland ([ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300)). |
 | Dispute parties | **Claimants or administrators only.** A party that isn't one of the 197 states gets a **short label** (Transnistria, Northern Cyprus, Sahrawi Republic (Polisario Front)). |
 | Feature regions | Derived by the [rules below](#assigning-physical-features-to-regions), with **overrides in `features.yaml`** (`region` plus `region_reason`): Nile 10, Karakoram 14, Danish Straits 2, Caucasus 6, Tian Shan 15, Amur 16, GIUK gap 2, Typhoon alley 17, and the Gulf Stream and Atlantic hurricane belt 21. |
 | Climate | **6 active climate cards, 9 retired** (commit `41fdf95`): the pressure belts, the East Asian and West African monsoons, the Canary, Benguela, Humboldt and Kuroshio currents, and the Bay of Bengal cyclones. |
@@ -182,6 +184,8 @@ About 607 cards:
 | Pass 1 | 584: 197 countries, 191 capitals, 23 territories, 15 disputed areas, 116 tier 1–2 features, 42 core cities |
 | Pass 2 | 10 tier-3 features |
 
+In v3.0.0 the blocks are continents (7), countries with territories and disputed areas (235), physical features (132) and capitals and cities (233); see [ADR 0009](adr/0009-curriculum-order.md#amendment-four-blocks-v300).
+
 Territories and disputed areas get no capital cards. The 132 active features split 6 orientation, 116 pass 1 and 10 pass 2.
 
 | New cards a day | New cards finish | Notes |
@@ -201,7 +205,7 @@ Pass 2 is 10 cards, so pass 1 ends within a day of the last new card at every ra
 
 - `kind::<k>` (feature, country, capital, city, territory, dispute, continent);
 - `region::NN`, the region number zero-padded, so the tag sidebar lists regions in ring order. Country, capital, territory, dispute and city cards carry it; feature cards don't yet;
-- `pass::orientation`, `pass::1` or `pass::2`.
+- `pass::orientation`, `pass::1` or `pass::2` (replaced in v3.0.0 by `block::continents`, `block::countries`, `block::features` or `block::cities`).
 
 [architecture.md](architecture.md#tags) lists every tag as built.
 
@@ -414,7 +418,8 @@ These defaults are waiting for the user's confirmation. Numbers follow the build
 | [0007](adr/0007-rename-and-migration.md) | Rename to World Atlas, and migration | Accepted; deck and repo renamed |
 | [0008](adr/0008-state-list-borders-adjacency.md) | State list, borders worldview and adjacency | Accepted |
 | [0009](adr/0009-curriculum-order.md) | Curriculum order; supersedes ADR 0004's tier-first rule and ≥ 3 gap | Proposed |
-| [0010](adr/0010-region-framing.md) | Region framing for political and city cards; amends ADR 0003 (v2.1.0) | Accepted |
+| [0010](adr/0010-region-framing.md) | Region framing for political and city cards; amends ADR 0003 (v3.0.0) | Accepted |
+| [0011](adr/0011-refreezing-at-a-major-version.md) | Re-freezing the study order at a major version; amends ADRs 0006 and 0009 (v3.0.0) | Accepted |
 
 Specialist reviews to run: `data-engineer` on the adjacency and region-derivation rules, and `technical-writer` on the README's migration section.
 

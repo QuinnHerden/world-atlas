@@ -34,7 +34,7 @@ series: 3
 3CsDa5bCHw: 221000 block=cities region=08
 3SFXx6aM1D: 58000 block=countries region=11
 3b0SX9Buga: 113000 block=countries region=21
-3bKooQUa8k: 160500 block=features region=15
+3bKooQUa8k: 160000 block=features region=15
 3cGDMrft6v: 247000 block=cities region=13
 3yYfTA76uu: 168000 block=features region=16
 450JCjLn1m: 280500 block=cities region=18
@@ -105,7 +105,7 @@ Aq8ZyotYEZ: 197000 block=cities region=03
 BJi3GD1LFi: 265000 block=cities region=16
 BLWHbP0dD3: 176000 block=features region=19
 BOfJDSGp93: 200500 block=cities region=03
-BRXi9sxovk: 159500 block=features region=15
+BRXi9sxovk: 159000 block=features region=15
 BXuf2N7ee1: 47500 block=countries region=09
 BZ6svqX5X1: 169500 block=features region=16
 Bf3yT5JobD: 235000 block=cities region=11
@@ -156,7 +156,7 @@ FU7hUDe7Kf: 296500 block=cities region=20
 FgxiyqXNVR: 282000 block=cities region=19
 FhpFsM6630: 145000 block=features region=09
 FjgXO6d1Ya: 293500 block=cities region=20
-FsC3qGSzTF: 159000 block=features region=15
+FsC3qGSzTF: 161000 block=features region=15
 FvFaC1ldG0: 294000 block=cities region=20
 GDx6o0YhpQ: 76000 block=countries region=15
 GE4gcrFv7R: 232500 block=cities region=11
@@ -174,7 +174,7 @@ GzvJcmyJPO: 185000 block=features region=16
 HMHbbmS4V5: 213500 block=cities region=06
 HRWKr40vOR: 57500 block=countries region=11
 HRaBqTzdJi: 120500 block=countries region=21
-HTwuBX9dFV: 161000 block=features region=15
+HTwuBX9dFV: 160500 block=features region=15
 HXEV8bNubz: 70000 block=countries region=13
 HZF3aGf7mv: 129000 block=features region=03
 Heh7XKRrTp: 5000 block=countries region=01
@@ -233,7 +233,7 @@ Mwg9eKbRgB: 236000 block=cities region=11
 N0vWpOks93: 242000 block=cities region=12
 N3NGMxsbci: 121500 block=features region=-
 N4LkoU6jYC: 111500 block=countries region=20
-NCIAyqs6XI: 158000 block=features region=15
+NCIAyqs6XI: 157500 block=features region=15
 NIg2un15Ab: 84000 block=countries region=16
 NRdvDSnlOm: 19500 block=countries region=03
 NSvsyjcuT2: 226000 block=cities region=09
@@ -380,7 +380,7 @@ ayUnvU3TOU: 284000 block=cities region=19
 b26ActofVa: 38000 block=countries region=07
 b5i7EhUujX: 297500 block=cities region=21
 b8dfk0W5fY: 500 block=continents region=-
-bBac0j3A9j: 157500 block=features region=15
+bBac0j3A9j: 158000 block=features region=15
 bDR8QUTGCj: 248000 block=cities region=13
 bJM8iWYKUz: 36500 block=countries region=07
 bcJskUQhSd: 251000 block=cities region=13
@@ -393,7 +393,7 @@ c8yZnVf3Wx: 283500 block=cities region=19
 cFpN3I9ILO: 37500 block=countries region=07
 chwOpF2aWb: 152000 block=features region=13
 cnUtmlZgSD: 243000 block=cities region=12
-cucDLcxgiQ: 160000 block=features region=15
+cucDLcxgiQ: 159500 block=features region=15
 d0HRyLUACO: 54000 block=countries region=11
 dBjfJbKtqd: 299000 block=cities region=21
 dDEYCruq0R: 67000 block=countries region=13

@@ -16,7 +16,7 @@ Before WS2, the render cache hashed the source of `model.py`, so adding a field 
 
 | Source | Model | Cards |
 |---|---|---|
-| `data/features.yaml` | `Feature` (`model.py`), unchanged apart from optional `region`/`anchor` overrides, each with a reason | feature |
+| `data/features.yaml` | `Feature` (`model.py`), unchanged apart from an optional `region` override with a reason (a feature `anchor` override existed until v3.0.0) | feature |
 | `data/countries.yaml` | `Country`, with its `Capital` nested (`polities.py`) | country, capital |
 | `data/territories.yaml` | `Territory` and `Dispute`, told apart by `kind` (`polities.py`): the 23 dependent territories and 15 disputed areas | territory, dispute |
 | `data/cities.yaml` | `City`, with a `country:` reference (`sources/cities.py`) | city |
@@ -31,9 +31,9 @@ Source modules live in `src/geofeat/sources/`: `features.py`, `political.py` (co
 - **`kind`** is `feature`, `country`, `capital`, `city`, `territory`, `dispute` or `continent`. `id` is unique within a kind; **`key`** is `kind:id` and unique across sources.
 - **`prompt`** is the front's type word: the feature's type, "Country", "City" for capitals and cities alike, and "Territory" or "Disputed territory" (the decision 4 default).
 - **`answer_lines`** is a tuple of plain-text lines. deckgen escapes each one and joins them with `<br>`, so a capital's back reads "Paris", then "Capital of France". A city's second line is its country; a territory's is its status; a dispute's is `Disputed: <parties>`.
-- **`host`** is the key of the country whose run a pocket sits in, after its capital. **`anchor`** is the key of the card a card comes right after: a city's feature (Alexandria after the Nile Delta), or a feature's `anchor` override. **`parents`** must come first: a capital's country, a city's country and capital.
+- **`host`** is the key of the country whose run a pocket sits in, after its capital. **`anchor`** is the key of the card a card comes right after in the ring order: a city's feature (Alexandria after the Nile Delta). Since v3.0.0 features take no anchor. **`parents`** must come first: a capital's country, a city's country and capital.
 - **`render`** is a `RenderRef`: the `RenderSpec`, plus a `geometry` provider (and a `dot` provider for capitals and cities) that resolves only when called, so building cards doesn't load Natural Earth.
-- **Tags:** every card gets `kind::<kind>` and a `pass::` tag, which must match `card.study_pass` (derived from kind, tier and the orientation flag). Political and city cards also get `region::NN`. Countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. `tier::` and `category::` stay.
+- **Tags:** every card gets `kind::<kind>` and a `block::` tag (`pass::` until v3.0.0), which must match `card.block` (derived from its kind). Political and city cards also get `region::NN`. Countries get `category::countries`, capitals and cities `category::cities`, territories and disputes `category::territories`. `tier::` and `category::` stay.
 
 **Two notes per state.** A country and its capital are separate notes with separate uids (`uids: {country, capital}`). The PoC's split cards showed why: the two cards differ on both sides, so ankc's reversed cards can't express them, and cloze can't hide one image per card. Two notes also give each card its own tags, position and retirement. That is how a same-name microstate drops its capital card.
 

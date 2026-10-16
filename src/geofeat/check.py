@@ -2,6 +2,7 @@
 
 import json
 import math
+import os
 import sqlite3
 import subprocess
 import sys
@@ -267,7 +268,8 @@ def lock_freeze_errors(release: bool) -> list[str]:
         lock = positions.read()
     except (SystemExit, ValueError) as exc:
         return [str(exc)]
-    errors, warnings = positions.guard(lock, strict=release)
+    errors, warnings = positions.guard(lock, strict=release, release=os.environ.get("VERSION") or None,
+                                       require_release=release)
     for warning in warnings:
         print(f"warning: {warning}")
     return errors
@@ -350,7 +352,8 @@ def check_package() -> list[str]:
         if (entry := lock.entries.get(guid)) is None:
             continue
         placed = {t for t in tags.split() if t.startswith(("block::", "pass::", "region::"))}
-        if f"block::{entry.block}" not in placed or placed - set(positions.locked_tags(list(placed), entry)):
+        if f"block::{entry.block}" not in placed or any(t.startswith("pass::") for t in placed) \
+                or placed - set(positions.locked_tags(list(placed), entry)):
             errors.append(f"{name}: note {guid}'s tags {sorted(placed)} differ from its lock entry {entry}")
     if writes_pos() or not lock.draft:
         if wrong := sorted(g for g, *_, due in rows if g in expected and due != lock.positions.get(g)):

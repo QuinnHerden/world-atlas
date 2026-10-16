@@ -4,7 +4,7 @@ An Anki deck of 607 map cards that teaches the political and physical map of the
 
 World Atlas grew out of the **Geographic Features** deck (v1), which held physical features alone. Its 132 active feature notes carry over, with their review history; see [Upgrading from Geographic Features](#upgrading-from-geographic-features).
 
-Current release: [v2.1.0](https://github.com/QuinnHerden/world-atlas/releases/tag/v2.1.0) (2026-10-15), which redraws the political and city maps on their regions and moves Greenland to the Nordic & Baltic region; see [Upgrading from v2.0](#upgrading-from-v20). Changes by release are in [CHANGELOG.md](CHANGELOG.md).
+Current release: [v3.0.0](https://github.com/QuinnHerden/world-atlas/releases/tag/v3.0.0) (2026-10-16). It studies the map in four blocks (continents, countries, physical features, then capitals and cities), redraws the political and city maps on their regions, and moves Greenland to the Nordic & Baltic region. An upgraded v2 collection keeps its old order unless you change it; see [Upgrading from v2](#upgrading-from-v2). Changes by release are in [CHANGELOG.md](CHANGELOG.md).
 
 Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.6.
 
@@ -21,11 +21,11 @@ Download two files from the [latest release](https://github.com/QuinnHerden/worl
 
 **New to the deck.** In Anki, choose **File → Import** and pick `world-atlas.apkg`. Every card lands in one deck, `World Atlas`, in the study order described under [Study](#study).
 
-**Upgrading from v2.0.** Import it the same way. Your cards are updated in place; [Upgrading from v2.0](#upgrading-from-v20) covers what changes and the one new card, Greenland.
+**Upgrading from v2.** Import it the same way. Your cards are updated in place but keep their v2 order; [Upgrading from v2](#upgrading-from-v2) covers what changes and how to switch to the new order.
 
 **Upgrading from Geographic Features.** Follow [Upgrading from Geographic Features](#upgrading-from-geographic-features) instead. It covers keeping your review history and moving the old cards into `World Atlas`.
 
-**The guide** prints every card in the order Anki shows new cards: entry N is the Nth new card, with its map, its answer and its note. It is sectioned into orientation, then pass 1 and pass 2 by region. For a single region, build it yourself with `make guide REGION=NN` (see [Build](#build)).
+**The guide** prints every card in the order Anki shows new cards: entry N is the Nth new card, with its map, its answer and its note. It is sectioned by the four blocks, then by region. For a single region, build it yourself with `make guide REGION=NN` (see [Build](#build)).
 
 ## Build
 
@@ -42,55 +42,80 @@ make adjacency  # the country adjacency graph and its report
 
 Output: `dist/world-atlas.apkg`. Import it in Anki with **File → Import**.
 
+A release build names its version: `make all RELEASE=1 VERSION=v3.0.0`. It fails without `VERSION` (unless a release tag is on `HEAD`), when the version's major isn't the lock's series, while a note has an open verify item, or when the freeze guard can't run: no readable `origin/main`, a shallow clone, or no tags. Fetch the full history and tags first.
+
 Rendering takes about 10 s per map and is cached, so only changed maps re-render. `JOBS=2 make all` renders in parallel; each worker needs about 1.5 GB of RAM.
 
-`make guide` writes `build/world-atlas-guide.pdf`, a printable guide to every card in the order Anki shows new cards: entry N is the Nth new card, with its map, answer and a short note on why it matters. It is sectioned into orientation, then pass 1 and pass 2 by region. `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with one region only: that region's countries, capitals, cities, territories and disputed areas, plus the features the study order places in its run. The `tag:region::NN` filtered deck (see **Pacing**) holds the same political cards but no features, because features have no region tag. It uses the optional `guide` dependency group (reportlab).
+`make guide` writes `build/world-atlas-guide.pdf`, a printable guide to every card in the order Anki shows new cards: entry N is the Nth new card, with its map, answer and a short note on why it matters. It is sectioned by the four blocks, then by region. `make guide REGION=NN` writes `build/world-atlas-guide-NN.pdf` with one region only: that region's countries, capitals, cities, territories and disputed areas, plus the features the study order places in its run. The `tag:region::NN` filtered deck (see **Pacing**) holds the same political cards but no features, because features have no region tag. It uses the optional `guide` dependency group (reportlab).
 
 ## Study
 
 Every card is in one deck, `World Atlas`, with no subdecks. Each card has these tags:
 
 - `kind::<kind>`: `country` (197), `capital` (191), `city` (42), `territory` (23), `dispute` (15), `continent` (7) or `feature` (132)
-- `pass::orientation`, `pass::1` or `pass::2` (13, 584 and 10 cards)
+- `block::continents`, `block::countries`, `block::features` or `block::cities` (7, 235, 132 and 233 cards): the study block. Countries, territories and disputed areas are in `countries`; capitals and other cities in `cities`
 - `region::01` to `region::21`: the region of a country, capital, city, territory or disputed area (features have none)
 - `tier::1`, `tier::2` or `tier::3` (381, 153 and 73 cards)
 - `category::<slug>`: `countries`, `cities` (capitals and other cities), `territories` (territories and disputed areas), `continents`, or a feature category: `water-bodies`, `straits-chokepoints`, `mountain-ranges`, `rivers-deltas`, `deserts-plateaus-plains`, `peninsulas-isthmuses`, `regions-rifts` or `climate-systems`
 - `id_<id>` for a feature, e.g. `id_nile`, or `id_<kind>_<id>` for any other kind, e.g. `id_country_france`
 
-New cards come up in a fixed order. An orientation block (the continents, the oceans and the planetary winds) comes first. Pass 1 then goes once round a ring of 21 regions, starting in Western Europe, country by neighbouring country, with each capital 2–3 cards after its country and each feature after the countries around it. Pass 2 goes round the ring again with the tier 3 features. `data/curriculum.yaml` names the regions. [ADR 0009](docs/adr/0009-curriculum-order.md) explains the design.
+New cards come up in a fixed order, in four blocks:
 
-To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) with a search such as `deck:"World Atlas" tag:region::04` or `tag:kind::capital`.
+1. **Continents** (7 cards, about half a day at 15 a day): Europe first, Antarctica last.
+2. **Countries, territories and disputed areas** (235 cards, about 16 days): once round a ring of 21 regions, starting in Western Europe with Portugal and ending in the Caribbean with the Bahamas. Within a region you go country by neighbouring country. Microstates and enclaves come right after a neighbour (Andorra after Spain, Monaco after France), and territories and disputed areas after the country they are placed with (Gibraltar after the United Kingdom, Greenland after Iceland).
+3. **Physical features** (132 cards, about 9 days): the oceans and planetary winds first, then the rest round the ring, region by region. The 10 tier 3 features come last.
+4. **Capitals and cities** (233 cards, about 16 days): round the ring again, in the same country order. Each country's capital comes first, then its other cities.
+
+At 15 new cards a day that is about 6 weeks. `data/curriculum.yaml` names the regions. [ADR 0009](docs/adr/0009-curriculum-order.md) explains the design.
+
+To study a subset, make a filtered deck (**Tools → Create Filtered Deck**) with a search and the order "Order due". Some searches:
+
+| Search | Gives |
+|---|---|
+| `deck:"World Atlas" tag:region::05 is:new` | Region 05's countries, territories and disputed areas, then its capitals and cities |
+| `deck:"World Atlas" tag:block::features is:new` | The physical features, in study order |
+| `deck:"World Atlas" tag:block::cities tag:region::16` | East Asia's capitals and cities |
+| `deck:"World Atlas" tag:kind::capital` | Every capital |
 
 **Re-importing a new build** updates each note's text (every card's back, its note included), map and tags, but not its card's deck or new-card position, and it never deletes notes:
 
-- **New cards:** a later release slots its new cards in between existing ones. No existing card moves, so a fresh import and an updated collection see the same order.
+- **New cards:** a later release of the same major version slots its new cards in between existing ones. No existing card moves, so a fresh import and an updated collection see the same order. A new major version may change the order itself, as v3.0.0 did; existing cards then keep their old place (see [Upgrading from v2](#upgrading-from-v2)).
 - **Moved tier or category:** the card keeps its place in the queue. To move it anyway, select it in **Browse** and use **Cards → Reposition**.
-- **Moved region:** a political card that moves to another region comes as a new card, and the old one is retired (see [Retired cards](#retired-cards)). Greenland in v2.1 is the only one so far.
 - **Old maps:** a re-rendered map gets a new file name. Run **Tools → Check Media** to delete the old image.
-- **Older imports:** cards imported from v1 or from a pre-release build keep the positions they had then. If you haven't started studying, delete the deck and import the new package to get the full study order.
+- **Older imports:** cards imported from v1, v2 or a pre-release build keep the positions they had then. If you haven't started studying, delete the deck and import the new package to get the full study order.
 
-### Upgrading from v2.0
+### Upgrading from v2
 
-**What changed in v2.1:**
+**What changed in v3:**
 
-- Country, territory and disputed-area maps are drawn on their region's map, so cards you study together share one frame. The largest states (Russia, Canada, Brazil and the like) keep their v2.0 framing.
+- New cards come in four blocks: continents, countries, physical features, then capitals and cities (see [Study](#study)). v2 mixed them in one pass round the ring.
+- The `pass::` tags are gone. Each card has a `block::` tag instead. A filtered deck that searched `pass::` needs a new search.
+- Country, territory and disputed-area maps are drawn on their region's map, so cards you study together share one frame. The largest states (Russia, Canada, Brazil and the like) keep their v2 framing.
 - Capital and city maps use their country's region map too.
 - Small places get a zoomed detail inset in a corner, joined to them by leader lines. Every capital and city card gets one round its dot.
 - Country, territory, disputed-area, capital and city cards no longer show the small world map. Feature cards still do.
-- Greenland moved from North & Central America (region 19) to Nordic & Baltic (region 02). It now comes right after Iceland and before the GIUK Gap.
+- Greenland moved from North & Central America (region 19) to Nordic & Baltic (region 02), right after Iceland. It is the same card, with the same review history.
 
-**Importing.** Import `world-atlas.apkg` with **File → Import**, keeping the default **Update notes: If newer**.
+**Importing.** Import `world-atlas.apkg` with **File → Import**, keeping the default **Update notes: If newer**. Your cards get their new maps and tags (`block::`, `region::`) in place, and keep their review history.
 
-- **Existing cards** get their new maps and tags in place. They keep their review history and their place in the queue.
-- **Greenland is a new card**, a new note. It lands in the queue between Iceland and the GIUK Gap. If you are already past that point, it comes up among your next new cards.
-- **The old Greenland card stays** in your collection, with its review history, until you delete it. Its history does not carry over to the new card: if you had learned Greenland, you learn it again from scratch. To delete the old card, search for it in **Browse**, check that it finds one card, select it and delete the note:
+Re-importing never changes a card's place in the new-card queue, so **an upgraded collection keeps the v2 order**. The new order applies to fresh imports only. To get it, pick one:
 
-  ```
-  deck:"World Atlas" tag:id_territory_greenland tag:region::19
-  ```
+- **Start over.** Delete the `World Atlas` deck, then import `world-atlas.apkg`. You lose your review history.
+- **Reposition the cards you haven't studied.** In **Browse**:
+  1. Show cards, not notes, and sort by the **Due** column, ascending.
+  2. Search `deck:"World Atlas" is:new tag:block::continents` and select all cards.
+  3. Choose **Cards → Reposition**. Set **Start position** to 500 and **Step** to 1. Turn **Randomize order** and **Shift position of existing cards** off. Click **OK**.
+  4. Repeat steps 2 and 3 for the other blocks, in order:
 
-  Both cards carry `id_territory_greenland`. The old one is tagged `region::19`, the new one `region::02`.
-- **Old maps** stay in your media folder. Run **Tools → Check Media** to delete them.
+     | Search | Start position |
+     |---|---|
+     | `deck:"World Atlas" is:new tag:block::countries` | 4000 |
+     | `deck:"World Atlas" is:new tag:block::features` | 121500 |
+     | `deck:"World Atlas" is:new tag:block::cities` | 187500 |
+
+  This moves only cards you haven't studied. It puts the blocks in v3 order, but within each block the cards keep their v2 order. That is close to v3's order but not the same. For example, Greenland stays among the North American countries instead of coming after Iceland.
+
+**Old maps** stay in your media folder. Run **Tools → Check Media** to delete them.
 
 ### Upgrading from Geographic Features
 
@@ -108,11 +133,11 @@ World Atlas v2.0.0 replaces the **Geographic Features** deck (v1), which held th
 3. Choose **Cards → Change Deck** and pick `World Atlas`.
 4. Delete the empty `Geographic Features` deck and any subdecks under it.
 
-The moved cards keep their old queue positions (0 to 131), ahead of every new card, so any unstudied features come up before the first country. Only the new cards follow the new order. To start the ring alongside them, use a region filtered deck (see **Pacing**). If you skip steps 2 to 4, you end up with two decks. The old cards still work under the old name.
+The moved cards keep their old queue positions (0 to 131), ahead of every new card, so any unstudied features come up before the first country. Only the new cards follow the new order. To move the unstudied feature cards into the features block, use the Reposition steps in [Upgrading from v2](#upgrading-from-v2) for `tag:block::features`. To start the ring alongside them, use a region filtered deck (see **Pacing**). If you skip steps 2 to 4, you end up with two decks. The old cards still work under the old name.
 
 **Retired cards.** Importing never deletes notes, so the 34 cards World Atlas retired from v1 stay in your collection and keep coming up. The searches in [Retired cards](#retired-cards) find them in any deck.
 
-**Card content.** The import updates each feature note's fields where they changed: most fronts point to a re-rendered map, the hidden Source field names the new deck file, and answers are now built from lines joined with `<br>` (a feature's answer text is unchanged). Every back also gains the card's note under the answer. It also adds the `kind::`, `pass::` and other new tags. The notes stay the same notes, with the same history. Afterwards, run **Tools → Check Media** to delete the old maps.
+**Card content.** The import updates each feature note's fields where they changed: most fronts point to a re-rendered map, the hidden Source field names the new deck file, and answers are now built from lines joined with `<br>` (a feature's answer text is unchanged). Every back also gains the card's note under the answer. It also adds the `kind::`, `block::` and other new tags. The notes stay the same notes, with the same history. Afterwards, run **Tools → Check Media** to delete the old maps.
 
 **Pacing.** At 15 new cards a day, the 607 cards take about 6 weeks. Set this under **New cards/day** in the deck's options. To work through one region alongside the main order, make a filtered deck (**Tools → Create Filtered Deck**) with this search, where `NN` is `01` to `21`:
 
@@ -120,7 +145,7 @@ The moved cards keep their old queue positions (0 to 131), ahead of every new ca
 deck:"World Atlas" tag:region::NN is:new
 ```
 
-Set its order to "Order due". Features have no region tag, so this deck holds only countries, capitals, cities, territories and disputed areas.
+Set its order to "Order due". Features have no region tag, so this deck holds only the region's countries, territories and disputed areas, then its capitals and cities.
 
 ## Edit the data
 
@@ -139,13 +164,7 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 
 ## Retired cards
 
-35 cards have been retired: from v1, all 10 passes and corridors, all 15 islands and 9 climate systems; in v2.1, the v2.0 Greenland card, replaced by a new one. Re-importing never deletes notes, so a retired card stays in your collection and keeps coming up for review. Delete it by hand: in **Browse**, search for it, check the count, select all and delete the notes.
-
-The v2.0 Greenland card shares its `id_` tag with the new one, but only it has the region 19 tag:
-
-```
-deck:"World Atlas" tag:id_territory_greenland tag:region::19
-```
+34 cards have been retired: all 10 passes and corridors, all 15 islands, and 9 climate systems. Re-importing never deletes notes, so a retired card stays in your collection and keeps coming up for review. Delete it by hand: in **Browse**, search for it, check the count, select all and delete the notes.
 
 The 9 climate cards carry an `id_` tag, so this search finds them:
 

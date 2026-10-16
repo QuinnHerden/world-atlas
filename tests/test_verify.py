@@ -149,6 +149,7 @@ class ReleaseGateTest(unittest.TestCase):
                 mock.patch.object(check, "GEOMETRY", mock.Mock(glob=lambda _: [])), \
                 mock.patch.object(check.political, "check", return_value=([], {})), \
                 mock.patch.object(check.cities, "check", return_value=[]), \
+                mock.patch.object(check, "lock_freeze_errors", return_value=[]), \
                 mock.patch.object(check, "save_siblings") as save:
             errors, _ = check.check_data(release=True)
         save.assert_called_once()  # a verify error holds back none of the checks before it

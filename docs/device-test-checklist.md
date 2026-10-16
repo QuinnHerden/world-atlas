@@ -2,7 +2,7 @@
 
 Run this by hand before a release, once each on Anki desktop, AnkiDroid (Android) and AnkiMobile (iOS). `make import-test` already checks the same behaviour in the desktop engine; this confirms it on real devices, and the mobile apps must pass before we rely on the positions lock. Build `dist/world-atlas.apkg` with `make all`, then record pass or fail per app in the table at the end.
 
-The card names, counts and positions below come from the draft `positions.lock` of 2026-10-14. If the data has changed since, take the current values from the output of `make import-test`, which prints the first 16 new cards, the region 05 list and the position range.
+The card names, counts and positions below come from the series-3 `positions.lock` of v3.0.0 (2026-10-16). If the data has changed since, take the current values from the output of `make import-test`, which prints the first 16 new cards, the region 05 list and the position range.
 
 **Mobile differences.** Menu names vary between versions, so look for the nearest match.
 
@@ -15,7 +15,7 @@ The card names, counts and positions below come from the draft `positions.lock` 
 1. Use a profile with no World Atlas or Geographic Features deck.
 2. Import `world-atlas.apkg` with the default options. Expect one deck, `World Atlas`, with no subdecks and 607 cards, all new.
 3. Set **New cards/day** to 20 or more and start studying. A card's front shows a type word and a map; the back names it. Expect the first 16 new cards in this order:
-   1 Europe, 2 Africa, 3 Asia, 4 Oceania, 5 North America, 6 South America, 7 Antarctica, 8 Atlantic Ocean, 9 Indian Ocean, 10 Pacific Ocean, 11 Arctic Ocean, 12 Trade winds, 13 Westerlies & Roaring Forties, 14 Portugal, 15 Spain, 16 Lisbon.
+   1 Europe, 2 Africa, 3 Asia, 4 Oceania, 5 North America, 6 South America, 7 Antarctica, 8 Portugal, 9 Spain, 10 Andorra, 11 France, 12 Monaco, 13 Luxembourg, 14 Belgium, 15 Netherlands, 16 United Kingdom.
 
 To check the order without studying, open **Browse** and sort by Due.
 
@@ -42,7 +42,7 @@ The retired v1 notes (34 in the headless test) move along with the rest. This is
 ## 4. Filtered deck by region
 
 1. Create a filtered deck with search `deck:"World Atlas" tag:region::05 is:new`, order "Order due", limit 9999.
-2. Expect 12 cards (region 05, Eastern Europe) in this order: Moldova, Ukraine, Chișinău, Transnistria, Kyiv, Crimea, Belarus, Russia, Minsk, Moscow, Saint Petersburg, Volgograd. No features appear, because features have no region tag.
+2. Expect 12 cards (region 05, Eastern Europe) in this order, the countries and disputed areas first, then the capitals and cities: Moldova, Transnistria, Ukraine, Crimea, Belarus, Russia, Chișinău, Kyiv, Minsk, Moscow, Saint Petersburg, Volgograd. No features appear, because features have no region tag.
 3. Empty the filtered deck. Expect the cards back in `World Atlas` with their order intact: on a fresh profile the first new card is still Europe.
 
 ## 5. Night mode

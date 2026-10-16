@@ -213,9 +213,15 @@ class BlockTest(unittest.TestCase):
                                      "territory:isle", "country:echo", "country:fox", "country:golf", "dispute:fjord",
                                      "country:hotel", "country:india", "country:juliet", "country:kilo"])
 
-    def test_features_keep_their_ring_order(self) -> None:
-        self.assertEqual([k for k in self.order if k.startswith("feature:")],
-                         [k for k in keys(self.o.ring) if k.startswith("feature:")])
+    def test_features_keep_their_ring_order_but_for_look_alikes(self) -> None:
+        features = [k for k in self.order if k.startswith("feature:")]
+        self.assertEqual(sorted(features), sorted(k for k in keys(self.o.ring) if k.startswith("feature:")))
+        at = {k: i for i, k in enumerate(self.order)}
+        for a, b in LOOKALIKES:
+            same_region = a in FRAMES and b in FRAMES and FRAMES[a].region == FRAMES[b].region
+            if same_region and not any(a in w and b in w for w in self.o.waivers):
+                with self.subTest((a, b)):
+                    self.assertTrue(3 <= abs(at[a] - at[b]) <= 10)
 
     def test_each_capital_then_its_cities(self) -> None:
         towns = [k for k in self.order if k.split(":")[0] in ("capital", "city")]

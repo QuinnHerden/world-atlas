@@ -4,7 +4,7 @@ Status: accepted, 2026-10-13. Amended on 2026-10-13 (`cf89ef5`) to note the reti
 
 Amended on 2026-10-14 (World Atlas P4) by the [World Atlas plan](../world-atlas-plan.md)'s decisions 6, 7 and 9: the close-dot exception to the **Minimum frame**, continents on the world map, and scattered states (see [Amendment: political cards](#amendment-political-cards-2026-10-14)).
 
-Amended on 2026-10-15 (v2.1.0) by [ADR 0010](0010-region-framing.md): country, territory, dispute, capital and city cards are framed on their curriculum region, with detail insets, and show no world locator; their rings are limited to microstate scale. Feature and continent cards keep this ADR's rules. The close-dot frame below survives only for close-dot cities in giant hosts.
+Amended on 2026-10-15 (v3.0.0) by [ADR 0010](0010-region-framing.md): country, territory, dispute, capital and city cards are framed on their curriculum region, with detail insets, and show no world locator; their rings are limited to microstate scale. Feature and continent cards keep this ADR's rules. The close-dot frame below survives only for close-dot cities in giant hosts.
 
 ## Context
 

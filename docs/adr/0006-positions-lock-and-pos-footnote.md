@@ -2,7 +2,7 @@
 
 Status: accepted, 2026-10-14; amended in P7 (lock format, freeze). Supersedes the drift consequence of [ADR 0004](0004-flat-deck-and-study-order.md). Built in P1 (WS1 in ankcompiler, WS3 here); the lock was frozen in P7 for v2.0.0.
 
-Amended on 2026-10-15 (v2.1.0): retire and replace, for a political card that must move region (see [the amendment](#amendment-retire-and-replace-v210)).
+Amended on 2026-10-16 (v3.0.0) by [ADR 0011](0011-refreezing-at-a-major-version.md): the lock declares its major-version series and records each card's block instead of its pass, and the freeze guard works per series (see [Amendment: series](#amendment-series-v300)).
 
 ## Context
 
@@ -14,7 +14,7 @@ So the position of every card depends on the whole deck. Adding one card shifts 
 
 **Positions are data.** `data/positions.lock` maps each uid to an integer position and to the pass and ring region the card was placed in. It is committed, and append-only once frozen: from then on a retired uid keeps its slot, so no position is ever reused.
 
-- **Format (P7 amendment):** a header line, `draft: true` or `draft: false`, then one line per uid, sorted by uid: `<uid>: <position> pass=<orientation|1|2> region=<NN|->`. An orientation card has no region, written `-`. Any other card records the region the order engine gave it: its own region for a political card, its frame region for a feature.
+- **Format (P7 amendment):** a header line, `draft: true` or `draft: false`, then one line per uid, sorted by uid: `<uid>: <position> pass=<orientation|1|2> region=<NN|->`. An orientation card has no region, written `-`. (Since v3.0.0 a second header line gives the series, and `block=` replaces `pass=`; see [the amendment](#amendment-series-v300).) Any other card records the region the order engine gave it: its own region for a political card, its frame region for a feature.
 - **Why pass and region are recorded:** the guide's sections, and the `pass::` and `region::` tags that filtered decks search on, must agree with the slot each card holds. The lock is the single source for both: the guide takes its sections from the lock instead of recomputing them from the curriculum, and deckgen writes each locked card's `pass::` tag, and its `region::` tag if it has one, from its entry. Features carry no `region::` tag, so their recorded region only places them in the guide. `check package` fails when a note's `pass::` or `region::` tag differs from its entry. When a frozen card's pass or region in the data changes (a curriculum edit, or a feature's frame region shifting with its geometry), the card keeps its slot, section and tags, and `check deck` and `make positions` print a warning naming it. No retirement is needed. Region numbers are therefore identifiers once frozen: renumbering or splitting the ring needs a migration.
 - **Initial assignment:** the ideal order from the order engine, with a stride of 500. About 700 cards end near 350,000.
 - **New cards:** for each new uid, `pred` is the nearest earlier card in the ideal order that is in the lock. The new uid goes between `lock[pred]` and the next locked value above it. With no `pred`, it goes between 0 and the lowest locked value; with nothing locked above `pred`, new uids go at successive strides of 500 after `lock[pred]`. Several new uids that share a bounded gap are spread evenly through it, in ideal order. The ideal order is used only to place new uids. It never moves a locked one.
@@ -40,25 +40,21 @@ So the position of every card depends on the whole deck. Adding one card shifts 
 
 ## Consequences
 
-- Adding a card never moves an existing card. Fresh and existing collections see the same order, and the README no longer needs Reposition instructions.
+- Adding a card never moves an existing card. Within a series, fresh and existing collections see the same order. A re-freeze at a major version breaks that once, on purpose ([ADR 0011](0011-refreezing-at-a-major-version.md)).
 - The lock is the history of the order. The ideal order and the shipped order can differ: a card placed when its neighbours were different keeps its slot.
 - Freezing the lock depends on ankc 0.6. Since the P7 freeze, a build with ankc 0.5 fails.
 - A frozen card's pass and region are fixed with its position: a later data change moves neither its slot nor its `pass::`/`region::` tags, only the warning shows it. The ring's region numbers can't be renumbered without a migration.
 - Existing users' 132 feature cards keep the positions they were imported with (0 to 131). The lock can't change those; see [ADR 0007](0007-rename-and-migration.md).
 - The Anki behaviour this relies on (due kept on import, Check Database rewriting dues of 2,000,000 or more) was measured on Anki 26.09.3 desktop in the P1 spike. P6 tests it on AnkiDroid and AnkiMobile before release.
 
-## Amendment: retire and replace (v2.1.0)
+## Amendment: series (v3.0.0)
 
-A frozen card's slot, pass and region can't change. A data change only warns, and the card stays where it was (above). That is right for a feature whose frame region drifts, but not for a political card deliberately moved to another region: it would keep the old region's slot and `region::` tag.
+v3.0.0 re-froze the lock in a new order ([ADR 0011](0011-refreezing-at-a-major-version.md)). What changed here:
 
-So a political card moves by **retire and replace**:
+- **Format:** two header lines, `draft: true|false` and `series: <N>`, then one line per uid: `<uid>: <position> block=<continents|countries|features|cities> region=<NN|->`. The `pass=` field is gone with the `pass::` tag; deckgen writes `block::` from the entry and `check package` holds it to the entry. A continent and an orientation feature (an ocean, a planetary wind band) have no region; every country, territory, dispute, capital and city has one. A lock with no `series:` line is series 2, v2.0.0's format.
+- **Freeze guard, per series:** the rules above apply against the base ref and the newest release tag *of the lock's own series* (`v<N>.*`). A base of an earlier series is only checked to be well formed; one of a later series is an error. The series must equal the newest release's major version or be the next one. A new series is a fresh freeze at stride 500, and only a major version may start one. It may reorder, but must keep every uid of the newest earlier release; uids only ever on main or a branch may go.
+- **Release tags:** found with `git tag --merged HEAD`, exact `vX.Y.Z` only, newest by version. Under `strict` (a release build, or `make positions`) a frozen lock also fails when the tags can't be listed or the clone is shallow.
+- **Release version:** a release build names its version, `make all RELEASE=1 VERSION=vX.Y.Z`, and fails without one unless a release tag is on `HEAD`. The version's major, and any release tag on `HEAD`, must equal the lock's series. A non-release build whose lock is ahead of the newest release warns that the next release must be vN.0.0.
+- **Retired uids:** `check deck` requires every locked uid to belong to a source entry, active or `retired: true` (`check.retired_lock_errors`), so a retired entry can't be deleted while the lock holds its uid. The series-3 lock was regenerated from the active cards, so it holds no retired uid.
 
-1. Set `retired: true` on the old entry in `territories.yaml` and keep the rest of it, uid included. A retired territory is validated, then dropped: it makes no card and isn't placed. Its lock entry stays as it is, as the freeze guard requires, and since it has no card it takes no number in the guide.
-2. Add a new entry with a fresh uid (`make ids`). It may reuse the old `id`.
-3. Run `make positions`. It places the new uid by the usual rule, between its `pred`'s slot and the next locked value.
-
-The freeze guard is unchanged: the lock only gains an entry. `check deck` holds the rest: every locked uid must belong to a source entry, active or `retired: true`, so deleting a retired entry fails the build; and a retired territory and the replacement that reuses its id must be locked in different regions, since the `region::` tag is what tells the two notes apart in Browse. Each such move also halves the gap it lands in (250 either side of Greenland), so about 7 more inserts fit there before `GapExhausted`.
-
-Greenland, v2.1.0: the old card, `24rdGoHY6W` at 250500 in region 19, is retired. The new card, `zjAlvxD9jl`, is at 21750 in region 02, between Iceland (21500) and the GIUK Gap (22000).
-
-For users the replacement is a new note. An upgraded collection keeps the old card, with its review history, until the user deletes it; the history doesn't carry over to the new card. The README's [Retired cards](../../README.md#retired-cards) section says how to find it.
+Within a series, nothing above changes: no entry moves, and new uids only fill gaps.
