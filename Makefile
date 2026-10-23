@@ -19,7 +19,7 @@ $(if $(filter-out 1,$(RELEASE)),$(error RELEASE must be 1 or unset))
 ANKC ?= ankc
 export ANKC
 
-.PHONY: all test fetch ids check-data positions adjacency walks companion-walks companion-sheets render deck check build sheet phone review pairs cvd verify-report import-test clean
+.PHONY: all test fetch ids check-data positions adjacency walks companion-walks companion-sheets flags flag-order flag-sheets render deck check build sheet phone review pairs cvd verify-report import-test clean
 
 all: build
 
@@ -57,6 +57,21 @@ walks: check-data
 companion-walks: check-data
 	$(PY).order.companions
 
+# Re-fetch every flag at its pin in data/flags/sources.lock and rewrite data/flags/*.svg; fails on any checksum that
+# differs. `uv run python -m geofeat.flagfiles --relock ID...` re-pins flags. Needs gh and the network; not part of
+# `make all`, which builds from the committed SVGs.
+flags:
+	$(PY).flagfiles
+
+# World Flags' order by continent, the cards moved to space look-alikes, and every look-alike pair's distance;
+# `uv run python -m geofeat.order.flags --write` rewrites data/flags.yaml in that order.
+flag-order:
+	$(PY).order.flags
+
+# Every flag in deck order, one JPEG per continent (build/flags-NN.jpg), rasterised by resvg.
+flag-sheets:
+	uv run --with resvg-py==0.5.0 python tools/flag_sheet.py
+
 render: check-data
 	$(PY).jobs $(QIDS)
 
@@ -67,7 +82,7 @@ deck: render
 check: deck
 	$(PY).check deck
 
-# One package per deck: dist/world-atlas.apkg and each companion deck's (geofeat.decks).
+# One package per deck: dist/world-atlas.apkg and each companion deck's, World Flags' included (geofeat.decks).
 build: check
 	$(PY).package
 	$(PY).check package
@@ -94,7 +109,8 @@ cvd: render
 	$(PY).cvd $(if $(OUT),--out $(call quote,$(OUT))) $(QIDS)
 
 # Import dist/world-atlas.apkg into fresh collections with the official Anki library: study order, a region filtered
-# deck, Check Database, and the upgrade from the v1 Geographic Features package (tools/import_test.py).
+# deck, Check Database, the upgrade from the v1 Geographic Features package, and each companion package beside it
+# (tools/import_test.py).
 import-test: build
 	uv run --with anki==26.09.3 python tools/import_test.py
 

@@ -393,7 +393,7 @@ class LockTest(unittest.TestCase):
         order = sorted(lock.entries, key=lambda u: lock.entries[u].position)
         self.assertEqual(order[7:11], list(positions.RESTART_MOVES))  # the oceans, after the seven continents
         blocks = [lock.entries[u].block for u in order if u not in positions.RESTART_MOVES]
-        self.assertEqual(blocks, sorted(blocks, key=["continents", "countries", "features", "cities", "subdivisions"].index))
+        self.assertEqual(blocks, sorted(blocks, key=["continents", "countries", "features", "cities", "subdivisions", "flags"].index))
         self.assertEqual(order.index("24rdGoHY6W"), order.index("PJEhGX8mTx") + 1)  # Greenland after Iceland
         self.assertEqual(lock.entries["24rdGoHY6W"], Entry(11500, "countries", 2))
 
@@ -404,7 +404,7 @@ class LockTest(unittest.TestCase):
             self.assertTrue(deck.base <= e.position < deck.limit, uid)
         firsts = {slug: min(e.position for e in lock.entries.values() if e.deck == slug) for slug in BY_SLUG}
         self.assertEqual(firsts, {"world-atlas": 500, "italian-regions": 600_500, "us-states": 650_500,
-                                  "brazilian-states": 700_500, "canadian-provinces": 750_500})
+                                  "brazilian-states": 700_500, "canadian-provinces": 750_500, "world-flags": 800_500})
 
 
 class DeckTest(unittest.TestCase):

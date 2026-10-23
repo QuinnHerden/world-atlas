@@ -19,7 +19,7 @@ from shapely.geometry.base import BaseGeometry
 
 from geofeat import adjacency, ne, polities, resolve
 from geofeat.card import Card, card_key
-from geofeat.decks import COMPANIONS, DeckInfo
+from geofeat.decks import SUBDIVISION_DECKS, DeckInfo
 from geofeat.model import BUILD, LOCK
 from geofeat.order.engine import LOOKALIKE_GAP
 from geofeat.order.walk import Adjacency
@@ -103,14 +103,14 @@ def lookalike_gaps(deck: DeckInfo, walk: list[str]) -> list[str]:
 def study_order(cards: list[Card]) -> list[Card]:
     """The companion decks' cards, deck by deck in registry order, each in data/subdivisions.yaml's (walk) order."""
     by_key = {c.key: c for c in cards}
-    return [by_key[k] for deck in COMPANIONS for s in subdivisions.of_country(deck.country)
+    return [by_key[k] for deck in SUBDIVISION_DECKS for s in subdivisions.of_country(deck.country)
             if (k := card_key("subdivision", s.id)) in by_key]
 
 
 def errors() -> list[str]:
     """The listed order of each deck must be a walk from its entry, without avoidable jumps; look-alikes name members."""
     out = []
-    for deck in COMPANIONS:
+    for deck in SUBDIVISION_DECKS:
         walk = [s.id for s in subdivisions.of_country(deck.country)]
         if not walk:
             continue
@@ -126,7 +126,7 @@ def errors() -> list[str]:
 def main() -> None:
     write = sys.argv[1:] == ["--write"]
     orders = {}
-    for deck in COMPANIONS:
+    for deck in SUBDIVISION_DECKS:
         nodes = [s.id for s in subdivisions.of_country(deck.country)]
         adj = graph(deck.country)
         walk = generate(deck, adj, nodes)
@@ -151,7 +151,7 @@ def rewrite(orders: dict[str, list[str]]) -> None:
     blocks[0] = blocks[0].removeprefix("- id: ")
     by_id = {b.split("\n", 1)[0].removeprefix("- id: ").strip(): b.strip("\n") for b in blocks}
     entries = {s.id: s for s in subdivisions.load_subdivisions()}
-    order = [i for deck in COMPANIONS for i in orders.get(deck.country, [])
+    order = [i for deck in SUBDIVISION_DECKS for i in orders.get(deck.country, [])
              + [s.id for s in entries.values() if s.country == deck.country and s.retired]]
     if sorted(order) != sorted(by_id):
         raise SystemExit("data/subdivisions.yaml: entries outside the companion decks; not rewritten")

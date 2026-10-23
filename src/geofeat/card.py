@@ -2,9 +2,11 @@
 read. See docs/adr/0005-card-sources-and-card-dto.md."""
 
 import fnmatch
+import hashlib
 import json
 import re
 from collections.abc import Callable
+from pathlib import Path
 from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
@@ -14,7 +16,8 @@ from geofeat.decks import BY_NAME, WORLD
 from geofeat.model import MEDIA_INDEX, NOT_ONE_LINE, Note  # noqa: F401  Note re-exported for the sources
 from geofeat.spec import RenderSpec
 
-Kind = Literal["feature", "country", "capital", "city", "subnational", "territory", "dispute", "continent", "subdivision"]
+Kind = Literal["feature", "country", "capital", "city", "subnational", "territory", "dispute", "continent", "subdivision",
+               "flag"]
 # What render() draws besides the basemap: the geometry, the shapes drawn faintly under it, and a former extent.
 Geometry = tuple[BaseGeometry, tuple[BaseGeometry, ...], BaseGeometry | None]
 # Card text goes into markdown that ankc renders, unsanitised, to HTML in Anki. deckgen HTML-escapes it, which
@@ -80,7 +83,8 @@ class Card(Frozen):
     host: str | None = None  # key of the country whose run this pocket sits in, after its capital (P3)
     orientation: bool = False  # in the orientation block that opens the deck (oceans, planetary winds, continents)
     deck: str = WORLD.name  # the deck, and so the package, it is in (geofeat.decks)
-    render: RenderRef
+    render: RenderRef | None = None  # how to draw its map; a card with a ready-made `image` has none
+    image: Path | None = None  # a ready-made image (a flag's SVG), copied into deck/ as the card's media
 
     @model_validator(mode="after")
     def _block_tag(self) -> "Card":
@@ -90,11 +94,20 @@ class Card(Frozen):
 
     @model_validator(mode="after")
     def _deck(self) -> "Card":
-        """A subdivision is in its country's companion deck; every other card is in World Atlas."""
+        """A subdivision is in its country's companion deck and a flag in World Flags: a companion deck holds only its
+        own block. Every other card is in World Atlas."""
         if self.deck not in BY_NAME:
             raise ValueError(f"{self.kind}:{self.id}: unknown deck {self.deck!r}")
-        if (self.kind == "subdivision") != (self.deck != WORLD.name):
-            raise ValueError(f"{self.kind}:{self.id}: only subdivisions go in a companion deck, and they always do")
+        own = BY_NAME[self.deck].block
+        if (self.block != own) if own else (self.block not in WORLD_BLOCKS):
+            raise ValueError(f"{self.kind}:{self.id}: a companion deck holds only its own kind of card, and that kind "
+                             f"is only ever in it")
+        return self
+
+    @model_validator(mode="after")
+    def _media(self) -> "Card":
+        if (self.render is None) == (self.image is None):
+            raise ValueError(f"{self.kind}:{self.id}: a card has exactly one of a map to render and a ready-made image")
         return self
 
     @property
@@ -127,13 +140,14 @@ def study_pass(kind: Kind, tier: int, orientation: bool = False) -> Pass:
 
 
 # World Atlas's four study blocks (ADR 0009): the continents, the political map (countries, territories and disputed
-# areas), the physical features, then the capitals and cities. A companion deck's cards are all `subdivisions`.
-Block = Literal["continents", "countries", "features", "cities", "subdivisions"]
-BLOCKS: tuple[Block, ...] = ("continents", "countries", "features", "cities", "subdivisions")
+# areas), the physical features, then the capitals and cities. A companion deck has one block: `subdivisions` or
+# `flags`.
+Block = Literal["continents", "countries", "features", "cities", "subdivisions", "flags"]
+BLOCKS: tuple[Block, ...] = ("continents", "countries", "features", "cities", "subdivisions", "flags")
 WORLD_BLOCKS: tuple[Block, ...] = BLOCKS[:4]
 _BLOCK_OF: dict[Kind, Block] = {"continent": "continents", "country": "countries", "subnational": "countries",
                                 "territory": "countries", "dispute": "countries", "feature": "features", "capital": "cities",
-                                "city": "cities", "subdivision": "subdivisions"}
+                                "city": "cities", "subdivision": "subdivisions", "flag": "flags"}
 
 
 def block_of(kind: Kind) -> Block:
@@ -161,6 +175,17 @@ def migrate_media(media: dict[str, str]) -> dict[str, str]:
 
 
 MEDIA_NAME = re.compile(r"[A-Za-z0-9_-]+\.png")  # a bare file name, so `deck/<name>` can't leave deck/
+
+
+def image_name(path: Path) -> str:
+    """A ready-made image's media name: a hash of its bytes, as a rendered map's is, so a changed file is a new name in
+    Anki's one media folder, and no other deck's file can share it."""
+    return f"{hashlib.sha256(path.read_bytes()).hexdigest()[:12]}{path.suffix}"
+
+
+def card_media(card: Card, media: dict[str, str]) -> str | None:
+    """The media file a card shows: its image's name, or its rendered map's from media.json (None: not rendered)."""
+    return image_name(card.image) if card.image is not None else media.get(card.key)
 
 
 def load_media() -> dict[str, str]:

@@ -4,6 +4,14 @@ All notable changes to this deck are recorded here. The format follows [Keep a C
 
 Pre-release history: the builds before v1.0.0 (Geographic Features, then two World Atlas pre-releases) are archived as the tags `archive/v1.0.0`, `archive/v2.0.0` and `archive/v3.0.0`; their changelog is in `CHANGELOG.md` at `archive/v3.0.0`.
 
+## [Unreleased]
+
+### Added
+
+- **World Flags**, a new companion deck and package (`world-flags.apkg`): 217 cards, one per flag, for the 197 countries and the 20 territories with an official flag of their own. The front is the flag alone, at its own proportions and with a thin grey border; the back is World Atlas's name for the place. The deck runs continent by continent (Europe, Asia, Africa, North America, South America, Oceania), in World Atlas's order within each, with look-alike flags 3–10 cards apart. Cards are tagged `id_flag_<id>`, `continent::`, `kind::flag`, `block::flags` and `country::` or `territory::`. It doesn't change World Atlas ([ADR 0012, amendment](docs/adr/0012-companion-decks.md#amendment-world-flags)).
+- World Flags' images are public-domain SVGs from hampusborgos/country-flags and Wikimedia Commons, sanitised and pinned by checksum in `data/flags/sources.lock` ([data/flags/SOURCES.md](data/flags/SOURCES.md)). `make flags` re-fetches them, `make flag-order` prints the deck's order and look-alike distances, and `make flag-sheets` writes review sheets.
+- `make import-test` also checks that every image a companion card shows lands in the collection's media folder.
+
 ## [1.0.0] - 2026-10-16
 
 The first release of **World Atlas**: 554 map cards for the political and physical map of the world, studied in four blocks (continents, then the oceans; countries, territories, subnationals and disputed areas; physical features; capitals and cities), each round a ring of 21 regions ([ADR 0009](docs/adr/0009-curriculum-order.md)). Versioning restarted here.

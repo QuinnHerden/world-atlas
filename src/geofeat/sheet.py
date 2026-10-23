@@ -23,7 +23,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from geofeat.card import card_key, load_media, match_keys
-from geofeat.decks import COMPANIONS
+from geofeat.decks import SUBDIVISION_DECKS
 from geofeat.model import BUILD, DECK, active, load_features
 from geofeat.pairs import find_pairs
 from geofeat.resolve import resolve
@@ -113,7 +113,7 @@ def companion_sheets() -> None:
     for old in out_dir.glob("*.jpg"):
         old.unlink()
     font = ImageFont.load_default(size=22)
-    for deck in COMPANIONS:
+    for deck in SUBDIVISION_DECKS:
         ids = [s.id for s in subdivisions.of_country(deck.country)]
         for page, start in enumerate(range(0, len(ids), COMPANION_PER_SHEET), 1):
             chunk = ids[start:start + COMPANION_PER_SHEET]

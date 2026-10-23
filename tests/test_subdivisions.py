@@ -7,7 +7,7 @@ from shapely.geometry import box
 
 import geofeat.sources.subdivisions as subdivisions
 from geofeat.card import Card, RenderRef
-from geofeat.decks import BY_COUNTRY, BY_NAME, COMPANIONS, DECKS, WORLD, DeckInfo, deck_of_position
+from geofeat.decks import BY_COUNTRY, BY_NAME, SUBDIVISION_DECKS, DECKS, WORLD, DeckInfo, deck_of_position
 from geofeat.order import companions
 from geofeat.spec import RenderSpec
 
@@ -55,11 +55,12 @@ class DeckRegistryTest(unittest.TestCase):
         for a, b in zip(DECKS, DECKS[1:]):
             self.assertLessEqual(a.limit, b.base)
         self.assertEqual(deck_of_position(650_500).slug, "us-states")
-        self.assertIsNone(deck_of_position(900_000))
+        self.assertEqual(deck_of_position(900_000).slug, "world-flags")
+        self.assertIsNone(deck_of_position(960_000))
 
     def test_names_and_slugs(self) -> None:
         self.assertEqual([d.slug for d in DECKS], ["world-atlas", "italian-regions", "us-states", "brazilian-states",
-                                                   "canadian-provinces"])
+                                                   "canadian-provinces", "world-flags"])
         self.assertEqual(BY_NAME["World Atlas"], WORLD)
         self.assertEqual(sorted(BY_COUNTRY), ["brazil", "canada", "italy", "united-states"])
 
@@ -100,7 +101,7 @@ class DataTest(unittest.TestCase):
     """The committed data: each companion deck's count, first card and walk."""
 
     def test_counts_and_entries(self) -> None:
-        for deck in COMPANIONS:
+        for deck in SUBDIVISION_DECKS:
             members = subdivisions.of_country(deck.country)
             self.assertEqual(len(members), deck.cards, deck.name)
             self.assertEqual(members[0].id, deck.entry)

@@ -7,8 +7,9 @@ Fresh import: every note lands in the World Atlas deck, new cards come up in dat
 filtered deck (`tag:region::05 is:new`, "Order due") gives that region's cards in lock order, and Check Database
 changes no due.
 
-Companion decks: each companion package imported after World Atlas lands in its own deck at its lock positions, shares
-World Atlas's note type without adding or renaming one, and leaves the World Atlas cards untouched.
+Companion decks: each companion package (the subdivision decks and World Flags) imported after World Atlas lands in
+its own deck at its lock positions with every image its cards show, shares World Atlas's note type without adding or
+renaming one, and leaves the World Atlas cards untouched.
 
 Upgrade from v1: the Geographic Features package of commit V1_COMMIT is imported first and a few cards are studied.
 Importing World Atlas then updates the feature notes in place (same note ids), keeps their scheduling and leaves them
@@ -172,6 +173,14 @@ def deck_names(col: Collection, guids: Iterable[str]) -> set[str]:
             if g in wanted}
 
 
+def missing_media(col: Collection, guids: Iterable[str]) -> list[str]:
+    """The images these notes show that the collection's media folder lacks."""
+    wanted = set(guids)
+    shown = {name for g, fields in col.db.all("select guid, flds from notes") if g in wanted
+             for name in re.findall(r'<img[^>]*src="([^"]+)"', fields)}
+    return sorted(name for name in shown if not (Path(col.media.dir()) / name).exists())
+
+
 def answer(col: Collection, guid: str) -> str:
     """The first line of a card's answer, before any <br> or the note's <hr>: its name."""
     note = col.get_note(col.db.scalar("select id from notes where guid = ?", guid))
@@ -247,6 +256,8 @@ def companion_imports(world: Path, lock: dict[str, int], tmp: Path) -> None:
             check(deck_names(col, mine) == {deck.name}, f'{apkg.name}: every card in "{deck.name}"', str(deck_names(col, mine)))
             wrong = sorted(g for g, row in cards.items() if row[5] != lock.get(g))
             check(not wrong, f"{apkg.name}: every due equals its lock position", f"{len(wrong)} differ")
+            missing = missing_media(col, mine)
+            check(not missing, f"{apkg.name}: every image its cards show is in the media folder", str(missing[:5]))
         check([(n.id, n.name) for n in col.models.all_names_and_ids()] == [(n.id, n.name) for n in notetypes],
               "the companion decks share World Atlas's note type; no note type is added or renamed")
         check(scheduling(col, before) == before, "World Atlas's notes and cards are untouched")
