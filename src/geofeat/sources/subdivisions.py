@@ -12,7 +12,7 @@ from shapely.errors import GEOSException
 from shapely.geometry.base import BaseGeometry
 
 from geofeat.card import Card, RenderRef, Text, block_of, block_tag, id_tag
-from geofeat.decks import BY_COUNTRY, COMPANIONS, DeckInfo
+from geofeat.decks import BY_COUNTRY, SUBDIVISION_DECKS, DeckInfo
 from geofeat.model import ROOT, Note, Part, Strict, Verify
 from geofeat.resolve import area_km2
 from geofeat.polities import BBox, Id, Uid, composition_errors, outline, read_entries, unique
@@ -128,7 +128,7 @@ def check(countries: set[str]) -> list[str]:
     except ValueError as exc:
         return [str(exc)]
     errors = [f"{s.id}: country {s.country!r} is not in countries.yaml" for s in entries if s.country not in countries]
-    for deck in COMPANIONS:
+    for deck in SUBDIVISION_DECKS:
         if (n := len(of_country(deck.country))) != deck.cards:
             errors.append(f"{deck.name}: {n} active subdivisions, expected {deck.cards}")
     for country in sorted({s.country for s in active()} & countries):

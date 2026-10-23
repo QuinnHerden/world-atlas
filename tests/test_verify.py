@@ -85,7 +85,8 @@ class NotedTest(unittest.TestCase):
         with data([country | {"verify": [ITEM]}, countries()[1]], [territory, dispute | {"verify": [ITEM]}],
                   [cities_data()[0] | {"verify": [ITEM]}]), \
                 mock.patch.object(check, "load_features", lambda: [feature("f", "Plain", note="Why.", verify=[Verify(**ITEM)])]), \
-                mock.patch.object(check.subdivisions, "active", lambda: []):
+                mock.patch.object(check.subdivisions, "active", lambda: []), \
+                mock.patch.object(check.flags, "active", lambda: []):
             found = {r.key: len(r.verify) for r in noted()}
         self.assertEqual(found, {"feature:f": 1, "country:alpha": 1, "capital:alpha": 1, "country:beta": 0,
                                  "territory:gamma": 0, "dispute:delta": 1, "city:alpha-port": 1})

@@ -12,6 +12,7 @@ from geofeat.curriculum import Curriculum, load_curriculum
 from geofeat.model import active, load_features
 from geofeat.decks import WORLD
 from geofeat.order import companions, frames
+from geofeat.order import flags as flag_order
 from geofeat.order.engine import Frame, Ordering, OrderError, curriculum_order, lookup, region_of
 from geofeat.order.legacy import Siblings, dependencies, load_siblings
 from geofeat.sources import all_cards
@@ -90,9 +91,10 @@ def ordering(siblings: Siblings | None = None) -> Ordering:
 
 
 def deck_order(world: Ordering | None = None) -> list[Card]:
-    """Every deck's active cards in study order: World Atlas's (`world`, or `ordering()`), then each companion deck's
-    in its walk order (ADR 0012). What positions, deckgen and `check package` place."""
-    return (world or ordering()).cards + companions.study_order(all_cards())
+    """Every deck's active cards in study order: World Atlas's (`world`, or `ordering()`), then each subdivision deck's
+    in its walk order, then World Flags' (ADR 0012). What positions, deckgen and `check package` place."""
+    cards = all_cards()
+    return (world or ordering()).cards + companions.study_order(cards) + flag_order.study_order(cards)
 
 
 def card_region(curriculum: Curriculum) -> Callable[[Card], int]:

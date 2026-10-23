@@ -2,7 +2,7 @@
 
 How World Atlas and its companion decks are built. This describes the system as it is now; the reasons for the larger choices are in the [ADRs](adr/), and the plan for the extension beyond the original feature deck is in the [World Atlas plan](world-atlas-plan.md).
 
-The build makes five decks, each its own package: World Atlas and four companion decks of country subdivisions (see [Companion decks](#companion-decks)). World Atlas is 554 cards from four sources: 131 active entries in `data/features.yaml` (124 physical features, 6 of them climate systems, and the 7 continents), 197 countries and 162 capitals from `data/countries.yaml`, 5 subnationals, 25 territories and 9 disputed areas from `data/territories.yaml`, and 25 cities from `data/cities.yaml`. Retired entries stay in the files: 42 in `data/features.yaml` (7 passes, 3 corridors, 15 islands, 9 climate systems, 1 peninsula and 7 tier-3 features), 29 capitals in `data/countries.yaml`, 7 disputed areas in `data/territories.yaml` and 18 cities in `data/cities.yaml`. The physical features were first published as the Geographic Features deck (the `archive/v1.0.0` pre-release); the curriculum order engine (`order/`) orders every kind, and one command turns the data into an `.apkg`, with no manual step per build.
+The build makes six decks, each its own package: World Atlas, four companion decks of country subdivisions (see [Companion decks](#companion-decks)) and the World Flags companion deck (see [World Flags](#world-flags)). World Atlas is 554 cards from four sources: 131 active entries in `data/features.yaml` (124 physical features, 6 of them climate systems, and the 7 continents), 197 countries and 162 capitals from `data/countries.yaml`, 5 subnationals, 25 territories and 9 disputed areas from `data/territories.yaml`, and 25 cities from `data/cities.yaml`. Retired entries stay in the files: 42 in `data/features.yaml` (7 passes, 3 corridors, 15 islands, 9 climate systems, 1 peninsula and 7 tier-3 features), 29 capitals in `data/countries.yaml`, 7 disputed areas in `data/territories.yaml` and 18 cities in `data/cities.yaml`. The physical features were first published as the Geographic Features deck (the `archive/v1.0.0` pre-release); the curriculum order engine (`order/`) orders every kind, and one command turns the data into an `.apkg`, with no manual step per build.
 
 ## Pipeline
 
@@ -30,10 +30,10 @@ The diagram is simplified: deckgen also reads the Cards and the study order, and
 | `make positions` | `positions.py` | Places new uids in `data/positions.lock` (below). The lock's only writer; commit the result. Not part of `make all`. |
 | `make adjacency` | `adjacency.py` | Builds the country adjacency graph ([ADR 0008](adr/0008-state-list-borders-adjacency.md)), caches it in `build/adjacency.json` and prints the report: edge counts, isolated states, hand edits, each region's connectivity and each ring seam. Fails if a state is isolated or a region is disconnected. Not part of `make all`. |
 | `make render` | `jobs.py`, `render.py` | One PNG per active card, cached by its cache key (below). Writes `build/media.json` (`card.key` → file name). `IDS="country:france city:*"` renders only the matching cards and deletes nothing, for a pilot. |
-| `make deck` | `deckgen.py` | Writes every card, in study order, to its deck's file: `deck/world-atlas.md` and one per companion deck, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map. |
+| `make deck` | `deckgen.py` | Writes every card, in study order, to its deck's file: `deck/world-atlas.md` and one per companion deck, with a `[^pos]` footnote from the lock when ankc is 0.6. Prints each region's walk jumps and waivers. Fails on a card with no map or image. |
 | `make check` | `check.py deck` | Every card rendered and in the lock; a draft lock matches the current order (a frozen card whose block or region changed only warns; every locked uid belongs to a source entry); ankc `>=0.5,<0.7`; no locked card changed deck; `ankc check` passes for every deck. |
 | `make build` | `package.py`, then `check.py package` | Runs `ankc build` once per deck, writing `dist/world-atlas.apkg` and `dist/<slug>.apkg` for each companion deck, and checks each package. |
-| `make import-test` | `tools/import_test.py` | Imports `world-atlas.apkg` into fresh collections with the official `anki` library and checks the study order, a region filtered deck, Check Database and the upgrade from Geographic Features (below), then imports each companion package after it and checks it lands in its own deck, at its lock positions, on World Atlas's note type. Not part of `make all`. |
+| `make import-test` | `tools/import_test.py` | Imports `world-atlas.apkg` into fresh collections with the official `anki` library and checks the study order, a region filtered deck, Check Database and the upgrade from Geographic Features (below), then imports each companion package after it and checks it lands in its own deck, at its lock positions and with its images, on World Atlas's note type. Not part of `make all`. |
 
 `deck/`, `build/`, `dist/` and `vendor/` are gitignored. `deck/` is pure output: nothing reads it back.
 
@@ -49,6 +49,8 @@ data/countries.yaml    the 197 states, each with its capital nested (29 retired)
 data/territories.yaml  the 5 subnationals, 25 territories and 9 disputed areas (and 7 retired disputed areas)
 data/cities.yaml       the 25 core cities (and 18 retired ones)
 data/subdivisions.yaml the companion decks' 111 subdivisions, each deck's in its walk order
+data/flags.yaml        World Flags' 217 flags, in study order
+data/flags/            the flag SVGs, their pins (sources.lock), the territories without a flag (excluded.yaml), SOURCES.md
 data/curriculum.yaml   passes, the ring of 21 regions, walk lists, pockets and placements, confusables
 data/adjacency.yaml    hand edits to the computed adjacency graph, each with a reason
 data/positions.lock    the lock's series, and each card's new-card position, block and region, keyed by uid; written only by `make positions`
@@ -68,7 +70,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 |---|---|
 | `model.py` | The `Feature` schema, type words, families, categories and shared paths. |
 | `card.py` | The `Card` DTO and `RenderRef`, the four study blocks (`BLOCKS`, `block_of`), the ring order's pass rule (`study_pass`), and the `block::` and `id_` tag formats. |
-| `sources/` | One adapter per data file: `features.py`, `political.py` (countries, capitals, subnationals, territories, disputes) and `cities.py`. `all_cards()` collects them. |
+| `sources/` | One adapter per data file: `features.py`, `political.py` (countries, capitals, subnationals, territories, disputes), `cities.py`, `subdivisions.py` and `flags.py`. `all_cards()` collects them. |
 | `decks.py` | The deck registry: World Atlas and the companion decks, each with its package slug and position range. |
 | `country_map.py` | A companion card's map: its country's fixed frame, boxes, internal borders and detail inset ([ADR 0013](adr/0013-subdivision-framing.md)). In the render cache key. |
 | `package.py` | `make build`'s packaging: one `ankc build` per deck. |
@@ -89,6 +91,7 @@ Python 3.12, managed with uv. `uv.lock` pins the geo stack so renders are byte-s
 | `deckgen.py` | The deck markdown. |
 | `ankc.py` | Runs the configured ankc and reads its version. |
 | `check.py` | `check data`, `check deck`, `check package`. |
+| `flagfiles.py` | World Flags' images: fetches each pinned flag, sanitises it to an allow-list of SVG, writes `data/flags/<id>.svg`, and checks the committed files against `data/flags/sources.lock`. |
 | `pairs.py`, `fetch.py`, `ids.py`, `sheet.py`, `cvd.py` | Pair check, Natural Earth download, uid minting, review sheets, colour-blindness simulation. |
 
 ## Data model
@@ -194,7 +197,7 @@ Alternate names follow the name in brackets.
 
 ### Positions
 
-`data/positions.lock` gives every card its new-card position ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md), [ADR 0011](adr/0011-refreezing-at-a-major-version.md)). The first line is `draft: true` or `draft: false`, the second `series: N`, the major version whose order the lock freezes (1 since versioning restarted at v1.0.0; the archived pre-releases used 2 and 3). Each other line is `<uid>: <position> block=<continents|countries|features|cities|subdivisions> region=<NN|-> deck=<slug>`, sorted by uid. Positions are unique and below 1,000,000, and each deck's stay in its range ([Companion decks](#companion-decks)). A line without `deck=` is World Atlas's. The block and region are where the order engine placed the card when it was locked (a feature's region is its frame region; a continent, an ocean or a planetary wind has none). Deckgen writes each card's `block::` and `region::` tags from them, and `check package` holds the packaged tags to them, so a filtered deck holds the cards their slots say.
+`data/positions.lock` gives every card its new-card position ([ADR 0006](adr/0006-positions-lock-and-pos-footnote.md), [ADR 0011](adr/0011-refreezing-at-a-major-version.md)). The first line is `draft: true` or `draft: false`, the second `series: N`, the major version whose order the lock freezes (1 since versioning restarted at v1.0.0; the archived pre-releases used 2 and 3). Each other line is `<uid>: <position> block=<continents|countries|features|cities|subdivisions|flags> region=<NN|-> deck=<slug>`, sorted by uid. Positions are unique and below 1,000,000, and each deck's stay in its range ([Companion decks](#companion-decks)). A line without `deck=` is World Atlas's. The block and region are where the order engine placed the card when it was locked (a feature's region is its frame region; a continent, an ocean or a planetary wind has none). Deckgen writes each card's `block::` and `region::` tags from them, and `check package` holds the packaged tags to them, so a filtered deck holds the cards their slots say.
 
 `make positions` is the only writer. While the lock is a draft it is regenerated from the study order at a stride of 500, so retired uids drop out. Once it is frozen, locked entries never move. A new uid goes after `pred`, the nearest earlier card in the study order that is in the lock. It takes a slot between `lock[pred]` and the next locked value above it. New uids that share a gap are spread evenly (after the last locked value, at successive strides of 500), and the command fails when a gap is exhausted. A retired uid keeps its entry, so no position is reused, and `check deck` fails on a locked uid that no source entry, active or `retired: true`, holds.
 
@@ -353,7 +356,7 @@ It prints every trim, every `allow_nested` override, references to retired featu
 
 **`check deck`** (before `ankc build`): every active card has a render and an entry in `positions.lock`, a draft lock still matches the current study order (`make positions` would leave it unchanged) (a frozen card whose block or region changed is a warning, not an error), every locked uid belongs to an active or `retired: true` source entry, ankc is `>=0.5,<0.7`, ankc is 0.6 when the lock is frozen, no locked card's deck has changed, and `ankc check --deck <deck>` passes for every deck.
 
-**`check package`** (after the build): exactly one `.apkg` per deck in `dist/` (`world-atlas.apkg` and each companion deck's), each with one note per active card of its deck and no others, every card in that deck and locked in it, every note carrying all its tags, `block::` and `region::` tags equal to the note's lock entry, every card new, packaged media equal to the rendered maps, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
+**`check package`** (after the build): exactly one `.apkg` per deck in `dist/` (`world-atlas.apkg` and each companion deck's), each with one note per active card of its deck and no others, every card in that deck and locked in it, every note carrying all its tags, `block::` and `region::` tags equal to the note's lock entry, every card new, packaged media equal to the cards' maps and images, and correct new-card positions. With ankc 0.6 or a frozen lock, each card's due must equal `positions.lock[uid]`; otherwise the dues must follow the study order.
 
 ## Deck and study order
 
@@ -388,7 +391,17 @@ Four decks of first-level subdivisions ship beside World Atlas, each as its own 
 - **Cards.** `kind: subdivision`, block `subdivisions`, tags `id_subdivision_<id>`, `kind::subdivision`, `block::subdivisions` and `country::<country id>`. No region or tier tag. `Card.deck` names the deck.
 - **Order.** A deck's order is its order in the file, which must be a neighbour walk over the admin-1 adjacency graph (`order/companions.py`, cached in `build/subdivision-adjacency.json`): each card borders an earlier one while any unvisited card does. `make companion-walks` prints each deck's generated walk, its jumps and its look-alike gaps; `python -m geofeat.order.companions --write` rewrites the file in that order.
 - **Maps.** One fixed frame per country, the other subdivisions' borders in grey, other countries in a flat grey-blue, Alaska and Hawaii in boxes, and a detail inset on every card but the 14 largest ([ADR 0013](adr/0013-subdivision-framing.md)). `make companion-sheets` writes them six to a JPEG in `build/framing/subdiv/`.
-- **Positions.** Each deck owns a range of the one lock: World Atlas below 600,000, then 50,000 per companion deck. `make positions` places a new uid among its own deck's entries. A card's `deck=` is frozen like its position: a change fails the freeze guard, `make positions`, `make deck`, `check deck` and `check package`.
+- **Positions.** Each deck owns a range of the one lock: World Atlas below 600,000, then 50,000 per subdivision deck, and World Flags 800,000–949,999. `make positions` places a new uid among its own deck's entries. A card's `deck=` is frozen like its position: a change fails the freeze guard, `make positions`, `make deck`, `check deck` and `check package`.
+
+## World Flags
+
+A fifth companion deck, `World Flags` (`world-flags.apkg`, positions from 800,500), has one card per flag ([ADR 0012, amendment](adr/0012-companion-decks.md#amendment-world-flags)): the 197 countries and the 20 territory cards whose place has an official flag of its own. `data/flags/excluded.yaml` gives the reason for each of the other 5 territories; subnationals and disputed areas have no flag card.
+
+- **Data.** `data/flags.yaml` lists the flags in study order: `id` (the country's or territory's), `uid`, `kind` (`country` or `territory`), `continent` and, for a territory, `reason`; `retired: true` as on any card. `check data` requires a flag for every country, a flag or an exclusion for every active territory, the continents in order, each look-alike gap, and each SVG to match its lock entry and pass the sanitiser's check.
+- **Cards.** `kind: flag`, block `flags`, tags `id_flag_<id>`, `continent::<continent>`, `kind::flag`, `block::flags` and `country::<id>` or `territory::<id>`; no region or tier tag. The front is the image alone in an `<img>` sized by `deckgen.FLAG_SIZE` (fit to the card's width and to 45% of the screen's height) with a 1 px translucent grey border (`FLAG_BORDER`; none on Nepal's pennants). The back is World Atlas's name for the place.
+- **Images.** `Card.image` is the committed SVG; a flag card has no `RenderRef`, so `make render` skips it. Deckgen copies each image into `deck/` under the first 12 hex digits of its sha256, as maps are named, and deletes copies no card uses; `card.card_media` gives any card's media name. `geofeat.flagfiles` builds the SVGs from the files `data/flags/sources.lock` pins (a GitHub repo, commit and path, or a Wikimedia Commons upload), each with its download's `sha256` and the sanitised file's `svg_sha256`.
+- **Order.** Continent by continent (`sources.flags.CONTINENTS`), and within one in World Atlas's frozen order of those places: the lock positions of their country and territory cards. `order/flags.py` then moves as few cards as it can until each look-alike pair on the continent (`decks.FLAG_LOOKALIKES`) is 3–10 cards apart. Once locked, the file must list the flags in lock order; a gap between two locked cards is only noted. `make flag-order` prints the order, the moves and every pair's distance; `python -m geofeat.order.flags --write` rewrites `data/flags.yaml`.
+- **Continents.** Each entry records World Atlas's continent for the place: its curriculum region's (`continents.REGION_CONTINENT`), or the continent cards' where they differ (`continents.MEMBERSHIP`). A transcontinental state goes with its region. `check data` notes an entry the curriculum no longer agrees with.
 
 ## Review tools
 
@@ -399,6 +412,7 @@ Four decks of first-level subdivisions ship beside World Atlas, each as its own 
 | `make review` | `build/review-NN.png` per ring region and `build/review-orientation.png`: every card 390 px wide in study order, labelled with its position, key and answer |
 | `make pairs` | `build/pairs.log` (every pair), and `build/pairs-NN.png` with flagged, nested, allowed and near-limit pairs (IoU ≥ 0.5 or cover ≥ 0.7) side by side, 50 to a page |
 | `make cvd [IDS=...] [OUT=x.png]` | `build/cvd.png`, each map beside deuteranopia and protanopia simulations, after the contrast of each mark |
+| `make flag-sheets` | `build/flags-NN.jpg`, one per continent: World Flags' flags in deck order, each numbered and named |
 
 `IDS` takes card keys or globs over them (`country:france`, `city:*`, `*:georgia`); a bare id is a feature.
 

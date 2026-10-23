@@ -1,0 +1,7 @@
+# World Atlas territory cards with no World Flags card, and why (geofeat.sources.flags). A territory with an official
+# flag of its own in common use gets a card in data/flags.yaml instead.
+svalbard: Part of Norway under the Svalbard Treaty; it flies the Norwegian flag and has no flag of its own.
+reunion: An overseas department and region, part of France; the French tricolour is its only official flag.
+french-guiana: A single territorial collectivity, part of France; the French tricolour is its only official flag, and the widely used green and yellow flag with a red star remains unofficial.
+guadeloupe: An overseas department and region, part of France; the French tricolour is its only official flag.
+akrotiri-and-dhekelia: The Sovereign Base Areas fly the Union Flag; they have no flag of their own.

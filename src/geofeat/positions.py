@@ -17,7 +17,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 
 from geofeat.card import BLOCKS, Block, Card
-from geofeat.decks import BY_NAME, BY_SLUG, DECKS, WORLD, DeckInfo
+from geofeat.decks import BY_NAME, BY_SLUG, COMPANION_BLOCKS, DECKS, WORLD, DeckInfo
 from geofeat.model import ROOT
 
 LOCK_FILE = ROOT / "data/positions.lock"
@@ -54,20 +54,20 @@ class Entry:
 
     position: int
     block: Block
-    region: int | None  # None for a continent, an orientation feature (an ocean, a planetary wind band) or a subdivision
+    region: int | None  # None for a continent, an orientation feature (an ocean, a planetary wind band) or a companion card
     deck: str = WORLD.slug  # the deck's slug; frozen like the position, since re-importing never moves a card's deck
 
     def __post_init__(self) -> None:
-        if self.block in ("continents", "subdivisions") and self.region is not None or \
+        if (self.block == "continents" or self.block in COMPANION_BLOCKS) and self.region is not None or \
                 self.block in ("countries", "cities") and self.region is None:
-            raise ValueError(f"block {self.block} with region {self.region}: continents and subdivisions have no "
+            raise ValueError(f"block {self.block} with region {self.region}: continents and companion cards have no "
                              f"region, political cards and cities one")
         if self.region is not None and not 1 <= self.region <= 99:
             raise ValueError(f"region {self.region} is not 01-99")
         if (deck := BY_SLUG.get(self.deck)) is None:
             raise ValueError(f"unknown deck {self.deck!r}")
-        if (self.block == "subdivisions") != (deck != WORLD):
-            raise ValueError(f"block {self.block} in deck {self.deck}: subdivisions, and only they, are in a companion deck")
+        if self.block != deck.block and (deck.block is not None or self.block in COMPANION_BLOCKS):
+            raise ValueError(f"block {self.block} in deck {self.deck}: a companion deck holds its own block, and only it")
         if not deck.base <= self.position < deck.limit:
             raise ValueError(f"position {self.position} is outside {deck.slug}'s range [{deck.base:,}, {deck.limit:,})")
 
@@ -233,14 +233,14 @@ def locked_tags(tags: list[str], entry: Entry | None) -> list[str]:
 
 def placements(ideal: list[Card] | None = None) -> list[Placement]:
     """The ideal order's cards (by default, every deck's active cards), with the block and the region the order engine
-    placed each in (none for a continent, an orientation feature or a subdivision), and the deck."""
+    placed each in (none for a continent, an orientation feature or a companion deck's card), and the deck."""
     from geofeat.countries_ne import state_ids
     from geofeat.curriculum import load_curriculum
     from geofeat.order.inputs import card_region, deck_order  # imports the card sources; keep this module light
 
     region = card_region(load_curriculum(state_ids()))
     cards = deck_order() if ideal is None else ideal
-    return [(c.uid, c.block, None if c.study_pass == "orientation" or c.block == "subdivisions" else region(c),
+    return [(c.uid, c.block, None if c.study_pass == "orientation" or c.block in COMPANION_BLOCKS else region(c),
              BY_NAME[c.deck].slug) for c in cards]
 
 

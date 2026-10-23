@@ -73,6 +73,7 @@ Every card needs an entry in its data file, a `uid` from `make ids` and a slot i
 | Subnational | `data/territories.yaml` | `kind: subnational`, `id`, `type` (`Constituent country` or `Exclave`), `name`, `state` (a country id), `status_line`, `geometry`, `expect`, `note` | Optional `within` box. Place it in its region's `subnationals: {id: host}`. |
 | Disputed area | `data/territories.yaml` | `kind: dispute`, `id`, `name`, `parties` (two or more country ids or `{label: …}`), `geometry`, `expect`, `note` | Place it in its region's `disputes: {id: host}`. |
 | City | `data/cities.yaml` | `id`, `name`, `country`, `tier` (`core` or `secondary`), `ne_id` (populated places), `expect`, `note` | Optional `anchor`: an active feature in the city's region that it follows. |
+| Flag | `data/flags.yaml` | `id` (a country's or territory's), `kind` (`country` or `territory`), `continent`; a territory also `reason` | An image pinned in `data/flags/sources.lock` ([Update a flag](#update-a-flag)). A new country or territory card needs a flag, or for a territory a line in `data/flags/excluded.yaml`. |
 
 Then:
 
@@ -135,6 +136,22 @@ To preview:
 
 `make sheet` and `make phone` only read already rendered maps (`build/media.json`), so render first.
 
+### Update a flag
+
+World Flags' images are `data/flags/<id>.svg`, made by `geofeat.flagfiles` from the upstream file each entry in `data/flags/sources.lock` pins. Never edit an SVG by hand: `make check-data` fails on a file whose checksum isn't the lock's `svg_sha256`.
+
+When a flag changes (Syria's in 2025, Kyrgyzstan's in 2023):
+
+1. Find a public-domain SVG of the flag now in use, at its official proportions: first [hampusborgos/country-flags](https://github.com/hampusborgos/country-flags) at a newer commit, else the flag's Wikimedia Commons file.
+2. Edit the flag's entry in `data/flags/sources.lock`. For GitHub, set `repo`, `commit` (a full sha on upstream history) and `path`. For Commons, set `commons` (the file's title, `File:…`), `url` (the `upload.wikimedia.org/wikipedia/commons/…` link, without a query) and `timestamp` (the current upload's, as `2026-03-31T12:00:00Z`). Commons serves only a file's latest upload, so a new upload there makes `make flags` fail until the entry is re-pinned.
+3. Run `uv run python -m geofeat.flagfiles --relock <id>`. It downloads the file, checks it against the repo's blob sha or Commons' sha1, sanitises it, writes `data/flags/<id>.svg` and records `sha256` and `svg_sha256`. It fails on anything the sanitiser refuses (a script, an external reference, an unknown element or attribute); choose another file rather than loosening the allow-list.
+4. Look at it: `make flag-sheets`, then `build/flags-NN.jpg`.
+5. Update [data/flags/SOURCES.md](data/flags/SOURCES.md) if the source changed, add a line to `CHANGELOG.md`, and commit the lock, the SVG and the notes together.
+
+The card's uid and position don't change, so re-importing the package shows the new flag on the existing card. `make flags` re-fetches every flag at its pin and fails on any file whose checksum differs.
+
+To add a territory's flag, add an entry to `data/flags.yaml` with its `continent` and `reason`, then run `make ids`, `make flag-order` to see where it goes (`uv run python -m geofeat.order.flags --write` rewrites the file in that order; it never moves a locked flag) and `make positions`. To drop one, set `retired: true` on its entry, as for any card, and add the territory to `data/flags/excluded.yaml` with its reason. Look-alikes are `FLAG_LOOKALIKES` in `src/geofeat/decks.py`.
+
 ### Add a Natural Earth layer
 
 1. Add an entry to `data/sources.lock` with `repo`, `commit` (a full sha on upstream history) and `path`. Use the commit the other entries pin unless you mean to move.
@@ -154,7 +171,7 @@ Work on a branch named `ws/<topic>` and open the pull request against `main`.
 | New or retired cards, the study order, the lock, deckgen or tags | `make all`, then `make import-test` |
 | Political geometry or `curriculum.yaml` regions | `make adjacency` |
 
-`make import-test` builds the packages and imports them into fresh collections with the official `anki` library. It checks World Atlas's study order, a region filtered deck, Check Database and the upgrade from Geographic Features, then that each companion package lands in its own deck, at its lock positions, on World Atlas's note type.
+`make import-test` builds the packages and imports them into fresh collections with the official `anki` library. It checks World Atlas's study order, a region filtered deck, Check Database and the upgrade from Geographic Features, then that each companion package lands in its own deck, at its lock positions and with its images, on World Atlas's note type.
 
 Add a line to the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) for anything a user would notice.
 
@@ -174,7 +191,7 @@ Add a line to the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) for anyth
 
 2. In CHANGELOG.md, change the version's heading from `Unreleased` to today's date. Commit and push it to `main`, so the tag carries the date.
 3. Build: `make all RELEASE=1 RELEASE_VERSION=vX.Y.Z`. A release build also fails while any verify item is open, with a draft lock, or when the version's major isn't the lock's `series:`. With no `vX.Y.Z` tag yet, the first release must be v1.x.
-4. `make import-test`. It covers World Atlas and the four companion packages.
+4. `make import-test`. It covers World Atlas and the five companion packages.
 5. Tag and push:
 
    ```sh
@@ -182,7 +199,7 @@ Add a line to the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) for anyth
    git push origin vX.Y.Z
    ```
 
-6. Publish the five packages, World Atlas and the four companion decks, with a `SHA256SUMS` over them written in `dist/`. Save the version's CHANGELOG section as `build/notes.md` (`build/` is ignored):
+6. Publish the six packages, World Atlas and the five companion decks (World Flags among them), with a `SHA256SUMS` over them written in `dist/`. Save the version's CHANGELOG section as `build/notes.md` (`build/` is ignored):
 
    ```sh
    (cd dist && sha256sum *.apkg > SHA256SUMS)

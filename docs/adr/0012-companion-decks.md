@@ -1,6 +1,6 @@
 # 12. Companion decks
 
-Status: accepted, 2026-10-16. Amends [ADR 0006](0006-positions-lock-and-pos-footnote.md) (the lock's entries and the freeze guard) and [ADR 0005](0005-card-sources-and-card-dto.md) (a card's deck).
+Status: accepted, 2026-10-16. Amended 2026-10-23 for World Flags ([Amendment: World Flags](#amendment-world-flags)). Amends [ADR 0006](0006-positions-lock-and-pos-footnote.md) (the lock's entries and the freeze guard) and [ADR 0005](0005-card-sources-and-card-dto.md) (a card's deck).
 
 ## Context
 
@@ -44,3 +44,21 @@ Two shapes were considered:
 - Each companion deck starts its own new-card queue. Studying several decks at once follows Anki's usual per-deck limits; nothing ties their orders together.
 - Moving a subdivision to another deck, or a World Atlas card into a companion deck, is a breaking change. It would need a new lock series (ADR 0011).
 - Adding a companion deck means a registry entry with an unused position range, entries in `data/subdivisions.yaml` and a frame for its country ([ADR 0013](0013-subdivision-framing.md)).
+
+## Amendment: World Flags
+
+Decided by the user, 2026-10-23.
+
+The user wants a flag deck beside World Atlas: one card per flag, the flag alone on the front and World Atlas's name for the place on the back, with no note. It covers the 197 countries and the territory cards whose place has an official flag of its own in common use (20 of the 25). It is a companion deck in every sense above: its own top-level deck `World Flags` and package `dist/world-flags.apkg`, World Atlas's note type, positions 800,000–949,999 (the first card at 800,500; at a stride of 500, 217 cards need 108,500, more than the 50,000 a subdivision deck has, and the rest is room to append; 950,000 up stays free for another deck), and `deck=world-flags` lock lines under the same freeze guard. Its cards are `kind: flag`, in a new block `flags`, tagged `id_flag_<id>`, `continent::<continent>`, `kind::flag`, `block::flags` and `country::<id>` or `territory::<id>`.
+
+It differs from the subdivision decks in three ways:
+
+- **No map.** A flag card has a ready-made image instead of a `RenderRef`: `Card.image`, the committed SVG `data/flags/<id>.svg`. `make render` skips it; deckgen copies it into `deck/` under a hash of its bytes, as a map is named, and `check package` holds each package's media to its cards' maps and images. Each SVG is a sanitised copy of a public-domain file pinned in `data/flags/sources.lock` (`geofeat.flagfiles`; sources and licences in `data/flags/SOURCES.md`).
+- **Grouped by tags, not subdecks.** The deck runs continent by continent: Europe, Asia, Africa, North America, South America, Oceania. Subdecks per continent would be gathered alphabetically by Anki's default new-card order, so the continent is a `continent::` tag instead, for filtered decks.
+- **Its order comes from World Atlas's.** Within a continent the flags follow World Atlas's frozen order of those places (the lock positions of their country and territory cards), so the deck goes round the region ring as World Atlas does. Each look-alike pair on one continent (`decks.FLAG_LOOKALIKES`) must be 3–10 cards apart; `geofeat.order.flags` moves as few cards as it can to get there. A card's continent is World Atlas's: its curriculum region's, or the continent cards' where they differ (Greenland, Aruba and Curaçao in North America, the British Indian Ocean Territory in Africa). A transcontinental state goes with its region: Russia in Europe; Turkey, Georgia, Azerbaijan and Kazakhstan in Asia; Egypt in Africa.
+
+`data/flags.yaml` lists the flags in study order, and once a flag is locked its position is its place. So `make check-data` requires the locked flags to be listed in lock order (which is where `make positions` slots a new one), and `--write` never reorders them. Each entry records its continent, so its tag and its place in the deck don't move if the curriculum later does; the check only notes a disagreement. A look-alike gap that a new card breaks fails the check; one between two locked cards is only noted, since mending it would take a new lock series (ADR 0011).
+
+`DeckInfo.block` names a companion deck's one block, and `decks.COMPANIONS` now holds the subdivision decks (`SUBDIVISION_DECKS`) and World Flags. The card validator and the lock's entries hold a companion deck to its block and its block to it, which generalises "only subdivisions go in a companion deck".
+
+A consequence: every World Atlas country needs a flag, so a new country card fails `make check-data` until its flag is pinned, and a new territory card until it has a flag or a line in `data/flags/excluded.yaml`.

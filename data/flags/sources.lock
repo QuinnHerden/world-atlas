@@ -1,0 +1,1955 @@
+[
+  {
+    "id": "portugal",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pt.svg",
+    "blob": "88b08160d2a286bca2950bcc2b88ce74b60f2da3",
+    "sha256": "0cee5f059ba5f2c6fbdbfdd682d955f7695239a40fa9300ba99ccbe3f144565a",
+    "svg_sha256": "434a1e52e7ba4de4d57aa214f29093e7f66471f178942400e0b49c8c192e68f7"
+  },
+  {
+    "id": "spain",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/es.svg",
+    "blob": "23f0d2f46bdb49dc2608bb22ee9bb8464988861f",
+    "sha256": "e6ce1922eba61c4ac26f70845b8c54ff8f29e33ef64aa35a150c719c07f76ef3",
+    "svg_sha256": "6ffdfaa6d128cf9832e5fa8d9918baff9bff81212aff886f0da21686793839f7"
+  },
+  {
+    "id": "andorra",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ad.svg",
+    "blob": "8d3096dc94bf48b278648cbf7f0cce9260bc3961",
+    "sha256": "4bd80209ab5bf4e474c789e9fc21635f51a18275151d9f948bea92c05c7e8964",
+    "svg_sha256": "d0efd419f376671cf3633c2bc65b2049b53ad0db30d7949295e5db8672bf0838"
+  },
+  {
+    "id": "france",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/fr.svg",
+    "blob": "c76dd719f462fb4456046040e9638b97f58ea936",
+    "sha256": "7504bdf1bc9b381f89b44828e048e3d2aaa3c89e68aafbac13fe30998ad121f2",
+    "svg_sha256": "2b585e76ea2f655f860642e3609c16c42d71b8d717d6f87ef915264af333f49f"
+  },
+  {
+    "id": "monaco",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mc.svg",
+    "blob": "231ec9ba3c7be4c3d5fc8ba842aed53ece7f338c",
+    "sha256": "8ffb26766aa814ec4b2fecca03b8d60756fd4f737c9d2fc0054986c921a3bdd9",
+    "svg_sha256": "378d610c2dabc4b6e05437f9bf525660d7fbda9b08b811a30c917363d57f1250"
+  },
+  {
+    "id": "belgium",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/be.svg",
+    "blob": "ce3cd3e4502e3524cb6262465eda445a6906105f",
+    "sha256": "cedd0a665a0ab17ba183e8e41694e097db4c9c1c06040ed62924ca9292f24e4e",
+    "svg_sha256": "6db24801141aea9a21c86879eafa3e03c6ad84689e4e7f47ff9c821cc936e3f2"
+  },
+  {
+    "id": "luxembourg",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/lu.svg",
+    "blob": "712a3aeb8dcca8accb4da88df3b3480c30d37728",
+    "sha256": "3ad3137b8b0d6218d0a9b3a4d7b572b5b9f594f5a60b52b5139b313db085640a",
+    "svg_sha256": "1e284180705db0ab2e244ebd12519179b0e130fea8d3705e3cb81f13e8e05dc6"
+  },
+  {
+    "id": "netherlands",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/nl.svg",
+    "blob": "86c0c376a22ff4c5c404a8b5ca8998d7f2870b3e",
+    "sha256": "0d04d9eadc49c5514881c1c3f7c465a10a37ead378bc5e61cf96fdfcb3599e54",
+    "svg_sha256": "091228219a902050c1ca08a10eeb3537015324f850b86f9a7918d866e0057b98"
+  },
+  {
+    "id": "united-kingdom",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gb.svg",
+    "blob": "1b8fb425043f2ab9d13d306d19a9e9bd129032ba",
+    "sha256": "910e4fa63fb7a23d30d59dee2feb08da51a405eb06b38a7e12d18d9b504d13b5",
+    "svg_sha256": "c267ba2af1bac0948d7c5b5dd96685061955b5d2b822d9160b4a272db4ef404f"
+  },
+  {
+    "id": "ireland",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ie.svg",
+    "blob": "8c90cc94ac3170f8dfbb304c176c01067a21b353",
+    "sha256": "82847f565fd12516c8f53fb6a46e9e0e85b477f8a9a307d49fc72e441995327f",
+    "svg_sha256": "69c45184acce55456e5c38657ee7880ded1adbee8904a53eadcdfe297510d9cb"
+  },
+  {
+    "id": "iceland",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/is.svg",
+    "blob": "2830bde5b4a0ea258a82db15c3bdb464f076eb31",
+    "sha256": "2f4de4153dd44e63cc532733fe16c36410302f00faf2a5edda2dca6c19d42107",
+    "svg_sha256": "f0b280baf9482fc3600f57f323de94faab6fa47f9ab0d8a269f2a15aa5e05f58"
+  },
+  {
+    "id": "norway",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/no.svg",
+    "blob": "69120a68be041641eb37d7cf5bc4d88f5eb86bd3",
+    "sha256": "24aea913a6dee250a7d34a85ecc449169ebb51b7bca3e93e8c7d0484ee5dedb8",
+    "svg_sha256": "a301bf932a40c37bf09fe8a86decbb7efc660a8e5507f182b24c34281d0e4c83"
+  },
+  {
+    "id": "sweden",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/se.svg",
+    "blob": "9223d14cbc72ce1795a0e46510f6c1bf37acfd35",
+    "sha256": "1d7c3fc0594c8fb856d9fd0a13a752dfaf8643c8b073582909c88be24e7e416f",
+    "svg_sha256": "b22d9bff02a3d1c7b1a6cd16ca01afccf7d59a0fec0d4e1529181ed3f6775712"
+  },
+  {
+    "id": "denmark",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/dk.svg",
+    "blob": "ae58c504d0f85991816d12ad603d36aa01a16323",
+    "sha256": "dc4827058fb343b6fa6383fb5e3471f4ab744a82d0f6ec9d895e8ce5d2a969ff",
+    "svg_sha256": "03c6dc1226265431ce5e94ed9676db4ae51cc2a8f94a2114e61370f7b9dc90b9"
+  },
+  {
+    "id": "finland",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/fi.svg",
+    "blob": "01d061d7a22012172cccfbacf545ed0747713947",
+    "sha256": "2f57f5b4ec3968d3127d25c1ba8973b593df0bfa8171a12d7c9f399a038ca071",
+    "svg_sha256": "18856c1b2a18c2cb68a042765dd001f5b60b1b36d810fce9a41d0e6d3c6c564e"
+  },
+  {
+    "id": "estonia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ee.svg",
+    "blob": "1bddd1ad43c22ba1b5a1b07a3bc7e3c81176dd07",
+    "sha256": "e084ea92ab4ce39bb662d479ac651be00678baaab3259863e3b82bfbab695af5",
+    "svg_sha256": "94d9e455fa9ed2532955b49a2488f4fc1fb3254555d17e61d972ac93d3e621a4"
+  },
+  {
+    "id": "latvia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/lv.svg",
+    "blob": "655ac4f422ace2567789a73d55d1f59b244d6cf8",
+    "sha256": "442240b6d0d4290a8a5bf289beae6d52665dc71f7cb529034682c8fdcf313bb1",
+    "svg_sha256": "70f79b637ab6dc0d7ad172f1cfcc18f3a6f95df0462f2cc1ab6d84967064cac6"
+  },
+  {
+    "id": "lithuania",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/lt.svg",
+    "blob": "690ae4688994c53dbbcf2ba854ec3312ec592fdb",
+    "sha256": "429d40e370103a47cb2fa03e143136308ce0ad387fc05acfff349d40406440a2",
+    "svg_sha256": "5d7e4d3fe71c09506823be2026f144256487a92c4a807c0910803d51f0a56e8a"
+  },
+  {
+    "id": "poland",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pl.svg",
+    "blob": "dfb989baadb2bb4d91f071f771081d5d73e46ae4",
+    "sha256": "608e5ed6a0820b02ac00e5ee7457a9822b5e5c1be9cba69d17c5a3e9ca4a4377",
+    "svg_sha256": "8800291c3fb7ec0281ef53d858a9e81a436b5aecfe879ff69e8149b3e551da09"
+  },
+  {
+    "id": "germany",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/de.svg",
+    "blob": "aa9fbd31b5c35ebde559f89115cc3501e740157f",
+    "sha256": "2a4fa7f09552fdb73936549ee0e77c22f16594dd1a370245ce34132e6bb483d5",
+    "svg_sha256": "8614eca7a2f4b665447d822b84f0cd8838e3472843eb12ba7eb018d2f6f1c145"
+  },
+  {
+    "id": "czechia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cz.svg",
+    "blob": "db03aba30d183dad5e481a9c22634ab8c5ae6ece",
+    "sha256": "a71bcb7e97223bdca2ff6105c4e261e96eaed1009d6326c404abe20011ed7dad",
+    "svg_sha256": "2032703f594ff0405960297142dd18e0b4e6806e5818dbd0f15ebabbbfd6aa50"
+  },
+  {
+    "id": "austria",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/at.svg",
+    "blob": "295e2ad14f745a25f4f66b3e0b0648abb286a47d",
+    "sha256": "28306a3d65e26dd0720063b4825ffdf3d86c306360a77351b78caacc09401d96",
+    "svg_sha256": "965aee8adcd37b8e9e21820aa5dd2919034b39d63d7c0fbe15db63b6cd19406f"
+  },
+  {
+    "id": "switzerland",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ch.svg",
+    "blob": "dd0ff636a36f01a213a7744ff1dcb4ad8930f543",
+    "sha256": "4c6adad3941f5a3188b3bcf3a64f9ab6b351c504f5b7c4d01548c74e72fa5149",
+    "svg_sha256": "0ca28b88002b25d1349faa13e038762b218c6d2f71d95a5ca04fadb2e9f5619a"
+  },
+  {
+    "id": "liechtenstein",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/li.svg",
+    "blob": "e7904fead6bf7cc74bcfe7ea1a42ae642ddd3e23",
+    "sha256": "88f34e0aa148bb98d2ff7e47eec4d1a65557f699be53215a6ce69d7cf48508d4",
+    "svg_sha256": "7a0bd0cf33d219aa40ee1f77c1cda76846004b48b066868a29b62db833d9b1d7"
+  },
+  {
+    "id": "italy",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/it.svg",
+    "blob": "f9d35b8c657040663ebe9027830430fbfbe13705",
+    "sha256": "15777a0dc5a5dd8af5d75deacec27d2d6dab190aa7295d61db601a28a71b5c6f",
+    "svg_sha256": "6e8e46e85a76325d076c1fccc302b96117388364339da4ca43abe3f76ba0ca03"
+  },
+  {
+    "id": "san-marino",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sm.svg",
+    "blob": "2cf041dd2f7c228bd888503dc883e14cfa25a40e",
+    "sha256": "3da871598b42b8c20867896215608615b47694cc98fe6e9b4e7ba5e7fc9f4744",
+    "svg_sha256": "62eace762a478221f112944d1464f1673af7ac823ad1dc2836fb4f7f6b8724bd"
+  },
+  {
+    "id": "vatican",
+    "commons": "File:Flag of Vatican City (2023–present).svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Flag_of_Vatican_City_%282023%E2%80%93present%29.svg",
+    "timestamp": "2024-10-17T12:52:57Z",
+    "sha1": "00563363b792470c5718400439675a556beb20e5",
+    "sha256": "59ac80ec65dde9fbbf6456609baa583218bf4290bd2a50b2616c354b1660724e",
+    "svg_sha256": "29ceaae64229261babf5b24b38de7ce28e9c045acd7bc5223b30b2011a71b977"
+  },
+  {
+    "id": "malta",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mt.svg",
+    "blob": "b0fcfd86ad6f8b338a26990a41c499264b762176",
+    "sha256": "7c7f9a96502c24023aa88c09de71cf639acc760a02b188ea69a06a637e6efdf0",
+    "svg_sha256": "962e20877f49668ca63a189e6b2726650fcd6c31d87bed50fe4f4f93e9de723e"
+  },
+  {
+    "id": "slovenia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/si.svg",
+    "blob": "517b1b1888ad8a638da2955629444f33908f2be7",
+    "sha256": "cb5fec5ac8527646e5e4afe2896b2bf6b978555ade411edc50d512ad296d6936",
+    "svg_sha256": "20233fd45684f4c60f3bbeeadc2d0b8dce30e1abc57af7ef4eac8c8b6499bc81"
+  },
+  {
+    "id": "hungary",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/hu.svg",
+    "blob": "3ff4c819880a2e7a512cf959856f5efcadbe24e3",
+    "sha256": "1c231bfcc2251da4ef6cd785ee4f67f602ce64a2a46c0b54539f0b8a16f3e5ab",
+    "svg_sha256": "0bc1617830a4d23fd91bbfb3124a97a49a09090f1f618afa1bb8ce146c88ffb8"
+  },
+  {
+    "id": "slovakia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sk.svg",
+    "blob": "70142ba819bbe68fa9e46226449385842fa43d35",
+    "sha256": "7061dea3193d89e0d9b10f7fe07076af43c4a901249c7c2d8f71b1eebfc52996",
+    "svg_sha256": "f94bdd98f7f3f2347842e4fd140ce11c00e393311770f592481b0360dcdfc0b7"
+  },
+  {
+    "id": "croatia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/hr.svg",
+    "blob": "dc56428085f9a78759b780b12463f0855e911dd5",
+    "sha256": "ecd619e1013f1de98ab10d4693d8d17ff1924494c099aaef02b0700636b51339",
+    "svg_sha256": "ba3d7ddf6ce7c8f961377f89be35aff2a9455a59a1a83bf128a9cd73585f0735"
+  },
+  {
+    "id": "bosnia-and-herzegovina",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ba.svg",
+    "blob": "45845f0dffab303b860763a1c2f1368a9b1598f3",
+    "sha256": "1c097dff94ee5da3f2ec073c2a6700bfe7d85699fd6eef6f2a690f5268e7d605",
+    "svg_sha256": "8968b7f510dbf3f6c8cdf185141742b56561fc46f744a474026ee7b912ad5e04"
+  },
+  {
+    "id": "serbia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/rs.svg",
+    "blob": "a1d6f40f3ebb0930ce5ba8a9368bd2a87fa9b25f",
+    "sha256": "a985cc8f262e923dc1d83eeff6c495281bdb4f8ce6df38ccaa1e0f94e2cdb3c1",
+    "svg_sha256": "f67457c273388efeb1a9da9ef943afbfec07b26435a35a8161f98de68e06f2c3"
+  },
+  {
+    "id": "kosovo",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/xk.svg",
+    "blob": "244c85fd31b3d5ca95a9596ee71df6f5a2299179",
+    "sha256": "b99d21fab5c2e9d106a9d48ec7e300dd068b116f71126a48b116c2cc539c7bba",
+    "svg_sha256": "e9fb7f0ccb403619089cd2344eaed175122c1c5d096428595827d2aa98c92598"
+  },
+  {
+    "id": "montenegro",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/me.svg",
+    "blob": "51a7d91469ca3eaa5ed9d7bf14a5a36141ad8e81",
+    "sha256": "699a6eeb24d29d413543c6f9d5b86d5858a43ba0202e9840ce73e2b5c810f864",
+    "svg_sha256": "75e722e21db531757c85cbd84acf6ad4b9d97bba91f266ca11280e3fcf95d373"
+  },
+  {
+    "id": "albania",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/al.svg",
+    "blob": "393d18e752ef059ade5cf5c595f9b640d336f07a",
+    "sha256": "9e00bfa393c4bd5f04b118b981692d998f3c5c4b817f309e03a35b9b4bb4b9ad",
+    "svg_sha256": "c4b62e8c91638d4a5aa5d68cbcde3458f0bbb6d59f0f15d455562f77c6ae39c2"
+  },
+  {
+    "id": "north-macedonia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mk.svg",
+    "blob": "06b3cceb899b01eb196a98b7a9ce8097a7504bfb",
+    "sha256": "7d69a93b4da13040879b5b387fc8b4ede87d20f0dd8647353849b7e6e5747629",
+    "svg_sha256": "ba01e84657b54ccaf8d4631b4f0955344bc620dcd46858391440c47fd446137e"
+  },
+  {
+    "id": "greece",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gr.svg",
+    "blob": "104ef7cecfa2e0b1c04b7db86e8e3c116155247a",
+    "sha256": "86cce2a11b19e83087b4ea15be2c293563f8dc90df958488174c2194e2adac07",
+    "svg_sha256": "64a459c12b552e7bef8b228be3abaeb5d3b076b8d99c2e8a91d547949e505907"
+  },
+  {
+    "id": "bulgaria",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bg.svg",
+    "blob": "4b1e0626fdee11ccb0926851223e41bacc45b10b",
+    "sha256": "345bc76ab317872c76a1192949d8ca9e4f562e9fe22c808785b770fe4d4fa105",
+    "svg_sha256": "a6b21466d0626f1a97cdc9029c4938e3a5f6152dd0a33bae74d88e555da83182"
+  },
+  {
+    "id": "romania",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ro.svg",
+    "blob": "ccd3c0d0a2a0fd6edf338e15e8633ae98efcdb51",
+    "sha256": "ea3e3c17cfd414a403313ddc73a62a264cbc205d962214e272321566e0d78ce8",
+    "svg_sha256": "17725c9e8329ab0ea879e4268c4d079e3b88e6aeac16f06acf7dc13e79faa19c"
+  },
+  {
+    "id": "moldova",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/md.svg",
+    "blob": "f4d781d264b6e475770a7fc0d84789a50c1f3cd3",
+    "sha256": "cbcc70ada50e7406f1a3ee36c424b57f3ce090489e85101af7293f8b44876657",
+    "svg_sha256": "7f95529f8cb81573c2a21f8d5c47004f80307c7c08e9cc0d5afb578e8b7ce55f"
+  },
+  {
+    "id": "ukraine",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ua.svg",
+    "blob": "c893d0220dc3499fe2c082b12a6b03b9549ed700",
+    "sha256": "8b72b27e5bb712f269e28182fd85175175b65ebf8fd31fbff8e255a0058c54b9",
+    "svg_sha256": "e17564a65d6c0807babc5a9711eef921d53d3eb54661e5cb100572ccce2ced58"
+  },
+  {
+    "id": "belarus",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/by.svg",
+    "blob": "574980fabafb89b40ee371cc67f6877d4a07e907",
+    "sha256": "e23393e407d5ab20cece67b85595707da0644f4f63cb57efc9ce54734cc60de3",
+    "svg_sha256": "d68565a0b321597ff02e2e9a9dec6a5b7f10ee01e6ed7f65febd6df9f30b7dd8"
+  },
+  {
+    "id": "russia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ru.svg",
+    "blob": "6e65fbdaf78e0876623000a3cae12fbdf83a04ea",
+    "sha256": "d3186a06e97966a28552e0134f08ffd6e30fb7325bd2d8b27c235193ed24fdf1",
+    "svg_sha256": "ce2eb19461366fe131516c46f9a928af2c98a117ba60f0927927e519e905fee1"
+  },
+  {
+    "id": "georgia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ge.svg",
+    "blob": "ed3c23ba03ce2942b9570c10e6e642dd9f98f983",
+    "sha256": "f8d487ea68fb839dff8d7836d4ecbdcaa4ed7dd7ca4c6eb2bbfe6e8bb95eebf7",
+    "svg_sha256": "c8fc8f89750bfb6effaacceb89d9246c1cee7564b487f7e5a111fb312d223dd8"
+  },
+  {
+    "id": "azerbaijan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/az.svg",
+    "blob": "013aa6cda4a2dc49f8be253c325d6ffbeb49d8f2",
+    "sha256": "1a04b7f55b879b568a82b419dad78b7943d60788370f85731a82bbe772e5f3f2",
+    "svg_sha256": "b7c4e7f01f11ea13bf655c5125d39f7886382df2b6e293736bdb348cd6a24070"
+  },
+  {
+    "id": "armenia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/am.svg",
+    "blob": "533bcd83cf62e52772e36623f85d8ab126200b04",
+    "sha256": "b52bf90a8165cecd27e6cacfab8a52934566e090aa33d17b0c418bf385d3d1b8",
+    "svg_sha256": "4fa78223a8c1830c6a961246dbb1d9b931444e15598a3a05a68fa8da7906fa56"
+  },
+  {
+    "id": "turkey",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tr.svg",
+    "blob": "3f676181e9c4c977e130cb89912d3d58f6bf4ef1",
+    "sha256": "03054d924491c213d26b12f6663d33481b1b4018caaa0c86e07d72846ce980d2",
+    "svg_sha256": "70803a43cc7fed7e029db96b0be887ff1f134909971a602b62dd86a700ef40ca"
+  },
+  {
+    "id": "cyprus",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cy.svg",
+    "blob": "54489e74cf1774fcf87c423e166afbfac1eefed9",
+    "sha256": "2dde527a4b52eaa8fa61d9cee6207e15aa6f105e2798b3441735a49eb7fb7dd5",
+    "svg_sha256": "da098bd0359de5123fd97a164df7dda8037f05c3601ea9a80efdc2ac952c1bd4"
+  },
+  {
+    "id": "syria",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sy.svg",
+    "blob": "73adde8d98ddcc35bb06fdcef8c85d83ecc04967",
+    "sha256": "ca2804577f06100f17e9df10cdc38dbaf37c91e78557a7c64a35f0f953b31d47",
+    "svg_sha256": "206574a5128a99395f76303a197f20a232263103ddefcd5b87a9b67689afb20f"
+  },
+  {
+    "id": "lebanon",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/lb.svg",
+    "blob": "af7e03d9b1daac4517dd37de100c47b5bfb612d3",
+    "sha256": "2068513eca86222ad8ad63231cdaf8831f6b6b04d57f7095bd0919d21a58aa9e",
+    "svg_sha256": "d6eef277d4ff13f12024ed1fa2ffc4cf4de06bae6502d8a06e26b8309686b689"
+  },
+  {
+    "id": "israel",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/il.svg",
+    "blob": "24750026600a087323238030450a1386eab6bb03",
+    "sha256": "14a4df274e784e760d44219b813e1b2849b16d373b5d945fb169d27cccc47dc7",
+    "svg_sha256": "9dc220db184dfbb418540d96e475ed0700ef06ebf8219f8139bcbbc05c58ee68"
+  },
+  {
+    "id": "palestine",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ps.svg",
+    "blob": "c0dfe9c2850be3cd360d757facb3b7deda0a5ff2",
+    "sha256": "5be22b2bf94b293c9757c97d727992c5da2ced98cf44cda7a789d1609c7fc381",
+    "svg_sha256": "a5b65cf9a3db39d95f5b30a5e89bf5bc38f7034dd93ddaf2abc301616749978b"
+  },
+  {
+    "id": "jordan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/jo.svg",
+    "blob": "fbcf46807f3bb192de66870f640a9e2f633818b5",
+    "sha256": "5fa2461d053598fecbeed1de5e793eac44922179b12e427470aad66e741d925e",
+    "svg_sha256": "8edc7c9f176d42b88e19fa1cb2aebc23b33f5ad99250e3bcdd6cd068cd6d5eba"
+  },
+  {
+    "id": "iraq",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/iq.svg",
+    "blob": "f806fcbe1ee9484573bf9038f513aa3974a764e5",
+    "sha256": "4d41f43f997d2ee824a5583fc2fe54dfc4c3304accb16b4dc70f3468cb6d0185",
+    "svg_sha256": "e352cd44b65c29087ebb867aae9e5ebf60d6cdfae869dc4f3e670aa8c23d559c"
+  },
+  {
+    "id": "kuwait",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/kw.svg",
+    "blob": "44065178ea7516742b4e725b87bd1750ec5e153e",
+    "sha256": "0e2c8ac36988d400a9ab816ed6bf9ea9d73308f7da2cbe43f980d1813c0c7efc",
+    "svg_sha256": "74f7491d7ca823e7cd1b95391484ebff0043fb07d59206d2567a44873e9452c7"
+  },
+  {
+    "id": "saudi-arabia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sa.svg",
+    "blob": "d9a6ce8b4bb353c1575033a7b08b40307237d83c",
+    "sha256": "e07786f2d467b66cae6e9bc096ebd887fa35daa4bc5a8dced89f0f6d7a2efaf3",
+    "svg_sha256": "0b80e1bd3bad220c8fbaa6ffa7d9cefa554ee28fc1da5414fdb99560099bdd49"
+  },
+  {
+    "id": "bahrain",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bh.svg",
+    "blob": "c539a5528d9a67c11f6e5d1f757834edbd3a93a7",
+    "sha256": "747e9450a3bee045ce7666a17832c425c5c68b21797070214cedac2f62ee2d12",
+    "svg_sha256": "9a31f8b26a55ccbc4bac5ac410e4f5ece5d3b30f587a56e1e44661d254d22893"
+  },
+  {
+    "id": "qatar",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/qa.svg",
+    "blob": "b750f072f16ced3fcf821d5167e03f8b04e8a94f",
+    "sha256": "64aa892eda2ab88830fb5feb195be1a6c8d57218cb0dca91b4c84a923673483a",
+    "svg_sha256": "de7d2ab2636b9356317981c833353072f0aae254a794878f652e3998095c33bb"
+  },
+  {
+    "id": "united-arab-emirates",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ae.svg",
+    "blob": "64bc2bd6d9ae788352e32c97a3c7877bc03531c6",
+    "sha256": "4cbd843ba82e44f98b9497dfd1492f92855eb53d7dd0d5c92b77c7fe7df04ca5",
+    "svg_sha256": "e900e10ae185a7fd4a7b605d4d06458ce358953c8d55bd92730e1b2f1f4c42d9"
+  },
+  {
+    "id": "oman",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/om.svg",
+    "blob": "9fc90216256be5e79342e0e243c3e00dcd3a9dde",
+    "sha256": "a80f8ec8b7d01c9a1728f371fd6ec97905f46809571657a076eba48c7ac16e74",
+    "svg_sha256": "918df4a6fe2884314739e3a102c3a41af8151b3315fe2cc5b3bc48e36f515d54"
+  },
+  {
+    "id": "yemen",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ye.svg",
+    "blob": "37c3ab3c496d453178d88b20e85ef1d2686c5ae2",
+    "sha256": "fe132d9cc0f86823c08730800a18ee90f136e599b23808cd4cb2e0eb97ecf362",
+    "svg_sha256": "0a2bbaa0c45febb736436a115570c7f4257a5601c279685aac1d698d5923a0ac"
+  },
+  {
+    "id": "djibouti",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/dj.svg",
+    "blob": "1d49f340043af36d70b1908ac74d814b79891c88",
+    "sha256": "3833f14a3e4461126b4d17d50b2442673da8826b43b3b23487e3f888a35a7931",
+    "svg_sha256": "ee456b2ffe00c10d5b71aea69474d391465c148fb15d92e73c8b9e36c076a335"
+  },
+  {
+    "id": "eritrea",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/er.svg",
+    "blob": "551f72c073e0b8a75fed06128d20a68158988651",
+    "sha256": "b66fe99843453f997f3613ffb5338bd7284d3b6b91375354bde5aeb4f361ae34",
+    "svg_sha256": "14f79cfe17e8bdd5a90ebe89bea75b9e222235bb6c6cccb5ffe4d8d7aab629a4"
+  },
+  {
+    "id": "ethiopia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/et.svg",
+    "blob": "a9c9781b3d90510a63bcab1c617eeb3d02577fff",
+    "sha256": "a542ea1e176de218fcd002f0f6492c5d5a80319f07991a1a63b09592d2a1aa65",
+    "svg_sha256": "045b0f2f53b5336d9bf8fe3d3a8549103f5c13fa1ea4580e7aa90836218c48b2"
+  },
+  {
+    "id": "somalia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/so.svg",
+    "blob": "3053eee70a9a232b0442659b3ba0facd27c6b9a4",
+    "sha256": "c3984120680ef8a88d7ba9bfbcf488c7e0e0c5a419f256995127c5faed1d3aeb",
+    "svg_sha256": "d301824be39184a5699eda17209b6fabc94d78912bb08d6a0c450aa0f40e1318"
+  },
+  {
+    "id": "kenya",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ke.svg",
+    "blob": "8f2468b4e52ee86599db12fcfeadbed91002d0ab",
+    "sha256": "fa900bbceccac751433239fdc3ab3cd2d177b02b7a4dc10e601764cd8519eacf",
+    "svg_sha256": "a8bd059e96492c9ab7093a12fc3e4209b3507f3d1b56b0d1bbcda87e836c43b7"
+  },
+  {
+    "id": "tanzania",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tz.svg",
+    "blob": "017001f8a2c0322e3576a825d6d8aed8f7806c41",
+    "sha256": "6535e0dc71b3ff75649a489c9d04256934a2476e5dbc8e0111d5c698d3987fdc",
+    "svg_sha256": "8002784ab4991caa088c17f991521f757b719962f0b13a4621a744155859e002"
+  },
+  {
+    "id": "burundi",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bi.svg",
+    "blob": "134f489671a5378fb9f1931dde316f226b08b499",
+    "sha256": "0424fb4c0ea6c39519836a39d6f70d411121c37a149be76bd0ebb8a368613832",
+    "svg_sha256": "e7adbcf8e093defb7a3a444d929d6dcd6616705554cb7c4884b6225816bf835e"
+  },
+  {
+    "id": "rwanda",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/rw.svg",
+    "blob": "7d2ec0c36cc5639d7f5a7e59c6211f29f72e5047",
+    "sha256": "35bee586963c2b7e0295400a90294b579679ae1404ffd6246af219a071e47b4a",
+    "svg_sha256": "b1af2442bde96de8842cb5bedf49debc6c65e96ae02efdc859632c6e81ba0ec2"
+  },
+  {
+    "id": "uganda",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ug.svg",
+    "blob": "f266517379f2fa9855395ebc1c76479e1d50ded1",
+    "sha256": "f4512cc9fe389b8349a4e4ca04cd656f61c65aee562850384af17177f40a7856",
+    "svg_sha256": "449af92d0512a4982389f8bdc78e42c0286b576fc441afa7536771733142cb5e"
+  },
+  {
+    "id": "south-sudan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ss.svg",
+    "blob": "71128d76a8e38fc0ec19f113e5498a9087aea6d0",
+    "sha256": "b38f305e68187c6b436ec835820044fd9a2b45f00c85fb7b08c5c77eb3e26074",
+    "svg_sha256": "d442807716a687903e3473df4b3af996b0764619de9eaf37ec84885aaf679dd7"
+  },
+  {
+    "id": "sudan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sd.svg",
+    "blob": "a7193e760b3c55d8d3df3e2b61bb71f3a8496761",
+    "sha256": "8b93452003c143c46f6c40756f2a1f4f2dd314d16a413dbf246e0e4b62662679",
+    "svg_sha256": "292d99dfad9a11be3298647df5b2fb4cdd6553d057419d0406ea676e2b529ea5"
+  },
+  {
+    "id": "egypt",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/eg.svg",
+    "blob": "e53e54a2c6bce6a9a64e7395c72f878d2e444ae4",
+    "sha256": "f157fdd22af1847ce1751c94bcb952ceb48e85ff459c922300ca28a6e633ce79",
+    "svg_sha256": "d7711e5f6b621b32e314e1c028b4114b05ef830c161777e0c7e17ce42991525a"
+  },
+  {
+    "id": "libya",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ly.svg",
+    "blob": "75db37c20f66dbf9cd057d7279205b4bc5f44118",
+    "sha256": "0096c87d6d96929e2e7a6e2624643b0cc577774f32e0ac40824e9fc8f3f328fb",
+    "svg_sha256": "794bbc48095a5dcc1707aa4fe8b1af112da65f76512350998c2ca8d337045bd1"
+  },
+  {
+    "id": "tunisia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tn.svg",
+    "blob": "a86d3d4eeb9d76669d604e596404d111090ee24e",
+    "sha256": "4dba7cc5500d3333d9ac08c1b4e01a9af241f50b53004f3931f4b30cd2ec521e",
+    "svg_sha256": "72056fcb9a390cb9cc5b4d6c052b49ae38136b022ed50e2c32ef4f935d2b6104"
+  },
+  {
+    "id": "algeria",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/dz.svg",
+    "blob": "e1165a7e9bd978741836e99c2faf07d7fb90d521",
+    "sha256": "de1442010432e1da1a1d3b08ca33a2057052aedcb66a88541d05bc44467a5c06",
+    "svg_sha256": "b9962c1758180b454a5b7f8b03e8e7589e6edb4f3f3b25a58dc1c7360b3f1f94"
+  },
+  {
+    "id": "morocco",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ma.svg",
+    "blob": "9faffa10970245f43b6b4d65381d09a04aa5cba6",
+    "sha256": "bde8b96d19af8ffbe3d5e861f019385b728233cb0e43a7880cf55d72416e29b6",
+    "svg_sha256": "6553b217fbc16081abc0650d1a50e8fe014bc9b8845732cd3a772634dcefa4d6"
+  },
+  {
+    "id": "mauritania",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mr.svg",
+    "blob": "c9ccfe8509e0350bd1aa4158b84e0454eb9015e8",
+    "sha256": "7a0f5ab104f86a946ae84645f0247943bd5697abfdc114ecff5078b8ddc2d505",
+    "svg_sha256": "b9cf6debcac6aff7aad82cf93e46791c5230ff68a25ef826d4d9f3ca2506f75a"
+  },
+  {
+    "id": "senegal",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sn.svg",
+    "blob": "7e343123400e0f37835a8370dd931805725bfb96",
+    "sha256": "703cc723bb89d12763271eaf19d3b927d12ebded09ee9408bf4b5704ab946117",
+    "svg_sha256": "f8c3d83a23fc4539a8d45ced82e9ffcf4735a77029f49712a8bb2b534f8d7d8a"
+  },
+  {
+    "id": "gambia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gm.svg",
+    "blob": "5e1719c4ae38cace4c5afec704cbf04dc002e2a4",
+    "sha256": "786b8fa58a016ccc36b648e15388c666ab0dbcb1bbf479cc6b6c2b14095a392d",
+    "svg_sha256": "191c87b1934025cb0b5000e93ec961d5c16d6310119869a5a92af817b2ad201f"
+  },
+  {
+    "id": "cabo-verde",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cv.svg",
+    "blob": "1f61248dc6fa8288fa48bb5ea061c16bdc0a8d40",
+    "sha256": "3297bdc9b5d5a39408a95ec47320647100c85486feeebbff70c12431dafd7e33",
+    "svg_sha256": "0dcbfe953e17eb1374a88ce4682c5c6e47ddda268b99550b6ae47bad365ffe1a"
+  },
+  {
+    "id": "guinea-bissau",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gw.svg",
+    "blob": "09d35f3618bc5ed59fdf80081fbf0f1a699a084e",
+    "sha256": "6cba42f1249197e706555685f55b52daa722b7cd36d1e814a93b2a0fa0d9e3ac",
+    "svg_sha256": "47c5cec8aa2dbb5a46e2e018f389f1d336da27bb812de67f7aa0167378f64291"
+  },
+  {
+    "id": "guinea",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gn.svg",
+    "blob": "4c2621ae2a737bac381f8b4b75a06068f2559f1c",
+    "sha256": "4a83ca2aed02bb35e22eeb594c47c0215f170162e0c7754becf308a9fdbd9172",
+    "svg_sha256": "09b1227bc3ca8039190b2e2ffa50fb4ef04a6eb870a7e2f24d466d20b5264c08"
+  },
+  {
+    "id": "sierra-leone",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sl.svg",
+    "blob": "eecb6b5df805ed9182607dd3dea3837ac1fac8fb",
+    "sha256": "022f91e79e13a30ae6dec0dc9257488b9193373f6c41748f787a05e050dab8b6",
+    "svg_sha256": "f494b61efd5687487ac37e968f3f97974c8c36f96432df9347132f4a9ce80e7d"
+  },
+  {
+    "id": "liberia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/lr.svg",
+    "blob": "5fbee8d9ea672f512f93f148ec72f654710e4d83",
+    "sha256": "69db91bd9390b9fa690c6ac9e2fb3a8fbf60e82ae00ebd3d2be2c43e8ffe7ab4",
+    "svg_sha256": "a2dab48f2817dd4ea2331edd7fd68edd858b662fee1da048697819e46e72fc1d"
+  },
+  {
+    "id": "cote-divoire",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ci.svg",
+    "blob": "7563a18b3128920cca58fc004be9e876fc17fa6b",
+    "sha256": "d7f52c57bf9da6a6e63268a410bd597062374d1582280e37b4c46a4c523a3bfa",
+    "svg_sha256": "558f04e5e50900ca34bae36790313380369cd8d529c6a93a827e01ee8162639b"
+  },
+  {
+    "id": "mali",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ml.svg",
+    "blob": "45f3dd25a46be658d5dbb3ece5db613323270310",
+    "sha256": "8aae6052300f6e46423bb5a256801e51151d48d81068dde61f0129da5f45fb59",
+    "svg_sha256": "3e40b62a915d618ea7065e10ed42c1375f5cd1ecf1786cca55f79395d5320075"
+  },
+  {
+    "id": "burkina-faso",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bf.svg",
+    "blob": "c38e9546912e637aff8f5a84dfaa0a51c6dce529",
+    "sha256": "c5b9f9c72c41222cb70bb850e6a23c9a477c8f5aad07715fe97cdc0e6adab06d",
+    "svg_sha256": "771f7b392cc095780b5275f906900d3ee2cfae475187125176ac3eed670d5b58"
+  },
+  {
+    "id": "ghana",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gh.svg",
+    "blob": "601733712f8beb0c5dfea3d99ee81162405d9345",
+    "sha256": "a5bd06898354acf1bce84ba5ae602181520d07bcac8e0e107f1688af7f185ab5",
+    "svg_sha256": "095d324e3014cacf739d5a1face5e552db3e2ae1a2bb7c5e1294db4570b7577a"
+  },
+  {
+    "id": "togo",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tg.svg",
+    "blob": "629813ab2790aa48d7c31a66ef8d6ce8b17787cc",
+    "sha256": "3c1fe68986d0e0965d8112b8a4072a6c67d0111fe9af98f8dd76d502196305da",
+    "svg_sha256": "05cf8307e72e10c6bfa5b5b25dd6c35ce5a2770ae0b9b7642e8ca9e9bd7e6656"
+  },
+  {
+    "id": "benin",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bj.svg",
+    "blob": "a4e3d879843f32b01544626d7f34e03d5d64ab18",
+    "sha256": "2ba39307b70cc91c2be6b378a6b558293d2efae14a367533bf46308a912a9092",
+    "svg_sha256": "fe8e3b9685d6f8659a1242cdf627ac5515c08206684fc9c60c6b74fda272fdbf"
+  },
+  {
+    "id": "nigeria",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ng.svg",
+    "blob": "87b44f380b622f729c463727ad0d748d9e856aa0",
+    "sha256": "e57d72a09cc42bfe39a62df27be30e1455701fc84955e36be5166ff1e8ced0f1",
+    "svg_sha256": "941c2291ec68062c1a377a08b8c9e1cbc32f5ebd43eed4d5ad9b92bfcdc69f65"
+  },
+  {
+    "id": "niger",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ne.svg",
+    "blob": "afe9445c9508a0f822b25a29e1d0fdc668c502cd",
+    "sha256": "b01f27fd487bb6036b1fe361cd3efb88cc6428d615adeb7f7014c2dcdb69e679",
+    "svg_sha256": "70eb3c6b691a53891ad72dcb61d26b2ccc0b7687c6bb7ada1ad60e5676ea296c"
+  },
+  {
+    "id": "chad",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/td.svg",
+    "blob": "29f4fee4c96f91f7cc45a97b5447cc6b0a616db2",
+    "sha256": "37a4a7eb7882674751f3f48f203285b8c56a74293a12a0240cd340ead7cb5050",
+    "svg_sha256": "525df9b4162af037c7ebeeb117e277c5deca18321d17c404f7e6726c3ebeedce"
+  },
+  {
+    "id": "cameroon",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cm.svg",
+    "blob": "901fecf36cc482fb24a59344381d75597e322828",
+    "sha256": "7dededfb0347d1ca4f5b2e45673313d33066a7cdd806cf4671967b4b900481e2",
+    "svg_sha256": "2f8775f8557048858d23fad334eb87c14135f55365b34b96729ca94cd0390840"
+  },
+  {
+    "id": "central-african-republic",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cf.svg",
+    "blob": "24e8e579944bee16e0260308e596d5cba3963fbf",
+    "sha256": "6a681c59df0e164bddf22bda52e1fd1243f9f2f5ce9e19034ba0f05673b3e196",
+    "svg_sha256": "493a74ae2a6e566b8ac8834b3609c0d24e2f64fcef902e12959e494730ee4b22"
+  },
+  {
+    "id": "equatorial-guinea",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gq.svg",
+    "blob": "e2bd36fe2e72dcbdd1a6aacefee4025ab3403da6",
+    "sha256": "f7daaac491b0831ecb8bf23aa24b6773d6b668da9c6541d96986506b6054b19a",
+    "svg_sha256": "5f12bcbc5ef3fe78aa3f916c7a3057c1f7048311cac54afabc4518e663bad653"
+  },
+  {
+    "id": "sao-tome-and-principe",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/st.svg",
+    "blob": "d6d560b22d59d83b0241e7bf43a6e09877e1adbe",
+    "sha256": "016bd6c122b0728fec6c9ef608a8938690d3ee11d25dbab2350ff95b206ca2d8",
+    "svg_sha256": "4907730017d5eb3f839723f8b5422178d4f920f3e00b21f781c379e88dd96773"
+  },
+  {
+    "id": "gabon",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ga.svg",
+    "blob": "45e3198d2a89be04c3283431004c9bccd487bed3",
+    "sha256": "3d8b5561eb66aadeaa712fa14c804375250b646406f99903ed406087cf73d34a",
+    "svg_sha256": "34a7e782cf97918526b4ed77139e60379094f54f3046478fbd798291ee03e355"
+  },
+  {
+    "id": "congo",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cg.svg",
+    "blob": "cbfd12ecc0c4deb4a47e35f1cb49c4caa4014c6e",
+    "sha256": "ace407160e763c92355d82605f006d4eda3fa07427fa55f6f8a3e3319a7a6686",
+    "svg_sha256": "80ae79f9043317d2a67cbf0919f5e35ef2378583b537a8ff626a90f3fc554823"
+  },
+  {
+    "id": "dr-congo",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cd.svg",
+    "blob": "862681eec6c764f835d7a0127b9d912cfc3f0bfe",
+    "sha256": "bb659cd27a4bb065b2262ce406e9a0e5f1bf8c4e4c2e6e62b11a001d66efdf55",
+    "svg_sha256": "a2e24bd79ddee698339d60841e8f339a6aa2e5259821961c15538e34b0620712"
+  },
+  {
+    "id": "angola",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ao.svg",
+    "blob": "d8b0ed43cc7b861ac1b92cbee75b9af456c5b2ea",
+    "sha256": "4c303bdcb88aaafcbe5fa5f5cee4e72d6f6f5ba338763f528d74efb8c8e8318c",
+    "svg_sha256": "86d13b6da981529a47094fd53867d1b4b2cf2972bbebac80cb08102a3b958536"
+  },
+  {
+    "id": "zambia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/zm.svg",
+    "blob": "bde9932ba1acfe3cb00abb36e730b0a91eefc88e",
+    "sha256": "cb23a0181c34027067d233803384555a950ed282a9fdc6c49a807a8b82134926",
+    "svg_sha256": "6167968251e6775009b2a3b55689eb738b0a9d5850eccbf0e8e709f04a19beb1"
+  },
+  {
+    "id": "malawi",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mw.svg",
+    "blob": "4a13318eb56b7cae797d607acd2495c6c81b647f",
+    "sha256": "95b9a2a516de5d93e7c8be9f9e0bb1c407d55c0222fb17cd30bc2606a486ebe7",
+    "svg_sha256": "3363de558ba4e55d8ca189400484bc6f35f8892f9db8fe833d8d374141d2011d"
+  },
+  {
+    "id": "mozambique",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mz.svg",
+    "blob": "ee2f077efc79d2297f35f188ca4b2bd6907ca08e",
+    "sha256": "f0e896e4c587b4ce6b76b4d75d5fe2df2b32d865e84f0cc6d52a719ed1a41262",
+    "svg_sha256": "653ed0b34302628bb8f8e70f5881fd190c15fbe4732718205adbe9674058f9df"
+  },
+  {
+    "id": "zimbabwe",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/zw.svg",
+    "blob": "c38e54878e868198ad6406d2c36cf798d2ec4903",
+    "sha256": "2fe17954bd5503637d36c65aaac312969004af08116589f830916a0c1ff1874a",
+    "svg_sha256": "05ac20ba3ff6ec2ac19395e57b949849275f2567bb191d94e426ff658042e981"
+  },
+  {
+    "id": "botswana",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bw.svg",
+    "blob": "2fe792ea8ab09f2fb9f1e86701fbceed5d09d89d",
+    "sha256": "e24dca30a7fce22312aff8f5f7728fbda101e2658d8f7758f9f767b0fe629cca",
+    "svg_sha256": "97f18584fd976411a5af1ae311038569ce4a23b5abaf85e493f06e95e2339698"
+  },
+  {
+    "id": "namibia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/na.svg",
+    "blob": "328e490cb60f338663060fa671b5683f4214a8d3",
+    "sha256": "6a26bce548822e92ceca2cafe3cb3c617f464f2d2939f67f0067b433636d58a4",
+    "svg_sha256": "f6adc54047eea1f159b1da7f43fd66b6e67f13ade97349d96380b0f852bf9afb"
+  },
+  {
+    "id": "south-africa",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/za.svg",
+    "blob": "9fd94ac0d268c90dbab063b1201773a9a92c37ab",
+    "sha256": "4d0b6e3bec69cd3387c0c7518c06074768797650581614c59f084104d96a204e",
+    "svg_sha256": "e9ed4d0169561bb9905651c5ee7a3da0f4f082635fde0ee9db5a27144231d306"
+  },
+  {
+    "id": "lesotho",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ls.svg",
+    "blob": "4cb99e055c2025cfe6e28fdeed2dea77d9431029",
+    "sha256": "cc5763382f8418db0af12dbfc41b61ee5b65d5a2eaef734a5b6e2ed9cdbfa385",
+    "svg_sha256": "367f486ff4c956c34744dfd50a4154e7d017f51869242329c5b9b8d99c5f7d7e"
+  },
+  {
+    "id": "eswatini",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sz.svg",
+    "blob": "901a97f1c6549df0d16ecad7fa918d4dd716fa24",
+    "sha256": "2f1564cd218afd1053333baca445392bb260e14cb8a8027208ae6b6c17b12fbd",
+    "svg_sha256": "5a54020daec20e1addbf298855b0a9c8589340eae69bb07e204bb4d8d48267ab"
+  },
+  {
+    "id": "madagascar",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mg.svg",
+    "blob": "6d7dcf41ccf26d57d00da06048f42915b095f4f4",
+    "sha256": "4d1570ba389319522de30e333e94bd04609f10b7768fb132a98fe0ef1a39e96e",
+    "svg_sha256": "01b145620406cab8fe70b3705c27212702b3656bf2e39770b22a3fc4d3b7f3a1"
+  },
+  {
+    "id": "comoros",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/km.svg",
+    "blob": "cd7a975f8ccad365d92b92425a9544ff2f608950",
+    "sha256": "7242420248f1b5c7ee266883182cc8d967691a8b39be5fb70744a3d33f80c080",
+    "svg_sha256": "79d0f519b2924d0a63a450f8376ae12ba5ef9e5cd0df550311902f0d4e36c937"
+  },
+  {
+    "id": "mauritius",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mu.svg",
+    "blob": "f92f2941259b527e996d3f6ec08582df599109b2",
+    "sha256": "90a665aec32d7890ce363fd4b833d921957329e44d14f0883b146b092b879b36",
+    "svg_sha256": "48f37bcdbc20b33bb3d0ce0f82ff1d0c1828122df4771bb4d46e6fa0ef80c464"
+  },
+  {
+    "id": "seychelles",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sc.svg",
+    "blob": "bbc2fc1f8da27298e6a6635c2d44fa78c4ce32ff",
+    "sha256": "3ddf34d076f859e888061197415baba9f386be68a74de2cea553ee41e0442875",
+    "svg_sha256": "716ece1972a071f149b67adaa18b3083d2ad697d7dd6295c41cce596f8820a68"
+  },
+  {
+    "id": "maldives",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mv.svg",
+    "blob": "5e5e5bb8d6056f14ceb9b1055c4cfa431d8f371d",
+    "sha256": "8b2f4dfc800df036e3eef1de56ad74107cf187cd4a751c61120686a50206cb4c",
+    "svg_sha256": "e98e8c2e1c97c61a6c32460e32e8b23d80a37647983f934e9905d483696c63b8"
+  },
+  {
+    "id": "sri-lanka",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/lk.svg",
+    "blob": "cb5e633671dadb0fe9c30986466da55346cb82d7",
+    "sha256": "099fd7a4517b9ea45a9fc847d903672ae9c0bfd7f74a085679661f04a76cb473",
+    "svg_sha256": "3a927620c8ffc25d8cddfde1ab3dbf3ece08f65d8bcc1d3100c650e482746b0a"
+  },
+  {
+    "id": "india",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/in.svg",
+    "blob": "c223595d58f6df917e286dc1f4c814925c77d456",
+    "sha256": "ef3efcee216612ae7520cf5eb09013901d21de4a20a63aa3c9c62c1ba0f6bd90",
+    "svg_sha256": "f73c161cfce0f8fd23622818678bf0ad90efeb6c2ba3ce77de8d777c778adbbb"
+  },
+  {
+    "id": "bangladesh",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bd.svg",
+    "blob": "8169149028ef5a2b3e46b9dfaf31dd9adbd50ce1",
+    "sha256": "490517f9cb3673d4d47cbc6fd296f89b906a4fa27e1f0fc37ca6d7d1dfc108e0",
+    "svg_sha256": "9d0f30911426f9c3987c2883f176ceed352e6aad026fb9acf13a51a5022f63db"
+  },
+  {
+    "id": "bhutan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bt.svg",
+    "blob": "7a23e11669e24b6b31cfa3a973b1fe53419aef5a",
+    "sha256": "a5be43aa874d0540d4e58d21ff7eb8f3f8d0d9e12bc69f8df1dfa156e8e2d79f",
+    "svg_sha256": "91d0ceb9a671d58f4088b27986298110c58223ec819de6bf06e84bcefa55741f"
+  },
+  {
+    "id": "nepal",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/np.svg",
+    "blob": "839dd2a52358b3715eba068f3ddee8b70a33cab2",
+    "sha256": "b3b01a6806439e01f19cffdb31b1ebff916c674c7fbbce9e4be1b5559fb33bb3",
+    "svg_sha256": "6f2103d3608a86a785cbf007bbe95585acee7351528cac193645bbd8b37d8c54"
+  },
+  {
+    "id": "pakistan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pk.svg",
+    "blob": "daab1421ed27756e89a7ff43a6bb5d8c4f7375f7",
+    "sha256": "c7cd484b294cc4ef265cfc50fcfb75d73c8d9b10818c2cfdec84959f105c62bd",
+    "svg_sha256": "cf4b4d5fba38d7c909b866c172663cc9e64b089348eef8db00041bf6c1db9429"
+  },
+  {
+    "id": "afghanistan",
+    "commons": "File:Flag of the Taliban.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Flag_of_the_Taliban.svg",
+    "timestamp": "2026-03-31T17:04:45Z",
+    "sha1": "fbfe78dee5dbaefbd21b488c0ae0231f3c5e2c9e",
+    "sha256": "fc326ebb964d9a50e31984495d1cf94f810a8af2ecaac5615001358404a389be",
+    "svg_sha256": "f5335d231a49b5d3e366b1681c7a925028cc3f1cf34d0ea24fcbf54c4e89a0d7"
+  },
+  {
+    "id": "iran",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ir.svg",
+    "blob": "59b51b5bea4d4220b52e00ba9d8ee623b818dc6c",
+    "sha256": "0f20ddf15daaccc9aa70d4d636dfcab7d0215175b7eb009e18474ac3fe6765bb",
+    "svg_sha256": "7e57cb92c12ae430d730e35b1590f9856937ee831812b07fe4c4e68a5ab41dc4"
+  },
+  {
+    "id": "turkmenistan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tm.svg",
+    "blob": "4e16348d61a548459735ff08a70bdea3df3128b7",
+    "sha256": "a2a90a7f637161539b281ed75ebf80d68a999d75d7b494d8ceb0cff917199143",
+    "svg_sha256": "4d32014e72c6f637fbc1971cea7af2f6186b4fec9213feb60ce85fa9a8eea53c"
+  },
+  {
+    "id": "uzbekistan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/uz.svg",
+    "blob": "c2f3bb3b8f1b8d42df2a0b4c3409d47fc1478f3b",
+    "sha256": "3a28b64713f7df950e570c5f9bffe257345d8c5ddffb7a4bedd8a900fef0ada4",
+    "svg_sha256": "2a0a23ff41c2a23bb9b5117f5cf95c8b45f4eaac13133c72b89dd71661cff6b6"
+  },
+  {
+    "id": "tajikistan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tj.svg",
+    "blob": "eaa1c14736f2a1073e740b3e18afcb106734eadd",
+    "sha256": "1483e84402e5a809335b018f87c3d8c22a008f95a2aa3f79d088cf8435c7a080",
+    "svg_sha256": "a8535eccb8f94b4f6d43967ddb82cb2c1ce4a7a36fe36f8394a335310f48cc1b"
+  },
+  {
+    "id": "kyrgyzstan",
+    "commons": "File:Flag of Kyrgyzstan.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Flag_of_Kyrgyzstan.svg",
+    "timestamp": "2026-03-31T14:31:03Z",
+    "sha1": "5cd47b048e3b7314ac62f97b7415faab2741410c",
+    "sha256": "d6baff517bb0b83b0a6e8b8e650534b8420da5940dd758646e239e7429f7e29e",
+    "svg_sha256": "ad7a289c100b3997cbd8141d78cf4f6269f63b31d7ec151871d68762ff7c93ea"
+  },
+  {
+    "id": "kazakhstan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/kz.svg",
+    "blob": "115aba3260284362a08a6c11d017b547be56facd",
+    "sha256": "2091001401171cb135b0683e1295a9748c9fb6658b54b716b4a7c7072258e0dd",
+    "svg_sha256": "f8944a8a485a6a59b952d029a4b9d960cf06aa1309e6b19640cff801e42a756c"
+  },
+  {
+    "id": "china",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cn.svg",
+    "blob": "69a70817347c65cd5f12f9b3154f38b56e9f13a9",
+    "sha256": "6bc6696ff46f1a326f162c12d4064d679076b81b206afc5e8e64a1126032e33b",
+    "svg_sha256": "dab8a31d4c4ffb7bfdbcb10b235498c941bc81fef5105dbce14bc44b9312b11b"
+  },
+  {
+    "id": "mongolia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mn.svg",
+    "blob": "2af7efec8d1af94a91c59f54590d4bfa0b79a594",
+    "sha256": "c9a6196e563c60601b2a60c4e090565abc9ae7f549ca440681f160083c7d3609",
+    "svg_sha256": "dfbb415f694bed64c31e58d86f5954e8c6bfcab1611859cc4d65ebb6d16cc6a2"
+  },
+  {
+    "id": "north-korea",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/kp.svg",
+    "blob": "d7004824ef3b9c89ccc4539a3bd0f14eabada8d4",
+    "sha256": "e691f1bd5630092174084b727d30497da300c699085d10b21134f1acb1cf5d3a",
+    "svg_sha256": "9cfbaf7d149fc6f9845530c37b4cbd75c2c9d2012a1ec709b0273fe76003d157"
+  },
+  {
+    "id": "south-korea",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/kr.svg",
+    "blob": "a2b3074c1b645c14cfbc5ca52a5dfab6e372a535",
+    "sha256": "cc39b7490a894db19113b999831ebf252e1043516c31b4af0fcf4d95e11b15cd",
+    "svg_sha256": "348b7843e594ee6fff49f67a181c17b946a7af600f5005a0aeb2bcc7289b6199"
+  },
+  {
+    "id": "japan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/jp.svg",
+    "blob": "6299e73272ef0c8fe432d603dc1ed3482ceeaf48",
+    "sha256": "3ecfe5fb326152e5a1270206b34825cb6ecb71f02f5ffdbb0a905474a1c2ed0d",
+    "svg_sha256": "3217b10c6bafe274f7e98f55dbe786df8e5bc8c2db04aa34cb054fe49709c5cf"
+  },
+  {
+    "id": "taiwan",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tw.svg",
+    "blob": "36a2d54e5e2fddee4a94296821ff2b9c344ba43e",
+    "sha256": "3756ee64b1a7902efe845ba2ded314f5e635bac2f67dfa650e03880bddd3cb18",
+    "svg_sha256": "1c69273f9585dca6aa6f31b2e2d5e75d42b5c2cd32ae06c4413dd803e4495f4c"
+  },
+  {
+    "id": "philippines",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ph.svg",
+    "blob": "7970fa18bca56c01d2ef6565bece4b9badac7bdf",
+    "sha256": "2c3e7818142561a4fd8a1e80fb2bf741aae9540b2c5494922ac838dcf90ef55b",
+    "svg_sha256": "1646e784f8275d12e3e5598911935d10405b3f8b4524b9c53a5bb5dd870da4a0"
+  },
+  {
+    "id": "malaysia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/my.svg",
+    "blob": "8cc26dbb0cfa9033a14d4581b1569f72fb3f216f",
+    "sha256": "9fa2004394439d9537440b5962f19116523f787bbb9814e242cb5f2b6d176535",
+    "svg_sha256": "40f511dfde516d1389b9a57533bff5fa681f35721270ef93b52c757dee12f0d3"
+  },
+  {
+    "id": "brunei",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bn.svg",
+    "blob": "276ff9e7867e4946b4cb245752c34712a12ff9bc",
+    "sha256": "dee8a70779d349117403546dc51ef29de21b15639810848d80a2c83dda9e5018",
+    "svg_sha256": "0968a60d7a7dd98520d3dba716403f76594f2b860c2020463afa3f988c71e08d"
+  },
+  {
+    "id": "singapore",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sg.svg",
+    "blob": "d5c6e04c5cd706c7af828ee1bd795513809998df",
+    "sha256": "3b8ae566d38d00d13b19aaaa5c739eb2023d4e65822d79425124b80513c717e0",
+    "svg_sha256": "87836cf9c0baa804755cb7c03a43b5b48ec0e42c335619069d2c25291a087077"
+  },
+  {
+    "id": "thailand",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/th.svg",
+    "blob": "eb7f78bc7ce98721113a3d1ad51829fd5ffeccd6",
+    "sha256": "a8df94da01c0b439521a1615c413abd8adf7b6b666cb5571f6bf71d5dedcd6f9",
+    "svg_sha256": "b74ad735d99afd20fe71b6995e9cab4c6fda17a9af79a331f0d0144d1de8a831"
+  },
+  {
+    "id": "myanmar",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mm.svg",
+    "blob": "abfdec798c033cb46f62f495ee64b84a5744cec2",
+    "sha256": "8315285390cf8e8d85b44da64a274dc8a04feaa73ffbf607b8e817e4ac911251",
+    "svg_sha256": "831131367b6ffc73f59ff675a8a0434f4f9720751f109f4d90be4290f5e64485"
+  },
+  {
+    "id": "laos",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/la.svg",
+    "blob": "b8805ee0976bc6058da9d585a98635f5107f8828",
+    "sha256": "6c5ae3648ab1ab7750b913f5705cdff9f72423fbfc31fdd4d709228f55d097e4",
+    "svg_sha256": "27950f47b0144dae07a04546f28094ae947615795bfe54795fc20db46fb98951"
+  },
+  {
+    "id": "vietnam",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/vn.svg",
+    "blob": "d0dd98a8829b45f8c17476e63a8762014ff222ab",
+    "sha256": "893b24ea38e9187b0caf4bbb787b525487931bb7401020f70ab36018f1e64bae",
+    "svg_sha256": "38a54bb63d0520b8ffa807d39a209b92b535af18fb58d6f2a4158e937dc4748a"
+  },
+  {
+    "id": "cambodia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/kh.svg",
+    "blob": "3d46f6223c3b21eb998f205af3ec1e328a4f3f54",
+    "sha256": "245858b7345eb8a9e9e3ff3ed1354ee53e7c46a71350e962ee9a3918df95bac5",
+    "svg_sha256": "a8d4b9aaf3f03c074bdd08d222f7d4cca29966e6857df6c91e8475f598a7bade"
+  },
+  {
+    "id": "indonesia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/id.svg",
+    "blob": "dadcc9be41adba9792c667146f3a247d4e4dfe6f",
+    "sha256": "83bd1b9215c403d205eb3548fc8498e3175e56c81494ebe5b2eab442291a7420",
+    "svg_sha256": "f37dab0a4b086be4c79ef393102d4c27c518913086a5069b51bb0ff885846340"
+  },
+  {
+    "id": "timor-leste",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tl.svg",
+    "blob": "33dcecb741441376c474e0ec2c34e81305b3b000",
+    "sha256": "7da64a9ca06f04e89204fadf3ab7b546784a0da26790017ff8f8a771bb2e66b2",
+    "svg_sha256": "299a0a1db7a30f4d7bc3f1ee5f8ce8b9a8be359f1f20c74bb018680547eff843"
+  },
+  {
+    "id": "australia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/au.svg",
+    "blob": "bab7eb4d0b640c8e003d86fd6e121af76bf59414",
+    "sha256": "bd6f1a9373e02ac0f0ae46622e60e752b408a2183d7ea40dd575f901e869aed5",
+    "svg_sha256": "4cb2f423bc3d0a4a512c77fd12dfb9989403ffba5daf8d97589d3411fc8b1947"
+  },
+  {
+    "id": "papua-new-guinea",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pg.svg",
+    "blob": "01f8a9dce95e4dbcef51c6a5e57830dcef8c7e62",
+    "sha256": "fc734101dfdac482e356a1824ec094f78790d4fa5cf923c2907a707a92e19dc4",
+    "svg_sha256": "a0e6a72865aef16cbc1464c813736e7835737720cc50e42d14b67636f79fb5ea"
+  },
+  {
+    "id": "solomon-islands",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sb.svg",
+    "blob": "b104e17e6778a8a91047c17d6b2bd2bae6a0387e",
+    "sha256": "13a37abe4d7f8fba3e44f3717da19d4d21bf78701a59f8570004b7492c9be955",
+    "svg_sha256": "f46ef5e055c64756f5e8fbadf671561cad2ff176f1bf797ed7fbf60314ceacce"
+  },
+  {
+    "id": "vanuatu",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/vu.svg",
+    "blob": "d754367024beb1e8df9fea47009076d6b34e77ef",
+    "sha256": "dfb2fbe51ad8efe6b643fef6d8d2c0c8ceb32bfdf82f86942cb43827cc2f92e6",
+    "svg_sha256": "a69554ef5e54b7c719eb01790da34a1a5c423888485cecac877b33ac29d3692c"
+  },
+  {
+    "id": "new-zealand",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/nz.svg",
+    "blob": "db87a7f5108ad548f33caa9836d55056b38ebe86",
+    "sha256": "521f4614597aa9e5a292cf62aa1174645bc09ed383879169c53008ab9deb73cc",
+    "svg_sha256": "a3b425cc481c2d6ba85c125b8370ceee96349e13c6730bb0c8950f49dbdd9017"
+  },
+  {
+    "id": "fiji",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/fj.svg",
+    "blob": "81b765b7b5a6ca2bb95d7fad2f2c1eb3b7ede751",
+    "sha256": "e56beb72207ff4f729ad3c48cbaa667b029a40b8a4ee93fdeced94080ba6972a",
+    "svg_sha256": "94a248f399934fbdbe1314170d22cf8ff6f213e488507ee686832b920f0bb5f2"
+  },
+  {
+    "id": "tonga",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/to.svg",
+    "blob": "dcacbaf8794f13b785ff99becd55c2ad4bf222f0",
+    "sha256": "0d2711fbf225046ca0d597bfc6b6e36ffb62c808f8132e2d354cf7f486df6b99",
+    "svg_sha256": "204bbec34ce2804428d4f143d577746557876cd101acb58359a04e359586039a"
+  },
+  {
+    "id": "samoa",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ws.svg",
+    "blob": "50716208b46c686be3192438995295083fe8930c",
+    "sha256": "bae8976231b0238a6d60a38b667611c7c9cee6f09690b90853f20c2ce10a0fb7",
+    "svg_sha256": "1c2d9503e557b3776ea598a1e9a65c8640116f854fac6d90be46c2ca2c565168"
+  },
+  {
+    "id": "tuvalu",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tv.svg",
+    "blob": "f88caa5c666c64f667b7a736cdb9bcc7efde9832",
+    "sha256": "7eb4dc3f01876c4610c6de2306d4f2b2d2edc75612a11ed261c3c29ea4561377",
+    "svg_sha256": "4f10dc98d25019bef11d167a34b316c1ce863168591b431cd9a8842c6f4a1319"
+  },
+  {
+    "id": "kiribati",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ki.svg",
+    "blob": "aa8ea66355bc1c1dd4920e69aa8a11c4c779dd46",
+    "sha256": "264b8dcc3bc462c0ba497e95f60238a61d4c81f0c87f7d1017c37849917b985d",
+    "svg_sha256": "1178b3c75cd0d84f7538937b9758fe92ad05e1ed353252d60cc7753bea002e7c"
+  },
+  {
+    "id": "nauru",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/nr.svg",
+    "blob": "481f8b627397c3a4ff06f409981cf02c897f3e3a",
+    "sha256": "7575fd4dfb8b7ea4c2700f62139abf9e01e490de0fbd33ba05badd3424329149",
+    "svg_sha256": "926ffae637b4e6f1a165d84cf408408121ba6715e8fb9c0f65b23272c22d77ce"
+  },
+  {
+    "id": "marshall-islands",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mh.svg",
+    "blob": "ae94efb68dcbbdfd2eb396d67f62683fada4c182",
+    "sha256": "12ca33cef77cc51ab300d9dcbf6dfea50a51834fde9733ee1111e22298f83836",
+    "svg_sha256": "2bad2ca73fafcc630dd06ebd382639ef991635909118342d453a2866a717d883"
+  },
+  {
+    "id": "micronesia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/fm.svg",
+    "blob": "98009e8c03915bac545dd205da5169ba4e6e900d",
+    "sha256": "d084ae191a766ce465a628fafe325ed1661aa56dc4fc1ebda2fa637783644091",
+    "svg_sha256": "4a17ad3d02aebe92fd54da3f1ef45ad15aefa10e9a76501c7116d0d15f868081"
+  },
+  {
+    "id": "palau",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pw.svg",
+    "blob": "802482d37cfdb50b83cc48e6d79f5be04c985d6a",
+    "sha256": "193a9b4f69f07c88ee58275ec00a39354c9991a5fb09059aa925aff12874ecca",
+    "svg_sha256": "c9822cb1977bea8acbee705367e5307d0f0ed9cdbddd19ea7a98f9b9c16c56e8"
+  },
+  {
+    "id": "united-states",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/us.svg",
+    "blob": "9201215ec3534e5cbd96cd3519cec599162f067a",
+    "sha256": "6b234bd17b00d498ac8d1c645a00025817e624641289fe4faec164c52eb43f20",
+    "svg_sha256": "689570ae13fadccddc1e49f2abf19dbcd1ace5154cb0badbdebeac2db6100a36"
+  },
+  {
+    "id": "canada",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ca.svg",
+    "blob": "f03177dd99642dfcb65d378fa8f7dc6107ef7fef",
+    "sha256": "5e20d135da10da02888954ba621c0ae58135776ab17b67c8c69d83c9dcc5b2e1",
+    "svg_sha256": "1d8f05e34c13678ac1d808ab194ddddc34e18d976be89c1c3533653ca546df0e"
+  },
+  {
+    "id": "mexico",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mx.svg",
+    "blob": "018c46216c938dda5492d728e513313c6bf66b49",
+    "sha256": "0c57c70b48c496060fdf81230870a860011901720c0788f1e838b320c8f13f47",
+    "svg_sha256": "204feeadf0866b5d31a09605bdb84b538d035e7f6ea2f852412a5ae6cc441274"
+  },
+  {
+    "id": "guatemala",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gt.svg",
+    "blob": "cf475c971398a0e4f67a3719138460146e94ac63",
+    "sha256": "7a143a29f70827fe5e19910902893c5edfeda2f586ab04378d1cb1cf021bddef",
+    "svg_sha256": "ebbb986029b988c759e7fb408dd5b40664f5d55e0bfa3eca6f5f85393319c2c9"
+  },
+  {
+    "id": "belize",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bz.svg",
+    "blob": "3cbb466a7d5780b2b13d4d062ef18a7d07a3074b",
+    "sha256": "f2d8f9960059723cb9380f0c417d7263d1e28c2742f20a936b4dae812d93b038",
+    "svg_sha256": "f0fa58fab32c23fa5b5033e2a990dea7ed692853ebf8b8617dc14f8e2336111c"
+  },
+  {
+    "id": "el-salvador",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sv.svg",
+    "blob": "36cb8695c032fb55692ea3402e1371d89dba6ce2",
+    "sha256": "fb6edde7d035a40153580c37675afcd261376a14e11f11b0ea0b85731cd4d3bd",
+    "svg_sha256": "af75002dd6a847fa66972739cb3e18af883a6c2f4cb709d1454235ce1c9d1ea0"
+  },
+  {
+    "id": "honduras",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/hn.svg",
+    "blob": "015a7442e3866537167f005b7bb339bdbbcca82c",
+    "sha256": "f5d9c7b02452b1c37188ea0f5b4cbb04ace77caf7d21d08fc37479e071b21bee",
+    "svg_sha256": "cda2adb3352162526f712f50480acd302cbbd74868c5eab52cad29573c59120d"
+  },
+  {
+    "id": "nicaragua",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ni.svg",
+    "blob": "5cc4a59bb5060eda098969c438336b16052afc46",
+    "sha256": "45740c163a6f2a2d71caf103adb25813eb4ee5558c7a048c6e197d613a50ebc5",
+    "svg_sha256": "c9ca2dab6736d5a8bdc23c499b9e6c4d7d1470278988ee1859693833c55602e0"
+  },
+  {
+    "id": "costa-rica",
+    "commons": "File:Flag of Costa Rica.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Flag_of_Costa_Rica.svg",
+    "timestamp": "2023-10-30T03:49:56Z",
+    "sha1": "c34ebf92545fbf770469c05c5d79fa1102cf2c1e",
+    "sha256": "fe4927d79e735bd7765cba91830b28c7e2aacc316365f5d8d2cea3f1e75167ac",
+    "svg_sha256": "8704b71766fbae5fd93d6e9ea8dda156b60e7803afa7e695e7df45abab9a9cec"
+  },
+  {
+    "id": "panama",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pa.svg",
+    "blob": "d6ddb3fe1130d60a59df80b443574826bc888fc9",
+    "sha256": "04a35515722e7b53cff4840eedfa1b1ad564b82c0b5bc225a9ebb79dca49c2f4",
+    "svg_sha256": "110a18833f89bc491be4c8583d30edf055bc92e42a00d6e6846ba61ec30483c5"
+  },
+  {
+    "id": "colombia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/co.svg",
+    "blob": "6cb2061f43d4e66654e98615bfadc1aa705b6833",
+    "sha256": "6de08e626dc2dfe251b8e2a149b6c4dea90e283f9a08edc9509fc33a4347fc73",
+    "svg_sha256": "aaed9eeef47a3af867cf332c084b4ee4128b5264bb213c36ff07f62919e08611"
+  },
+  {
+    "id": "ecuador",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ec.svg",
+    "blob": "b673e6e1ec6892949fc1210ba76de6644db65845",
+    "sha256": "f6f0389ea432698999e82ad40917c06369c569d8abec100292d5c2142271fc53",
+    "svg_sha256": "361ca17bb8f9d50941bb01b42212a25c4dfe9a8535743eb00b7fab6c0f4cdc5b"
+  },
+  {
+    "id": "peru",
+    "commons": "File:Flag of Peru.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Peru.svg",
+    "timestamp": "2013-11-11T13:31:28Z",
+    "sha256": "4358cec747829a0009dac86055e74e60b05e6eb57eba5f7bc30da2c88168a7f2",
+    "svg_sha256": "ca8ac486a8daf8ff7a9b93cf52d731ab4860f119479478ff24ebe3b186ed8750",
+    "sha1": "9bd26bf3325a894c32971cb4630322a611dcd15c"
+  },
+  {
+    "id": "chile",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cl.svg",
+    "blob": "b338656552bebabe622c1226cffd6eb8b31f8d7a",
+    "sha256": "bac827bc619f621335f34ebdd4ecb5c9d6fddae8a980eb108aa9e22a446c9be3",
+    "svg_sha256": "c84ec9aa15d0eff40d44f74c1128264710e6da3571ebf27d377cf7f410f76cfd"
+  },
+  {
+    "id": "bolivia",
+    "commons": "File:Flag of Bolivia.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/48/Flag_of_Bolivia.svg",
+    "timestamp": "2023-10-30T03:48:47Z",
+    "sha1": "a57c58925f69f4efde5c4bb9035971fd9bad8816",
+    "sha256": "714854e37084cc25c195efdd14d5392a8c64ea03128f7fa858b7677e83a5556e",
+    "svg_sha256": "e3a1cfb1c1319aa0091d98bb335825b9bf9219d9d8144ffb4cd4b3afc9d74624"
+  },
+  {
+    "id": "argentina",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ar.svg",
+    "blob": "e71880e6d7d18e6391d1f6885eacd1c1f2885cf5",
+    "sha256": "ecdd45e5a779592f59b4f833b20bc2c5979d480edf70ff3ed4d941b36866a7f9",
+    "svg_sha256": "b32bba87edfdcc356ccf8881cdc58007f5dbfbc592d965707d8c1f65c9e94cbe"
+  },
+  {
+    "id": "uruguay",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/uy.svg",
+    "blob": "a01a1722c61dc48936a419b3e51aaa985f5a2235",
+    "sha256": "70a7ec0a17d0d950de791f23e550175d1265fb120dcc66ec691ad40410508717",
+    "svg_sha256": "2074fe38c65e71cf2e087983a0522f72fb36b5f6115d4ff39849101908c3aa47"
+  },
+  {
+    "id": "paraguay",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/py.svg",
+    "blob": "7e41611b891dcc7c1aaedced0ad8db75feec6fd3",
+    "sha256": "e632a93f6e3e0288f8c2fd695b258d2afcea581c84f57cd8a3830ba32fe78ed5",
+    "svg_sha256": "2a4804957770c0bf5fd23c670311d23ac657f7d44143d84eae1aff4d0682d165"
+  },
+  {
+    "id": "brazil",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/br.svg",
+    "blob": "a07bcf7eb381de5174dc1f93251c50057083791d",
+    "sha256": "f3ec9e5b04044212720816960b6d269be2bc1cd127ccadf4cefb131036c78e6e",
+    "svg_sha256": "a731c4f9f03fdb075a7f62abc551f1a63a835344252e27d0ec19e7f39e3910c3"
+  },
+  {
+    "id": "suriname",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/sr.svg",
+    "blob": "721805ed38f48a87fbddbe1a8f5d4ea1d19de4a7",
+    "sha256": "dc01781121dcb300dc8e2ad10877a96363f0fda9a155032d4710c38bb0f3af88",
+    "svg_sha256": "844c7bdd94061d93d9578aebcae20a22077fad145630c80cff569dea283087f8"
+  },
+  {
+    "id": "guyana",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gy.svg",
+    "blob": "16ce1ad052cc99ad8fd36c30be299c7b0a9e24a7",
+    "sha256": "900f15b29ee630f298e71472768c65a752ad5deedb46b41434795216c67f12cb",
+    "svg_sha256": "d59ea85a332c83bb4defef2d014fd2796d4327188794c9131c4abd0207c53725"
+  },
+  {
+    "id": "venezuela",
+    "commons": "File:Flag of Venezuela.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Venezuela.svg",
+    "timestamp": "2024-03-09T12:13:36Z",
+    "sha1": "2cc53adfde42fda71450e863301ce1c97e0cd136",
+    "sha256": "facdf9d3992996b00daa7cd1749d2f583528f7bcc9c4b4c88bc7b9cd16f2712c",
+    "svg_sha256": "56a1a608eeb1693f6bd0017b43f45c62d5a3ebee1d5a9811a20617a2df9f09bf"
+  },
+  {
+    "id": "trinidad-and-tobago",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/tt.svg",
+    "blob": "b11e506b9a3d8c95e692c81f0b75d759f00030cf",
+    "sha256": "3899dfac3d4383b59a7e2817fcc99ad6fde428b6990a339aea6be4d1ceb7ac23",
+    "svg_sha256": "902753907fd91c10be6e764b06d63fb67341f72f7bb2378dbc997c6b1e850641"
+  },
+  {
+    "id": "grenada",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gd.svg",
+    "blob": "a8ad7304f8ae87b2c41ccbc99ec49f6198d356c0",
+    "sha256": "562a5d03434482410215beb4a517b84446d81fa512a9bd12dac8a006a1179c48",
+    "svg_sha256": "f73b9d226533c4e4a33c397bcc574696345da853c8eb19af90b20bea3997e756"
+  },
+  {
+    "id": "saint-vincent-and-the-grenadines",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/vc.svg",
+    "blob": "ebd16e52c9b825fe804665166fb4b3f6de0c43de",
+    "sha256": "920f884361e7aac720606f117665aa205598ff07a1be11ca957e60c53ef0da8c",
+    "svg_sha256": "fa90cf75304ee091a904451646b6f2c7119d7346cad238899c666c0562294639"
+  },
+  {
+    "id": "barbados",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bb.svg",
+    "blob": "e07f5205a5c20c4a8111bc1ecb40ee6fb6d980ca",
+    "sha256": "d1ff17c3a155f96bbeddf162a2c4410a9d6b637e0297435d62981329365c7e84",
+    "svg_sha256": "07e9d1bfb0a7887e52c316cf0235071da77225e8fd62be88b910e16ad340b13b"
+  },
+  {
+    "id": "saint-lucia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/lc.svg",
+    "blob": "1249b767cc9a052749f10d78d450e1951c624184",
+    "sha256": "a5a4cc02cd45921586e04dd3fbd236f4c32fd244cb27519e9d0ca733bb987644",
+    "svg_sha256": "b323eef9c1ef7c6a9a8cb8bb8036a6376b7d979b1619ffe17a174f4ed04007d8"
+  },
+  {
+    "id": "dominica",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/dm.svg",
+    "blob": "028b33bfa058fb542733ede045ba6f762e45c1f6",
+    "sha256": "cdcbb6cff78165c7810f5e2f38e62ee8f345e53cd9d11559fc8e9287f0a63358",
+    "svg_sha256": "ffeceff15d8250593be875591a38202e5eda9ae7a4cacc525537c2cce509a71c"
+  },
+  {
+    "id": "antigua-and-barbuda",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ag.svg",
+    "blob": "54d96e0554ebb35ccf74799a7a84a1f5b7cdf577",
+    "sha256": "e795bcd1c80149246e1db35d2d00e2afc2731dadceadf91efe1d91faa12ac4ea",
+    "svg_sha256": "3aae4b7226b2a24097b5d083d30e3b9537ade5bd15130f3ccd8e12c4383200f1"
+  },
+  {
+    "id": "saint-kitts-and-nevis",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/kn.svg",
+    "blob": "6fd78c60dea415892a4147ab06a3d435f0f6ffe9",
+    "sha256": "03af4c3390aaa5f2af044ab88d96a102aba4ae9bc76aed6f2654ab87deb07472",
+    "svg_sha256": "ff6e9534e3dfd445c9e123ad14ebea8c711a32e894cdbea0284011271c1a035e"
+  },
+  {
+    "id": "dominican-republic",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/do.svg",
+    "blob": "fa272ed58f9a03ea953ee7708ae7980a6e2e0eba",
+    "sha256": "a23babc0d52bfbe677da8c910d1b72ce0425d0015e9f36c171bc9ca8dabd5f28",
+    "svg_sha256": "2b43b54617c42cdfef88fdddc9741d9eb568d9a1f5ff0dd3d168dad2e5297db2"
+  },
+  {
+    "id": "haiti",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ht.svg",
+    "blob": "8fb20cf5e94855e897abdd1eb7479104762cd0c0",
+    "sha256": "3a120d1b8ae1b5b1684aa0afefca27377ce5d8f4ab4b9c35bc26c78e40371ee9",
+    "svg_sha256": "3a643a88f5aa25d86b56564b8abcfd20651c1485ca21b4e09a5def21732cb2b3"
+  },
+  {
+    "id": "jamaica",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/jm.svg",
+    "blob": "ee72440b7ad485fcd23147e236e9ac10f3ad7b44",
+    "sha256": "cc81c5e39f3acbb40c3c4ff4c9e26bfb09813d313b9ded160e6fafcda039feb0",
+    "svg_sha256": "82ec3b7e85d08a7706807fdb122868af08fd0bce9a985192673e22610395c37d"
+  },
+  {
+    "id": "cuba",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cu.svg",
+    "blob": "09558fa36e625dd23b3bd2dabbf5189fbecb6c1a",
+    "sha256": "515d1d55fb5dce0633ca76a6a9ff33b973a76c5c45fcc65727bbb8f6ab43f14a",
+    "svg_sha256": "e9e0033e02f7f73419d2e56a9ceaec17ac432d189d716c2c1f13a0078bea5c90"
+  },
+  {
+    "id": "bahamas",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bs.svg",
+    "blob": "7f98ff84e47a761e6a09d549d62fd926ae819885",
+    "sha256": "5c01acd2e7c40e2d6c986027b3e8f160b84c5c5506d85574192a6785fe2a9587",
+    "svg_sha256": "f32fac9b28ff4253bfb3036dce8d0b6ee63dd6798f3e5ada711a0dea6e8b9ee2"
+  },
+  {
+    "id": "gibraltar",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gi.svg",
+    "blob": "5a45fbd123502583181419fb5167395a4b1a4064",
+    "sha256": "92fdfc46aedf1a1ad6ccb8cb48656d8c655af5752f37894957b8ac12a8610fdf",
+    "svg_sha256": "52fbcc5b8931209f29ef7cdc45044a69bb59c9c143e89bacc9cdb85cb892532a"
+  },
+  {
+    "id": "isle-of-man",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/im.svg",
+    "blob": "757c4018865761f738412545aa9239f218cf3e3e",
+    "sha256": "9dc1e53fb01f7ebff8ef165d98cc42e05d21026e7fa510819686460605cd1dec",
+    "svg_sha256": "ff5bba3a17bf08fedcc928d7536dbabd0632efa8cd0f94feb3d6c69f40efcad0"
+  },
+  {
+    "id": "jersey",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/je.svg",
+    "blob": "d324787c24df8d0754b20f5f532c357065d168bd",
+    "sha256": "33285d14f55c1ac1653a7a4a3aee46070c03b5e74f612d6173005e0d3928aa44",
+    "svg_sha256": "93a1e339b922c073e604ecc6079b3a2afc787bf448209088ffa17708480664cc"
+  },
+  {
+    "id": "guernsey",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gg.svg",
+    "blob": "b470de5fcfcab8459956964e2fac3aaa6fb6fd15",
+    "sha256": "f602e67a64bf4ea4e1965520a9aa13caa1eb0fed7f5babf977f779850da7eaba",
+    "svg_sha256": "9b3400fce1d1eeed879e571e2e12e369ddec1c49a7c4ee82c8347204be001f24"
+  },
+  {
+    "id": "faroe-islands",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/fo.svg",
+    "blob": "57292f390e2baf5dd5d7cce47cfd96ddb1aeb91f",
+    "sha256": "649c6c10a5d4bdb4381a52144e156754b6ff0b72ff6a7c7fb713c6fd56925f50",
+    "svg_sha256": "3eeda90f252c4cf4e1aa029111afa18400a8254a02825139b15bdb7fed4188f6"
+  },
+  {
+    "id": "british-indian-ocean-territory",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/io.svg",
+    "blob": "8130500e2ebfa94bb1be8192045d39b2c9629ac9",
+    "sha256": "aeb872cb50192585fee2f29a9bf4c6fb81605ccd110386136c2f08ed8437a1a1",
+    "svg_sha256": "bed1f599b40652f1ae741ea1f7f209cdd170f4137a66cd876d4700e7312278eb"
+  },
+  {
+    "id": "hong-kong",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/hk.svg",
+    "blob": "c95457ca0a3e21f09fdb56395b9d070234fb15f7",
+    "sha256": "8a11689aeb2fd7c7f6a4e776ec2961b40dcc5bbc26c51fc2aa195771b93e7ea8",
+    "svg_sha256": "1420cc5288c8693353c5c4c6f25ce8cb79fdee02d0301583d64092cfda60e801"
+  },
+  {
+    "id": "macau",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/mo.svg",
+    "blob": "3d17d054f82210e5b3d1b31e5522f0819e4b737c",
+    "sha256": "a20a5e002eead128bd18f2846ef6ca01a52b4ea50304a801f4bc4cad54f62cdb",
+    "svg_sha256": "29f5b3630cc974f6e2f72fabb50f5b18f95d18a9f3297f11f15d9c47e77948bc"
+  },
+  {
+    "id": "guam",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gu.svg",
+    "blob": "31bda5911bd1534bd7f380769aceb7690f84fab2",
+    "sha256": "c4c1bc901aeaff132c59126b18e2a929027254fd75c1b4d2156a993f6a05dd43",
+    "svg_sha256": "0cd27cc97e154080c414c2d2e8055fb6d15a90ab0ecc0e1b69f21cde47c11004"
+  },
+  {
+    "id": "new-caledonia",
+    "commons": "File:Flag of FLNKS.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/66/Flag_of_FLNKS.svg",
+    "timestamp": "2026-03-30T15:49:28Z",
+    "sha1": "525ab9b59ed3309779b3735f9390f1d2ec8f1c54",
+    "sha256": "397c6115361a22cdc00b8841fb847c7731106e05ff699befa7c345d08315dc67",
+    "svg_sha256": "399a10148a8e1725cbdcdfb2c97e5d8de9396b0dab3ef89583de79d1dbbc1217"
+  },
+  {
+    "id": "cook-islands",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ck.svg",
+    "blob": "c08f95d06784be4da13a08297f38b0ffbdb321e4",
+    "sha256": "165ccadcb9f3be2801d5d1ace5facf192cf14b219e90eb5e3ee8d6306d3806d5",
+    "svg_sha256": "d966aec4320c21d2e0749d429254fd1cfd5ec13bac50d85cbf6a0c06110f6e9c"
+  },
+  {
+    "id": "french-polynesia",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pf.svg",
+    "blob": "9f87f90f9b025039a60efb0867cf900734cec50b",
+    "sha256": "9cce0678437c21e9e52f197d039d5d69352fa67f6e662c9f00895376bbbf7bfb",
+    "svg_sha256": "c9d1701261760898f43062b65df2a371397e74fb1aa9f75292f43118a958748b"
+  },
+  {
+    "id": "greenland",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/gl.svg",
+    "blob": "00ccf9412a86958b267b04af3bfd9eeb4be3ffa9",
+    "sha256": "ca3e5bea5f4d0bae5015d40d4085bef1cbe363d4dc00b5f2631b3e140e4cd980",
+    "svg_sha256": "569da097ed3c9177d724c8e70fefac9755aba2a75da38a30109d7e5ae94857b6"
+  },
+  {
+    "id": "bermuda",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/bm.svg",
+    "blob": "31a298aee267b3b3a4c279c56fdc94de0c34af1f",
+    "sha256": "69472537453eb555d49aad9742af106942fd1cc246b59f8a6fcf5531392d2e51",
+    "svg_sha256": "39753b06edbf96aaca822bf01016af3093a0efd795c19740cf154016d31d504a"
+  },
+  {
+    "id": "falkland-islands",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/fk.svg",
+    "blob": "876af98a8888b00a95084880e76658d4ecbd3b77",
+    "sha256": "9703888e349c91b541e7839caa01efef1fcb30471f73b23fe923dcf068a69d59",
+    "svg_sha256": "a73f87c84192f58d46b9e3c6e7c9493ea9a310d4b46f18d3383bd293f7e75da8"
+  },
+  {
+    "id": "aruba",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/aw.svg",
+    "blob": "d6cb10f29625cbb19d00b40023f82d6aff5604b3",
+    "sha256": "f598d1d225ce2d615707f21be1e019efb5f5f1c43b7e77df51ced7a842f755bd",
+    "svg_sha256": "2f63cf151251d98d0d360e5a11d247f283a6a2ffd395322e6266716061f62d59"
+  },
+  {
+    "id": "curacao",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/cw.svg",
+    "blob": "f2c98533657da04124bbfdd75193f6d4b79574f6",
+    "sha256": "c735d8e0c01d35d533386c6bde959e3d81ae279accbc393afef4e9a7f06f729f",
+    "svg_sha256": "223c38a814d6a88e36d91c52b8f123cd99fb7d2c718e25d8474093333691b8c6"
+  },
+  {
+    "id": "puerto-rico",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/pr.svg",
+    "blob": "775619c2804501953722be8e337941a66d17cdae",
+    "sha256": "e2f0da6566aad10630fbc6d43d33d246ed9014c5c61d6cb25f705e7d1c9cf7eb",
+    "svg_sha256": "67ac1e9fb2553cfb4192cc5c823710cef3be4782decc1a047ea4ec8934fddcfa"
+  },
+  {
+    "id": "cayman-islands",
+    "repo": "hampusborgos/country-flags",
+    "commit": "c09927e63705529bbf59ca6684cd9b23225dddad",
+    "path": "svg/ky.svg",
+    "blob": "395664d038124b95c1a8b074b2fbeb40f5390b40",
+    "sha256": "4646bd213cc6be49164101cf0a8dcd9de9f62b13778399c2bbe541883e587b27",
+    "svg_sha256": "186203f977cfdfcf6c9580049b04a9f3892bfab53d7b2b4a0a70dc82ac4153c1"
+  },
+  {
+    "id": "martinique",
+    "commons": "File:Flag-of-Martinique.svg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/27/Flag-of-Martinique.svg",
+    "timestamp": "2023-03-14T11:55:55Z",
+    "sha1": "bb35ea7b16f50de48d721019742170d5240227cf",
+    "sha256": "4e8aecee9b175427ff36bbc1cee226feaa91629165416f8cd5f23dd5a4dae85f",
+    "svg_sha256": "cea8124dd160316203c2ba32bb6be7fae0769a8059cec11ab54a1136cd8faaf8"
+  }
+]

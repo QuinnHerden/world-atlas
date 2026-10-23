@@ -6,7 +6,7 @@ World Atlas grew out of the **Geographic Features** deck, which held physical fe
 
 The first release is v1.0.0. Earlier builds were pre-releases, archived as the `archive/v1.0.0` to `archive/v3.0.0` tags. Changes are in [CHANGELOG.md](CHANGELOG.md).
 
-Four **companion decks** go deeper on single countries: Italy's 20 regions, the 50 US states and DC, Brazil's 26 states and the Distrito Federal, and Canada's 10 provinces and 3 territories. Each is a separate deck and download; see [Companion decks](#companion-decks).
+Four **companion decks** go deeper on single countries: Italy's 20 regions, the 50 US states and DC, Brazil's 26 states and the Distrito Federal, and Canada's 10 provinces and 3 territories. A fifth, **World Flags**, has the flag of every country and of 20 territories. Each is a separate deck and download; see [Companion decks](#companion-decks) and [World Flags](#world-flags).
 
 Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. The deck is compiled with [ankcompiler](https://github.com/QuinnHerden/ankcompiler) 0.6.
 
@@ -17,7 +17,7 @@ Maps are rendered from [Natural Earth](https://www.naturalearthdata.com/) data. 
 
 ## Download and import
 
-The [latest release](https://github.com/QuinnHerden/world-atlas/releases/latest) has five packages: `world-atlas.apkg` (554 cards) and the four companion decks (see [Companion decks](#companion-decks)). Download the ones you want. `SHA256SUMS` lists their checksums; `sha256sum -c --ignore-missing SHA256SUMS` in the download folder checks them.
+The [latest release](https://github.com/QuinnHerden/world-atlas/releases/latest) has six packages: `world-atlas.apkg` (554 cards), the four subdivision decks (see [Companion decks](#companion-decks)) and `world-flags.apkg` (see [World Flags](#world-flags)). Download the ones you want. `SHA256SUMS` lists their checksums; `sha256sum -c --ignore-missing SHA256SUMS` in the download folder checks them.
 
 In Anki, choose **File → Import** and pick `world-atlas.apkg`. Every card lands in one deck, `World Atlas`, in the study order described under [Study](#study).
 
@@ -38,6 +38,20 @@ Each companion deck teaches one country's first-level subdivisions. Each is its 
 
 **Study order.** New cards come up in a walk from neighbour to neighbour. Italy starts at Valle d'Aosta, the US at Maine (Alaska and Hawaii last) and Brazil at Roraima in the north. Canada runs east from British Columbia, taking in the territories among the provinces from west to east. A deck takes 1 to 4 days at 15 new cards a day. Each card is tagged `kind::subdivision`, `block::subdivisions` and `country::<country>` (for example `country::united-states`).
 
+## World Flags
+
+`world-flags.apkg` holds 217 flag cards: one for each of World Atlas's 197 countries, and one for each of its 20 territories with an official flag of their own (Greenland, the Faroe Islands, Hong Kong, Puerto Rico, Bermuda and the like). The territories that fly their sovereign's flag, such as Svalbard, Réunion and Akrotiri and Dhekelia, have no card; `data/flags/excluded.yaml` gives each reason.
+
+**Importing.** In Anki, choose **File → Import** and pick `world-flags.apkg`. Its cards land in a new top-level deck, `World Flags`, beside `World Atlas`. Like the other companion decks it uses World Atlas's note type, so it adds no note type and changes no World Atlas card. It can be imported with or without World Atlas.
+
+**The cards.** The front is the flag alone, at its own proportions (Switzerland square, Qatar long and narrow), with a thin grey border so that a white flag such as Japan's shows its edge in day and night mode. The back gives the place's name, as World Atlas spells it, with no note.
+
+**Study order.** One continent at a time: Europe, Asia, Africa, North America, South America, then Oceania. Within a continent the flags follow World Atlas's order of those countries and territories, round its ring of regions. Flags that look alike on the same continent (Romania and Moldova, Qatar and Bahrain, Honduras, Nicaragua and El Salvador, Australia and New Zealand) come 3 to 10 cards apart. At 15 new cards a day the deck takes about 15 days.
+
+**Tags.** Each card has `id_flag_<id>`, `continent::<continent>` (`europe`, `asia`, `africa`, `north-america`, `south-america` or `oceania`), `kind::flag`, `block::flags`, and `country::<id>` or `territory::<id>`. There are no subdecks: to study one continent, make a filtered deck with, for example, `deck:"World Flags" tag:continent::africa is:new` and the order "Order due".
+
+The images are public-domain SVGs, mostly from [hampusborgos/country-flags](https://github.com/hampusborgos/country-flags) and nine from Wikimedia Commons; [data/flags/SOURCES.md](data/flags/SOURCES.md) lists them.
+
 ## Build
 
 Requires [uv](https://docs.astral.sh/uv/), `ankc` 0.6.x (on PyPI as `ankcompiler`) and an authenticated `gh` CLI (Natural Earth downloads go through the GitHub API).
@@ -51,7 +65,7 @@ make adjacency  # the country adjacency graph and its report
 
 `ANKC` picks the compiler, e.g. `make all ANKC="uv run --with ../ankcompiler ankc"`. Every card gets its new-card position from `data/positions.lock` as a `[^pos]` footnote. The lock is frozen and append-only, so ankc 0.5, which can't write positions, fails the build.
 
-Output: `dist/world-atlas.apkg` and one package per companion deck (`dist/italian-regions.apkg`, `dist/us-states.apkg`, `dist/brazilian-states.apkg`, `dist/canadian-provinces.apkg`). Import any of them in Anki with **File → Import**.
+Output: `dist/world-atlas.apkg` and one package per companion deck (`dist/italian-regions.apkg`, `dist/us-states.apkg`, `dist/brazilian-states.apkg`, `dist/canadian-provinces.apkg`, `dist/world-flags.apkg`). Import any of them in Anki with **File → Import**.
 
 A release build names its version: `make all RELEASE=1 RELEASE_VERSION=v1.0.0`. It fails without `RELEASE_VERSION` (unless a release tag is on `HEAD`), when the version's major isn't the lock's series, while a note has an open verify item, or when the freeze guard can't run: no readable `origin/main`, a shallow clone, or no tags (the `archive/*` tags included). Fetch the full history and tags first. [CONTRIBUTING.md](CONTRIBUTING.md#release) has the release steps.
 
@@ -106,6 +120,7 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 - **Type words:** `type` must be one of the 23 words in `src/geofeat/model.py`.
 - **World Atlas data:** `data/countries.yaml`, `data/territories.yaml` and `data/cities.yaml` hold the political cards; `data/curriculum.yaml` places each country, subnational, territory and disputed area in a region. See [Political data](docs/architecture.md#political-data).
 - **Companion decks:** `data/subdivisions.yaml` holds the subdivisions, each country's in study order. See [Companion decks](docs/architecture.md#companion-decks).
+- **World Flags:** `data/flags.yaml` lists the flags in study order, `data/flags/excluded.yaml` the territories without one, and `data/flags/` the SVGs and their pins. See [World Flags](docs/architecture.md#world-flags).
 
 [docs/architecture.md](docs/architecture.md) covers the selectors, frame options, nesting overrides and every check.
 
@@ -113,8 +128,8 @@ Set its order to "Order due". Features have no region tag, so this deck holds on
 
 **Retiring a card.** Set `retired: true` and keep the rest of the entry. This works on a feature, city, territory, subnational or disputed area, and on a country's `capital:` for its capital card. A retired territory, subnational or disputed area also comes out of `data/curriculum.yaml`. A tier 3 state's capital must stay retired; `make check-data` fails otherwise. After un-retiring one, run `make check-data`.
 
-**Reviewing maps.** `make sheet` writes a grid of every map to `build/sheet.png`; `make phone` writes each map 390 px wide, as on a phone; `make pairs` shows neighbouring features side by side; `make cvd` simulates colour blindness. Each except `pairs` takes `IDS="bosporus country:france city:*"` to limit it to the maps you name (a bare id is a feature); `make review` writes one phone-size sheet per region in study order. `make import-test` imports the package into fresh Anki collections and checks the study order, a region filtered deck, Check Database and the upgrade from Geographic Features; [docs/device-test-checklist.md](docs/device-test-checklist.md) repeats those checks by hand on Anki desktop, AnkiDroid and AnkiMobile.
+**Reviewing maps.** `make sheet` writes a grid of every map to `build/sheet.png`; `make phone` writes each map 390 px wide, as on a phone; `make pairs` shows neighbouring features side by side; `make cvd` simulates colour blindness. Each except `pairs` takes `IDS="bosporus country:france city:*"` to limit it to the maps you name (a bare id is a feature); `make review` writes one phone-size sheet per region in study order; `make flag-sheets` writes World Flags' flags in deck order, one JPEG per continent (`build/flags-NN.jpg`). `make import-test` imports the package into fresh Anki collections and checks the study order, a region filtered deck, Check Database and the upgrade from Geographic Features; [docs/device-test-checklist.md](docs/device-test-checklist.md) repeats those checks by hand on Anki desktop, AnkiDroid and AnkiMobile.
 
 ## License
 
-The code and the generated deck are under the [MIT License](LICENSE). Natural Earth data is public domain, pinned by commit and checksum in `data/sources.lock`. The NOAA datasets used for the climate geometry (IBTrACS, ICOADS and the Global Drifter Program climatology) are US government data in the public domain; [tools/README.md](tools/README.md) gives versions and citations.
+The code and the generated deck are under the [MIT License](LICENSE). Natural Earth data is public domain, pinned by commit and checksum in `data/sources.lock`. The flag images are public domain, from [hampusborgos/country-flags](https://github.com/hampusborgos/country-flags) and Wikimedia Commons, pinned in `data/flags/sources.lock`; [data/flags/SOURCES.md](data/flags/SOURCES.md) gives the attribution. The NOAA datasets used for the climate geometry (IBTrACS, ICOADS and the Global Drifter Program climatology) are US government data in the public domain; [tools/README.md](tools/README.md) gives versions and citations.

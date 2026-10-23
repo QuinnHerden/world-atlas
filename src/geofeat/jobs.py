@@ -133,9 +133,10 @@ def close_dots(dots: dict[str, tuple[float, float]], km: float = CLOSE_DOT_KM) -
 
 
 def card_jobs(cards: list[Card], report: set[str] | None = None) -> dict[str, RenderJob]:
-    """Every card's job, by key. A dot with another carded dot within CLOSE_DOT_KM gets the close-dot frame, so this
-    takes every card, even when only some are rendered. Prints the close dots among `report` (default: all)."""
-    jobs = {c.key: card_job(c) for c in cards}
+    """Every map's job, by card key; a card with a ready-made image (a flag) has none. A dot with another carded dot
+    within CLOSE_DOT_KM gets the close-dot frame, so this takes every card, even when only some are rendered. Prints
+    the close dots among `report` (default: all)."""
+    jobs = {c.key: card_job(c) for c in cards if c.render is not None}
     close = close_dots({key: job.spec.dot for key, job in jobs.items() if job.spec.dot})
     for key, near in close.items():
         jobs[key] = replace(jobs[key], spec=jobs[key].spec.model_copy(update={"close_dot": True}))
@@ -212,7 +213,7 @@ def render_cards(cards: list[Card], only: list[str] | None = None) -> dict[str, 
 def main() -> None:
     """`jobs [pattern…]`: render every active card, or only the cards whose keys match (`country:france`, `city:*`)."""
     _check_vendor()
-    cards = all_cards()
+    cards = [c for c in all_cards() if c.render is not None]  # a flag's SVG is copied by deckgen, never rendered
     only = None
     if patterns := sys.argv[1:]:
         try:

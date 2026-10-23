@@ -22,7 +22,7 @@ from shapely.geometry.base import BaseGeometry
 
 import geofeat.positions as positions
 from geofeat.ankc import ankc_command, ankc_version, ankc_version_text, writes_pos
-from geofeat.card import card_key, load_media
+from geofeat.card import card_key, card_media, load_media
 from geofeat.frame import laea, project
 from geofeat.deckgen import ideal_order, ordered
 from geofeat.ids import duplicate_uids, uids as entry_uids
@@ -30,11 +30,12 @@ from geofeat.model import DECK, GEOMETRY, NOTE_MARKER, ROOT, ROOT_DECK, Feature,
 from geofeat.curriculum import CURRICULUM, Curriculum
 from geofeat.polities import FrameOverride, read_countries, active_territory_file, read_territory_file
 from geofeat import framing
-from geofeat.decks import COMPANIONS, DECKS
+from geofeat.decks import DECKS, FLAGS, SUBDIVISION_DECKS
 from geofeat.order import Siblings, companions, load_siblings, save_siblings
+from geofeat.order import flags as flag_order
 from geofeat.pairs import NEAR_M, UNCOMPARED_FAMILIES, find_pairs
 from geofeat.resolve import area_km2, features_by_id, flow_lines, land_within, layer, provenance_errors, resolve_with_trim
-from geofeat.sources import PATHS, all_cards, cities, political, subdivisions
+from geofeat.sources import PATHS, all_cards, cities, flags, political, subdivisions
 from geofeat.sources import features as features_source
 
 RIVER_GAP_M = 20_000
@@ -140,8 +141,8 @@ class Noted(NamedTuple):
 
 
 def noted() -> list[Noted]:
-    """Every card that can carry a note, in file order: active features, countries and their capitals, territories
-    and disputes, cities, subdivisions."""
+    """Every card, in file order: active features, countries and their capitals, territories and disputes, cities,
+    subdivisions, and the flags, which carry no note."""
     rows = [Noted(features_source.key(f), f.note, f.verify) for f in active(load_features())]
     for c in read_countries():
         rows.append(Noted(card_key("country", c.id), c.note, c.verify))
@@ -150,6 +151,7 @@ def noted() -> list[Noted]:
     rows += [Noted(card_key(e.kind, e.id), e.note, e.verify) for e in active_territory_file()]
     rows += [Noted(card_key("city", c.id), c.note, c.verify) for c in cities.load_cities()]
     rows += [Noted(card_key("subdivision", s.id), s.note, s.verify) for s in subdivisions.active()]
+    rows += [Noted(card_key("flag", f.id), None, []) for f in flags.active()]  # a flag's back is its name alone
     return rows
 
 
@@ -275,8 +277,12 @@ def check_data(release: bool = False) -> tuple[list[str], list[str]]:
     errors += political_errors + cities.check(outlines) + subdivision_errors
     if not subdivision_errors:
         errors += companions.errors()
-        notes += [f"{deck.name}: look-alikes {gap}" for deck in COMPANIONS
+        notes += [f"{deck.name}: look-alikes {gap}" for deck in SUBDIVISION_DECKS
                   for gap in companions.lookalike_gaps(deck, [s.id for s in subdivisions.of_country(deck.country)])]
+    if not (flag_errors := flags.check()):
+        flag_errors = flag_order.errors()
+        notes += flag_order.notes() + [f"{FLAGS.name}: {n}" for n in flags.continent_notes()]
+    errors += flag_errors
     retired_errors, retired_notes = retired_references(all_features)
     errors += retired_errors
     notes += retired_notes
@@ -348,8 +354,8 @@ def check_deck() -> list[str]:
     media = load_media()
     cards = all_cards()
     for c in cards:
-        if c.key not in media or not (DECK / media[c.key]).exists():
-            errors.append(f"{c.key}: not rendered (run `make render`)")
+        if (name := card_media(c, media)) is None or not (DECK / name).exists():
+            errors.append(f"{c.key}: not rendered (run `make render`) or, for an image, not copied (run `make deck`)")
     lock = positions.read()
     if missing := sorted(c.uid for c in cards if c.uid not in lock.positions):
         errors.append(f"uids not in {positions.LOCK_FILE.name} (run `make positions`): {missing}")
@@ -407,8 +413,8 @@ def _check_one_package(package: Path, deck, cards: list, expected: set[str], loc
         errors.append(f"{name}: notes locked in another deck: {wrong}")
     if any((ctype, queue) != (0, 0) for *_, ctype, queue, _ in rows):
         errors.append(f"{name}: some cards aren't new")
-    if odd := packaged_media ^ {media.get(c.key) for c in cards}:  # nothing a card's text pulled in from elsewhere
-        errors.append(f"{name}: packaged media differ from the rendered maps: {sorted(map(str, odd))}")
+    if odd := packaged_media ^ {card_media(c, media) for c in cards}:  # nothing a card's text pulled in from elsewhere
+        errors.append(f"{name}: packaged media differ from the cards' maps and images: {sorted(map(str, odd))}")
     for guid, tags, *_ in rows:  # the tags filtered decks search must name the block and region the lock placed it in
         if (entry := lock.entries.get(guid)) is None:
             continue
