@@ -4,7 +4,7 @@ All notable changes to this deck are recorded here. The format follows [Keep a C
 
 Pre-release history: the builds before v1.0.0 (Geographic Features, then two World Atlas pre-releases) are archived as the tags `archive/v1.0.0`, `archive/v2.0.0` and `archive/v3.0.0`; their changelog is in `CHANGELOG.md` at `archive/v3.0.0`.
 
-## [Unreleased]
+## [1.1.0] - 2026-10-23
 
 ### Added
 
@@ -58,4 +58,5 @@ Each retired entry keeps its uid, and `positions.lock` keeps its slot.
 - Micronesia, Kiribati and French Polynesia get one oval round the whole state instead of a ring per island group. Tonga is no longer ringed.
 - Aruba's and Curaçao's insets show the ABC islands together.
 
+[1.1.0]: https://github.com/QuinnHerden/world-atlas/releases/tag/v1.1.0
 [1.0.0]: https://github.com/QuinnHerden/world-atlas/releases/tag/v1.0.0

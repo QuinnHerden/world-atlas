@@ -189,7 +189,7 @@ Add a line to the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) for anyth
 
    The `archive/*` tags point into `main`'s history, so this fetch brings them; never build a release with `--no-tags`. A clone that still holds the deleted `v1.0.0`-`v3.0.0` tags fails the guard ("older than release v3.0.0") until it prunes them.
 
-2. In CHANGELOG.md, change the version's heading from `Unreleased` to today's date. Commit and push it to `main`, so the tag carries the date.
+2. In CHANGELOG.md, change the `[Unreleased]` heading to the version and today's date (`## [X.Y.Z] - YYYY-MM-DD`) and add the version's link at the bottom. Commit and push it to `main`, so the tag carries the date.
 3. Build: `make all RELEASE=1 RELEASE_VERSION=vX.Y.Z`. A release build also fails while any verify item is open, with a draft lock, or when the version's major isn't the lock's `series:`. With no `vX.Y.Z` tag yet, the first release must be v1.x.
 4. `make import-test`. It covers World Atlas and the five companion packages.
 5. Tag and push:
@@ -199,12 +199,14 @@ Add a line to the `Unreleased` section of [CHANGELOG.md](CHANGELOG.md) for anyth
    git push origin vX.Y.Z
    ```
 
-6. Publish the six packages, World Atlas and the five companion decks (World Flags among them), with a `SHA256SUMS` over them written in `dist/`. Save the version's CHANGELOG section as `build/notes.md` (`build/` is ignored):
+6. Publish the six packages, World Atlas and the five companion decks (World Flags among them), with a `SHA256SUMS` over them written in `dist/`. Write the release notes to `build/notes.md` (`build/` is ignored) in the previous release's shape, not the CHANGELOG's: a line on what's new, the decks table, "How to add a deck to Anki", the collapsed checksum section and a link to CHANGELOG.md. Start from `gh release view vPREV --repo QuinnHerden/world-atlas --json body -q .body`. `dist/` must hold only the six packages:
 
    ```sh
    (cd dist && sha256sum *.apkg > SHA256SUMS)
    gh release create vX.Y.Z dist/*.apkg dist/SHA256SUMS --verify-tag --repo QuinnHerden/world-atlas --title "World Atlas vX.Y.Z" --notes-file build/notes.md
    ```
+
+7. Check: `gh release view vX.Y.Z --repo QuinnHerden/world-atlas --json assets` lists the six packages and `SHA256SUMS`; download one package and `SHA256SUMS` to an empty folder and run `sha256sum -c --ignore-missing SHA256SUMS`.
 
 The releases before v1.0.0 are archived as the tags `archive/v1.0.0`, `archive/v2.0.0` and `archive/v3.0.0`, with no GitHub releases; never create a release for an `archive/*` tag. Series 1 continues archived v3.0.0's order entry for entry, except the four oceans, moved to just after the continents before v1.0.0. Every lock must keep every uid of every archived release. See [ADR 0011's amendment](docs/adr/0011-refreezing-at-a-major-version.md#amendment-versioning-restarted-at-v100).
 
